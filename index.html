@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPath — Найди свой университет</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:        #F7EFE1;
+    --cream-deep:   #EFE1C6;
+    --paper:        #FBF6EC;
+    --espresso:     #2B1B10;
+    --bark:         #5A3B26;
+    --clay:         #8C5A34;
+    --caramel:      #C79256;
+    --sand:         #D9BD93;
+    --text-main:    #2B1B10;
+    --text-muted:   #7A6552;
+    --line:         rgba(43,27,16,0.14);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    font-family:'Work Sans', sans-serif;
+    background:var(--cream);
+    color:var(--text-main);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{ font-family:'Fraunces', serif; }
+
+  a{ text-decoration:none; color:inherit; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; appearance:none; -webkit-appearance:none; }
+
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 64px; }
+
+  /* ---------- NAV ---------- */
+  header{
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    position:relative;
+    z-index:5;
+  }
+  nav.wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:84px;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:26px;
+    color:var(--espresso);
+    letter-spacing:-0.01em;
+  }
+  .logo svg{ width:38px; height:38px; flex-shrink:0; }
+
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .nav-links a{
+    font-size:15px;
+    color:var(--text-muted);
+    padding:10px 18px;
+    border-radius:8px;
+    transition:background .15s ease, color .15s ease;
+  }
+  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
+  .nav-links a.active{
+    background:var(--espresso);
+    color:var(--paper);
+  }
+
+  .nav-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .btn-login{
+    background:var(--clay);
+    color:var(--paper);
+    padding:10px 22px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:500;
+    transition:background .15s ease;
+  }
+  .btn-login:hover{ background:var(--bark); }
+
+  .icon-btn{
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted);
+    background:transparent;
+    border-radius:50%;
+    transition:background .15s ease, color .15s ease;
+  }
+  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+
+  .lang-dropdown{ position:relative; }
+  .lang-menu{
+    position:absolute;
+    top:calc(100% + 10px);
+    right:0;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:6px;
+    min-width:150px;
+    box-shadow:0 16px 32px -14px rgba(43,27,16,0.3);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-6px);
+    transition:opacity .15s ease, transform .15s ease, visibility .15s;
+    z-index:30;
+  }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:none;
+    padding:10px 12px;
+    font-size:14px;
+    color:var(--text-muted);
+    border-radius:8px;
+  }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:var(--cream);
+  }
+  .decor-icon{
+    position:absolute;
+    pointer-events:none;
+    stroke:var(--sand);
+    fill:none;
+    z-index:0;
+  }
+  .how .decor-icon{ stroke:rgba(247,239,225,0.5); }
+
+  .hero-grid{
+    position:relative;
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    align-items:center;
+    gap:64px;
+    padding:104px 0 56px;
+  }
+
+  /* ---------- SEAM (quote straddling hero/how boundary) ---------- */
+  .seam-grid{
+    display:grid;
+    grid-template-columns:0.42fr 0.58fr;
+    gap:28px;
+    align-items:start;
+  }
+  .seam-top{ padding:0 0 18px; }
+  .seam-bottom{ padding:16px 0 0; }
+  .seam-quote{
+    font-family:'Fraunces', serif;
+    font-size:30px;
+    font-weight:600;
+    line-height:1.3;
+    letter-spacing:-0.01em;
+  }
+  .seam-top .seam-quote{ color:var(--espresso); }
+  .seam-bottom .seam-quote{ color:var(--paper); }
+  .seam-desc{
+    font-size:15px;
+    line-height:1.75;
+    max-width:540px;
+    padding-top:6px;
+  }
+  .seam-top .seam-desc{ color:var(--text-muted); }
+  .seam-bottom .seam-desc{ color:var(--sand); }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+    color:var(--clay);
+    font-weight:600;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px; height:1.5px;
+    background:var(--clay);
+    display:inline-block;
+  }
+
+  .hero-title{
+    font-size:52px;
+    line-height:1.08;
+    font-weight:600;
+    color:var(--espresso);
+    letter-spacing:-0.01em;
+    max-width:600px;
+  }
+  .hero-title em{
+    font-style:italic;
+    color:var(--clay);
+  }
+
+  .hero-sub{
+    margin-top:26px;
+    font-size:17px;
+    color:var(--text-muted);
+    max-width:460px;
+    line-height:1.65;
+  }
+
+  .cta{
+    margin-top:38px;
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    background:var(--espresso);
+    color:var(--paper);
+    padding:17px 30px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:500;
+    box-shadow:0 10px 24px -10px rgba(43,27,16,0.45);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .cta:hover{ background:var(--bark); transform:translateY(-1px); }
+  .cta svg{ width:16px; height:16px; }
+
+  .hero-note{
+    margin-top:20px;
+    font-size:13.5px;
+    color:var(--text-muted);
+  }
+
+  /* ---------- HERO ART ---------- */
+  .hero-art{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .hero-art svg{ width:100%; max-width:460px; height:auto; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .how{
+    background:var(--espresso);
+    color:var(--paper);
+    padding:0 0 84px;
+    position:relative;
+    overflow:hidden;
+  }
+  .how-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-top:56px;
+    margin-bottom:52px;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .how-head h2{
+    font-size:32px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .how-head p{
+    color:var(--sand);
+    font-size:15px;
+    max-width:320px;
+  }
+
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:0;
+  }
+  .step{
+    padding:0 40px;
+    border-left:1px solid rgba(247,239,225,0.14);
+  }
+  .step:first-child{ padding-left:0; border-left:none; }
+
+  .step-num{
+    font-family:'Fraunces', serif;
+    font-size:15px;
+    color:var(--caramel);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .step-num::before{
+    content:"";
+    width:28px; height:1px;
+    background:var(--caramel);
+  }
+  .step h3{
+    font-size:19px;
+    font-weight:500;
+    margin-bottom:10px;
+  }
+  .step p{
+    font-size:14.5px;
+    color:var(--sand);
+    line-height:1.6;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--cream-deep);
+    padding:22px 0;
+    text-align:center;
+    font-size:13px;
+    color:var(--text-muted);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  /* Laptop / smaller desktop */
+  @media (max-width: 1120px){
+    .wrap{ padding:0 40px; }
+    .hero-grid{ gap:44px; padding:84px 0 76px; }
+    .hero-title{ font-size:44px; }
+    .decor-icon{ opacity:.7; }
+  }
+
+  /* Tablet */
+  @media (max-width: 820px){
+    .decor-icon{ display:none; }
+    .hero-grid{ grid-template-columns:1fr; gap:36px; padding:56px 0 48px; }
+    .hero-title{ font-size:36px; max-width:100%; }
+    .hero-sub{ max-width:100%; }
+    .hero-art{ order:-1; margin-bottom:4px; }
+    .hero-art svg{ max-width:320px; }
+    .steps{ grid-template-columns:1fr; gap:32px; }
+    .step{ padding-left:0; border-left:none; }
+    .nav-links{ display:none; }
+    .wrap{ padding:0 26px; }
+    .how-head{ flex-direction:column; align-items:flex-start; }
+    .how{ padding:0 0 64px; }
+    .how-head{ margin-top:44px; }
+    .seam-grid{ grid-template-columns:1fr; gap:14px; }
+    .seam-quote{ font-size:25px; }
+    .seam-top{ padding:0 0 16px; }
+    .seam-bottom{ padding:16px 0 0; }
+  }
+
+  /* Phone */
+  @media (max-width: 480px){
+    .wrap{ padding:0 18px; }
+    nav.wrap{ height:72px; }
+    .nav-right{ gap:8px; }
+    .logo{ font-size:21px; gap:9px; }
+    .logo svg{ width:30px; height:30px; }
+    .eyebrow{ font-size:13px; }
+    .hero-title{ font-size:29px; }
+    .hero-sub{ font-size:15px; }
+    .hero-note{ font-size:13px; }
+    .cta{ width:100%; justify-content:center; padding:15px 22px; }
+    .btn-login{ padding:9px 15px; font-size:13px; }
+    .hero-art svg{ max-width:250px; }
+    .lang-menu{ right:-14px; min-width:140px; }
+    .how-head h2{ font-size:25px; }
+    .step h3{ font-size:18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
+        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
+        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
+      </svg>
+      EduPath
+    </div>
+    <div class="nav-links">
+      <a href="#" class="active" data-i18n="nav_home">Главная</a>
+      <a href="#" data-i18n="nav_universities">Университеты</a>
+      <a href="#" data-i18n="nav_profile">Профиль</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык / Change language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+        </div>
+      </div>
+      <a href="#" class="btn-login" data-i18n="btn_login">Войти</a>
+      <a href="#" class="icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <svg class="decor-icon" style="top:8%; left:4.5%; width:30px; height:30px; opacity:.5; transform:rotate(-8deg);" viewBox="0 0 24 24" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+  <svg class="decor-icon" style="top:36%; left:2%; width:26px; height:26px; opacity:.4; transform:rotate(6deg);" viewBox="0 0 24 24" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M9 4v16M15 4v16"/></svg>
+  <svg class="decor-icon" style="top:80%; left:15%; width:28px; height:28px; opacity:.45; transform:rotate(-4deg);" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
+  <svg class="decor-icon" style="top:6%; left:47%; width:24px; height:24px; opacity:.35; transform:rotate(10deg);" viewBox="0 0 24 24" stroke-width="1.4"><path d="M4 19V6a2 2 0 012-2h9l5 5v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M15 4v5h5"/></svg>
+  <svg class="decor-icon" style="top:10%; right:6%; width:32px; height:32px; opacity:.4; transform:rotate(-10deg);" viewBox="0 0 24 24" stroke-width="1.4"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+  <svg class="decor-icon" style="top:58%; right:3%; width:26px; height:26px; opacity:.4; transform:rotate(5deg);" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 4L3 8l9 4 9-4-9-4z"/><path d="M6 10v6c0 1.5 2.7 3 6 3s6-1.5 6-3v-6"/></svg>
+  <svg class="decor-icon" style="bottom:6%; right:18%; width:26px; height:26px; opacity:.4; transform:rotate(-6deg);" viewBox="0 0 24 24" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M9 4v16M15 4v16"/></svg>
+  <svg class="decor-icon" style="bottom:4%; left:44%; width:22px; height:22px; opacity:.35; transform:rotate(4deg);" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
+
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow" data-i18n="eyebrow">Тест на подбор университета</div>
+      <h1 class="hero-title"><span data-i18n="hero_title_pre">Пройди тест — и найди </span><em data-i18n="hero_title_em">свой</em><span data-i18n="hero_title_post"> университет</span></h1>
+      <p class="hero-sub" data-i18n="hero_sub">Подбор направлений и вузов по твоим предпочтениям, результатам тестов и бюджету. Отвечай на вопросы — дальше система сама решит, что уточнить.</p>
+      <a href="#" class="cta">
+        <span data-i18n="cta">Начать заполнение профиля</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <p class="hero-note" data-i18n="hero_note">На основе специального ИИ поймём, какой университет может вам подойти</p>
+    </div>
+
+    <div class="hero-art">
+      <svg viewBox="0 0 480 480" fill="none">
+        <circle cx="240" cy="240" r="178" stroke="#D9BD93" stroke-width="1.4" stroke-dasharray="2 7"/>
+        <circle cx="240" cy="240" r="140" stroke="#8C5A34" stroke-width="1.6"/>
+
+        <g stroke="#5A3B26" stroke-width="1.4">
+          <line x1="240" y1="70" x2="240" y2="94"/>
+          <line x1="240" y1="386" x2="240" y2="410"/>
+          <line x1="70" y1="240" x2="94" y2="240"/>
+          <line x1="386" y1="240" x2="410" y2="240"/>
+        </g>
+        <text x="240" y="60" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">N</text>
+        <text x="240" y="430" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">S</text>
+        <text x="52" y="245" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">W</text>
+        <text x="428" y="245" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">E</text>
+
+        <path d="M240 240 L280 165 L255 240 Z" fill="#2B1B10"/>
+        <path d="M240 240 L200 315 L225 240 Z" fill="#C79256"/>
+        <circle cx="240" cy="240" r="7" fill="#FBF6EC" stroke="#2B1B10" stroke-width="2"/>
+
+        <g stroke="#8C5A34" stroke-width="1.2" stroke-dasharray="3 5">
+          <path d="M240 240 L120 120"/>
+          <path d="M240 240 L370 130"/>
+          <path d="M240 240 L340 360"/>
+          <path d="M240 240 L130 345"/>
+        </g>
+        <circle cx="120" cy="120" r="5" fill="#5A3B26"/>
+        <circle cx="370" cy="130" r="5" fill="#5A3B26"/>
+        <circle cx="340" cy="360" r="5" fill="#5A3B26"/>
+        <circle cx="130" cy="345" r="5" fill="#5A3B26"/>
+        <text x="120" y="104" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_seoul">Сеул</text>
+        <text x="370" y="114" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_berlin">Берлин</text>
+        <text x="340" y="382" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_boston">Бостон</text>
+        <text x="130" y="367" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_shanghai">Шанхай</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="wrap seam-top">
+    <div class="seam-grid">
+      <p class="seam-quote" data-i18n="seam_quote_top">«С нами —</p>
+      <p class="seam-desc" data-i18n="seam_desc_top">Помимо учебных показателей нам важно, в какой среде хочет жить абитуриент.</p>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <svg class="decor-icon" style="top:10%; right:8%; width:30px; height:30px; opacity:.5; transform:rotate(8deg);" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
+  <svg class="decor-icon" style="bottom:12%; left:4%; width:34px; height:34px; opacity:.5; transform:rotate(-6deg);" viewBox="0 0 24 24" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+  <svg class="decor-icon" style="top:14%; left:36%; width:22px; height:22px; opacity:.4; transform:rotate(10deg);" viewBox="0 0 24 24" stroke-width="1.4"><path d="M4 19V6a2 2 0 012-2h9l5 5v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M15 4v5h5"/></svg>
+  <div class="wrap seam-bottom">
+    <div class="seam-grid">
+      <p class="seam-quote" data-i18n="seam_quote_bottom">комфортнее, практичнее, эффективнее»</p>
+      <p class="seam-desc" data-i18n="seam_desc_bottom">Мы рекомендуем только те университеты, которые подходят тебе по-настоящему хорошо.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="how-head">
+      <h2 data-i18n="how_title">Как это работает</h2>
+      <p data-i18n="how_sub">Три шага от первого вопроса до списка подходящих университетов.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3 data-i18n="step1_title">Личные данные</h3>
+        <p data-i18n="step1_desc">Твои интересы, увлечения и предпочтения по стране, климату и формату обучения.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3 data-i18n="step2_title">Показатели</h3>
+        <p data-i18n="step2_desc">Оценки, результаты экзаменов (SAT, IELTS и др.) и ориентировочный бюджет.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3 data-i18n="step3_title">Результаты теста</h3>
+        <p data-i18n="step3_desc">Список университетов, которые подходят тебе больше всего, с пояснениями и советами.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer data-i18n="footer">
+  EduPath © 2026. Все права защищены
+</footer>
+
+<script>
+  const translations = {
+    ru: {
+      nav_home:"Главная", nav_universities:"Университеты", nav_profile:"Профиль", btn_login:"Войти",
+      eyebrow:"Тест на подбор университета",
+      hero_title_pre:"Пройди тест — и найди ", hero_title_em:"свой", hero_title_post:" университет",
+      hero_sub:"Подбор направлений и вузов по твоим предпочтениям, результатам тестов и бюджету. Отвечай на вопросы — дальше система сама решит, что уточнить.",
+      cta:"Начать заполнение профиля",
+      hero_note:"На основе специального ИИ поймём, какой университет может вам подойти",
+      how_title:"Как это работает",
+      how_sub:"Три шага от первого вопроса до списка подходящих университетов.",
+      step1_title:"Личные данные", step1_desc:"Твои интересы, увлечения и предпочтения по стране, климату и формату обучения.",
+      step2_title:"Показатели", step2_desc:"Оценки, результаты экзаменов (SAT, IELTS и др.) и ориентировочный бюджет.",
+      step3_title:"Результаты теста", step3_desc:"Список университетов, которые подходят тебе больше всего, с пояснениями и советами.",
+      seam_quote_top:"«С нами —", seam_quote_bottom:"комфортнее, практичнее, эффективнее»",
+      seam_desc_top:"Помимо учебных показателей нам важно, в какой среде хочет жить абитуриент — климат, темп города, доступность родного языка и то, насколько легко будет привыкнуть к новому месту.",
+      seam_desc_bottom:"Мы рекомендуем только те университеты, которые подходят тебе по-настоящему хорошо — не только по баллам и бюджету, но и по образу жизни, который ты для себя представляешь.",
+      footer:"EduPath © 2026. Все права защищены",
+      city_seoul:"Сеул", city_berlin:"Берлин", city_boston:"Бостон", city_shanghai:"Шанхай"
+    },
+    en: {
+      nav_home:"Home", nav_universities:"Universities", nav_profile:"Profile", btn_login:"Log in",
+      eyebrow:"University matching test",
+      hero_title_pre:"Take the test — find ", hero_title_em:"your", hero_title_post:" university",
+      hero_sub:"We match programs and universities to your preferences, test scores and budget. Answer the questions — the system decides what to ask next.",
+      cta:"Start your profile",
+      hero_note:"A dedicated AI works out which university could suit you",
+      how_title:"How it works",
+      how_sub:"Three steps from the first question to a list of matching universities.",
+      step1_title:"Personal details", step1_desc:"Your interests, hobbies and preferences on country, climate and study format.",
+      step2_title:"Your scores", step2_desc:"Grades, test results (SAT, IELTS, etc.) and your approximate budget.",
+      step3_title:"Test results", step3_desc:"A list of universities that suit you best, with explanations and tips.",
+      seam_quote_top:"“With us it's —", seam_quote_bottom:"more comfortable, more practical, more effective”",
+      seam_desc_top:"Beyond academic scores, we care about the environment you want to live in — climate, city pace, access to your native language, and how easily you'll settle into a new place.",
+      seam_desc_bottom:"We only recommend universities that genuinely fit you — not just by scores and budget, but by the lifestyle you picture for yourself.",
+      footer:"EduPath © 2026. All rights reserved",
+      city_seoul:"Seoul", city_berlin:"Berlin", city_boston:"Boston", city_shanghai:"Shanghai"
+    },
+    zh: {
+      nav_home:"首页", nav_universities:"大学", nav_profile:"个人主页", btn_login:"登录",
+      eyebrow:"大学匹配测试",
+      hero_title_pre:"参加测试，找到", hero_title_em:"属于你的", hero_title_post:"大学",
+      hero_sub:"根据你的偏好、考试成绩和预算，为你匹配专业和大学。回答问题——系统会自动决定接下来要问什么。",
+      cta:"开始填写资料",
+      hero_note:"专属人工智能将判断哪所大学适合你",
+      how_title:"工作原理",
+      how_sub:"从第一个问题到匹配大学列表，只需三步。",
+      step1_title:"个人信息", step1_desc:"你的兴趣、爱好以及对国家、气候和学习方式的偏好。",
+      step2_title:"成绩指标", step2_desc:"成绩、考试结果（SAT、雅思等）和大致预算。",
+      step3_title:"测试结果", step3_desc:"最适合你的大学清单，并附有说明和建议。",
+      seam_quote_top:"「有我们，", seam_quote_bottom:"更舒适、更务实、更高效」",
+      seam_desc_top:"除了学习成绩，我们同样关心你想生活在怎样的环境中——气候、城市节奏、能否使用母语交流，以及适应新环境的难易程度。",
+      seam_desc_bottom:"我们只推荐真正适合你的大学——不仅看成绩和预算，也看你想要的生活方式。",
+      footer:"EduPath © 2026 版权所有",
+      city_seoul:"首尔", city_berlin:"柏林", city_boston:"波士顿", city_shanghai:"上海"
+    },
+    kk: {
+      nav_home:"Басты бет", nav_universities:"Университеттер", nav_profile:"Профиль", btn_login:"Кіру",
+      eyebrow:"Университет таңдау тесті",
+      hero_title_pre:"Тестен өт — ", hero_title_em:"өзіңе сай", hero_title_post:" университетті тап",
+      hero_sub:"Қалауларыңа, тест нәтижелеріне және бюджетіңе сай мамандықтар мен университеттерді іріктейміз. Сұрақтарға жауап бер — жүйе өзі не сұрау керектігін шешеді.",
+      cta:"Профильді толтыруды бастау",
+      hero_note:"Арнайы ЖИ саған қандай университет сәйкес келетінін анықтайды",
+      how_title:"Бұл қалай жұмыс істейді",
+      how_sub:"Бірінші сұрақтан сәйкес университеттер тізіміне дейін үш қадам.",
+      step1_title:"Жеке деректер", step1_desc:"Сенің қызығушылықтарың, хоббиің, ел, климат және оқу форматына қатысты қалауларың.",
+      step2_title:"Көрсеткіштер", step2_desc:"Бағалар, тест нәтижелері (SAT, IELTS және т.б.) және шамамен бюджет.",
+      step3_title:"Тест нәтижелері", step3_desc:"Саған ең сәйкес келетін университеттер тізімі, түсіндірмелер мен кеңестермен.",
+      seam_quote_top:"«Бізбен —", seam_quote_bottom:"ыңғайлырақ, тиімдірек, нәтижелірек»",
+      seam_desc_top:"Оқу көрсеткіштерінен бөлек, абитуриенттің қандай ортада өмір сүргісі келетіні де біз үшін маңызды — климат, қала қарқыны, ана тілінде сөйлесу мүмкіндігі және жаңа жерге үйренудің қаншалықты оңай болатыны.",
+      seam_desc_bottom:"Біз тек саған шынымен сәйкес келетін университеттерді ұсынамыз — бағалар мен бюджет бойынша ғана емес, сен елестететін өмір салты бойынша да.",
+      footer:"EduPath © 2026. Барлық құқықтар қорғалған",
+      city_seoul:"Сеул", city_berlin:"Берлин", city_boston:"Бостон", city_shanghai:"Шанхай"
+    }
+  };
+
+  const langBtn  = document.getElementById('langBtn');
+  const langMenu = document.getElementById('langMenu');
+
+  function setLang(lang){
+    const dict = translations[lang];
+    if(!dict) return;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      if(dict[key] !== undefined) el.textContent = dict[key];
+    });
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang-option').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+
+  langBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const isOpen = langMenu.classList.toggle('open');
+    langBtn.setAttribute('aria-expanded', isOpen);
+  });
+
+  langMenu.addEventListener('click', (e)=>{
+    const option = e.target.closest('.lang-option');
+    if(!option) return;
+    setLang(option.dataset.lang);
+    langMenu.classList.remove('open');
+    langBtn.setAttribute('aria-expanded', 'false');
+  });
+
+  document.addEventListener('click', ()=>{
+    langMenu.classList.remove('open');
+    langBtn.setAttribute('aria-expanded', 'false');
+  });
+</script>
+</body>
+</html>
