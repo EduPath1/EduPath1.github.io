@@ -338,11 +338,8 @@ const COUNTRY_FILES = [
 const UNI_FIELDS = [
   "Университет", "Страна", "Город",
   "Стоимость обучения (USD/год)",
-  "Процент Поступления",
   "Дают полный грант (обучение, проживание, перелет, питание) международным студентам?",
-  "TOEFL/IELTS", "SAT",
-  "Рейтинг по Стране", "Рейтинг в Мире",
-  "Профессии"
+  "TOEFL/IELTS", "SAT"
 ];
 
 // Состояние диалога
@@ -521,13 +518,15 @@ async function loadAllUniversities(){
     if(r.status !== "fulfilled") return;
     r.value.forEach(uni => {
       if(!uni || !uni["Университет"]) return;
-      const small = {};
-      UNI_FIELDS.forEach(f => {
-        const v = uni[f];
-        if(v !== undefined && v !== null && String(v).trim() !== ""){
-          small[f] = String(v).trim();
-        }
-      });
+      const small = {
+        n: String(uni["Университет"] || "").trim(),
+        c: String(uni["Страна"] || "").trim(),
+        city: String(uni["Город"] || "").trim(),
+        cost: String(uni["Стоимость обучения (USD/год)"] || "").trim(),
+        grant: String(uni["Дают полный грант (обучение, проживание, перелет, питание) международным студентам?"] || "").trim(),
+        ielts: String(uni["TOEFL/IELTS"] || "").trim(),
+        sat: String(uni["SAT"] || "").trim()
+      };
       compact.push(small);
     });
   });
