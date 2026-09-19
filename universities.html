@@ -1,0 +1,69 @@
+
+  const found = ALL_DATA.filter(u => {
+    const name = String(u["Университет"] || "").toLowerCase();
+    const city = String(u["Город"] || "").toLowerCase();
+    const country = String(u._country_ru || "").toLowerCase();
+    return name.includes(q) || city.includes(q) || country.includes(q);
+  }).slice(0, 12);
+
+  if(found.length === 0){
+    searchResults.innerHTML = `<div class="search-empty">Извините, мы пока работаем над добавлением этого университета</div>`;
+  } else {
+    searchResults.innerHTML = found.map(u => `
+      <button class="search-result" data-name="${escape(u["Университет"])}">
+        ${u["Университет"]}
+        <small>${u._flag} ${u._country_ru} · ${u["Город"] || ""}</small>
+      </button>
+    `).join("");
+  }
+  searchResults.classList.add("open");
+});
+
+searchResults.addEventListener("click", (e) => {
+  const btn = e.target.closest(".search-result");
+  if(!btn) return;
+  const name = btn.dataset.name;
+  const uni = ALL_DATA.find(u => u["Университет"] === name);
+  if(uni){
+    // Найти и раскрыть страну
+    const itemBtn = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === name);
+    if(itemBtn){
+      itemBtn.closest(".country").classList.add("open");
+      selectUni(uni, itemBtn);
+      itemBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      selectUni(uni, null);
+    }
+  }
+  searchInput.value = "";
+  searchResults.classList.remove("open");
+  searchInput.classList.remove("open");
+});
+
+document.addEventListener("click", () => {
+  searchResults.classList.remove("open");
+  searchInput.classList.remove("open");
+});
+
+searchInput.addEventListener("click", (e) => e.stopPropagation());
+searchResults.addEventListener("click", (e) => e.stopPropagation());
+
+// === СТАРТ ===
+loadAll();
+
+// Поддержка ?uni=Имя — открыть сразу
+window.addEventListener("load", () => {
+  const params = new URLSearchParams(window.location.search);
+  const uni = params.get("uni");
+  if(uni && ALL_DATA.length){
+    const found = ALL_DATA.find(u => u["Университет"] === uni);
+    if(found) selectUni(found, null);
+  }
+});
+</script>
+</body>
+</html>
+
+
+
+
