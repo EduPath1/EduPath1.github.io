@@ -271,7 +271,7 @@
         <form id="edupathAuthForm" autocomplete="off">
           <div class="edupath-field" id="edupathNameField">
             <label>Имя</label>
-            <input type="text" id="edupathName" placeholder="Например, Айдана">
+            <input type="text" id="edupathName" placeholder="Например, Айсана">
           </div>
           <div class="edupath-field">
             <label>Email</label>
