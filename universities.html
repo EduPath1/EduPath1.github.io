@@ -474,12 +474,10 @@ function isFullGrant(uni){
 
 function renderSidebar(){
   const container = document.getElementById("countriesList");
-  const onlyGrant = document.getElementById("onlyGrant").checked;
   container.innerHTML = "";
-
+  const filtered = applyFilters(ALL_DATA);
   COUNTRY_FILES.forEach(c => {
-    let items = ALL_DATA.filter(u => u._country_ru === c.name);
-    if(onlyGrant) items = items.filter(isFullGrant);
+    let items = filtered.filter(u => u._country_ru === c.name);
     if(items.length === 0) return;
 
     const div = document.createElement("div");
