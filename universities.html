@@ -48,9 +48,92 @@
   .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; max-height:calc(100vh - 84px); position:sticky; top:84px; }
   .sidebar h2{ font-size:24px; margin-bottom:6px; }
   .sidebar .subtitle{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
-  .only-grant{ display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--cream); border-radius:10px; margin-bottom:18px; font-size:14px; cursor:pointer; transition:background .25s var(--ease); }
-  .only-grant:hover{ background:var(--cream-deep); }
-  .only-grant input{ accent-color:var(--clay); width:16px; height:16px; cursor:pointer; }
+  /* ФИЛЬТРЫ */
+.filters-wrap{ position:relative; margin-bottom:18px; }
+.filters-btn{
+  display:flex; align-items:center; justify-content:space-between;
+  width:100%; padding:12px 16px;
+  background:var(--cream); border:1px solid transparent;
+  border-radius:10px; font-size:14px; font-weight:500;
+  color:var(--espresso);
+  transition:background .25s var(--ease), border-color .25s var(--ease);
+}
+.filters-btn:hover{ background:var(--cream-deep); }
+.filters-btn.active{ border-color:var(--clay); background:var(--paper); }
+.filters-btn-left{ display:flex; align-items:center; gap:8px; }
+.filters-btn-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:20px; height:20px; padding:0 6px;
+  background:var(--clay); color:var(--paper);
+  border-radius:10px; font-size:11px; font-weight:600;
+}
+.filters-btn-arrow{ font-size:11px; color:var(--text-muted); transition:transform .3s var(--ease); }
+.filters-btn.active .filters-btn-arrow{ transform:rotate(180deg); }
+
+.filters-panel{
+  max-height:0; overflow:hidden; opacity:0;
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:12px;
+  margin-top:8px;
+  transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease), margin-top .3s var(--ease);
+}
+.filters-panel.open{
+  max-height:600px; opacity:1;
+  padding:18px;
+}
+
+.filter-group{ margin-bottom:16px; }
+.filter-group:last-of-type{ margin-bottom:0; }
+.filter-group label{
+  display:block; font-size:12px; color:var(--text-muted);
+  text-transform:uppercase; letter-spacing:0.05em;
+  margin-bottom:8px; font-weight:600;
+}
+.filter-row{ display:flex; gap:8px; align-items:center; }
+.filter-row input{
+  flex:1; min-width:0; padding:10px 12px;
+  font-family:inherit; font-size:14px;
+  background:var(--cream); color:var(--text-main);
+  border:1.5px solid var(--line); border-radius:8px;
+  transition:border-color .2s var(--ease), background .2s var(--ease);
+}
+.filter-row input:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
+.filter-row span{ color:var(--text-muted); font-size:13px; }
+
+.filter-select{
+  width:100%; padding:10px 12px;
+  font-family:inherit; font-size:14px;
+  background:var(--cream); color:var(--text-main);
+  border:1.5px solid var(--line); border-radius:8px;
+  cursor:pointer;
+  transition:border-color .2s var(--ease), background .2s var(--ease);
+}
+.filter-select:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
+
+.filter-check{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; background:var(--cream);
+  border-radius:8px; font-size:14px; cursor:pointer;
+  transition:background .2s var(--ease);
+}
+.filter-check:hover{ background:var(--cream-deep); }
+.filter-check input{ accent-color:var(--clay); width:16px; height:16px; cursor:pointer; }
+
+.filter-actions{ display:flex; gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+.filter-btn-apply{
+  flex:1; padding:11px 16px;
+  background:var(--espresso); color:var(--paper);
+  border-radius:8px; font-size:14px; font-weight:600;
+  transition:background .2s var(--ease);
+}
+.filter-btn-apply:hover{ background:var(--bark); }
+.filter-btn-reset{
+  padding:11px 16px;
+  background:var(--cream-deep); color:var(--espresso);
+  border-radius:8px; font-size:14px; font-weight:500;
+  transition:background .2s var(--ease);
+}
+.filter-btn-reset:hover{ background:var(--sand); }
 
   .country{ border-bottom:1px solid var(--line); overflow:hidden; }
   .country:last-child{ border-bottom:none; }
