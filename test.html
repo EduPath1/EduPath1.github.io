@@ -26,7 +26,6 @@
   a{ text-decoration:none; color:inherit; }
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
-  /* HEADER */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
@@ -39,10 +38,8 @@
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
 
-  /* MAIN */
   main{ max-width:900px; margin:0 auto; padding:64px 32px 96px; }
 
-  /* SCREEN 1 — приветствие */
   .screen{ display:none; animation: fadeInUp .5s var(--ease) forwards; }
   .screen.active{ display:block; }
 
@@ -54,163 +51,66 @@
   .intro h1 em{ font-style:italic; color:var(--clay); }
   .intro p{ font-size:17px; color:var(--text-muted); max-width:560px; margin:0 auto 20px; line-height:1.7; }
   .intro .note{ font-size:14px; color:var(--text-muted); margin-bottom:36px; }
-  .intro .btn-start{
-    display:inline-flex; align-items:center; gap:12px;
-    background:var(--espresso); color:var(--paper);
-    padding:18px 34px; border-radius:10px; font-size:15px; font-weight:500;
-    box-shadow:0 10px 24px -10px rgba(43,27,16,0.45);
-    transition:background .25s var(--ease), transform .25s var(--ease);
-  }
+  .intro .btn-start{ display:inline-flex; align-items:center; gap:12px; background:var(--espresso); color:var(--paper); padding:18px 34px; border-radius:10px; font-size:15px; font-weight:500; box-shadow:0 10px 24px -10px rgba(43,27,16,0.45); transition:background .25s var(--ease), transform .25s var(--ease); }
   .intro .btn-start:hover{ background:var(--bark); transform:translateY(-2px); }
   .intro .btn-start svg{ width:16px; height:16px; }
 
-  /* SCREEN 2 — диалог */
-  .dialog-wrap{
-    background:var(--paper); border:1px solid var(--line);
-    border-radius:24px; padding:48px 48px 40px;
-    box-shadow:0 20px 48px -28px rgba(43,27,16,0.25);
-    position:relative; overflow:hidden;
-  }
-  .dialog-progress{
-    display:flex; align-items:center; justify-content:space-between;
-    font-size:13px; color:var(--text-muted);
-    margin-bottom:28px;
-    padding-bottom:20px; border-bottom:1px solid var(--line);
-  }
+  .dialog-wrap{ background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:48px 48px 40px; box-shadow:0 20px 48px -28px rgba(43,27,16,0.25); position:relative; overflow:hidden; }
+  .dialog-progress{ display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--line); }
   .progress-dots{ display:flex; gap:6px; }
-  .progress-dot{
-    width:8px; height:8px; border-radius:50%;
-    background:var(--cream-deep);
-    transition:background .3s var(--ease), transform .3s var(--ease);
-  }
+  .progress-dot{ width:8px; height:8px; border-radius:50%; background:var(--cream-deep); transition:background .3s var(--ease), transform .3s var(--ease); }
   .progress-dot.done{ background:var(--clay); }
   .progress-dot.current{ background:var(--caramel); transform:scale(1.3); }
 
-  .question-label{
-    font-family:'Fraunces', serif; font-size:13px; font-weight:600;
-    color:var(--clay); text-transform:uppercase; letter-spacing:0.08em;
-    margin-bottom:16px;
-    display:flex; align-items:center; gap:8px;
-  }
-  .question-label::before{
-    content:""; width:22px; height:1.5px; background:var(--clay);
-  }
-  .question-text{
-    font-family:'Fraunces', serif; font-size:28px; font-weight:500;
-    line-height:1.35; color:var(--espresso);
-    margin-bottom:32px;
-    min-height:76px;
-  }
-  .answer-input{
-    width:100%; padding:18px 20px;
-    font-family:inherit; font-size:16px; color:var(--text-main);
-    background:var(--cream); border:1.5px solid var(--line);
-    border-radius:12px; resize:vertical; min-height:100px;
-    transition:border-color .25s var(--ease), background .25s var(--ease);
-  }
-  .answer-input:focus{
-    outline:none; border-color:var(--clay);
-    background:var(--paper);
-  }
+  .question-label{ font-family:'Fraunces', serif; font-size:13px; font-weight:600; color:var(--clay); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .question-label::before{ content:""; width:22px; height:1.5px; background:var(--clay); }
+  .question-text{ font-family:'Fraunces', serif; font-size:28px; font-weight:500; line-height:1.35; color:var(--espresso); margin-bottom:32px; min-height:76px; }
+  .answer-input{ width:100%; padding:18px 20px; font-family:inherit; font-size:16px; color:var(--text-main); background:var(--cream); border:1.5px solid var(--line); border-radius:12px; resize:vertical; min-height:100px; transition:border-color .25s var(--ease), background .25s var(--ease); }
+  .answer-input:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
   .answer-input::placeholder{ color:var(--text-muted); opacity:0.7; }
 
-  .dialog-actions{
-    display:flex; justify-content:flex-end; gap:12px;
-    margin-top:20px;
-  }
-  .btn-send{
-    display:inline-flex; align-items:center; gap:10px;
-    background:var(--espresso); color:var(--paper);
-    padding:14px 26px; border-radius:10px;
-    font-size:14px; font-weight:500;
-    transition:background .25s var(--ease), opacity .25s var(--ease), transform .25s var(--ease);
-  }
-  .btn-send:disabled{
-    background:var(--cream-deep); color:var(--text-muted);
-    cursor:not-allowed; opacity:0.7;
-  }
+  .dialog-actions{ display:flex; justify-content:flex-end; gap:12px; margin-top:20px; }
+  .btn-send{ display:inline-flex; align-items:center; gap:10px; background:var(--espresso); color:var(--paper); padding:14px 26px; border-radius:10px; font-size:14px; font-weight:500; transition:background .25s var(--ease), opacity .25s var(--ease), transform .25s var(--ease); }
+  .btn-send:disabled{ background:var(--cream-deep); color:var(--text-muted); cursor:not-allowed; opacity:0.7; }
   .btn-send:not(:disabled):hover{ background:var(--bark); transform:translateY(-1px); }
 
-  /* Состояние «ИИ думает» */
-  .thinking{
-    display:none; align-items:center; gap:12px;
-    padding:20px 0;
-    color:var(--text-muted); font-size:15px;
-  }
+  .thinking{ display:none; align-items:center; gap:12px; padding:20px 0; color:var(--text-muted); font-size:15px; }
   .thinking.active{ display:flex; }
   .thinking-dots{ display:flex; gap:5px; }
-  .thinking-dot{
-    width:8px; height:8px; border-radius:50%;
-    background:var(--clay);
-    animation: thinkingPulse 1.4s ease-in-out infinite;
-  }
-  .thinking-dot:nth-child(2){ animation-delay: 0.2s; }
-  .thinking-dot:nth-child(3){ animation-delay: 0.4s; }
-  @keyframes thinkingPulse{
-    0%, 80%, 100% { opacity:0.3; transform:scale(0.8); }
-    40% { opacity:1; transform:scale(1.1); }
-  }
+  .thinking-dot{ width:8px; height:8px; border-radius:50%; background:var(--clay); animation:thinkingPulse 1.4s ease-in-out infinite; }
+  .thinking-dot:nth-child(2){ animation-delay:0.2s; }
+  .thinking-dot:nth-child(3){ animation-delay:0.4s; }
+  @keyframes thinkingPulse{ 0%,80%,100%{ opacity:0.3; transform:scale(0.8);} 40%{ opacity:1; transform:scale(1.1);} }
 
-  /* SCREEN 3 — финал */
   .final-header{ text-align:center; margin-bottom:48px; }
   .final-header h2{ font-size:38px; margin-bottom:14px; color:var(--espresso); }
   .final-header h2 em{ font-style:italic; color:var(--clay); }
   .final-header p{ font-size:16px; color:var(--text-muted); max-width:560px; margin:0 auto; line-height:1.7; }
 
-  .category{
-    margin-bottom:36px;
-    background:var(--paper); border:1px solid var(--line);
-    border-radius:20px; padding:32px;
-    opacity:0; transform:translateY(12px);
-    animation: fadeInUp .6s var(--ease) forwards;
-  }
-  .category:nth-child(1){ animation-delay: 0.1s; }
-  .category:nth-child(2){ animation-delay: 0.25s; }
-  .category:nth-child(3){ animation-delay: 0.4s; }
-  .category:nth-child(4){ animation-delay: 0.55s; }
-
-  .category-title{
-    display:flex; align-items:center; gap:12px;
-    font-family:'Fraunces', serif; font-size:22px;
-    color:var(--espresso); margin-bottom:8px;
-  }
+  .category{ margin-bottom:36px; background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:32px; opacity:0; transform:translateY(12px); animation:fadeInUp .6s var(--ease) forwards; }
+  .category:nth-child(1){ animation-delay:0.1s; }
+  .category:nth-child(2){ animation-delay:0.25s; }
+  .category:nth-child(3){ animation-delay:0.4s; }
+  .category:nth-child(4){ animation-delay:0.55s; }
+  .category-title{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-size:22px; color:var(--espresso); margin-bottom:8px; }
   .category-sub{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
 
   .uni-list{ display:flex; flex-direction:column; gap:12px; }
-  .uni-card{
-    background:var(--cream); border:1px solid transparent;
-    border-radius:12px; padding:18px 20px;
-    transition:border-color .25s var(--ease), transform .25s var(--ease);
-  }
+  .uni-card{ background:var(--cream); border:1px solid transparent; border-radius:12px; padding:18px 20px; transition:border-color .25s var(--ease), transform .25s var(--ease); }
   .uni-card:hover{ border-color:var(--sand); transform:translateX(3px); }
   .uni-card-name{ font-weight:600; font-size:16px; color:var(--espresso); margin-bottom:4px; }
   .uni-card-country{ font-size:13px; color:var(--text-muted); margin-bottom:10px; }
   .uni-card-reason{ font-size:14px; color:var(--text-main); line-height:1.6; opacity:0.85; }
 
-  .empty-note{
-    padding:20px; background:var(--cream); border-radius:10px;
-    font-size:14px; color:var(--text-muted); text-align:center;
-    font-style:italic;
-  }
+  .empty-note{ padding:20px; background:var(--cream); border-radius:10px; font-size:14px; color:var(--text-muted); text-align:center; font-style:italic; }
 
   .final-actions{ text-align:center; margin-top:48px; }
-  .btn-restart{
-    display:inline-flex; align-items:center; gap:10px;
-    background:var(--clay); color:var(--paper);
-    padding:16px 32px; border-radius:10px;
-    font-size:15px; font-weight:500;
-    transition:background .25s var(--ease), transform .25s var(--ease);
-  }
+  .btn-restart{ display:inline-flex; align-items:center; gap:10px; background:var(--clay); color:var(--paper); padding:16px 32px; border-radius:10px; font-size:15px; font-weight:500; transition:background .25s var(--ease), transform .25s var(--ease); }
   .btn-restart:hover{ background:var(--bark); transform:translateY(-2px); }
 
-  /* Анимации */
-  @keyframes fadeInUp{
-    from { opacity:0; transform: translateY(12px); }
-    to   { opacity:1; transform: translateY(0); }
-  }
+  @keyframes fadeInUp{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:translateY(0);} }
 
-  /* RESPONSIVE */
-  @media (max-width: 700px){
+  @media (max-width:700px){
     nav.wrap{ height:72px; padding:0 18px; }
     .nav-links{ display:none; }
     .logo{ font-size:21px; gap:9px; }
@@ -244,7 +144,7 @@
       <a href="profile.html">Профиль</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="btn-login">Войти</a>
+      <a href="#" class="btn-login" data-auth-open="register">Войти</a>
       <button type="button" class="icon-btn" aria-label="Поиск">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       </button>
@@ -254,7 +154,6 @@
 
 <main>
 
-  <!-- ЭКРАН 1: ПРИВЕТСТВИЕ -->
   <section class="screen active" id="screenIntro">
     <div class="intro">
       <div class="eyebrow">Тест на подбор университета</div>
@@ -268,7 +167,6 @@
     </div>
   </section>
 
-  <!-- ЭКРАН 2: ДИАЛОГ -->
   <section class="screen" id="screenDialog">
     <div class="dialog-wrap">
       <div class="dialog-progress">
@@ -299,7 +197,6 @@
     </div>
   </section>
 
-  <!-- ЭКРАН 3: ФИНАЛ -->
   <section class="screen" id="screenFinal">
     <div class="final-header">
       <h2>Готово! Вот твои <em>университеты</em></h2>
@@ -317,13 +214,8 @@
 </main>
 
 <script>
-// ============================================================
-// EduPath — логика теста с ИИ
-// ============================================================
-
 const WORKER_URL = "https://edupath-ai.muqiyatalkar.workers.dev";
 
-// Файлы со странами (должны совпадать с теми, что в universities.html)
 const COUNTRY_FILES = [
   "Australia.json", "Austria.json", "Belgium.json", "Canada.json",
   "China.json", "Czech Republic.json", "Denmark.json", "Finland.json",
@@ -334,7 +226,6 @@ const COUNTRY_FILES = [
   "UK.json", "USA.json"
 ];
 
-// Поля, которые пойдут в ИИ (компактный формат — только нужное)
 const UNI_FIELDS = [
   "Университет", "Страна", "Город",
   "Стоимость обучения (USD/год)",
@@ -342,19 +233,14 @@ const UNI_FIELDS = [
   "TOEFL/IELTS", "SAT"
 ];
 
-// Состояние диалога
 let state = {
-  messages: [],        // вся история [{role: "user"/"assistant", content: "..."}]
-  questionCount: 0,    // сколько вопросов задал ИИ
+  messages: [],
+  questionCount: 0,
   maxQuestions: 12,
   minQuestions: 8,
-  allUniversities: null,  // кэш базы вузов
+  allUniversities: null,
   isLoading: false
 };
-
-// ============================================================
-// ЭКРАНЫ
-// ============================================================
 
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -368,30 +254,25 @@ function showScreen(id){
 // ============================================================
 
 async function startDialog(){
-  // Сбрасываем состояние (по требованию — при обновлении страницы всё сбрасывается)
   state.messages = [];
   state.questionCount = 0;
   state.allUniversities = null;
 
   showScreen("screenDialog");
-
-  // Показываем "ИИ думает..."
   showThinking(true);
   document.getElementById("questionBox").style.display = "none";
 
-  // Отправляем стартовый запрос — ИИ должен задать первый вопрос
   try {
     const res = await callWorker([
       { role: "user", content: "Начни диалог. Задай первый вопрос абитуриенту." }
     ]);
 
-    state.messages.push({ role: "assistant", content: res });
+    state.messages.push({ role: "assistant", content: JSON.stringify(res) });
 
     if(res.type === "question"){
       state.questionCount = 1;
       renderQuestion(res.question);
     } else if(res.type === "final"){
-      // Маловероятно на первом шаге, но на всякий случай
       await renderFinal(res);
     }
   } catch(e){
@@ -420,12 +301,11 @@ async function sendAnswer(){
   document.getElementById("questionBox").style.display = "none";
   showThinking(true);
 
-  // Добавляем ответ пользователя в историю
   state.messages.push({ role: "user", content: answer });
 
   try {
     const res = await callWorker(state.messages);
-    state.messages.push({ role: "assistant", content: res });
+    state.messages.push({ role: "assistant", content: JSON.stringify(res) });
 
     if(res.type === "question"){
       state.questionCount++;
@@ -435,12 +315,11 @@ async function sendAnswer(){
     }
   } catch(e){
     alert("Ошибка: " + e.message);
-    // Возвращаем поле обратно
     document.getElementById("questionBox").style.display = "block";
     input.disabled = false;
     document.getElementById("sendBtn").disabled = false;
     input.value = answer;
-    state.messages.pop(); // удаляем неудачный ответ из истории
+    state.messages.pop();
     state.messages.pop();
   } finally {
     state.isLoading = false;
@@ -449,57 +328,87 @@ async function sendAnswer(){
 }
 
 // ============================================================
-// ЗАПРОС К WORKER
+// ЗАПРОС К WORKER (с защитой от не-JSON)
 // ============================================================
 
 async function callWorker(messages){
-  // Определяем, пора ли передать базу университетов
-  // Передаём её всегда, начиная с 8-го вопроса — чтобы ИИ мог готовить финал
   let universities = null;
   if(state.questionCount >= state.minQuestions){
     if(!state.allUniversities){
-      // Подгружаем базу один раз и кэшируем
       state.allUniversities = await loadAllUniversities();
     }
     universities = state.allUniversities;
   }
 
-  const res = await fetch(WORKER_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      messages: messages,
-      universities: universities,
-      meta: {
-        questionCount: state.questionCount,
-        minQuestions: state.minQuestions,
-        maxQuestions: state.maxQuestions
+  let lastError = null;
+
+  // Пробуем до 3 раз
+  for(let attempt = 0; attempt < 3; attempt++){
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: messages,
+          universities: universities,
+          meta: {
+            questionCount: state.questionCount,
+            minQuestions: state.minQuestions,
+            maxQuestions: state.maxQuestions
+          }
+        })
+      });
+
+      if(!res.ok){
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}: ${text}`);
       }
-    })
-  });
 
-  if(!res.ok){
-    const text = await res.text();
-    throw new Error(`HTTP ${res.status}: ${text}`);
+      const data = await res.json();
+      if(data.error){
+        throw new Error(data.error + " " + (data.details || ""));
+      }
+
+      let content = String(data.result || "").trim();
+
+      if(content.startsWith("```")){
+        content = content.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, "");
+      }
+
+      const firstBrace = content.indexOf("{");
+      const lastBrace = content.lastIndexOf("}");
+      if(firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace){
+        throw new Error("Ответ ИИ не содержит JSON");
+      }
+      content = content.substring(firstBrace, lastBrace + 1);
+
+      let parsed;
+      try {
+        parsed = JSON.parse(content);
+      } catch(e){
+        throw new Error("Невалидный JSON: " + content.substring(0, 80));
+      }
+
+      if(!parsed.type){
+        throw new Error("В JSON нет поля type");
+      }
+
+      return parsed;
+
+    } catch(e){
+      lastError = e;
+      console.warn("Попытка " + (attempt + 1) + " не удалась:", e.message);
+      if(attempt < 2){
+        await new Promise(r => setTimeout(r, 800));
+      }
+    }
   }
 
-  const data = await res.json();
-  if(data.error){
-    throw new Error(data.error + " " + (data.details || ""));
-  }
-
-  // data.result — это JSON-строка от ИИ
-  let parsed;
-  try {
-    parsed = JSON.parse(data.result);
-  } catch(e){
-    throw new Error("ИИ вернул некорректный JSON: " + data.result);
-  }
-  return parsed;
+  throw new Error("ИИ не смог ответить после 3 попыток. " + (lastError ? lastError.message : ""));
 }
 
 // ============================================================
-// ЗАГРУЗКА БАЗЫ УНИВЕРСИТЕТОВ
+// ЗАГРУЗКА БАЗЫ
 // ============================================================
 
 async function loadAllUniversities(){
@@ -550,12 +459,10 @@ function renderQuestion(questionText){
   const sendBtn = document.getElementById("sendBtn");
   sendBtn.disabled = true;
 
-  // Слушатель на поле — активирует кнопку когда что-то введено
   input.oninput = () => {
     sendBtn.disabled = input.value.trim().length === 0;
   };
 
-  // Счётчик
   const total = state.maxQuestions;
   const current = state.questionCount;
   document.getElementById("progressText").textContent =
@@ -563,7 +470,6 @@ function renderQuestion(questionText){
       ? `Вопрос ${current} из ${state.minQuestions}`
       : `Вопрос ${current} (уточняющие)`;
 
-  // Точки прогресса
   const dots = document.getElementById("progressDots");
   dots.innerHTML = "";
   for(let i = 0; i < total; i++){
@@ -576,7 +482,7 @@ function renderQuestion(questionText){
 }
 
 // ============================================================
-// ИНДИКАТОР "ИИ ДУМАЕТ"
+// "ИИ ДУМАЕТ"
 // ============================================================
 
 function showThinking(active, customText){
@@ -594,16 +500,16 @@ function showThinking(active, customText){
 }
 
 // ============================================================
-// ФИНАЛЬНЫЙ ЭКРАН
+// ФИНАЛ
 // ============================================================
 
 async function renderFinal(finalData){
   showThinking(false);
   showScreen("screenFinal");
 
-  // Сохраняем результат в профиль, если пользователь вошёл
+  // Сохраняем в профиль, если вошёл
   if(window.EduAuth && window.EduAuth.isLoggedIn()){
-   window.EduAuth.saveTestResult(finalData);
+    window.EduAuth.saveTestResult(finalData);
   }
 
   const container = document.getElementById("categoriesContainer");
@@ -621,7 +527,7 @@ async function renderFinal(finalData){
       sub: "Target-университеты: если подтянуть один-два пункта — можно подавать." }
   ];
 
-  catDefs.forEach((def, idx) => {
+  catDefs.forEach((def) => {
     const list = cats[def.key] || [];
 
     const card = document.createElement("div");
@@ -648,7 +554,6 @@ async function renderFinal(finalData){
     container.appendChild(card);
   });
 
-  // Резюме внизу, если есть
   if(finalData.summary){
     const summary = document.createElement("div");
     summary.style.cssText = "text-align:center; margin-top:32px; padding:24px; background:var(--paper); border-radius:16px; border:1px solid var(--line); font-size:15px; color:var(--text-muted); line-height:1.7;";
@@ -658,7 +563,7 @@ async function renderFinal(finalData){
 }
 
 // ============================================================
-// ПРОЙТИ ЗАНОВО
+// ЗАНОВО
 // ============================================================
 
 function restartTest(){
@@ -675,7 +580,7 @@ function restartTest(){
 // ============================================================
 
 function escapeHtml(s){
-  return String(s)
+  return String(s == null ? "" : s)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
