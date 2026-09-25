@@ -701,7 +701,120 @@ function renderDetail(uni){
 // ФИЛЬТР
 // ============================================================
 
-document.getElementById("onlyGrant").addEventListener("change", renderSidebar);
+// ============================================================
+// ФИЛЬТРЫ
+// ============================================================
+
+const filters = {
+  budgetMin: null,
+  budgetMax: null,
+  country: "",
+  fullGrant: false
+};
+
+// Парсинг цены из строки: "$53 770" → 53770, "бесплатное" → 0
+function parsePrice(str){
+  if(!str) return null;
+  const s = String(str).trim().toLowerCase();
+
+  if(s.includes("бесплат") || s.includes("free")) return 0;
+
+  // Ищем все числа (с пробелами или без)
+  const matches = s.match(/\d[\d\s,\.]*/g);
+  if(!matches || matches.length === 0) return null;
+
+  const numbers = matches.map(m => {
+    const clean = m.replace(/[\s,\.]/g, "");
+    return parseInt(clean, 10);
+  }).filter(n => !isNaN(n) && n > 0);
+
+  if(numbers.length === 0) return null;
+
+  // Если диапазон — берём среднее
+  if(numbers.length >= 2){
+    return Math.round((numbers[0] + numbers[1]) / 2);
+  }
+  return numbers[0];
+}
+
+// Применить фильтры к списку университетов
+function applyFilters(items){
+  return items.filter(uni => {
+    // Страна
+    if(filters.country && uni._country_ru !== filters.country) return false;
+
+    // Полный грант
+    if(filters.fullGrant && !isFullGrant(uni)) return false;
+
+    // Бюджет
+    if(filters.budgetMin !== null || filters.budgetMax !== null){
+      const price = parsePrice(uni["Стоимость обучения (USD/год)"]);
+      if(price === null) return false; // не можем проверить — исключаем
+      if(filters.budgetMin !== null && price < filters.budgetMin) return false;
+      if(filters.budgetMax !== null && price > filters.budgetMax) return false;
+    }
+
+    return true;
+  });
+}
+
+// Обновить счётчик активных фильтров
+function updateFiltersBadge(){
+  let count = 0;
+  if(filters.budgetMin !== null) count++;
+  if(filters.budgetMax !== null) count++;
+  if(filters.country) count++;
+  if(filters.fullGrant) count++;
+
+  const badge = document.getElementById("filtersBadge");
+  const btn = document.getElementById("filtersToggle");
+
+  if(count > 0){
+    badge.style.display = "inline-flex";
+    badge.textContent = count;
+    btn.classList.add("active");
+  } else {
+    badge.style.display = "none";
+    btn.classList.remove("active");
+  }
+}
+
+// Открыть/закрыть панель
+document.getElementById("filtersToggle").addEventListener("click", () => {
+  const panel = document.getElementById("filtersPanel");
+  panel.classList.toggle("open");
+});
+
+// Применить
+document.getElementById("filterApply").addEventListener("click", () => {
+  const minVal = document.getElementById("filterBudgetMin").value;
+  const maxVal = document.getElementById("filterBudgetMax").value;
+
+  filters.budgetMin = minVal !== "" ? parseInt(minVal, 10) : null;
+  filters.budgetMax = maxVal !== "" ? parseInt(maxVal, 10) : null;
+  filters.country = document.getElementById("filterCountry").value;
+  filters.fullGrant = document.getElementById("filterFullGrant").checked;
+
+  updateFiltersBadge();
+  renderSidebar();
+  document.getElementById("filtersPanel").classList.remove("open");
+});
+
+// Сбросить
+document.getElementById("filterReset").addEventListener("click", () => {
+  document.getElementById("filterBudgetMin").value = "";
+  document.getElementById("filterBudgetMax").value = "";
+  document.getElementById("filterCountry").value = "";
+  document.getElementById("filterFullGrant").checked = false;
+
+  filters.budgetMin = null;
+  filters.budgetMax = null;
+  filters.country = "";
+  filters.fullGrant = false;
+
+  updateFiltersBadge();
+  renderSidebar();
+});
 
 // ============================================================
 // ПОИСК
