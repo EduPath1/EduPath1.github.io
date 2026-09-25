@@ -295,10 +295,73 @@
   <aside class="sidebar">
     <h2>Университеты</h2>
     <p class="subtitle">Выбери страну и университет</p>
-    <label class="only-grant">
-      <input type="checkbox" id="onlyGrant">
-      <span>Показывать только с полным грантом</span>
-    </label>
+    <div class="filters-wrap">
+  <button type="button" class="filters-btn" id="filtersToggle">
+    <span class="filters-btn-left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+      <span>Фильтры</span>
+      <span class="filters-btn-badge" id="filtersBadge" style="display:none;">0</span>
+    </span>
+    <span class="filters-btn-arrow">▾</span>
+  </button>
+
+  <div class="filters-panel" id="filtersPanel">
+    <div class="filter-group">
+      <label>Бюджет на обучение (USD/год)</label>
+      <div class="filter-row">
+        <input type="number" id="filterBudgetMin" placeholder="от" min="0">
+        <span>—</span>
+        <input type="number" id="filterBudgetMax" placeholder="до" min="0">
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label>Страна</label>
+      <select class="filter-select" id="filterCountry">
+        <option value="">Все страны</option>
+        <option value="Австралия">Австралия</option>
+        <option value="Австрия">Австрия</option>
+        <option value="Бельгия">Бельгия</option>
+        <option value="Венгрия">Венгрия</option>
+        <option value="Великобритания">Великобритания</option>
+        <option value="Германия">Германия</option>
+        <option value="Гонконг">Гонконг</option>
+        <option value="Дания">Дания</option>
+        <option value="Испания">Испания</option>
+        <option value="Италия">Италия</option>
+        <option value="Канада">Канада</option>
+        <option value="Катар">Катар</option>
+        <option value="Китай">Китай</option>
+        <option value="Латвия">Латвия</option>
+        <option value="Нидерланды">Нидерланды</option>
+        <option value="ОАЭ">ОАЭ</option>
+        <option value="Польша">Польша</option>
+        <option value="Сингапур">Сингапур</option>
+        <option value="США">США</option>
+        <option value="Турция">Турция</option>
+        <option value="Финляндия">Финляндия</option>
+        <option value="Чехия">Чехия</option>
+        <option value="Швейцария">Швейцария</option>
+        <option value="Швеция">Швеция</option>
+        <option value="Южная Корея">Южная Корея</option>
+        <option value="Япония">Япония</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Финансовая помощь</label>
+      <label class="filter-check">
+        <input type="checkbox" id="filterFullGrant">
+        <span>Только с полным грантом</span>
+      </label>
+    </div>
+
+    <div class="filter-actions">
+      <button type="button" class="filter-btn-reset" id="filterReset">Сбросить</button>
+      <button type="button" class="filter-btn-apply" id="filterApply">Применить</button>
+    </div>
+  </div>
+    </div>
     <div id="countriesList"></div>
   </aside>
 
