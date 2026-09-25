@@ -601,6 +601,11 @@ async function renderFinal(finalData){
   showThinking(false);
   showScreen("screenFinal");
 
+  // Сохраняем результат в профиль, если пользователь вошёл
+  if(window.EduAuth && window.EduAuth.isLoggedIn()){
+   window.EduAuth.saveTestResult(finalData);
+  }
+
   const container = document.getElementById("categoriesContainer");
   container.innerHTML = "";
 
