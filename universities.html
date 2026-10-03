@@ -890,7 +890,26 @@ function escapeAttr(s){
 // СТАРТ
 // ============================================================
 
-loadAll();
+loadAll().then(() => {
+  // Проверяем ?uni= в адресе и открываем вуз
+  const params = new URLSearchParams(window.location.search);
+  const uniName = params.get("uni");
+  if(!uniName) return;
+
+  const uni = ALL_DATA.find(u => u["Университет"] === uniName);
+  if(!uni) return;
+
+  // Раскрываем страну
+  const country = uni._country_ru;
+  const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === uniName);
+  if(itemEl){
+    itemEl.closest(".country").classList.add("open");
+    selectUni(uni, itemEl);
+    setTimeout(() => itemEl.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+  } else {
+    selectUni(uni, null);
+  }
+});
 </script>
 <script src="auth.js"></script>
 </body>
