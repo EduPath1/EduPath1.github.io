@@ -437,6 +437,15 @@ document.addEventListener("click", (e) => {
 // Первый рендер
 renderProfile();
 
+// Клик по университету в результатах теста → каталог
+document.addEventListener("click", (e) => {
+  const card = e.target.closest(".uni-mini");
+  if(!card) return;
+  const name = card.dataset.uniName;
+  if(!name) return;
+  window.location.href = "universities.html?uni=" + encodeURIComponent(name);
+});
+
 // Обновление, если пользователь только что вошёл/вышел
 window.addEventListener("storage", renderProfile);
 </script>
