@@ -174,6 +174,16 @@
   .uni-mini-name{ font-weight:600; font-size:14px; color:var(--espresso); margin-bottom:2px; }
   .uni-mini-country{ font-size:12px; color:var(--text-muted); margin-bottom:6px; }
   .uni-mini-reason{ font-size:13px; color:var(--text-main); opacity:0.85; line-height:1.55; }
+  .uni-mini{ cursor:pointer; }
+  .uni-mini:active{ transform:scale(0.98); }
+  .uni-mini-arrow{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:12px; color:var(--clay); font-weight:600;
+  margin-top:8px;
+  opacity:0; transform:translateX(-4px);
+  transition:opacity .2s var(--ease), transform .2s var(--ease);
+}
+.uni-mini:hover .uni-mini-arrow{ opacity:1; transform:translateX(0); }
 
   .empty-mini{
     padding:14px; background:var(--cream); border-radius:8px;
