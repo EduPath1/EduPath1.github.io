@@ -331,12 +331,13 @@ function renderTests(tests) {
         listHtml = `<div class="empty-mini">Ничего не подошло в этой категории</div>`;
       } else {
         listHtml = `<div class="uni-list-mini">` + list.map(u => `
-          <div class="uni-mini">
-            <div class="uni-mini-name">${escapeHtml(u.name || "—")}</div>
-            <div class="uni-mini-country">${escapeHtml(u.country || "")}</div>
-            <div class="uni-mini-reason">${escapeHtml(u.reason || "")}</div>
-          </div>
-        `).join("") + `</div>`;
+  <div class="uni-mini" data-uni-name="${escapeAttr(u.name || "")}">
+    <div class="uni-mini-name">${escapeHtml(u.name || "—")}</div>
+    <div class="uni-mini-country">${escapeHtml(u.country || "")}</div>
+    <div class="uni-mini-reason">${escapeHtml(u.reason || "")}</div>
+    <div class="uni-mini-arrow">Подробнее →</div>
+  </div>
+`).join("") + `</div>`;
       }
       return `
         <div class="category-mini">
