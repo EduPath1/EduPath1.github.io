@@ -1,5 +1,5 @@
 // ============================================================
-// EduPath — auth.js (настоящий бэкенд)
+// EduPath — auth.js (настоящий бэкенд, v2)
 // ============================================================
 
 (function() {
@@ -8,6 +8,10 @@
   const API_URL = "https://edupath1-github-io.onrender.com";
   const TOKEN_KEY = "edupath_token";
   const USER_KEY = "edupath_user";
+
+  // ============================================================
+  // РАБОТА С ТОКЕНОМ / ЮЗЕРОМ
+  // ============================================================
 
   function getToken() {
     return localStorage.getItem(TOKEN_KEY);
@@ -36,6 +40,15 @@
     return getCachedUser();
   }
 
+  // ============================================================
+  // СЕТЕВОЙ СЛОЙ — с обработкой «спящего сервера»
+  // ============================================================
+
+  // Проверяет: сервер вернул ошибку «спит»?
+  function isServerSleeping(status) {
+    return status === 0 || status === 502 || status === 503 || status === 504 || status >= 500;
+  }
+
   async function apiFetch(path, options) {
     options = options || {};
     const headers = Object.assign({
@@ -44,10 +57,41 @@
     const token = getToken();
     if (token) headers["Authorization"] = "Bearer " + token;
 
-    const res = await fetch(API_URL + path, Object.assign({}, options, { headers }));
-    let data = null;
-    try { data = await res.json(); } catch(e) {}
-    return { ok: res.ok, status: res.status, data };
+    try {
+      const res = await fetch(API_URL + path, Object.assign({}, options, { headers }));
+      let data = null;
+      try { data = await res.json(); } catch(e) {}
+      return { ok: res.ok, status: res.status, data };
+    } catch(networkError) {
+      // fetch не смог дозвониться — сервер точно спит или нет интернета
+      return { ok: false, status: 0, data: null, networkError: true };
+    }
+  }
+
+  // Универсальная обёртка: повторяет запрос один раз, если сервер спал
+  async function apiFetchWithRetry(path, options, retryDelayMs) {
+    retryDelayMs = retryDelayMs || 2000;
+    let res = await apiFetch(path, options);
+
+    // Если сервер спал или вернул 5xx — ждём и пробуем ещё раз
+    if (!res.ok && isServerSleeping(res.status)) {
+      console.warn("Server seems asleep, retrying in", retryDelayMs, "ms");
+      await new Promise(r => setTimeout(r, retryDelayMs));
+      res = await apiFetch(path, options);
+    }
+
+    return res;
+  }
+
+  // Человеческое сообщение об ошибке
+  function humanError(res, fallback) {
+    if (res && isServerSleeping(res.status)) {
+      return "Сервер просыпается. Подожди 30 секунд и попробуй снова.";
+    }
+    if (res && res.data && res.data.error) {
+      return res.data.error;
+    }
+    return fallback || "Что-то пошло не так. Попробуй ещё раз.";
   }
 
   // ============================================================
@@ -58,48 +102,52 @@
     if (!name || !email || !password) {
       return { ok: false, error: "Заполните все поля" };
     }
-    try {
-      const res = await apiFetch("/api/register", {
-        method: "POST",
-        body: JSON.stringify({ name, email, password })
-      });
-      if (!res.ok) {
-        return { ok: false, error: (res.data && res.data.error) || "Ошибка регистрации" };
-      }
-      const session = res.data.session;
-      const user = res.data.user;
-      if (session && session.access_token) {
-        setToken(session.access_token);
-        setCachedUser({ name: user.name || name, email: user.email || email, id: user.id });
-      }
-      return { ok: true, user: user };
-    } catch(e) {
-      return { ok: false, error: "Сервер не отвечает. Попробуйте позже." };
+    const res = await apiFetchWithRetry("/api/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password })
+    });
+
+    if (!res.ok) {
+      return { ok: false, error: humanError(res, "Ошибка регистрации") };
     }
+
+    const session = res.data && res.data.session;
+    const user = res.data && res.data.user;
+    if (session && session.access_token) {
+      setToken(session.access_token);
+      setCachedUser({
+        name: (user && user.name) || name,
+        email: (user && user.email) || email,
+        id: user && user.id
+      });
+    }
+    return { ok: true, user: user };
   }
 
   async function login(email, password) {
     if (!email || !password) {
       return { ok: false, error: "Заполните все поля" };
     }
-    try {
-      const res = await apiFetch("/api/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password })
-      });
-      if (!res.ok) {
-        return { ok: false, error: (res.data && res.data.error) || "Неверный email или пароль" };
-      }
-      const session = res.data.session;
-      const user = res.data.user;
-      if (session && session.access_token) {
-        setToken(session.access_token);
-        setCachedUser({ name: user.name || "", email: user.email, id: user.id });
-      }
-      return { ok: true, user: user };
-    } catch(e) {
-      return { ok: false, error: "Сервер не отвечает. Попробуйте позже." };
+    const res = await apiFetchWithRetry("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!res.ok) {
+      return { ok: false, error: humanError(res, "Неверный email или пароль") };
     }
+
+    const session = res.data && res.data.session;
+    const user = res.data && res.data.user;
+    if (session && session.access_token) {
+      setToken(session.access_token);
+      setCachedUser({
+        name: (user && user.name) || "",
+        email: user && user.email,
+        id: user && user.id
+      });
+    }
+    return { ok: true, user: user };
   }
 
   function logout() {
@@ -119,19 +167,20 @@
       _savedCache = [];
       return [];
     }
-    try {
-      const res = await apiFetch("/api/saved", { method: "GET" });
-      if (!res.ok) return _savedCache || [];
-      const list = (res.data && res.data.saved) || [];
-      _savedCache = list.map(s => ({
-        name: s.university_name,
-        country: s.country || "",
-        city: s.city || ""
-      }));
-      return _savedCache;
-    } catch(e) {
+
+    const res = await apiFetch("/api/saved", { method: "GET" });
+    if (!res.ok) {
+      // Не ломаем интерфейс — возвращаем прошлый кэш или пустой массив
       return _savedCache || [];
     }
+
+    const list = (res.data && res.data.saved) || [];
+    _savedCache = list.map(s => ({
+      name: s.university_name,
+      country: s.country || "",
+      city: s.city || ""
+    }));
+    return _savedCache;
   }
 
   function isSaved(name) {
@@ -142,38 +191,41 @@
   async function toggleSave(uni) {
     if (!isLoggedIn()) return { ok: false, error: "Не вошёл" };
 
-    try {
-      // ВСЕГДА подгружаем свежий список перед решением
-      await getSaved();
-      const currentlySaved = isSaved(uni.name);
+    // 1) Подгружаем актуальный список
+    await getSaved();
 
-      if (currentlySaved) {
-        // Удаляем
-        const res = await apiFetch("/api/saved/" + encodeURIComponent(uni.name), { method: "DELETE" });
-        if (!res.ok) return { ok: false, error: "Не удалось удалить" };
-        if (_savedCache) _savedCache = _savedCache.filter(u => u.name !== uni.name);
-        return { ok: true, removed: true };
-      } else {
-        // Сохраняем
-        const res = await apiFetch("/api/saved", {
-          method: "POST",
-          body: JSON.stringify({
-            name: uni.name,
-            country: uni.country || "",
-            city: uni.city || ""
-          })
-        });
-        if (!res.ok) return { ok: false, error: "Не удалось сохранить" };
-        if (!_savedCache) _savedCache = [];
-        _savedCache.unshift({
+    const currentlySaved = isSaved(uni.name);
+
+    // 2) Отправляем запрос (с retry при спящем сервере)
+    if (currentlySaved) {
+      const res = await apiFetchWithRetry(
+        "/api/saved/" + encodeURIComponent(uni.name),
+        { method: "DELETE" }
+      );
+      if (!res.ok) {
+        return { ok: false, error: humanError(res, "Не удалось удалить") };
+      }
+      if (_savedCache) _savedCache = _savedCache.filter(u => u.name !== uni.name);
+      return { ok: true, removed: true };
+    } else {
+      const res = await apiFetchWithRetry("/api/saved", {
+        method: "POST",
+        body: JSON.stringify({
           name: uni.name,
           country: uni.country || "",
           city: uni.city || ""
-        });
-        return { ok: true, added: true };
+        })
+      });
+      if (!res.ok) {
+        return { ok: false, error: humanError(res, "Не удалось сохранить") };
       }
-    } catch(e) {
-      return { ok: false, error: "Сервер не отвечает" };
+      if (!_savedCache) _savedCache = [];
+      _savedCache.unshift({
+        name: uni.name,
+        country: uni.country || "",
+        city: uni.city || ""
+      });
+      return { ok: true, added: true };
     }
   }
 
@@ -188,37 +240,37 @@
       _testsCache = [];
       return [];
     }
-    try {
-      const res = await apiFetch("/api/tests", { method: "GET" });
-      if (!res.ok) return _testsCache || [];
-      const list = (res.data && res.data.tests) || [];
-      _testsCache = list.map(t => ({
-        date: t.created_at,
-        categories: t.categories || {},
-        summary: t.summary || ""
-      }));
-      return _testsCache;
-    } catch(e) {
+
+    const res = await apiFetch("/api/tests", { method: "GET" });
+    if (!res.ok) {
       return _testsCache || [];
     }
+
+    const list = (res.data && res.data.tests) || [];
+    _testsCache = list.map(t => ({
+      date: t.created_at,
+      categories: t.categories || {},
+      summary: t.summary || ""
+    }));
+    return _testsCache;
   }
 
   async function saveTestResult(finalData) {
     if (!isLoggedIn()) return { ok: false, error: "Не вошёл" };
-    try {
-      const res = await apiFetch("/api/tests", {
-        method: "POST",
-        body: JSON.stringify({
-          categories: finalData.categories || {},
-          summary: finalData.summary || ""
-        })
-      });
-      if (!res.ok) return { ok: false, error: "Не удалось сохранить тест" };
-      _testsCache = null;
-      return { ok: true };
-    } catch(e) {
-      return { ok: false, error: "Сервер не отвечает" };
+
+    const res = await apiFetchWithRetry("/api/tests", {
+      method: "POST",
+      body: JSON.stringify({
+        categories: finalData.categories || {},
+        summary: finalData.summary || ""
+      })
+    });
+
+    if (!res.ok) {
+      return { ok: false, error: humanError(res, "Не удалось сохранить тест") };
     }
+    _testsCache = null;
+    return { ok: true };
   }
 
   // ============================================================
@@ -248,6 +300,9 @@
           z-index: 9999; opacity: 0;
           animation: toastIn .3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
           pointer-events: none;
+          max-width: 90vw;
+          text-align: center;
+          line-height: 1.4;
         }
         .edupath-toast-success { background: #2B1B10; color: #F7EFE1; }
         .edupath-toast-error { background: #B84A3A; color: #FBF6EC; }
@@ -262,7 +317,7 @@
       toast.style.opacity = "0";
       toast.style.transform = "translateX(-50%) translateY(20px)";
       setTimeout(() => toast.remove(), 300);
-    }, 2200);
+    }, 3200);
   }
 
   // ============================================================
@@ -353,7 +408,7 @@
           transition: border-color .2s, background .2s;
         }
         .edupath-field input:focus { outline: none; border-color: #8C5A34; background: #FBF6EC; }
-        .edupath-error { font-size: 13px; color: #B84A3A; min-height: 18px; margin-bottom: 12px; }
+        .edupath-error { font-size: 13px; color: #B84A3A; min-height: 18px; margin-bottom: 12px; line-height: 1.4; }
         .edupath-btn-submit {
           width: 100%; padding: 15px;
           background: #2B1B10; color: #F7EFE1;
@@ -514,15 +569,18 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     updateHeaderUI();
-    // Преload сохранённых и тестов — чтобы isSaved сразу работал
     if (isLoggedIn()) {
       getSaved().catch(e => console.warn("preload saved failed:", e));
       getTests().catch(e => console.warn("preload tests failed:", e));
     }
   });
 
+  // ============================================================
   // ЭКСПОРТ
+  // ============================================================
+
   window.EduAuth = {
+    getToken,
     getCurrentUser,
     isLoggedIn,
     register,
