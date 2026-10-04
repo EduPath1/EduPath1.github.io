@@ -22,19 +22,25 @@
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; position:relative; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; }
   .nav-links{ display:flex; align-items:center; gap:8px; }
   .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .25s var(--ease), color .25s var(--ease); }
   .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
+  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
   .nav-right{ display:flex; align-items:center; gap:14px; }
   .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; }
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; }
-  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+
+  .lang-dropdown{ position:relative; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
   main{ max-width:900px; margin:0 auto; padding:64px 32px 96px; }
-
   .screen{ display:none; animation:fadeInUp .5s var(--ease) forwards; }
   .screen.active{ display:block; }
 
@@ -62,7 +68,6 @@
   .question-text{ font-family:'Fraunces', serif; font-size:28px; font-weight:500; line-height:1.35; color:var(--espresso); margin-bottom:32px; min-height:76px; }
   .answer-input{ width:100%; padding:18px 20px; font-family:inherit; font-size:16px; color:var(--text-main); background:var(--cream); border:1.5px solid var(--line); border-radius:12px; resize:vertical; min-height:100px; transition:border-color .25s var(--ease), background .25s var(--ease); }
   .answer-input:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
-  .answer-input::placeholder{ color:var(--text-muted); opacity:0.7; }
 
   .dialog-actions{ display:flex; justify-content:flex-end; gap:12px; margin-top:20px; }
   .btn-send{ display:inline-flex; align-items:center; gap:10px; background:var(--espresso); color:var(--paper); padding:14px 26px; border-radius:10px; font-size:14px; font-weight:500; transition:background .25s var(--ease), opacity .25s var(--ease), transform .25s var(--ease); }
@@ -77,37 +82,14 @@
   .thinking-dot:nth-child(3){ animation-delay:0.4s; }
   @keyframes thinkingPulse{ 0%,80%,100%{ opacity:0.3; transform:scale(0.8);} 40%{ opacity:1; transform:scale(1.1);} }
 
-  .save-banner{
-    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-    background:linear-gradient(135deg, var(--caramel) 0%, var(--clay) 100%);
-    color:var(--paper);
-    padding:20px 26px;
-    border-radius:16px;
-    margin-bottom:32px;
-    box-shadow:0 12px 28px -16px rgba(140,90,52,0.6);
-    opacity:0; transform:translateY(8px);
-    animation:fadeInUp .6s var(--ease) .1s forwards;
-  }
-  .save-banner-icon{
-    flex-shrink:0;
-    width:44px; height:44px;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(251,246,236,0.2);
-    border-radius:50%;
-    font-size:22px;
-  }
+  .save-banner{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; background:linear-gradient(135deg, var(--caramel) 0%, var(--clay) 100%); color:var(--paper); padding:20px 26px; border-radius:16px; margin-bottom:32px; box-shadow:0 12px 28px -16px rgba(140,90,52,0.6); opacity:0; transform:translateY(8px); animation:fadeInUp .6s var(--ease) .1s forwards; }
+  .save-banner-icon{ flex-shrink:0; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:rgba(251,246,236,0.2); border-radius:50%; font-size:22px; }
   .save-banner-text{ flex:1; min-width:200px; }
   .save-banner-title{ font-weight:600; font-size:16px; margin-bottom:4px; }
   .save-banner-desc{ font-size:13.5px; opacity:0.9; line-height:1.5; }
   .save-banner-actions{ display:flex; gap:10px; flex-wrap:wrap; }
-  .save-banner-btn{
-    display:inline-flex; align-items:center; gap:8px;
-    background:var(--paper); color:var(--clay);
-    padding:11px 20px; border-radius:10px;
-    font-size:14px; font-weight:600;
-    transition:transform .2s var(--ease), box-shadow .2s var(--ease);
-  }
-  .save-banner-btn:hover{ transform:translateY(-2px); box-shadow:0 8px 16px -8px rgba(43,27,16,0.3); }
+  .save-banner-btn{ display:inline-flex; align-items:center; gap:8px; background:var(--paper); color:var(--clay); padding:11px 20px; border-radius:10px; font-size:14px; font-weight:600; transition:transform .2s var(--ease); }
+  .save-banner-btn:hover{ transform:translateY(-2px); }
 
   .final-header{ text-align:center; margin-bottom:32px; }
   .final-header h2{ font-size:38px; margin-bottom:14px; color:var(--espresso); }
@@ -123,28 +105,12 @@
   .category-sub{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
 
   .uni-list{ display:flex; flex-direction:column; gap:12px; }
-  .uni-card{
-    background:var(--cream); border:1px solid transparent;
-    border-radius:12px; padding:18px 20px;
-    cursor:pointer;
-    transition:border-color .25s var(--ease), transform .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
-  }
-  .uni-card:hover{
-    border-color:var(--caramel);
-    transform:translateX(4px);
-    background:var(--paper);
-    box-shadow:0 8px 20px -12px rgba(43,27,16,0.25);
-  }
+  .uni-card{ background:var(--cream); border:1px solid transparent; border-radius:12px; padding:18px 20px; cursor:pointer; transition:border-color .25s var(--ease), transform .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease); }
+  .uni-card:hover{ border-color:var(--caramel); transform:translateX(4px); background:var(--paper); box-shadow:0 8px 20px -12px rgba(43,27,16,0.25); }
   .uni-card-name{ font-weight:600; font-size:16px; color:var(--espresso); margin-bottom:4px; }
   .uni-card-country{ font-size:13px; color:var(--text-muted); margin-bottom:10px; }
   .uni-card-reason{ font-size:14px; color:var(--text-main); line-height:1.6; opacity:0.85; }
-  .uni-card-arrow{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:13px; color:var(--clay); font-weight:600;
-    margin-top:10px;
-    opacity:0; transform:translateX(-4px);
-    transition:opacity .25s var(--ease), transform .25s var(--ease);
-  }
+  .uni-card-arrow{ display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--clay); font-weight:600; margin-top:10px; opacity:0; transform:translateX(-4px); transition:opacity .25s var(--ease), transform .25s var(--ease); }
   .uni-card:hover .uni-card-arrow{ opacity:1; transform:translateX(0); }
 
   .empty-note{ padding:20px; background:var(--cream); border-radius:10px; font-size:14px; color:var(--text-muted); text-align:center; font-style:italic; }
@@ -155,9 +121,11 @@
 
   @keyframes fadeInUp{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:translateY(0);} }
 
+  @media (max-width: 900px){
+    .nav-links{ display:none !important; }
+  }
   @media (max-width:700px){
     nav.wrap{ height:72px; padding:0 18px; }
-    .nav-links{ display:none; }
     .logo{ font-size:21px; gap:9px; }
     .logo svg{ width:30px; height:30px; }
     main{ padding:32px 18px 64px; }
@@ -186,15 +154,23 @@
       EduPath
     </a>
     <div class="nav-links">
-      <a href="index.html">Главная</a>
-      <a href="universities.html">Университеты</a>
-      <a href="profile.html">Профиль</a>
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="btn-login" data-auth-open="register">Войти</a>
-      <button type="button" class="icon-btn" aria-label="Поиск">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      </button>
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+        </div>
+      </div>
+      <a href="#" class="btn-login" data-auth-open="register" data-i18n="nav_login">Войти</a>
     </div>
   </nav>
 </header>
@@ -203,12 +179,12 @@
 
   <section class="screen active" id="screenIntro">
     <div class="intro">
-      <div class="eyebrow">Тест на подбор университета</div>
-      <h1>Найдём твой <em>идеальный</em> университет</h1>
-      <p>Ответь на несколько вопросов — про учёбу, страну мечты, климат и то, как ты хочешь жить. ИИ проанализирует ответы и покажет, какие вузы тебе подходят больше всего.</p>
-      <p class="note">8–12 вопросов. Около 5 минут. Только вдумчивые ответы — вариантов выбора нет, пиши сам.</p>
+      <div class="eyebrow" data-i18n="home_eyebrow">Тест на подбор университета</div>
+      <h1 data-i18n="test_title">Найдём твой идеальный университет</h1>
+      <p data-i18n="test_sub">Ответь на несколько вопросов — про учёбу, страну мечты, климат и то, как ты хочешь жить.</p>
+      <p class="note">8–12 вопросов. Около 5 минут.</p>
       <button class="btn-start" onclick="startDialog()">
-        <span>Начать</span>
+        <span data-i18n="test_start">Начать</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
     </div>
@@ -222,19 +198,19 @@
       </div>
 
       <div id="questionBox">
-        <div class="question-label">ИИ спрашивает</div>
-        <div class="question-text" id="questionText">Загрузка...</div>
-        <textarea class="answer-input" id="answerInput" placeholder="Напиши свой ответ здесь..." rows="3"></textarea>
+        <div class="question-label" data-i18n="test_ask">ИИ спрашивает</div>
+        <div class="question-text" id="questionText">...</div>
+        <textarea class="answer-input" id="answerInput" data-i18n-placeholder="test_answer_placeholder" placeholder="Напиши свой ответ здесь..." rows="3"></textarea>
         <div class="dialog-actions">
           <button class="btn-send" id="sendBtn" disabled onclick="sendAnswer()">
-            <span>Отправить</span>
+            <span data-i18n="test_send">Отправить</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </button>
         </div>
       </div>
 
       <div class="thinking" id="thinking">
-        <span>ИИ думает</span>
+        <span data-i18n="test_thinking">ИИ думает</span>
         <div class="thinking-dots">
           <div class="thinking-dot"></div>
           <div class="thinking-dot"></div>
@@ -247,21 +223,28 @@
   <section class="screen" id="screenFinal">
     <div id="saveBanner"></div>
     <div class="final-header">
-      <h2>Готово! Вот твои <em>университеты</em></h2>
-      <p>ИИ проанализировал твои ответы и подобрал варианты по 4 категориям.</p>
+      <h2><span data-i18n="test_final_title">Готово! Вот твои университеты</span></h2>
+      <p data-i18n="test_final_sub">ИИ проанализировал твои ответы и подобрал варианты по 4 категориям.</p>
     </div>
     <div id="categoriesContainer"></div>
     <div class="final-actions">
       <button class="btn-restart" onclick="restartTest()">
-        <span>Пройти заново</span>
+        <span data-i18n="test_restart">Пройти заново</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
       </button>
     </div>
   </section>
 
 </main>
+
   
+<script src="i18n.js"></script>
+<script src="auth.js"></script>
 <script>
+// ============================================================
+// EduPath — тест с ИИ
+// ============================================================
+
 const WORKER_URL = "https://edupath-ai.muqiyatalkar.workers.dev";
 
 const COUNTRY_FILES = [
@@ -284,15 +267,33 @@ let state = {
   finalData: null
 };
 
+function t(key, fallback){
+  return (window.I18N && window.I18N.t(key)) || fallback || key;
+}
+function escapeHtml(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+function escapeAttr(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   const el = document.getElementById(id);
-  el.classList.add("active");
+  if(el) el.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // ============================================================
-// СТАРТ ДИАЛОГА
+// ДИАЛОГ
 // ============================================================
 
 async function startDialog(){
@@ -309,7 +310,6 @@ async function startDialog(){
     const res = await callWorker([
       { role: "user", content: "Начни диалог. Задай первый вопрос абитуриенту." }
     ]);
-
     state.messages.push({ role: "assistant", content: JSON.stringify(res) });
 
     if(res.type === "question"){
@@ -325,10 +325,6 @@ async function startDialog(){
     showThinking(false);
   }
 }
-
-// ============================================================
-// ОТПРАВКА ОТВЕТА
-// ============================================================
 
 async function sendAnswer(){
   if(state.isLoading) return;
@@ -384,7 +380,6 @@ async function callWorker(messages){
   }
 
   let lastError = null;
-
   for(let attempt = 0; attempt < 3; attempt++){
     try {
       const res = await fetch(WORKER_URL, {
@@ -407,16 +402,12 @@ async function callWorker(messages){
       }
 
       const data = await res.json();
-      if(data.error){
-        throw new Error(data.error + " " + (data.details || ""));
-      }
+      if(data.error) throw new Error(data.error + " " + (data.details || ""));
 
       let content = String(data.result || "").trim();
-
       if(content.startsWith("```")){
         content = content.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, "");
       }
-
       const firstBrace = content.indexOf("{");
       const lastBrace = content.lastIndexOf("}");
       if(firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace){
@@ -425,36 +416,23 @@ async function callWorker(messages){
       content = content.substring(firstBrace, lastBrace + 1);
 
       let parsed;
-      try {
-        parsed = JSON.parse(content);
-      } catch(e){
-        throw new Error("Невалидный JSON: " + content.substring(0, 80));
-      }
+      try { parsed = JSON.parse(content); }
+      catch(e){ throw new Error("Невалидный JSON"); }
 
-      if(!parsed.type){
-        throw new Error("В JSON нет поля type");
-      }
-
+      if(!parsed.type) throw new Error("В JSON нет поля type");
       return parsed;
 
     } catch(e){
       lastError = e;
       console.warn("Попытка " + (attempt + 1) + " не удалась:", e.message);
-      if(attempt < 2){
-        await new Promise(r => setTimeout(r, 800));
-      }
+      if(attempt < 2) await new Promise(r => setTimeout(r, 800));
     }
   }
-
   throw new Error("ИИ не смог ответить после 3 попыток. " + (lastError ? lastError.message : ""));
 }
 
-// ============================================================
-// ЗАГРУЗКА БАЗЫ
-// ============================================================
-
 async function loadAllUniversities(){
-  showThinking(true, "ИИ анализирует 250 университетов");
+  showThinking(true, t("test_analyzing", "ИИ анализирует 250 университетов"));
 
   const results = await Promise.allSettled(
     COUNTRY_FILES.map(async (file) => {
@@ -469,7 +447,7 @@ async function loadAllUniversities(){
     if(r.status !== "fulfilled") return;
     r.value.forEach(uni => {
       if(!uni || !uni["Университет"]) return;
-      const small = {
+      compact.push({
         n: String(uni["Университет"] || "").trim(),
         c: String(uni["Страна"] || "").trim(),
         city: String(uni["Город"] || "").trim(),
@@ -477,11 +455,9 @@ async function loadAllUniversities(){
         grant: String(uni["Дают полный грант (обучение, проживание, перелет, питание) международным студентам?"] || "").trim(),
         ielts: String(uni["TOEFL/IELTS"] || "").trim(),
         sat: String(uni["SAT"] || "").trim()
-      };
-      compact.push(small);
+      });
     });
   });
-
   return compact;
 }
 
@@ -500,17 +476,14 @@ function renderQuestion(questionText){
 
   const sendBtn = document.getElementById("sendBtn");
   sendBtn.disabled = true;
-
-  input.oninput = () => {
-    sendBtn.disabled = input.value.trim().length === 0;
-  };
+  input.oninput = () => { sendBtn.disabled = input.value.trim().length === 0; };
 
   const total = state.maxQuestions;
   const current = state.questionCount;
   document.getElementById("progressText").textContent =
     current < state.minQuestions
-      ? `Вопрос ${current} из ${state.minQuestions}`
-      : `Вопрос ${current} (уточняющие)`;
+      ? `${t("test_question", "Вопрос")} ${current} ${t("test_of", "из")} ${state.minQuestions}`
+      : `${t("test_question", "Вопрос")} ${current}`;
 
   const dots = document.getElementById("progressDots");
   dots.innerHTML = "";
@@ -523,19 +496,12 @@ function renderQuestion(questionText){
   }
 }
 
-// ============================================================
-// "ИИ ДУМАЕТ"
-// ============================================================
-
 function showThinking(active, customText){
   const el = document.getElementById("thinking");
+  if(!el) return;
   if(active){
     el.classList.add("active");
-    if(customText){
-      el.querySelector("span").textContent = customText;
-    } else {
-      el.querySelector("span").textContent = "ИИ думает";
-    }
+    el.querySelector("span").textContent = customText || t("test_thinking", "ИИ думает");
   } else {
     el.classList.remove("active");
   }
@@ -554,13 +520,10 @@ function renderSaveBanner(){
       <div class="save-banner">
         <div class="save-banner-icon">✓</div>
         <div class="save-banner-text">
-          <div class="save-banner-title">Ваш результат сохранён в профиле</div>
-          <div class="save-banner-desc">Вы всегда можете вернуться к нему позже — раздел «Профиль» → «Результаты теста».</div>
+          <div class="save-banner-title">${t("test_saved_banner", "Ваш результат сохранён в профиле")}</div>
         </div>
         <div class="save-banner-actions">
-          <a href="profile.html" class="save-banner-btn">
-            Перейти в профиль →
-          </a>
+          <a href="profile.html" class="save-banner-btn">${t("test_saved_hint", "Посмотреть в профиле →")}</a>
         </div>
       </div>
     `;
@@ -569,13 +532,10 @@ function renderSaveBanner(){
       <div class="save-banner">
         <div class="save-banner-icon">💾</div>
         <div class="save-banner-text">
-          <div class="save-banner-title">Войдите, чтобы сохранить результат</div>
-          <div class="save-banner-desc">Создайте аккаунт — и результат теста будет ждать вас в профиле.</div>
+          <div class="save-banner-title">${t("test_not_saved_banner", "Войдите, чтобы сохранить результат")}</div>
         </div>
         <div class="save-banner-actions">
-          <button type="button" class="save-banner-btn" data-auth-open="register">
-            Войти
-          </button>
+          <button type="button" class="save-banner-btn" data-auth-open="register">${t("test_not_saved_hint", "Войти")}</button>
         </div>
       </div>
     `;
@@ -589,13 +549,9 @@ function renderSaveBanner(){
 async function renderFinal(finalData){
   showThinking(false);
   state.finalData = finalData;
-
   showScreen("screenFinal");
-
-  // Плашка
   renderSaveBanner();
 
-  // Сохраняем в профиль, если вошёл
   if(window.EduAuth && window.EduAuth.isLoggedIn()){
     window.EduAuth.saveTestResult(finalData);
   }
@@ -605,50 +561,37 @@ async function renderFinal(finalData){
 
   const cats = finalData.categories || {};
   const catDefs = [
-    { key: "academic",  icon: "🎓", title: "Подходят по учебным показателям",
-      sub: "Эти вузы подходят по твоим оценкам, экзаменам и специальности." },
-    { key: "lifestyle", icon: "🌍", title: "Подходят по желанию жить",
-      sub: "Здесь климат, природа и культура совпадают с тем, что ты описал." },
-    { key: "safe",      icon: "🎯", title: "Куда шанс поступить высокий",
-      sub: "Реалистичные варианты, где у тебя хорошие шансы." },
-    { key: "reach",     icon: "💪", title: "Куда мог бы, но не дотягиваешь",
-      sub: "Target-университеты: если подтянуть один-два пункта — можно подавать." }
+    { key: "academic",  icon: "🎓", title: t("test_cat_academic", "Подходят по учебным показателям") },
+    { key: "lifestyle", icon: "🌍", title: t("test_cat_lifestyle", "Подходят по желанию жить") },
+    { key: "safe",      icon: "🎯", title: t("test_cat_safe", "Куда шанс поступить высокий") },
+    { key: "reach",     icon: "💪", title: t("test_cat_reach", "Куда мог бы, но не дотягиваешь") }
   ];
 
   catDefs.forEach((def) => {
     const list = cats[def.key] || [];
-
     const card = document.createElement("div");
     card.className = "category";
 
-    let listHtml = "";
+    let listHtml;
     if(list.length === 0){
-      listHtml = `<div class="empty-note">По твоим ответам пока ничего не подходит в этой категории. Это не значит, что вариантов нет — попробуй пройти тест снова, уточнив ответы.</div>`;
+      listHtml = `<div class="empty-note">${t("test_empty_category", "Ничего не подошло в этой категории")}</div>`;
     } else {
       listHtml = `<div class="uni-list">` + list.map(u => `
         <div class="uni-card" data-uni-name="${escapeAttr(u.name || "")}">
           <div class="uni-card-name">${escapeHtml(u.name || "—")}</div>
           <div class="uni-card-country">📍 ${escapeHtml(u.country || "—")}</div>
           <div class="uni-card-reason">${escapeHtml(u.reason || "")}</div>
-          <div class="uni-card-arrow">Подробнее →</div>
+          <div class="uni-card-arrow">${t("test_more", "Подробнее →")}</div>
         </div>
       `).join("") + `</div>`;
     }
 
     card.innerHTML = `
       <div class="category-title">${def.icon} ${def.title}</div>
-      <div class="category-sub">${def.sub}</div>
       ${listHtml}
     `;
     container.appendChild(card);
   });
-
-  if(finalData.summary){
-    const summary = document.createElement("div");
-    summary.style.cssText = "text-align:center; margin-top:32px; padding:24px; background:var(--paper); border-radius:16px; border:1px solid var(--line); font-size:15px; color:var(--text-muted); line-height:1.7;";
-    summary.textContent = finalData.summary;
-    container.appendChild(summary);
-  }
 }
 
 // ============================================================
@@ -660,8 +603,18 @@ document.addEventListener("click", (e) => {
   if(!card) return;
   const name = card.dataset.uniName;
   if(!name) return;
-  const url = "universities.html?uni=" + encodeURIComponent(name);
-  window.location.href = url;
+  window.location.href = "universities.html?uni=" + encodeURIComponent(name);
+});
+
+// ============================================================
+// ПЕРЕРИСОВКА ПРИ СМЕНЕ ЯЗЫКА
+// ============================================================
+
+window.addEventListener("edupath-lang-change", () => {
+  if(state.finalData){
+    renderSaveBanner();
+    renderFinal(state.finalData);
+  }
 });
 
 // ============================================================
@@ -678,27 +631,6 @@ function restartTest(){
   document.getElementById("saveBanner").innerHTML = "";
   showScreen("screenIntro");
 }
-
-// ============================================================
-// ХЕЛПЕРЫ
-// ============================================================
-
-function escapeHtml(s){
-  return String(s == null ? "" : s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-function escapeAttr(s){
-  return String(s == null ? "" : s)
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 </script>
-<script src="auth.js"></script>
 </body>
 </html>
