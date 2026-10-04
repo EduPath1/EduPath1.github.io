@@ -1,152 +1,216 @@
 // ============================================================
-// EduPath — авторизация и хранение данных (localStorage)
+// EduPath — auth.js (настоящий бэкенд)
 // ============================================================
 
 (function() {
   "use strict";
 
-  const STORAGE_KEYS = {
-    USERS: "edupath_users",
-    CURRENT: "edupath_current_user",
-    SAVED: "edupath_saved_",
-    TESTS: "edupath_tests_"
-  };
+  const API_URL = "https://edupath1-github-io.onrender.com";
+  const TOKEN_KEY = "edupath_token";
+  const USER_KEY = "edupath_user";
 
-  function getUsers() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || "[]"); }
-    catch(e) { return []; }
+  function getToken() {
+    return localStorage.getItem(TOKEN_KEY);
   }
-  function saveUsers(users) {
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+  function setToken(token) {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
   }
-  function getCurrentEmail() {
-    return localStorage.getItem(STORAGE_KEYS.CURRENT);
+  function clearToken() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+  function setCachedUser(user) {
+    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  }
+  function getCachedUser() {
+    try {
+      const s = localStorage.getItem(USER_KEY);
+      return s ? JSON.parse(s) : null;
+    } catch(e) { return null; }
+  }
+
+  function isLoggedIn() {
+    return !!getToken();
   }
   function getCurrentUser() {
-    const email = getCurrentEmail();
-    if (!email) return null;
-    return getUsers().find(u => u.email === email) || null;
+    return getCachedUser();
   }
-  function isLoggedIn() {
-    return !!getCurrentEmail();
-  }
-  function simpleHash(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return "h_" + Math.abs(hash).toString(36);
+
+  async function apiFetch(path, options) {
+    options = options || {};
+    const headers = Object.assign({
+      "Content-Type": "application/json"
+    }, options.headers || {});
+    const token = getToken();
+    if (token) headers["Authorization"] = "Bearer " + token;
+
+    const res = await fetch(API_URL + path, Object.assign({}, options, { headers }));
+    let data = null;
+    try { data = await res.json(); } catch(e) {}
+    return { ok: res.ok, status: res.status, data };
   }
 
   // ============================================================
   // РЕГИСТРАЦИЯ / ВХОД / ВЫХОД
   // ============================================================
 
-  function register(name, email, password) {
-    if (!name || !email || !password) return { ok: false, error: "Заполните все поля" };
-    if (!email.includes("@") || !email.includes(".")) return { ok: false, error: "Введите корректный email" };
-    if (password.length < 4) return { ok: false, error: "Пароль слишком короткий (минимум 4 символа)" };
-
-    const users = getUsers();
-    if (users.find(u => u.email === email.trim().toLowerCase())) {
-      return { ok: false, error: "Пользователь с таким email уже существует" };
+  async function register(name, email, password) {
+    if (!name || !email || !password) {
+      return { ok: false, error: "Заполните все поля" };
     }
-
-    const newUser = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      passHash: simpleHash(password),
-      createdAt: new Date().toISOString()
-    };
-    users.push(newUser);
-    saveUsers(users);
-    localStorage.setItem(STORAGE_KEYS.CURRENT, newUser.email);
-    return { ok: true, user: newUser };
+    try {
+      const res = await apiFetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password })
+      });
+      if (!res.ok) {
+        return { ok: false, error: (res.data && res.data.error) || "Ошибка регистрации" };
+      }
+      const session = res.data.session;
+      const user = res.data.user;
+      if (session && session.access_token) {
+        setToken(session.access_token);
+        setCachedUser({ name: user.name || name, email: user.email || email, id: user.id });
+      }
+      return { ok: true, user: user };
+    } catch(e) {
+      return { ok: false, error: "Сервер не отвечает. Попробуйте позже." };
+    }
   }
 
-  function login(email, password) {
-    if (!email || !password) return { ok: false, error: "Заполните все поля" };
-    const users = getUsers();
-    const user = users.find(u => u.email === email.trim().toLowerCase());
-    if (!user) return { ok: false, error: "Пользователь не найден" };
-    if (user.passHash !== simpleHash(password)) return { ok: false, error: "Неверный пароль" };
-    localStorage.setItem(STORAGE_KEYS.CURRENT, user.email);
-    return { ok: true, user };
+  async function login(email, password) {
+    if (!email || !password) {
+      return { ok: false, error: "Заполните все поля" };
+    }
+    try {
+      const res = await apiFetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password })
+      });
+      if (!res.ok) {
+        return { ok: false, error: (res.data && res.data.error) || "Неверный email или пароль" };
+      }
+      const session = res.data.session;
+      const user = res.data.user;
+      if (session && session.access_token) {
+        setToken(session.access_token);
+        setCachedUser({ name: user.name || "", email: user.email, id: user.id });
+      }
+      return { ok: true, user: user };
+    } catch(e) {
+      return { ok: false, error: "Сервер не отвечает. Попробуйте позже." };
+    }
   }
 
   function logout() {
-    localStorage.removeItem(STORAGE_KEYS.CURRENT);
+    clearToken();
   }
 
   // ============================================================
   // СОХРАНЁННЫЕ УНИВЕРСИТЕТЫ
   // ============================================================
 
-  function getSavedKey() {
-    const email = getCurrentEmail();
-    return email ? STORAGE_KEYS.SAVED + email : null;
+  let _savedCache = null;
+
+  async function getSaved() {
+    if (!isLoggedIn()) return [];
+    try {
+      const res = await apiFetch("/api/saved", { method: "GET" });
+      if (!res.ok) return _savedCache || [];
+      const list = (res.data && res.data.saved) || [];
+      _savedCache = list.map(s => ({
+        name: s.university_name,
+        country: s.country || "",
+        city: s.city || ""
+      }));
+      return _savedCache;
+    } catch(e) {
+      return _savedCache || [];
+    }
   }
-  function getSaved() {
-    const key = getSavedKey();
-    if (!key) return [];
-    try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-    catch(e) { return []; }
+
+  function isSaved(name) {
+    if (!_savedCache) return false;
+    return _savedCache.some(u => u.name === name);
   }
-  function isSaved(uniName) {
-    return getSaved().some(u => u.name === uniName);
-  }
-  function toggleSave(uni) {
-    if (!getCurrentEmail()) return { ok: false, error: "Не вошёл" };
-    const key = getSavedKey();
-    const saved = getSaved();
-    const idx = saved.findIndex(u => u.name === uni.name);
-    if (idx >= 0) {
-      saved.splice(idx, 1);
-      localStorage.setItem(key, JSON.stringify(saved));
-      return { ok: true, removed: true };
-    } else {
-      saved.push({
-        name: uni.name,
-        country: uni.country || "",
-        city: uni.city || "",
-        savedAt: new Date().toISOString()
-      });
-      localStorage.setItem(key, JSON.stringify(saved));
-      return { ok: true, added: true };
+
+  async function toggleSave(uni) {
+    if (!isLoggedIn()) return { ok: false, error: "Не вошёл" };
+
+    const currentlySaved = isSaved(uni.name);
+
+    try {
+      if (currentlySaved) {
+        const res = await apiFetch("/api/saved/" + encodeURIComponent(uni.name), { method: "DELETE" });
+        if (!res.ok) return { ok: false, error: "Не удалось удалить" };
+        if (_savedCache) _savedCache = _savedCache.filter(u => u.name !== uni.name);
+        return { ok: true, removed: true };
+      } else {
+        const res = await apiFetch("/api/saved", {
+          method: "POST",
+          body: JSON.stringify({
+            name: uni.name,
+            country: uni.country || "",
+            city: uni.city || ""
+          })
+        });
+        if (!res.ok) return { ok: false, error: "Не удалось сохранить" };
+        if (!_savedCache) _savedCache = [];
+        _savedCache.unshift({
+          name: uni.name,
+          country: uni.country || "",
+          city: uni.city || ""
+        });
+        return { ok: true, added: true };
+      }
+    } catch(e) {
+      return { ok: false, error: "Сервер не отвечает" };
     }
   }
 
   // ============================================================
-  // РЕЗУЛЬТАТЫ ТЕСТА
+  // РЕЗУЛЬТАТЫ ТЕСТОВ
   // ============================================================
 
-  function getTestsKey() {
-    const email = getCurrentEmail();
-    return email ? STORAGE_KEYS.TESTS + email : null;
+  let _testsCache = null;
+
+  async function getTests() {
+    if (!isLoggedIn()) return [];
+    try {
+      const res = await apiFetch("/api/tests", { method: "GET" });
+      if (!res.ok) return _testsCache || [];
+      const list = (res.data && res.data.tests) || [];
+      _testsCache = list.map(t => ({
+        date: t.created_at,
+        categories: t.categories || {},
+        summary: t.summary || ""
+      }));
+      return _testsCache;
+    } catch(e) {
+      return _testsCache || [];
+    }
   }
-  function getTests() {
-    const key = getTestsKey();
-    if (!key) return [];
-    try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-    catch(e) { return []; }
-  }
-  function saveTestResult(finalData) {
-    if (!getCurrentEmail()) return { ok: false, error: "Не вошёл" };
-    const key = getTestsKey();
-    const tests = getTests();
-    tests.unshift({
-      date: new Date().toISOString(),
-      categories: finalData.categories || {},
-      summary: finalData.summary || ""
-    });
-    localStorage.setItem(key, JSON.stringify(tests));
-    return { ok: true };
+
+  async function saveTestResult(finalData) {
+    if (!isLoggedIn()) return { ok: false, error: "Не вошёл" };
+    try {
+      const res = await apiFetch("/api/tests", {
+        method: "POST",
+        body: JSON.stringify({
+          categories: finalData.categories || {},
+          summary: finalData.summary || ""
+        })
+      });
+      if (!res.ok) return { ok: false, error: "Не удалось сохранить тест" };
+      _testsCache = null;
+      return { ok: true };
+    } catch(e) {
+      return { ok: false, error: "Сервер не отвечает" };
+    }
   }
 
   // ============================================================
-  // TOAST-УВЕДОМЛЕНИЯ
+  // TOAST
   // ============================================================
 
   function showToast(message, type) {
@@ -190,7 +254,7 @@
   }
 
   // ============================================================
-  // МОДАЛЬНОЕ ОКНО ВХОДА/РЕГИСТРАЦИИ
+  // МОДАЛКА
   // ============================================================
 
   let modalEl = null;
@@ -218,7 +282,7 @@
           </div>
           <div class="edupath-field">
             <label>Пароль</label>
-            <input type="password" id="edupathPassword" placeholder="Минимум 4 символа">
+            <input type="password" id="edupathPassword" placeholder="Минимум 6 символов">
           </div>
           <div class="edupath-error" id="edupathAuthError"></div>
           <button type="submit" class="edupath-btn-submit" id="edupathSubmitBtn">Создать аккаунт</button>
@@ -348,7 +412,6 @@
     if (modalEl) modalEl.classList.remove("open");
   }
 
-  // Обработчики модалки
   document.addEventListener("click", (e) => {
     const openBtn = e.target.closest("[data-auth-open]");
     if (openBtn) {
@@ -374,14 +437,16 @@
     }
   });
 
-  // Отправка формы
-  document.addEventListener("submit", (e) => {
+  document.addEventListener("submit", async (e) => {
     if (e.target.id !== "edupathAuthForm") return;
     e.preventDefault();
+
     const errEl = document.getElementById("edupathAuthError");
     const submitBtn = document.getElementById("edupathSubmitBtn");
     errEl.textContent = "";
     submitBtn.disabled = true;
+    const oldText = submitBtn.textContent;
+    submitBtn.textContent = "Подождите...";
 
     const name = document.getElementById("edupathName").value.trim();
     const email = document.getElementById("edupathEmail").value.trim();
@@ -389,27 +454,33 @@
 
     let result;
     if (modalMode === "register") {
-      result = register(name, email, password);
+      result = await register(name, email, password);
     } else {
-      result = login(email, password);
+      result = await login(email, password);
     }
-    submitBtn.disabled = false;
 
-    if (!result.ok) { errEl.textContent = result.error; return; }
+    submitBtn.disabled = false;
+    submitBtn.textContent = oldText;
+
+    if (!result.ok) {
+      errEl.textContent = result.error;
+      return;
+    }
 
     closeModal();
     showToast(
-      modalMode === "register" ? "Аккаунт создан. Привет, " + result.user.name + "!" :
-      "С возвращением, " + result.user.name + "!", "success"
+      modalMode === "register" ? "Аккаунт создан. Привет!" :
+      "С возвращением!", "success"
     );
     updateHeaderUI();
+
     if (window.location.pathname.includes("profile")) {
       window.location.reload();
     }
   });
 
   // ============================================================
-  // ОБНОВЛЕНИЕ ШАПКИ
+  // ШАПКА
   // ============================================================
 
   function updateHeaderUI() {
@@ -417,7 +488,7 @@
     const loginBtn = document.querySelector(".btn-login");
     if (!loginBtn) return;
     if (user) {
-      loginBtn.textContent = "Привет, " + user.name.split(" ")[0];
+      loginBtn.textContent = "Привет, " + (user.name || "друг").split(" ")[0];
       loginBtn.href = "profile.html";
       loginBtn.setAttribute("data-auth-user", "1");
       loginBtn.removeAttribute("data-auth-open");
