@@ -1,9 +1,9 @@
 // ===== EduPath 简易认证 (使用 Supabase + GitHub 登录) =====
 // 1. 初始化 Supabase (把你的 URL 和 anon key 填进去)
 const supabase = supabase.createClient(
-  'https://lmhcoxtgtmndthscsgjg.supabase.co',  // 你的 Project URL
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtaGNveHRndG1uZHRoc2NzZ2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NjA2OTMsImV4cCI6MjEwNjUzNjY5M30.LntM4ZDg4TQnl9BlRwivdYbmwgeuBxLt-h_kIDGES6g'  // anon key
-)
+  'https://lmhcoxtgtmndthscsgjg.supabase.co',  // ← 你的 Project URL (一定要是这个)
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtaGNveHRndG1uZHRoc2NzZ2pnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NjA2OTMsImV4cCI6MjEwNjUzNjY5M30.LntM4ZDg4TQnl9BlRwivdYbmwgeuBxLt-h_kIDGES6g'  // ← anon key
+);
 
 // 2. GitHub 登录函数
 async function githubLogin() {
