@@ -432,3 +432,397 @@ function renderSidebar(){
 
       wrapper.innerHTML = `
         <div class="uni-item-main">
+          <span class="uni-name">${uni["Университет"]}</span>
+          <span class="uni-meta">
+            <span>📍 ${city}</span>
+            <span>🎯 ${rate}</span>
+            <span>📅 ${deadline}</span>
+          </span>
+        </div>
+        <button type="button" class="star-btn ${isSaved ? "active" : ""}" data-star="${escapeAttr(uni["Университет"])}" title="${isSaved ? "Убрать из избранного" : "Сохранить в избранное"}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </button>
+      `;
+
+      wrapper.addEventListener("click", (e) => {
+        if(e.target.closest(".star-btn")) return;
+        selectUni(uni, wrapper);
+      });
+
+      list.appendChild(wrapper);
+    });
+
+    div.appendChild(header);
+    div.appendChild(list);
+    container.appendChild(div);
+  });
+}
+
+// ============================================================
+// КЛИК ПО ЗВЁЗДОЧКЕ
+// ============================================================
+
+document.addEventListener("click", async (e) => {
+  const starBtn = e.target.closest(".star-btn");
+  if(!starBtn) return;
+
+  e.stopPropagation();
+
+  const name = starBtn.dataset.star;
+  const uni = ALL_DATA.find(u => u["Университет"] === name);
+  if(!uni) return;
+
+  if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
+    window.EduAuth.showToast("Чтобы сохранять вузы, войдите в аккаунт", "info");
+    window.EduAuth.openModal("register");
+    return;
+  }
+
+  const result = await window.EduAuth.toggleSave({
+    name: uni["Университет"],
+    country: uni["_country_ru"],
+    city: uni["Город"]
+  });
+
+  if(!result || !result.ok){
+    window.EduAuth.showToast((result && result.error) || "Ошибка, попробуйте ещё раз", "error");
+    return;
+  }
+
+  if(result.added){
+    starBtn.classList.add("active");
+    window.EduAuth.showToast("Успешно сохранили университет", "success");
+  } else if(result.removed){
+    starBtn.classList.remove("active");
+    window.EduAuth.showToast("Университет убран из избранного", "info");
+  }
+});
+
+// ============================================================
+// ВЫБОР УНИВЕРСИТЕТА
+// ============================================================
+
+function selectUni(uni, wrapper){
+  document.querySelectorAll(".uni-item.selected").forEach(el => el.classList.remove("selected"));
+  if(wrapper) wrapper.classList.add("selected");
+
+  const content = document.getElementById("detailContent");
+  const empty = document.getElementById("detailEmpty");
+
+  if(content.classList.contains("active")){
+    content.style.transition = "opacity .2s ease";
+    content.style.opacity = "0";
+    setTimeout(() => {
+      content.classList.remove("active");
+      renderDetail(uni);
+    }, 180);
+  } else {
+    empty.style.opacity = "0";
+    setTimeout(() => {
+      empty.style.display = "none";
+      renderDetail(uni);
+    }, 200);
+  }
+}
+
+function renderDetail(uni){
+  const content = document.getElementById("detailContent");
+  content.classList.add("active");
+
+  const g = (k) => {
+    const v = uni[k];
+    if(v === undefined || v === null || String(v).trim() === "" || String(v).trim().toLowerCase() === "n/a") return null;
+    return v;
+  };
+
+  const row = (label, value) => {
+    const val = value ? String(value) : "не указано";
+    const cls = value ? "" : " empty";
+    return `<div class="info-card"><div class="info-label">${label}</div><div class="info-value${cls}">${val}</div></div>`;
+  };
+
+  const title = g("Университет") || "Без названия";
+  const country = g("Страна") || uni._country_ru;
+  const city = g("Город");
+  const grantBadge = isFullGrant(uni) ? `<div class="grant-badge">✨ Полный грант</div>` : "";
+
+  const saved = window.EduAuth ? window.EduAuth.isSaved(title) : false;
+
+  content.innerHTML = `
+    <h1 class="uni-title">${title}</h1>
+    <div class="uni-location">📍 ${country}${city ? " · " + city : ""}</div>
+    ${grantBadge}
+
+    <h3 class="section-title">Финансы</h3>
+    <div class="info-grid">
+      ${row("Стоимость обучения", g("Стоимость обучения (USD/год)"))}
+      ${row("Процент поступления", g("Процент Поступления"))}
+      ${row("Финансовая помощь", g("Максимальная Финансовая помощь (USD)"))}
+      ${row("Полный грант", isFullGrant(uni) ? "ДА" : "нет")}
+    </div>
+
+    <h3 class="section-title">Сроки</h3>
+    <div class="info-grid">
+      ${row("Дедлайн ранней подачи", g("Дедлайн Ранней Подачи"))}
+      ${row("Дедлайн основной подачи", g("Дедлайн Основной Подачи"))}
+    </div>
+
+    <h3 class="section-title">Требования</h3>
+    <div class="info-grid">
+      ${row("TOEFL / IELTS", g("TOEFL/IELTS"))}
+      ${row("SAT", g("SAT"))}
+      ${row("Эссе", g("Эссе"))}
+      ${row("Рекомендательные письма", g("Рекомендательные Письма"))}
+      ${row("Стоимость заявки", g("Стоимость Заявки"))}
+      ${row("Ссылка на подачу", g("Ссылка на заполнение заявки"))}
+    </div>
+
+    <h3 class="section-title">Рейтинги</h3>
+    <div class="info-grid">
+      ${row("Рейтинг по стране", g("Рейтинг по Стране"))}
+      ${row("Рейтинг в мире", g("Рейтинг в Мире"))}
+    </div>
+
+    <h3 class="section-title">Профессии</h3>
+    <div class="info-grid">
+      ${row("Направления", g("Профессии"))}
+    </div>
+
+    <h3 class="section-title">Дополнительно</h3>
+    <div class="info-grid">
+      ${row("Комментарии", g("Дополнительные Комментарии"))}
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-main ${saved ? "secondary" : "primary"}" id="detailStarBtn">
+        ⭐ ${saved ? "В избранном" : "Сохранить в избранное"}
+      </button>
+      ${uni["Сайт Университета"] ? `<a href="${uni["Сайт Университета"]}" target="_blank" rel="noopener" class="btn-main primary">🌐 Официальный сайт</a>` : ""}
+      ${uni["Ссылка на заполнение заявки"] && String(uni["Ссылка на заполнение заявки"]).startsWith("http") ? `<a href="${uni["Ссылка на заполнение заявки"]}" target="_blank" rel="noopener" class="btn-main secondary">📝 Подать заявку</a>` : ""}
+      ${uni["Сайт Финансовой Помощи"] && String(uni["Сайт Финансовой Помощи"]).startsWith("http") ? `<a href="${uni["Сайт Финансовой Помощи"]}" target="_blank" rel="noopener" class="btn-main ghost">💰 Финансовая помощь</a>` : ""}
+    </div>
+  `;
+
+  const detailBtn = document.getElementById("detailStarBtn");
+  if(detailBtn){
+    detailBtn.addEventListener("click", async () => {
+      if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
+        window.EduAuth.showToast("Чтобы сохранять вузы, войдите в аккаунт", "info");
+        window.EduAuth.openModal("register");
+        return;
+      }
+      const result = await window.EduAuth.toggleSave({
+        name: title,
+        country: uni._country_ru,
+        city: city
+      });
+      if(!result || !result.ok){
+        window.EduAuth.showToast((result && result.error) || "Ошибка", "error");
+        return;
+      }
+      renderDetail(uni);
+      renderSidebar();
+      if(result.added){
+        window.EduAuth.showToast("Успешно сохранили университет", "success");
+      } else if(result.removed){
+        window.EduAuth.showToast("Университет убран из избранного", "info");
+      }
+    });
+  }
+}
+
+// ============================================================
+// ФИЛЬТРЫ
+// ============================================================
+
+const filters = {
+  budgetMin: null,
+  budgetMax: null,
+  country: "",
+  fullGrant: false
+};
+
+function parsePrice(str){
+  if(!str) return null;
+  const s = String(str).trim().toLowerCase();
+  if(s.includes("бесплат") || s.includes("free")) return 0;
+  const matches = s.match(/\d[\d\s,\.]*/g);
+  if(!matches || matches.length === 0) return null;
+  const numbers = matches.map(m => {
+    const clean = m.replace(/[\s,\.]/g, "");
+    return parseInt(clean, 10);
+  }).filter(n => !isNaN(n) && n > 0);
+  if(numbers.length === 0) return null;
+  if(numbers.length >= 2){
+    return Math.round((numbers[0] + numbers[1]) / 2);
+  }
+  return numbers[0];
+}
+
+function applyFilters(items){
+  return items.filter(uni => {
+    if(filters.country && uni._country_ru !== filters.country) return false;
+    if(filters.fullGrant && !isFullGrant(uni)) return false;
+    if(filters.budgetMin !== null || filters.budgetMax !== null){
+      const price = parsePrice(uni["Стоимость обучения (USD/год)"]);
+      if(price === null) return false;
+      if(filters.budgetMin !== null && price < filters.budgetMin) return false;
+      if(filters.budgetMax !== null && price > filters.budgetMax) return false;
+    }
+    return true;
+  });
+}
+
+function updateFiltersBadge(){
+  let count = 0;
+  if(filters.budgetMin !== null) count++;
+  if(filters.budgetMax !== null) count++;
+  if(filters.country) count++;
+  if(filters.fullGrant) count++;
+
+  const badge = document.getElementById("filtersBadge");
+  const btn = document.getElementById("filtersToggle");
+
+  if(count > 0){
+    badge.style.display = "inline-flex";
+    badge.textContent = count;
+    btn.classList.add("active");
+  } else {
+    badge.style.display = "none";
+    btn.classList.remove("active");
+  }
+}
+
+document.getElementById("filtersToggle").addEventListener("click", () => {
+  const panel = document.getElementById("filtersPanel");
+  panel.classList.toggle("open");
+});
+
+document.getElementById("filterApply").addEventListener("click", () => {
+  const minVal = document.getElementById("filterBudgetMin").value;
+  const maxVal = document.getElementById("filterBudgetMax").value;
+
+  filters.budgetMin = minVal !== "" ? parseInt(minVal, 10) : null;
+  filters.budgetMax = maxVal !== "" ? parseInt(maxVal, 10) : null;
+  filters.country = document.getElementById("filterCountry").value;
+  filters.fullGrant = document.getElementById("filterFullGrant").checked;
+
+  updateFiltersBadge();
+  renderSidebar();
+  document.getElementById("filtersPanel").classList.remove("open");
+});
+
+document.getElementById("filterReset").addEventListener("click", () => {
+  document.getElementById("filterBudgetMin").value = "";
+  document.getElementById("filterBudgetMax").value = "";
+  document.getElementById("filterCountry").value = "";
+  document.getElementById("filterFullGrant").checked = false;
+
+  filters.budgetMin = null;
+  filters.budgetMax = null;
+  filters.country = "";
+  filters.fullGrant = false;
+
+  updateFiltersBadge();
+  renderSidebar();
+});
+
+// ============================================================
+// ПОИСК
+// ============================================================
+
+const searchBtn = document.getElementById("searchBtn");
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+
+searchBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  searchInput.classList.toggle("open");
+  if(searchInput.classList.contains("open")) searchInput.focus();
+  else searchResults.classList.remove("open");
+});
+
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if(q.length < 2){ searchResults.classList.remove("open"); return; }
+  const found = ALL_DATA.filter(u => {
+    const name = String(u["Университет"] || "").toLowerCase();
+    const city = String(u["Город"] || "").toLowerCase();
+    const country = String(u._country_ru || "").toLowerCase();
+    return name.includes(q) || city.includes(q) || country.includes(q);
+  }).slice(0, 12);
+  if(found.length === 0){
+    searchResults.innerHTML = `<div class="search-empty">Извините, мы пока работаем над добавлением этого университета</div>`;
+  } else {
+    searchResults.innerHTML = found.map(u => `
+      <button class="search-result" data-name="${escapeAttr(u["Университет"])}">
+        ${u["Университет"]}
+        <small>${u._flag} ${u._country_ru} · ${u["Город"] || ""}</small>
+      </button>
+    `).join("");
+  }
+  searchResults.classList.add("open");
+});
+
+searchResults.addEventListener("click", (e) => {
+  const btn = e.target.closest(".search-result");
+  if(!btn) return;
+  const name = btn.dataset.name;
+  const uni = ALL_DATA.find(u => u["Университет"] === name);
+  if(uni){
+    const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === name);
+    if(itemEl){
+      itemEl.closest(".country").classList.add("open");
+      selectUni(uni, itemEl);
+      setTimeout(() => itemEl.scrollIntoView({ behavior:"smooth", block:"center" }), 250);
+    } else {
+      selectUni(uni, null);
+    }
+  }
+  searchInput.value = "";
+  searchResults.classList.remove("open");
+  searchInput.classList.remove("open");
+});
+
+document.addEventListener("click", () => {
+  searchResults.classList.remove("open");
+  searchInput.classList.remove("open");
+});
+searchInput.addEventListener("click", (e) => e.stopPropagation());
+searchResults.addEventListener("click", (e) => e.stopPropagation());
+
+// ============================================================
+// ХЕЛПЕРЫ
+// ============================================================
+
+function escapeAttr(s){
+  return String(s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+// ============================================================
+// СТАРТ
+// ============================================================
+
+loadAll().then(() => {
+  const params = new URLSearchParams(window.location.search);
+  const uniName = params.get("uni");
+  if(!uniName) return;
+
+  const uni = ALL_DATA.find(u => u["Университет"] === uniName);
+  if(!uni) return;
+
+  const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === uniName);
+  if(itemEl){
+    itemEl.closest(".country").classList.add("open");
+    selectUni(uni, itemEl);
+    setTimeout(() => itemEl.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+  } else {
+    selectUni(uni, null);
+  }
+});
+</script>
+<script src="auth.js"></script>
+</body>
+</html>
