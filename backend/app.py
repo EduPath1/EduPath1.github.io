@@ -4,6 +4,7 @@
 # ============================================================
 
 import os
+import traceback
 from functools import wraps
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -11,50 +12,65 @@ from supabase import create_client, Client
 
 app = Flask(__name__)
 
-# CORS: разрешаем запросы с GitHub Pages и локально
+# CORS
 CORS(app, origins=[
     "https://edupath1.github.io",
     "http://localhost:3000",
     "http://localhost:5000"
 ], supports_credentials=True)
 
-# Supabase — берём из переменных окружения
+# Supabase — переменные окружения
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY")
 
 if not SUPABASE_URL or not SUPABASE_ANON_KEY:
     raise Exception("SUPABASE_URL and SUPABASE_ANON_KEY must be set")
 
+# Глобальный клиент (для регистрации/входа)
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 
 # ============================================================
-# ВСПОМОГАТЕЛЬНОЕ: получить пользователя из JWT
+# АВТОРИЗАЦИЯ
 # ============================================================
 
-def get_user_from_token():
-    """Достаёт пользователя из заголовка Authorization: Bearer <token>"""
+def get_user_and_client():
+    """
+    Достаёт пользователя И создаёт клиент Supabase с его токеном.
+    Возвращает (user, client) или (None, None).
+    """
     auth_header = request.headers.get("Authorization", "")
     if not auth_header.startswith("Bearer "):
-        return None
+        return None, None
+
     token = auth_header.replace("Bearer ", "").strip()
+    if not token:
+        return None, None
+
     try:
-        user_response = supabase.auth.get_user(token)
+        # Отдельный клиент с токеном пользователя
+        user_client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+        user_client.auth.set_session(token, "")
+
+        user_response = user_client.auth.get_user()
         if user_response and user_response.user:
-            return user_response.user
+            return user_response.user, user_client
     except Exception as e:
-        print("Token error:", e)
-    return None
+        print("=== TOKEN ERROR ===")
+        print(str(e))
+        print(traceback.format_exc())
+
+    return None, None
 
 
 def require_auth(f):
-    """Декоратор: требует авторизации"""
+    """Декоратор: требует авторизации. Передаёт (user, client) в функцию."""
     @wraps(f)
     def decorated(*args, **kwargs):
-        user = get_user_from_token()
-        if not user:
+        user, client = get_user_and_client()
+        if not user or not client:
             return jsonify({"error": "Unauthorized"}), 401
-        return f(user, *args, **kwargs)
+        return f(user, client, *args, **kwargs)
     return decorated
 
 
@@ -89,16 +105,13 @@ def register():
         return jsonify({"error": "Пароль минимум 4 символа"}), 400
 
     try:
-        # Создаём пользователя в Supabase Auth
         response = supabase.auth.sign_up({
             "email": email,
             "password": password,
-            "options": {
-                "data": {"name": name}
-            }
+            "options": {"data": {"name": name}}
         })
 
-        # Записываем профиль
+        # Пробуем записать профиль (не критично, если упадёт)
         if response.user:
             try:
                 supabase.table("profiles").insert({
@@ -106,7 +119,6 @@ def register():
                     "name": name
                 }).execute()
             except Exception as e:
-                # Профиль мог создаться автоматически триггером — не критично
                 print("Profile insert error:", e)
 
         return jsonify({
@@ -124,6 +136,8 @@ def register():
 
     except Exception as e:
         msg = str(e)
+        print("=== REGISTER ERROR ===")
+        print(traceback.format_exc())
         if "already registered" in msg.lower() or "already exists" in msg.lower():
             return jsonify({"error": "Пользователь с таким email уже существует"}), 400
         return jsonify({"error": msg}), 400
@@ -165,6 +179,8 @@ def login():
 
     except Exception as e:
         msg = str(e)
+        print("=== LOGIN ERROR ===")
+        print(traceback.format_exc())
         if "invalid" in msg.lower() or "credentials" in msg.lower():
             return jsonify({"error": "Неверный email или пароль"}), 401
         return jsonify({"error": msg}), 401
@@ -172,7 +188,7 @@ def login():
 
 @app.route("/api/me", methods=["GET"])
 @require_auth
-def me(user):
+def me(user, client):
     name = ""
     try:
         if user.user_metadata:
@@ -194,21 +210,23 @@ def me(user):
 
 @app.route("/api/saved", methods=["GET"])
 @require_auth
-def get_saved(user):
+def get_saved(user, client):
     try:
-        response = supabase.table("saved_universities") \
+        response = client.table("saved_universities") \
             .select("*") \
             .eq("user_id", user.id) \
             .order("saved_at", desc=True) \
             .execute()
         return jsonify({"saved": response.data or []})
     except Exception as e:
+        print("=== GET /api/saved ERROR ===")
+        print(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/saved", methods=["POST"])
 @require_auth
-def add_saved(user):
+def add_saved(user, client):
     data = request.json or {}
     name = (data.get("name") or "").strip()
     country = (data.get("country") or "").strip()
@@ -218,8 +236,8 @@ def add_saved(user):
         return jsonify({"error": "name required"}), 400
 
     try:
-        # Проверяем — нет ли уже такого
-        existing = supabase.table("saved_universities") \
+        # Проверка дубликата
+        existing = client.table("saved_universities") \
             .select("id") \
             .eq("user_id", user.id) \
             .eq("university_name", name) \
@@ -228,7 +246,7 @@ def add_saved(user):
         if existing.data and len(existing.data) > 0:
             return jsonify({"ok": True, "already": True})
 
-        supabase.table("saved_universities").insert({
+        client.table("saved_universities").insert({
             "user_id": user.id,
             "university_name": name,
             "country": country,
@@ -237,20 +255,24 @@ def add_saved(user):
 
         return jsonify({"ok": True, "added": True})
     except Exception as e:
+        print("=== POST /api/saved ERROR ===")
+        print(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/saved/<path:name>", methods=["DELETE"])
 @require_auth
-def remove_saved(user, name):
+def remove_saved(user, client, name):
     try:
-        supabase.table("saved_universities") \
+        client.table("saved_universities") \
             .delete() \
             .eq("user_id", user.id) \
             .eq("university_name", name) \
             .execute()
         return jsonify({"ok": True, "removed": True})
     except Exception as e:
+        print("=== DELETE /api/saved ERROR ===")
+        print(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
 
@@ -260,33 +282,37 @@ def remove_saved(user, name):
 
 @app.route("/api/tests", methods=["GET"])
 @require_auth
-def get_tests(user):
+def get_tests(user, client):
     try:
-        response = supabase.table("test_results") \
+        response = client.table("test_results") \
             .select("*") \
             .eq("user_id", user.id) \
             .order("created_at", desc=True) \
             .execute()
         return jsonify({"tests": response.data or []})
     except Exception as e:
+        print("=== GET /api/tests ERROR ===")
+        print(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/tests", methods=["POST"])
 @require_auth
-def save_test(user):
+def save_test(user, client):
     data = request.json or {}
     categories = data.get("categories") or {}
     summary = (data.get("summary") or "").strip()
 
     try:
-        supabase.table("test_results").insert({
+        client.table("test_results").insert({
             "user_id": user.id,
             "categories": categories,
             "summary": summary
         }).execute()
         return jsonify({"ok": True})
     except Exception as e:
+        print("=== POST /api/tests ERROR ===")
+        print(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
 
