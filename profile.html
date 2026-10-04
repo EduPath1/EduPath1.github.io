@@ -22,7 +22,7 @@
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; position:relative; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; }
   .nav-links{ display:flex; align-items:center; gap:8px; }
@@ -32,6 +32,13 @@
   .nav-right{ display:flex; align-items:center; gap:14px; }
   .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; }
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; }
+
+  .lang-dropdown{ position:relative; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
   main{ max-width:1000px; margin:0 auto; padding:48px 32px 96px; }
 
@@ -98,9 +105,11 @@
 
   .empty-mini{ padding:14px; background:var(--cream); border-radius:8px; font-size:13px; color:var(--text-muted); text-align:center; font-style:italic; }
 
+  @media (max-width: 900px){
+    .nav-links{ display:none !important; }
+  }
   @media (max-width: 700px){
     nav.wrap{ height:72px; padding:0 18px; }
-    .nav-links{ display:none; }
     .logo{ font-size:21px; gap:9px; }
     .logo svg{ width:30px; height:30px; }
     main{ padding:32px 18px 64px; }
@@ -124,22 +133,30 @@
       EduPath
     </a>
     <div class="nav-links">
-      <a href="index.html">Главная</a>
-      <a href="universities.html">Университеты</a>
-      <a href="profile.html" class="active">Профиль</a>
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+      <a href="profile.html" class="active" data-i18n="nav_profile">Профиль</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="btn-login">Войти</a>
-      <button type="button" class="icon-btn" aria-label="Поиск">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      </button>
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+        </div>
+      </div>
+      <a href="#" class="btn-login" data-auth-open="register" data-i18n="nav_login">Войти</a>
     </div>
   </nav>
 </header>
 
 <main id="mainContent">
   <div class="loading">
-    Загрузка профиля
+    <span data-i18n="profile_loading">Загрузка профиля</span>
     <span class="loading-dots">
       <span class="loading-dot"></span>
       <span class="loading-dot"></span>
@@ -148,10 +165,11 @@
   </div>
 </main>
 
+<script src="i18n.js"></script>
 <script src="auth.js"></script>
 <script>
 // ============================================================
-// УТИЛИТЫ
+// ХЕЛПЕРЫ
 // ============================================================
 
 function escapeHtml(s) {
@@ -175,6 +193,9 @@ function formatDate(iso) {
   return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear() + ", " +
          String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
 }
+function t(key, fallback){
+  return (window.I18N && window.I18N.t(key)) || fallback || key;
+}
 
 // ============================================================
 // РЕНДЕР
@@ -183,7 +204,7 @@ function formatDate(iso) {
 function renderLoading() {
   document.getElementById("mainContent").innerHTML = `
     <div class="loading">
-      Загрузка профиля
+      <span>${t("profile_loading", "Загрузка профиля")}</span>
       <span class="loading-dots">
         <span class="loading-dot"></span>
         <span class="loading-dot"></span>
@@ -200,10 +221,10 @@ function renderNotLoggedIn() {
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>
       </svg>
-      <h2>Сначала войди в аккаунт</h2>
-      <p>Чтобы сохранять университеты и видеть результаты тестов — создай аккаунт или войди.</p>
+      <h2>${t("profile_need_login_title", "Сначала войди в аккаунт")}</h2>
+      <p>${t("profile_need_login_desc", "Чтобы сохранять университеты и видеть результаты тестов — создай аккаунт или войди.")}</p>
       <button class="btn-primary" data-auth-open="register">
-        <span>Создать аккаунт</span>
+        <span>${t("profile_create_account", "Создать аккаунт")}</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
     </div>
@@ -214,8 +235,8 @@ function renderSavedUniversities(saved) {
   if (!saved || saved.length === 0) {
     return `
       <div class="empty-state">
-        Ты пока не сохранил ни одного университета.<br>
-        Зайди в <a href="universities.html">каталог</a> и нажми на звёздочку рядом с вузом.
+        ${t("profile_empty_saved", "Ты пока не сохранил ни одного университета.")}<br>
+        <a href="universities.html">${t("profile_empty_saved_hint", "Зайди в каталог и нажми на звёздочку рядом с вузом.")}</a>
       </div>
     `;
   }
@@ -227,7 +248,7 @@ function renderSavedUniversities(saved) {
             <div class="saved-name">${escapeHtml(u.name)}</div>
             <div class="saved-location">${escapeHtml(u.country || "")}${u.city ? " · " + escapeHtml(u.city) : ""}</div>
           </div>
-          <button class="saved-remove" type="button" title="Убрать" data-remove-saved="${escapeAttr(u.name)}">
+          <button class="saved-remove" type="button" data-remove-saved="${escapeAttr(u.name)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
@@ -240,22 +261,22 @@ function renderTests(tests) {
   if (!tests || tests.length === 0) {
     return `
       <div class="empty-state">
-        Ты пока не проходил тест.<br>
-        <a href="test.html">Пройти тест на подбор университета →</a>
+        ${t("profile_empty_tests", "Ты пока не проходил тест.")}<br>
+        <a href="test.html">${t("profile_empty_tests_hint", "Пройти тест на подбор университета →")}</a>
       </div>
     `;
   }
 
-  return tests.map((t, idx) => {
+  return tests.map((tData, idx) => {
     const isFirst = idx === 0;
     const openClass = isFirst ? "open" : "";
     const currentClass = isFirst ? "test-current" : "";
-    const cats = t.categories || {};
+    const cats = tData.categories || {};
     const catDefs = [
-      { key: "academic",  icon: "🎓", title: "По учебным показателям" },
-      { key: "lifestyle", icon: "🌍", title: "По желанию жить" },
-      { key: "safe",      icon: "🎯", title: "Куда шанс высокий" },
-      { key: "reach",     icon: "💪", title: "Куда мог бы, но не дотягиваешь" }
+      { key: "academic",  icon: "🎓", title: t("test_cat_academic", "По учебным показателям") },
+      { key: "lifestyle", icon: "🌍", title: t("test_cat_lifestyle", "По желанию жить") },
+      { key: "safe",      icon: "🎯", title: t("test_cat_safe", "Куда шанс высокий") },
+      { key: "reach",     icon: "💪", title: t("test_cat_reach", "Куда мог бы, но не дотягиваешь") }
     ];
     let totalUnis = 0;
     catDefs.forEach(c => { totalUnis += (cats[c.key] || []).length; });
@@ -264,14 +285,14 @@ function renderTests(tests) {
       const list = cats[c.key] || [];
       let listHtml;
       if (list.length === 0) {
-        listHtml = `<div class="empty-mini">Ничего не подошло в этой категории</div>`;
+        listHtml = `<div class="empty-mini">${t("test_empty_category", "Ничего не подошло в этой категории")}</div>`;
       } else {
         listHtml = `<div class="uni-list-mini">` + list.map(u => `
           <div class="uni-mini" data-uni-name="${escapeAttr(u.name || "")}">
             <div class="uni-mini-name">${escapeHtml(u.name || "—")}</div>
             <div class="uni-mini-country">${escapeHtml(u.country || "")}</div>
             <div class="uni-mini-reason">${escapeHtml(u.reason || "")}</div>
-            <div class="uni-mini-arrow">Подробнее →</div>
+            <div class="uni-mini-arrow">${t("test_more", "Подробнее →")}</div>
           </div>
         `).join("") + `</div>`;
       }
@@ -287,14 +308,14 @@ function renderTests(tests) {
       <div class="test-block ${openClass} ${currentClass}" data-test-idx="${idx}">
         <div class="test-header" data-toggle-test>
           <div class="test-header-left">
-            <div class="test-date">${isFirst ? "Последний тест" : "Тест"} · ${formatDate(t.date)}</div>
-            <div class="test-summary-line">Найдено ${totalUnis} университетов</div>
+            <div class="test-date">${isFirst ? t("profile_last_test", "Последний тест") : t("profile_test", "Тест")} · ${formatDate(tData.date)}</div>
+            <div class="test-summary-line">${totalUnis} ${t("profile_unis_found", "университетов найдено")}</div>
           </div>
           <div class="test-toggle">▾</div>
         </div>
         <div class="test-body">
           ${bodyHtml}
-          ${t.summary ? `<div class="empty-mini" style="margin-top:20px; font-style:normal;">${escapeHtml(t.summary)}</div>` : ""}
+          ${tData.summary ? `<div class="empty-mini" style="margin-top:20px; font-style:normal;">${escapeHtml(tData.summary)}</div>` : ""}
         </div>
       </div>
     `;
@@ -313,40 +334,30 @@ async function renderProfile() {
 
   let saved = [];
   let tests = [];
-  try {
-    saved = await window.EduAuth.getSaved();
-  } catch(e) {
-    console.warn("getSaved failed:", e);
-    saved = [];
-  }
-  try {
-    tests = await window.EduAuth.getTests();
-  } catch(e) {
-    console.warn("getTests failed:", e);
-    tests = [];
-  }
+  try { saved = await window.EduAuth.getSaved(); } catch(e) { saved = []; }
+  try { tests = await window.EduAuth.getTests(); } catch(e) { tests = []; }
 
   document.getElementById("mainContent").innerHTML = `
     <div class="profile-head">
       <div class="profile-greeting">
-        <h1>Привет, <em>${escapeHtml((user.name || "друг").split(" ")[0])}</em></h1>
+        <h1>${t("profile_greeting", "Привет")}, <em>${escapeHtml((user.name || "друг").split(" ")[0])}</em></h1>
         <div class="profile-email">${escapeHtml(user.email || "")}</div>
       </div>
       <button class="btn-logout" data-auth-logout>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <span>Выйти</span>
+        <span>${t("profile_logout", "Выйти")}</span>
       </button>
     </div>
 
     <section class="section">
-      <h2 class="section-title">⭐ Понравившиеся университеты</h2>
-      <p class="section-sub">Те, которые ты отметил звёздочкой в каталоге</p>
+      <h2 class="section-title">${t("profile_saved_title", "⭐ Понравившиеся университеты")}</h2>
+      <p class="section-sub">${t("profile_saved_sub", "Те, которые ты отметил звёздочкой в каталоге")}</p>
       ${renderSavedUniversities(saved)}
     </section>
 
     <section class="section">
-      <h2 class="section-title">🎯 Результаты теста</h2>
-      <p class="section-sub">Университеты, которые ИИ подобрал по твоим ответам</p>
+      <h2 class="section-title">${t("profile_tests_title", "🎯 Результаты теста")}</h2>
+      <p class="section-sub">${t("profile_tests_sub", "Университеты, которые ИИ подобрал по твоим ответам")}</p>
       ${renderTests(tests)}
     </section>
   `;
@@ -357,7 +368,6 @@ async function renderProfile() {
 // ============================================================
 
 document.addEventListener("click", async (e) => {
-  // Удалить сохранённый вуз
   const removeBtn = e.target.closest("[data-remove-saved]");
   if (removeBtn) {
     e.stopPropagation();
@@ -366,23 +376,19 @@ document.addEventListener("click", async (e) => {
     const uni = saved.find(u => u.name === name);
     if (uni) {
       await window.EduAuth.toggleSave({ name: uni.name, country: uni.country, city: uni.city });
-      window.EduAuth.showToast("Университет убран из избранного", "info");
+      window.EduAuth.showToast(t("catalog_saved_remove", "Университет убран из избранного"), "info");
       renderProfile();
     }
     return;
   }
 
-  // Открыть вуз по клику на карточку в сохранённых
   const savedCard = e.target.closest(".saved-card");
   if (savedCard) {
     const name = savedCard.dataset.uniName;
-    if (name) {
-      window.location.href = "universities.html?uni=" + encodeURIComponent(name);
-    }
+    if (name) window.location.href = "universities.html?uni=" + encodeURIComponent(name);
     return;
   }
 
-  // Развернуть/свернуть тест
   const testHeader = e.target.closest("[data-toggle-test]");
   if (testHeader) {
     const block = testHeader.closest(".test-block");
@@ -390,7 +396,6 @@ document.addEventListener("click", async (e) => {
     return;
   }
 
-  // Открыть вуз из результатов теста
   const uniMini = e.target.closest(".uni-mini");
   if (uniMini && uniMini.dataset.uniName) {
     window.location.href = "universities.html?uni=" + encodeURIComponent(uniMini.dataset.uniName);
@@ -399,8 +404,12 @@ document.addEventListener("click", async (e) => {
 });
 
 // ============================================================
-// СТАРТ
+// ПЕРЕРИСОВКА ПРИ СМЕНЕ ЯЗЫКА
 // ============================================================
+
+window.addEventListener("edupath-lang-change", () => {
+  renderProfile();
+});
 
 renderProfile();
 </script>
