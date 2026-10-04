@@ -104,6 +104,8 @@
 
   function logout() {
     clearToken();
+    _savedCache = null;
+    _testsCache = null;
   }
 
   // ============================================================
@@ -113,7 +115,10 @@
   let _savedCache = null;
 
   async function getSaved() {
-    if (!isLoggedIn()) return [];
+    if (!isLoggedIn()) {
+      _savedCache = [];
+      return [];
+    }
     try {
       const res = await apiFetch("/api/saved", { method: "GET" });
       if (!res.ok) return _savedCache || [];
@@ -137,15 +142,19 @@
   async function toggleSave(uni) {
     if (!isLoggedIn()) return { ok: false, error: "Не вошёл" };
 
-    const currentlySaved = isSaved(uni.name);
-
     try {
+      // ВСЕГДА подгружаем свежий список перед решением
+      await getSaved();
+      const currentlySaved = isSaved(uni.name);
+
       if (currentlySaved) {
+        // Удаляем
         const res = await apiFetch("/api/saved/" + encodeURIComponent(uni.name), { method: "DELETE" });
         if (!res.ok) return { ok: false, error: "Не удалось удалить" };
         if (_savedCache) _savedCache = _savedCache.filter(u => u.name !== uni.name);
         return { ok: true, removed: true };
       } else {
+        // Сохраняем
         const res = await apiFetch("/api/saved", {
           method: "POST",
           body: JSON.stringify({
@@ -175,7 +184,10 @@
   let _testsCache = null;
 
   async function getTests() {
-    if (!isLoggedIn()) return [];
+    if (!isLoggedIn()) {
+      _testsCache = [];
+      return [];
+    }
     try {
       const res = await apiFetch("/api/tests", { method: "GET" });
       if (!res.ok) return _testsCache || [];
@@ -500,7 +512,14 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", updateHeaderUI);
+  document.addEventListener("DOMContentLoaded", () => {
+    updateHeaderUI();
+    // Преload сохранённых и тестов — чтобы isSaved сразу работал
+    if (isLoggedIn()) {
+      getSaved().catch(e => console.warn("preload saved failed:", e));
+      getTests().catch(e => console.warn("preload tests failed:", e));
+    }
+  });
 
   // ЭКСПОРТ
   window.EduAuth = {
