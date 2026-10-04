@@ -22,7 +22,7 @@
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1400px; margin:0 auto; padding:0 32px; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1400px; margin:0 auto; padding:0 32px; position:relative; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces',serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; }
   .nav-links{ display:flex; align-items:center; gap:8px; }
@@ -34,6 +34,13 @@
   .btn-login:hover{ background:var(--bark); }
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .3s var(--ease); }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+
+  .lang-dropdown{ position:relative; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
   .search-input{ display:block; position:absolute; top:48px; right:0; width:340px; padding:14px 18px; background:var(--paper); border:1px solid var(--line); border-radius:12px; font-size:15px; font-family:inherit; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); z-index:200; opacity:0; visibility:hidden; transform:translateY(-8px); transition:opacity .25s var(--ease), transform .25s var(--ease), visibility .25s; }
   .search-input.open{ opacity:1; visibility:visible; transform:translateY(0); }
@@ -100,7 +107,6 @@
   .star-btn{ flex-shrink:0; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; color:var(--text-muted); transition:color .2s var(--ease), background .2s var(--ease); position:relative; }
   .star-btn:hover{ background:rgba(43,27,16,0.06); color:var(--clay); }
   .uni-item.selected .star-btn{ color:var(--sand); }
-  .uni-item.selected .star-btn:hover{ background:rgba(247,239,225,0.15); color:var(--paper); }
   .star-btn svg{ width:20px; height:20px; transition:transform .5s var(--ease), fill .3s var(--ease), stroke .3s var(--ease); }
   .star-btn.active svg{ fill:url(#starGradient); stroke:url(#starGradient); animation:starPop .6s var(--ease); }
   @keyframes starPop{
@@ -164,9 +170,11 @@
     .uni-title{ font-size:30px; }
     .info-grid{ grid-template-columns:1fr; }
   }
+  @media (max-width:900px){
+    .nav-links{ display:none !important; }
+  }
   @media (max-width:600px){
     nav.wrap{ height:72px; padding:0 18px; }
-    .nav-links{ display:none; }
     .logo{ font-size:21px; gap:9px; }
     .logo svg{ width:30px; height:30px; }
     .search-input, .search-results{ width:calc(100vw - 36px); right:-10px; }
@@ -195,16 +203,27 @@
       EduPath
     </a>
     <div class="nav-links">
-      <a href="index.html">Главная</a>
-      <a href="universities.html" class="active">Университеты</a>
-      <a href="profile.html">Профиль</a>
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="universities.html" class="active" data-i18n="nav_universities">Университеты</a>
+      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
     </div>
     <div class="nav-right">
-      <a href="#" class="btn-login" data-auth-open="register">Войти</a>
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+        </div>
+      </div>
+      <a href="#" class="btn-login" data-auth-open="register" data-i18n="nav_login">Войти</a>
       <button type="button" class="icon-btn" id="searchBtn" aria-label="Поиск">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       </button>
-      <input type="text" class="search-input" id="searchInput" placeholder="Найти университет...">
+      <input type="text" class="search-input" id="searchInput" data-i18n-placeholder="catalog_search_placeholder" placeholder="Найти университет...">
       <div class="search-results" id="searchResults"></div>
     </div>
   </nav>
@@ -212,74 +231,74 @@
 
 <div class="layout">
   <aside class="sidebar">
-    <h2>Университеты</h2>
-    <p class="subtitle">Выбери страну и университет</p>
+    <h2 data-i18n="catalog_title">Университеты</h2>
+    <p class="subtitle" data-i18n="catalog_sub">Выбери страну и университет</p>
     <div class="filters-wrap">
-  <button type="button" class="filters-btn" id="filtersToggle">
-    <span class="filters-btn-left">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
-      <span>Фильтры</span>
-      <span class="filters-btn-badge" id="filtersBadge" style="display:none;">0</span>
-    </span>
-    <span class="filters-btn-arrow">▾</span>
-  </button>
+      <button type="button" class="filters-btn" id="filtersToggle">
+        <span class="filters-btn-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+          <span data-i18n="catalog_filters">Фильтры</span>
+          <span class="filters-btn-badge" id="filtersBadge" style="display:none;">0</span>
+        </span>
+        <span class="filters-btn-arrow">▾</span>
+      </button>
 
-  <div class="filters-panel" id="filtersPanel">
-    <div class="filter-group">
-      <label>Бюджет на обучение (USD/год)</label>
-      <div class="filter-row">
-        <input type="number" id="filterBudgetMin" placeholder="от" min="0">
-        <span>—</span>
-        <input type="number" id="filterBudgetMax" placeholder="до" min="0">
+      <div class="filters-panel" id="filtersPanel">
+        <div class="filter-group">
+          <label data-i18n="catalog_budget_label">Бюджет на обучение (USD/год)</label>
+          <div class="filter-row">
+            <input type="number" id="filterBudgetMin" data-i18n-placeholder="catalog_budget_from" placeholder="от" min="0">
+            <span>—</span>
+            <input type="number" id="filterBudgetMax" data-i18n-placeholder="catalog_budget_to" placeholder="до" min="0">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label data-i18n="catalog_country_label">Страна</label>
+          <select class="filter-select" id="filterCountry">
+            <option value="" data-i18n="catalog_country_all">Все страны</option>
+            <option value="Австралия">Австралия</option>
+            <option value="Австрия">Австрия</option>
+            <option value="Бельгия">Бельгия</option>
+            <option value="Венгрия">Венгрия</option>
+            <option value="Великобритания">Великобритания</option>
+            <option value="Германия">Германия</option>
+            <option value="Гонконг">Гонконг</option>
+            <option value="Дания">Дания</option>
+            <option value="Испания">Испания</option>
+            <option value="Италия">Италия</option>
+            <option value="Канада">Канада</option>
+            <option value="Катар">Катар</option>
+            <option value="Китай">Китай</option>
+            <option value="Латвия">Латвия</option>
+            <option value="Нидерланды">Нидерланды</option>
+            <option value="ОАЭ">ОАЭ</option>
+            <option value="Польша">Польша</option>
+            <option value="Сингапур">Сингапур</option>
+            <option value="США">США</option>
+            <option value="Турция">Турция</option>
+            <option value="Финляндия">Финляндия</option>
+            <option value="Чехия">Чехия</option>
+            <option value="Швейцария">Швейцария</option>
+            <option value="Швеция">Швеция</option>
+            <option value="Южная Корея">Южная Корея</option>
+            <option value="Япония">Япония</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label data-i18n="catalog_grant_label">Финансовая помощь</label>
+          <label class="filter-check">
+            <input type="checkbox" id="filterFullGrant">
+            <span data-i18n="catalog_grant_only">Только с полным грантом</span>
+          </label>
+        </div>
+
+        <div class="filter-actions">
+          <button type="button" class="filter-btn-reset" id="filterReset" data-i18n="catalog_reset">Сбросить</button>
+          <button type="button" class="filter-btn-apply" id="filterApply" data-i18n="catalog_apply">Применить</button>
+        </div>
       </div>
-    </div>
-
-    <div class="filter-group">
-      <label>Страна</label>
-      <select class="filter-select" id="filterCountry">
-        <option value="">Все страны</option>
-        <option value="Австралия">Австралия</option>
-        <option value="Австрия">Австрия</option>
-        <option value="Бельгия">Бельгия</option>
-        <option value="Венгрия">Венгрия</option>
-        <option value="Великобритания">Великобритания</option>
-        <option value="Германия">Германия</option>
-        <option value="Гонконг">Гонконг</option>
-        <option value="Дания">Дания</option>
-        <option value="Испания">Испания</option>
-        <option value="Италия">Италия</option>
-        <option value="Канада">Канада</option>
-        <option value="Катар">Катар</option>
-        <option value="Китай">Китай</option>
-        <option value="Латвия">Латвия</option>
-        <option value="Нидерланды">Нидерланды</option>
-        <option value="ОАЭ">ОАЭ</option>
-        <option value="Польша">Польша</option>
-        <option value="Сингапур">Сингапур</option>
-        <option value="США">США</option>
-        <option value="Турция">Турция</option>
-        <option value="Финляндия">Финляндия</option>
-        <option value="Чехия">Чехия</option>
-        <option value="Швейцария">Швейцария</option>
-        <option value="Швеция">Швеция</option>
-        <option value="Южная Корея">Южная Корея</option>
-        <option value="Япония">Япония</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label>Финансовая помощь</label>
-      <label class="filter-check">
-        <input type="checkbox" id="filterFullGrant">
-        <span>Только с полным грантом</span>
-      </label>
-    </div>
-
-    <div class="filter-actions">
-      <button type="button" class="filter-btn-reset" id="filterReset">Сбросить</button>
-      <button type="button" class="filter-btn-apply" id="filterApply">Применить</button>
-    </div>
-  </div>
     </div>
     <div id="countriesList"></div>
   </aside>
@@ -290,8 +309,8 @@
         <path d="M12 4L3 8l9 4 9-4-9-4z"/>
         <path d="M6 10v6c0 1.5 2.7 3 6 3s6-1.5 6-3v-6"/>
       </svg>
-      <h2>Выбери университет</h2>
-      <p>Кликни на страну слева, потом на университет, чтобы увидеть подробную информацию.</p>
+      <h2 data-i18n="catalog_choose_uni">Выбери университет</h2>
+      <p data-i18n="catalog_choose_hint">Кликни на страну слева, потом на университет, чтобы увидеть подробную информацию.</p>
     </div>
     <div class="detail-content" id="detailContent"></div>
   </main>
@@ -299,7 +318,7 @@
 
 <script>
 // ============================================================
-// EduPath — каталог университетов + звёздочки
+// EduPath — каталог университетов
 // ============================================================
 
 const COUNTRY_FILES = [
@@ -342,6 +361,18 @@ const FLAGS = {
 let ALL_DATA = [];
 
 // ============================================================
+// ХЕЛПЕРЫ
+// ============================================================
+
+function escapeAttr(s){
+  return String(s == null ? "" : s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function t(key, fallback){
+  return (window.I18N && window.I18N.t(key)) || fallback || key;
+}
+
+// ============================================================
 // ЗАГРУЗКА
 // ============================================================
 
@@ -375,13 +406,9 @@ async function loadAll(){
     return String(a["Университет"]).localeCompare(String(b["Университет"]));
   });
 
-  // Подгружаем сохранённые вузы ПЕРЕД отрисовкой, чтобы звёздочки были правильные
+  // Подгружаем сохранённые вузы ПЕРЕД отрисовкой
   if (window.EduAuth && window.EduAuth.isLoggedIn()) {
-    try {
-      await window.EduAuth.getSaved();
-    } catch(e) {
-      console.warn("getSaved preload failed:", e);
-    }
+    try { await window.EduAuth.getSaved(); } catch(e) {}
   }
 
   renderSidebar();
@@ -404,6 +431,7 @@ function renderSidebar(){
   const container = document.getElementById("countriesList");
   container.innerHTML = "";
   const filtered = applyFilters(ALL_DATA);
+
   COUNTRY_FILES.forEach(c => {
     let items = filtered.filter(u => u._country_ru === c.name);
     if(items.length === 0) return;
@@ -439,7 +467,7 @@ function renderSidebar(){
             <span>📅 ${deadline}</span>
           </span>
         </div>
-        <button type="button" class="star-btn ${isSaved ? "active" : ""}" data-star="${escapeAttr(uni["Университет"])}" title="${isSaved ? "Убрать из избранного" : "Сохранить в избранное"}">
+        <button type="button" class="star-btn ${isSaved ? "active" : ""}" data-star="${escapeAttr(uni["Университет"])}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
@@ -475,7 +503,7 @@ document.addEventListener("click", async (e) => {
   if(!uni) return;
 
   if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-    window.EduAuth.showToast("Чтобы сохранять вузы, войдите в аккаунт", "info");
+    window.EduAuth.showToast(t("catalog_need_login", "Чтобы сохранять вузы, войдите в аккаунт"), "info");
     window.EduAuth.openModal("register");
     return;
   }
@@ -487,16 +515,16 @@ document.addEventListener("click", async (e) => {
   });
 
   if(!result || !result.ok){
-    window.EduAuth.showToast((result && result.error) || "Ошибка, попробуйте ещё раз", "error");
+    window.EduAuth.showToast((result && result.error) || "Ошибка", "error");
     return;
   }
 
   if(result.added){
     starBtn.classList.add("active");
-    window.EduAuth.showToast("Успешно сохранили университет", "success");
+    window.EduAuth.showToast(t("catalog_saved_ok", "Успешно сохранили университет"), "success");
   } else if(result.removed){
     starBtn.classList.remove("active");
-    window.EduAuth.showToast("Университет убран из избранного", "info");
+    window.EduAuth.showToast(t("catalog_saved_remove", "Университет убран из избранного"), "info");
   }
 });
 
@@ -543,7 +571,7 @@ function renderDetail(uni){
     return `<div class="info-card"><div class="info-label">${label}</div><div class="info-value${cls}">${val}</div></div>`;
   };
 
-  const title = g("Университет") || "Без названия";
+  const title = g("Университет") || "—";
   const country = g("Страна") || uni._country_ru;
   const city = g("Город");
   const grantBadge = isFullGrant(uni) ? `<div class="grant-badge">✨ Полный грант</div>` : "";
@@ -597,7 +625,7 @@ function renderDetail(uni){
 
     <div class="action-buttons">
       <button class="btn-main ${saved ? "secondary" : "primary"}" id="detailStarBtn">
-        ⭐ ${saved ? "В избранном" : "Сохранить в избранное"}
+        ⭐ ${saved ? t("catalog_saved_btn", "В избранном") : t("catalog_save_btn", "Сохранить в избранное")}
       </button>
       ${uni["Сайт Университета"] ? `<a href="${uni["Сайт Университета"]}" target="_blank" rel="noopener" class="btn-main primary">🌐 Официальный сайт</a>` : ""}
       ${uni["Ссылка на заполнение заявки"] && String(uni["Ссылка на заполнение заявки"]).startsWith("http") ? `<a href="${uni["Ссылка на заполнение заявки"]}" target="_blank" rel="noopener" class="btn-main secondary">📝 Подать заявку</a>` : ""}
@@ -609,7 +637,7 @@ function renderDetail(uni){
   if(detailBtn){
     detailBtn.addEventListener("click", async () => {
       if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-        window.EduAuth.showToast("Чтобы сохранять вузы, войдите в аккаунт", "info");
+        window.EduAuth.showToast(t("catalog_need_login", "Чтобы сохранять вузы, войдите в аккаунт"), "info");
         window.EduAuth.openModal("register");
         return;
       }
@@ -625,9 +653,9 @@ function renderDetail(uni){
       renderDetail(uni);
       renderSidebar();
       if(result.added){
-        window.EduAuth.showToast("Успешно сохранили университет", "success");
+        window.EduAuth.showToast(t("catalog_saved_ok", "Успешно сохранили университет"), "success");
       } else if(result.removed){
-        window.EduAuth.showToast("Университет убран из избранного", "info");
+        window.EduAuth.showToast(t("catalog_saved_remove", "Университет убран из избранного"), "info");
       }
     });
   }
@@ -655,9 +683,7 @@ function parsePrice(str){
     return parseInt(clean, 10);
   }).filter(n => !isNaN(n) && n > 0);
   if(numbers.length === 0) return null;
-  if(numbers.length >= 2){
-    return Math.round((numbers[0] + numbers[1]) / 2);
-  }
+  if(numbers.length >= 2) return Math.round((numbers[0] + numbers[1]) / 2);
   return numbers[0];
 }
 
@@ -696,8 +722,7 @@ function updateFiltersBadge(){
 }
 
 document.getElementById("filtersToggle").addEventListener("click", () => {
-  const panel = document.getElementById("filtersPanel");
-  panel.classList.toggle("open");
+  document.getElementById("filtersPanel").classList.toggle("open");
 });
 
 document.getElementById("filterApply").addEventListener("click", () => {
@@ -754,7 +779,7 @@ searchInput.addEventListener("input", () => {
     return name.includes(q) || city.includes(q) || country.includes(q);
   }).slice(0, 12);
   if(found.length === 0){
-    searchResults.innerHTML = `<div class="search-empty">Извините, мы пока работаем над добавлением этого университета</div>`;
+    searchResults.innerHTML = `<div class="search-empty">${t("catalog_search_empty", "Извините, мы пока работаем над добавлением этого университета")}</div>`;
   } else {
     searchResults.innerHTML = found.map(u => `
       <button class="search-result" data-name="${escapeAttr(u["Университет"])}">
@@ -794,14 +819,6 @@ searchInput.addEventListener("click", (e) => e.stopPropagation());
 searchResults.addEventListener("click", (e) => e.stopPropagation());
 
 // ============================================================
-// ХЕЛПЕРЫ
-// ============================================================
-
-function escapeAttr(s){
-  return String(s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
-
-// ============================================================
 // СТАРТ
 // ============================================================
 
@@ -823,6 +840,7 @@ loadAll().then(() => {
   }
 });
 </script>
+<script src="i18n.js"></script>
 <script src="auth.js"></script>
 </body>
 </html>
