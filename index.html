@@ -22,18 +22,19 @@
   button{ font-family:inherit; cursor:pointer; border:none; background:none; appearance:none; }
   .wrap{ max-width:1200px; margin:0 auto; padding:0 64px; }
 
+  /* NAV */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); letter-spacing:-0.01em; }
   .logo svg{ width:38px; height:38px; flex-shrink:0; }
   .nav-links{ display:flex; align-items:center; gap:8px; }
-  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .15s, color .15s; }
+  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .15s ease, color .15s ease; }
   .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
   .nav-links a.active{ background:var(--espresso); color:var(--paper); }
   .nav-right{ display:flex; align-items:center; gap:14px; }
-  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .15s; }
+  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .15s ease; }
   .btn-login:hover{ background:var(--bark); }
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); background:transparent; border-radius:50%; transition:background .15s, color .15s; }
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); background:transparent; border-radius:50%; transition:background .15s ease, color .15s ease; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
 
   .lang-dropdown{ position:relative; }
@@ -43,6 +44,7 @@
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
+  /* HERO */
   .hero{ position:relative; overflow:hidden; background:var(--cream); }
   .decor-icon{ position:absolute; pointer-events:none; stroke:var(--sand); fill:none; z-index:0; }
   .how .decor-icon{ stroke:rgba(247,239,225,0.5); }
@@ -52,7 +54,7 @@
   .hero-title{ font-size:52px; line-height:1.08; font-weight:600; color:var(--espresso); letter-spacing:-0.01em; max-width:600px; }
   .hero-title em{ font-style:italic; color:var(--clay); }
   .hero-sub{ margin-top:26px; font-size:17px; color:var(--text-muted); max-width:460px; line-height:1.65; }
-  .cta{ margin-top:38px; display:inline-flex; align-items:center; gap:12px; background:var(--espresso); color:var(--paper); padding:17px 30px; border-radius:10px; font-size:15px; font-weight:500; box-shadow:0 10px 24px -10px rgba(43,27,16,0.45); transition:transform .15s, background .15s; }
+  .cta{ margin-top:38px; display:inline-flex; align-items:center; gap:12px; background:var(--espresso); color:var(--paper); padding:17px 30px; border-radius:10px; font-size:15px; font-weight:500; box-shadow:0 10px 24px -10px rgba(43,27,16,0.45); transition:transform .15s ease, background .15s ease; }
   .cta:hover{ background:var(--bark); transform:translateY(-1px); }
   .cta svg{ width:16px; height:16px; }
   .hero-note{ margin-top:20px; font-size:13.5px; color:var(--text-muted); }
@@ -69,6 +71,7 @@
   .seam-top .seam-desc{ color:var(--text-muted); }
   .seam-bottom .seam-desc{ color:var(--sand); }
 
+  /* HOW */
   .how{ background:var(--espresso); color:var(--paper); padding:0 0 84px; position:relative; overflow:hidden; }
   .how-head{ display:flex; align-items:baseline; justify-content:space-between; margin-top:56px; margin-bottom:52px; flex-wrap:wrap; gap:16px; }
   .how-head h2{ font-size:32px; font-weight:600; letter-spacing:-0.01em; }
@@ -155,7 +158,7 @@
           <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
         </div>
       </div>
-      <a href="#" class="btn-login" data-auth-open="register">Войти</a>
+      <a href="#" class="btn-login" data-auth-open="register" data-i18n="nav_login">Войти</a>
     </div>
   </nav>
 </header>
