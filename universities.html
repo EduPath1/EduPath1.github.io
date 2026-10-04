@@ -48,92 +48,35 @@
   .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; max-height:calc(100vh - 84px); position:sticky; top:84px; }
   .sidebar h2{ font-size:24px; margin-bottom:6px; }
   .sidebar .subtitle{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
-  /* ФИЛЬТРЫ */
-.filters-wrap{ position:relative; margin-bottom:18px; }
-.filters-btn{
-  display:flex; align-items:center; justify-content:space-between;
-  width:100%; padding:12px 16px;
-  background:var(--cream); border:1px solid transparent;
-  border-radius:10px; font-size:14px; font-weight:500;
-  color:var(--espresso);
-  transition:background .25s var(--ease), border-color .25s var(--ease);
-}
-.filters-btn:hover{ background:var(--cream-deep); }
-.filters-btn.active{ border-color:var(--clay); background:var(--paper); }
-.filters-btn-left{ display:flex; align-items:center; gap:8px; }
-.filters-btn-badge{
-  display:inline-flex; align-items:center; justify-content:center;
-  min-width:20px; height:20px; padding:0 6px;
-  background:var(--clay); color:var(--paper);
-  border-radius:10px; font-size:11px; font-weight:600;
-}
-.filters-btn-arrow{ font-size:11px; color:var(--text-muted); transition:transform .3s var(--ease); }
-.filters-btn.active .filters-btn-arrow{ transform:rotate(180deg); }
 
-.filters-panel{
-  max-height:0; overflow:hidden; opacity:0;
-  background:var(--paper); border:1px solid var(--line);
-  border-radius:12px;
-  margin-top:8px;
-  transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease), margin-top .3s var(--ease);
-}
-.filters-panel.open{
-  max-height:600px; opacity:1;
-  padding:18px;
-}
+  .filters-wrap{ position:relative; margin-bottom:18px; }
+  .filters-btn{ display:flex; align-items:center; justify-content:space-between; width:100%; padding:12px 16px; background:var(--cream); border:1px solid transparent; border-radius:10px; font-size:14px; font-weight:500; color:var(--espresso); transition:background .25s var(--ease), border-color .25s var(--ease); }
+  .filters-btn:hover{ background:var(--cream-deep); }
+  .filters-btn.active{ border-color:var(--clay); background:var(--paper); }
+  .filters-btn-left{ display:flex; align-items:center; gap:8px; }
+  .filters-btn-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; background:var(--clay); color:var(--paper); border-radius:10px; font-size:11px; font-weight:600; }
+  .filters-btn-arrow{ font-size:11px; color:var(--text-muted); transition:transform .3s var(--ease); }
+  .filters-btn.active .filters-btn-arrow{ transform:rotate(180deg); }
 
-.filter-group{ margin-bottom:16px; }
-.filter-group:last-of-type{ margin-bottom:0; }
-.filter-group label{
-  display:block; font-size:12px; color:var(--text-muted);
-  text-transform:uppercase; letter-spacing:0.05em;
-  margin-bottom:8px; font-weight:600;
-}
-.filter-row{ display:flex; gap:8px; align-items:center; }
-.filter-row input{
-  flex:1; min-width:0; padding:10px 12px;
-  font-family:inherit; font-size:14px;
-  background:var(--cream); color:var(--text-main);
-  border:1.5px solid var(--line); border-radius:8px;
-  transition:border-color .2s var(--ease), background .2s var(--ease);
-}
-.filter-row input:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
-.filter-row span{ color:var(--text-muted); font-size:13px; }
-
-.filter-select{
-  width:100%; padding:10px 12px;
-  font-family:inherit; font-size:14px;
-  background:var(--cream); color:var(--text-main);
-  border:1.5px solid var(--line); border-radius:8px;
-  cursor:pointer;
-  transition:border-color .2s var(--ease), background .2s var(--ease);
-}
-.filter-select:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
-
-.filter-check{
-  display:flex; align-items:center; gap:10px;
-  padding:10px 12px; background:var(--cream);
-  border-radius:8px; font-size:14px; cursor:pointer;
-  transition:background .2s var(--ease);
-}
-.filter-check:hover{ background:var(--cream-deep); }
-.filter-check input{ accent-color:var(--clay); width:16px; height:16px; cursor:pointer; }
-
-.filter-actions{ display:flex; gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
-.filter-btn-apply{
-  flex:1; padding:11px 16px;
-  background:var(--espresso); color:var(--paper);
-  border-radius:8px; font-size:14px; font-weight:600;
-  transition:background .2s var(--ease);
-}
-.filter-btn-apply:hover{ background:var(--bark); }
-.filter-btn-reset{
-  padding:11px 16px;
-  background:var(--cream-deep); color:var(--espresso);
-  border-radius:8px; font-size:14px; font-weight:500;
-  transition:background .2s var(--ease);
-}
-.filter-btn-reset:hover{ background:var(--sand); }
+  .filters-panel{ max-height:0; overflow:hidden; opacity:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; margin-top:8px; transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease), margin-top .3s var(--ease); }
+  .filters-panel.open{ max-height:600px; opacity:1; padding:18px; }
+  .filter-group{ margin-bottom:16px; }
+  .filter-group:last-of-type{ margin-bottom:0; }
+  .filter-group label{ display:block; font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; font-weight:600; }
+  .filter-row{ display:flex; gap:8px; align-items:center; }
+  .filter-row input{ flex:1; min-width:0; padding:10px 12px; font-family:inherit; font-size:14px; background:var(--cream); color:var(--text-main); border:1.5px solid var(--line); border-radius:8px; }
+  .filter-row input:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
+  .filter-row span{ color:var(--text-muted); font-size:13px; }
+  .filter-select{ width:100%; padding:10px 12px; font-family:inherit; font-size:14px; background:var(--cream); color:var(--text-main); border:1.5px solid var(--line); border-radius:8px; cursor:pointer; }
+  .filter-select:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
+  .filter-check{ display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--cream); border-radius:8px; font-size:14px; cursor:pointer; transition:background .2s var(--ease); }
+  .filter-check:hover{ background:var(--cream-deep); }
+  .filter-check input{ accent-color:var(--clay); width:16px; height:16px; cursor:pointer; }
+  .filter-actions{ display:flex; gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
+  .filter-btn-apply{ flex:1; padding:11px 16px; background:var(--espresso); color:var(--paper); border-radius:8px; font-size:14px; font-weight:600; transition:background .2s var(--ease); }
+  .filter-btn-apply:hover{ background:var(--bark); }
+  .filter-btn-reset{ padding:11px 16px; background:var(--cream-deep); color:var(--espresso); border-radius:8px; font-size:14px; font-weight:500; transition:background .2s var(--ease); }
+  .filter-btn-reset:hover{ background:var(--sand); }
 
   .country{ border-bottom:1px solid var(--line); overflow:hidden; }
   .country:last-child{ border-bottom:none; }
@@ -145,17 +88,7 @@
   .country-list{ display:block; max-height:0; overflow:hidden; opacity:0; transition:max-height .6s var(--ease), opacity .4s var(--ease), padding .4s var(--ease); }
   .country.open .country-list{ max-height:6000px; opacity:1; padding:0 0 12px 0; }
 
-  .uni-item{
-    display:flex; align-items:center; gap:10px;
-    width:100%; text-align:left;
-    padding:12px 14px; margin-bottom:6px;
-    border-radius:10px; background:var(--cream);
-    border:1px solid transparent;
-    cursor:pointer;
-    opacity:0; transform:translateY(6px);
-    animation:fadeInUp .45s var(--ease) forwards;
-    transition:background .25s var(--ease), transform .25s var(--ease), border-color .25s var(--ease);
-  }
+  .uni-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:12px 14px; margin-bottom:6px; border-radius:10px; background:var(--cream); border:1px solid transparent; cursor:pointer; opacity:0; transform:translateY(6px); animation:fadeInUp .45s var(--ease) forwards; transition:background .25s var(--ease), transform .25s var(--ease), border-color .25s var(--ease); }
   .country.open .uni-item{ animation-play-state:running; }
   .uni-item:hover{ background:var(--cream-deep); transform:translateY(-2px); }
   .uni-item.selected{ background:var(--espresso); color:var(--paper); border-color:var(--espresso); }
@@ -164,25 +97,12 @@
   .uni-name{ font-weight:600; font-size:14px; margin-bottom:4px; display:block; }
   .uni-meta{ font-size:12px; color:var(--text-muted); display:flex; gap:10px; flex-wrap:wrap; transition:color .25s var(--ease); }
 
-  /* ЗВЁЗДОЧКА */
-  .star-btn{
-    flex-shrink:0;
-    width:32px; height:32px;
-    display:flex; align-items:center; justify-content:center;
-    border-radius:50%;
-    color:var(--text-muted);
-    transition:color .2s var(--ease), background .2s var(--ease);
-    position:relative;
-  }
+  .star-btn{ flex-shrink:0; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; color:var(--text-muted); transition:color .2s var(--ease), background .2s var(--ease); position:relative; }
   .star-btn:hover{ background:rgba(43,27,16,0.06); color:var(--clay); }
   .uni-item.selected .star-btn{ color:var(--sand); }
   .uni-item.selected .star-btn:hover{ background:rgba(247,239,225,0.15); color:var(--paper); }
   .star-btn svg{ width:20px; height:20px; transition:transform .5s var(--ease), fill .3s var(--ease), stroke .3s var(--ease); }
-  .star-btn.active svg{
-    fill:url(#starGradient);
-    stroke:url(#starGradient);
-    animation:starPop .6s var(--ease);
-  }
+  .star-btn.active svg{ fill:url(#starGradient); stroke:url(#starGradient); animation:starPop .6s var(--ease); }
   @keyframes starPop{
     0% { transform:scale(0.6) rotate(0deg); }
     40% { transform:scale(1.4) rotate(180deg); }
@@ -255,7 +175,6 @@
 </head>
 <body>
 
-<!-- Градиент для звёздочки -->
 <svg style="position:absolute; width:0; height:0;" aria-hidden="true">
   <defs>
     <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -456,6 +375,15 @@ async function loadAll(){
     return String(a["Университет"]).localeCompare(String(b["Университет"]));
   });
 
+  // Подгружаем сохранённые вузы ПЕРЕД отрисовкой, чтобы звёздочки были правильные
+  if (window.EduAuth && window.EduAuth.isLoggedIn()) {
+    try {
+      await window.EduAuth.getSaved();
+    } catch(e) {
+      console.warn("getSaved preload failed:", e);
+    }
+  }
+
   renderSidebar();
 }
 
@@ -504,413 +432,3 @@ function renderSidebar(){
 
       wrapper.innerHTML = `
         <div class="uni-item-main">
-          <span class="uni-name">${uni["Университет"]}</span>
-          <span class="uni-meta">
-            <span>📍 ${city}</span>
-            <span>🎯 ${rate}</span>
-            <span>📅 ${deadline}</span>
-          </span>
-        </div>
-        <button type="button" class="star-btn ${isSaved ? "active" : ""}" data-star="${escapeAttr(uni["Университет"])}" title="${isSaved ? "Убрать из избранного" : "Сохранить в избранное"}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </button>
-      `;
-
-      // Клик по строке (не по звезде) — открытие деталей
-      wrapper.addEventListener("click", (e) => {
-        if(e.target.closest(".star-btn")) return;
-        selectUni(uni, wrapper);
-      });
-
-      list.appendChild(wrapper);
-    });
-
-    div.appendChild(header);
-    div.appendChild(list);
-    container.appendChild(div);
-  });
-}
-
-// ============================================================
-// КЛИК ПО ЗВЁЗДОЧКЕ
-// ============================================================
-
-document.addEventListener("click", (e) => {
-  const starBtn = e.target.closest(".star-btn");
-  if(!starBtn) return;
-
-  e.stopPropagation();
-
-  const name = starBtn.dataset.star;
-  const uni = ALL_DATA.find(u => u["Университет"] === name);
-  if(!uni) return;
-
-  // Если не вошёл — показать сообщение
-  if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-    window.EduAuth.showToast("Чтобы сохранять вузы, войдите в аккаунт", "info");
-    window.EduAuth.openModal("register");
-    return;
-  }
-
-  const result = window.EduAuth.toggleSave({
-    name: uni["Университет"],
-    country: uni["_country_ru"],
-    city: uni["Город"]
-  });
-
-  if(result.added){
-    starBtn.classList.add("active");
-    window.EduAuth.showToast("Успешно сохранили университет", "success");
-  } else {
-    starBtn.classList.remove("active");
-    window.EduAuth.showToast("Университет убран из избранного", "info");
-  }
-});
-
-// ============================================================
-// ВЫБОР УНИВЕРСИТЕТА
-// ============================================================
-
-function selectUni(uni, wrapper){
-  document.querySelectorAll(".uni-item.selected").forEach(el => el.classList.remove("selected"));
-  if(wrapper) wrapper.classList.add("selected");
-
-  const content = document.getElementById("detailContent");
-  const empty = document.getElementById("detailEmpty");
-
-  if(content.classList.contains("active")){
-    content.style.transition = "opacity .2s ease";
-    content.style.opacity = "0";
-    setTimeout(() => {
-      content.classList.remove("active");
-      renderDetail(uni);
-    }, 180);
-  } else {
-    empty.style.opacity = "0";
-    setTimeout(() => {
-      empty.style.display = "none";
-      renderDetail(uni);
-    }, 200);
-  }
-}
-
-function renderDetail(uni){
-  const content = document.getElementById("detailContent");
-  content.classList.add("active");
-
-  const g = (k) => {
-    const v = uni[k];
-    if(v === undefined || v === null || String(v).trim() === "" || String(v).trim().toLowerCase() === "n/a") return null;
-    return v;
-  };
-
-  const row = (label, value) => {
-    const val = value ? String(value) : "не указано";
-    const cls = value ? "" : " empty";
-    return `<div class="info-card"><div class="info-label">${label}</div><div class="info-value${cls}">${val}</div></div>`;
-  };
-
-  const title = g("Университет") || "Без названия";
-  const country = g("Страна") || uni._country_ru;
-  const city = g("Город");
-  const grantBadge = isFullGrant(uni) ? `<div class="grant-badge">✨ Полный грант</div>` : "";
-
-  const saved = window.EduAuth ? window.EduAuth.isSaved(title) : false;
-
-  content.innerHTML = `
-    <h1 class="uni-title">${title}</h1>
-    <div class="uni-location">📍 ${country}${city ? " · " + city : ""}</div>
-    ${grantBadge}
-
-    <h3 class="section-title">Финансы</h3>
-    <div class="info-grid">
-      ${row("Стоимость обучения", g("Стоимость обучения (USD/год)"))}
-      ${row("Процент поступления", g("Процент Поступления"))}
-      ${row("Финансовая помощь", g("Максимальная Финансовая помощь (USD)"))}
-      ${row("Полный грант", isFullGrant(uni) ? "ДА" : "нет")}
-    </div>
-
-    <h3 class="section-title">Сроки</h3>
-    <div class="info-grid">
-      ${row("Дедлайн ранней подачи", g("Дедлайн Ранней Подачи"))}
-      ${row("Дедлайн основной подачи", g("Дедлайн Основной Подачи"))}
-    </div>
-
-    <h3 class="section-title">Требования</h3>
-    <div class="info-grid">
-      ${row("TOEFL / IELTS", g("TOEFL/IELTS"))}
-      ${row("SAT", g("SAT"))}
-      ${row("Эссе", g("Эссе"))}
-      ${row("Рекомендательные письма", g("Рекомендательные Письма"))}
-      ${row("Стоимость заявки", g("Стоимость Заявки"))}
-      ${row("Ссылка на подачу", g("Ссылка на заполнение заявки"))}
-    </div>
-
-    <h3 class="section-title">Рейтинги</h3>
-    <div class="info-grid">
-      ${row("Рейтинг по стране", g("Рейтинг по Стране"))}
-      ${row("Рейтинг в мире", g("Рейтинг в Мире"))}
-    </div>
-
-    <h3 class="section-title">Профессии</h3>
-    <div class="info-grid">
-      ${row("Направления", g("Профессии"))}
-    </div>
-
-    <h3 class="section-title">Дополнительно</h3>
-    <div class="info-grid">
-      ${row("Комментарии", g("Дополнительные Комментарии"))}
-    </div>
-
-    <div class="action-buttons">
-      <button class="btn-main ${saved ? "secondary" : "primary"}" id="detailStarBtn" data-star="${escapeAttr(title)}">
-        ⭐ ${saved ? "В избранном" : "Сохранить в избранное"}
-      </button>
-      ${uni["Сайт Университета"] ? `<a href="${uni["Сайт Университета"]}" target="_blank" rel="noopener" class="btn-main primary">🌐 Официальный сайт</a>` : ""}
-      ${uni["Ссылка на заполнение заявки"] && String(uni["Ссылка на заполнение заявки"]).startsWith("http") ? `<a href="${uni["Ссылка на заполнение заявки"]}" target="_blank" rel="noopener" class="btn-main secondary">📝 Подать заявку</a>` : ""}
-      ${uni["Сайт Финансовой Помощи"] && String(uni["Сайт Финансовой Помощи"]).startsWith("http") ? `<a href="${uni["Сайт Финансовой Помощи"]}" target="_blank" rel="noopener" class="btn-main ghost">💰 Финансовая помощь</a>` : ""}
-    </div>
-  `;
-
-  // Обработка клика по большой кнопке "Сохранить" в деталях
-  const detailBtn = document.getElementById("detailStarBtn");
-  if(detailBtn){
-    detailBtn.addEventListener("click", () => {
-      if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-        window.EduAuth.showToast("Чтобы сохранять вузы, войдите в аккаунт", "info");
-        window.EduAuth.openModal("register");
-        return;
-      }
-      window.EduAuth.toggleSave({
-        name: title,
-        country: uni._country_ru,
-        city: city
-      });
-      renderDetail(uni);
-      renderSidebar();
-      window.EduAuth.showToast("Успешно сохранили университет", "success");
-    });
-  }
-}
-
-// ============================================================
-// ФИЛЬТР
-// ============================================================
-
-// ============================================================
-// ФИЛЬТРЫ
-// ============================================================
-
-const filters = {
-  budgetMin: null,
-  budgetMax: null,
-  country: "",
-  fullGrant: false
-};
-
-// Парсинг цены из строки: "$53 770" → 53770, "бесплатное" → 0
-function parsePrice(str){
-  if(!str) return null;
-  const s = String(str).trim().toLowerCase();
-
-  if(s.includes("бесплат") || s.includes("free")) return 0;
-
-  // Ищем все числа (с пробелами или без)
-  const matches = s.match(/\d[\d\s,\.]*/g);
-  if(!matches || matches.length === 0) return null;
-
-  const numbers = matches.map(m => {
-    const clean = m.replace(/[\s,\.]/g, "");
-    return parseInt(clean, 10);
-  }).filter(n => !isNaN(n) && n > 0);
-
-  if(numbers.length === 0) return null;
-
-  // Если диапазон — берём среднее
-  if(numbers.length >= 2){
-    return Math.round((numbers[0] + numbers[1]) / 2);
-  }
-  return numbers[0];
-}
-
-// Применить фильтры к списку университетов
-function applyFilters(items){
-  return items.filter(uni => {
-    // Страна
-    if(filters.country && uni._country_ru !== filters.country) return false;
-
-    // Полный грант
-    if(filters.fullGrant && !isFullGrant(uni)) return false;
-
-    // Бюджет
-    if(filters.budgetMin !== null || filters.budgetMax !== null){
-      const price = parsePrice(uni["Стоимость обучения (USD/год)"]);
-      if(price === null) return false; // не можем проверить — исключаем
-      if(filters.budgetMin !== null && price < filters.budgetMin) return false;
-      if(filters.budgetMax !== null && price > filters.budgetMax) return false;
-    }
-
-    return true;
-  });
-}
-
-// Обновить счётчик активных фильтров
-function updateFiltersBadge(){
-  let count = 0;
-  if(filters.budgetMin !== null) count++;
-  if(filters.budgetMax !== null) count++;
-  if(filters.country) count++;
-  if(filters.fullGrant) count++;
-
-  const badge = document.getElementById("filtersBadge");
-  const btn = document.getElementById("filtersToggle");
-
-  if(count > 0){
-    badge.style.display = "inline-flex";
-    badge.textContent = count;
-    btn.classList.add("active");
-  } else {
-    badge.style.display = "none";
-    btn.classList.remove("active");
-  }
-}
-
-// Открыть/закрыть панель
-document.getElementById("filtersToggle").addEventListener("click", () => {
-  const panel = document.getElementById("filtersPanel");
-  panel.classList.toggle("open");
-});
-
-// Применить
-document.getElementById("filterApply").addEventListener("click", () => {
-  const minVal = document.getElementById("filterBudgetMin").value;
-  const maxVal = document.getElementById("filterBudgetMax").value;
-
-  filters.budgetMin = minVal !== "" ? parseInt(minVal, 10) : null;
-  filters.budgetMax = maxVal !== "" ? parseInt(maxVal, 10) : null;
-  filters.country = document.getElementById("filterCountry").value;
-  filters.fullGrant = document.getElementById("filterFullGrant").checked;
-
-  updateFiltersBadge();
-  renderSidebar();
-  document.getElementById("filtersPanel").classList.remove("open");
-});
-
-// Сбросить
-document.getElementById("filterReset").addEventListener("click", () => {
-  document.getElementById("filterBudgetMin").value = "";
-  document.getElementById("filterBudgetMax").value = "";
-  document.getElementById("filterCountry").value = "";
-  document.getElementById("filterFullGrant").checked = false;
-
-  filters.budgetMin = null;
-  filters.budgetMax = null;
-  filters.country = "";
-  filters.fullGrant = false;
-
-  updateFiltersBadge();
-  renderSidebar();
-});
-
-// ============================================================
-// ПОИСК
-// ============================================================
-
-const searchBtn = document.getElementById("searchBtn");
-const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
-
-searchBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  searchInput.classList.toggle("open");
-  if(searchInput.classList.contains("open")) searchInput.focus();
-  else searchResults.classList.remove("open");
-});
-
-searchInput.addEventListener("input", () => {
-  const q = searchInput.value.trim().toLowerCase();
-  if(q.length < 2){ searchResults.classList.remove("open"); return; }
-  const found = ALL_DATA.filter(u => {
-    const name = String(u["Университет"] || "").toLowerCase();
-    const city = String(u["Город"] || "").toLowerCase();
-    const country = String(u._country_ru || "").toLowerCase();
-    return name.includes(q) || city.includes(q) || country.includes(q);
-  }).slice(0, 12);
-  if(found.length === 0){
-    searchResults.innerHTML = `<div class="search-empty">Извините, мы пока работаем над добавлением этого университета</div>`;
-  } else {
-    searchResults.innerHTML = found.map(u => `
-      <button class="search-result" data-name="${escapeAttr(u["Университет"])}">
-        ${u["Университет"]}
-        <small>${u._flag} ${u._country_ru} · ${u["Город"] || ""}</small>
-      </button>
-    `).join("");
-  }
-  searchResults.classList.add("open");
-});
-
-searchResults.addEventListener("click", (e) => {
-  const btn = e.target.closest(".search-result");
-  if(!btn) return;
-  const name = btn.dataset.name;
-  const uni = ALL_DATA.find(u => u["Университет"] === name);
-  if(uni){
-    const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === name);
-    if(itemEl){
-      itemEl.closest(".country").classList.add("open");
-      selectUni(uni, itemEl);
-      setTimeout(() => itemEl.scrollIntoView({ behavior:"smooth", block:"center" }), 250);
-    } else {
-      selectUni(uni, null);
-    }
-  }
-  searchInput.value = "";
-  searchResults.classList.remove("open");
-  searchInput.classList.remove("open");
-});
-
-document.addEventListener("click", () => {
-  searchResults.classList.remove("open");
-  searchInput.classList.remove("open");
-});
-searchInput.addEventListener("click", (e) => e.stopPropagation());
-searchResults.addEventListener("click", (e) => e.stopPropagation());
-
-// ============================================================
-// ХЕЛПЕРЫ
-// ============================================================
-
-function escapeAttr(s){
-  return String(s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
-
-// ============================================================
-// СТАРТ
-// ============================================================
-
-loadAll().then(() => {
-  // Проверяем ?uni= в адресе и открываем вуз
-  const params = new URLSearchParams(window.location.search);
-  const uniName = params.get("uni");
-  if(!uniName) return;
-
-  const uni = ALL_DATA.find(u => u["Университет"] === uniName);
-  if(!uni) return;
-
-  // Раскрываем страну
-  const country = uni._country_ru;
-  const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === uniName);
-  if(itemEl){
-    itemEl.closest(".country").classList.add("open");
-    selectUni(uni, itemEl);
-    setTimeout(() => itemEl.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
-  } else {
-    selectUni(uni, null);
-  }
-});
-</script>
-<script src="auth.js"></script>
-</body>
-</html>
