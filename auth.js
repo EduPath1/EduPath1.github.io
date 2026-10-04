@@ -541,7 +541,17 @@
     );
     updateHeaderUI();
     
-    function updateHeaderUI() {
+   
+    if (window.location.pathname.includes("profile")) {
+      window.location.reload();
+    }
+  });
+
+  // ============================================================
+  // ШАПКА
+  // ============================================================
+
+function updateHeaderUI() {
   const user = getCurrentUser();
   const loginBtn = document.querySelector(".btn-login");
   if (!loginBtn) return;
@@ -560,32 +570,7 @@
     loginBtn.removeAttribute("data-auth-user");
     loginBtn.setAttribute("data-auth-open", "register");
   }
-    }
-    if (window.location.pathname.includes("profile")) {
-      window.location.reload();
-    }
-  });
-
-  // ============================================================
-  // ШАПКА
-  // ============================================================
-
-  function updateHeaderUI() {
-    const user = getCurrentUser();
-    const loginBtn = document.querySelector(".btn-login");
-    if (!loginBtn) return;
-    if (user) {
-      loginBtn.textContent = "Привет, " + (user.name || "друг").split(" ")[0];
-      loginBtn.href = "profile.html";
-      loginBtn.setAttribute("data-auth-user", "1");
-      loginBtn.removeAttribute("data-auth-open");
-    } else {
-      loginBtn.textContent = "Войти";
-      loginBtn.href = "#";
-      loginBtn.removeAttribute("data-auth-user");
-      loginBtn.setAttribute("data-auth-open", "register");
-    }
-  }
+}
 
   document.addEventListener("DOMContentLoaded", () => {
     updateHeaderUI();
