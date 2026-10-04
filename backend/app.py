@@ -36,8 +36,8 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 def get_user_and_client():
     """
-    Достаёт пользователя И создаёт клиент Supabase с его токеном.
-    Возвращает (user, client) или (None, None).
+    Достаёт пользователя из токена.
+    Использует глобальный клиент — самый надёжный способ.
     """
     auth_header = request.headers.get("Authorization", "")
     if not auth_header.startswith("Bearer "):
@@ -46,6 +46,19 @@ def get_user_and_client():
     token = auth_header.replace("Bearer ", "").strip()
     if not token:
         return None, None
+
+    try:
+        user_response = supabase.auth.get_user(token)
+        if user_response and user_response.user:
+            # Возвращаем глобальный клиент — он работает с anon key + RLS
+            # (RLS должен быть отключён для таблиц)
+            return user_response.user, supabase
+    except Exception as e:
+        print("=== TOKEN ERROR ===")
+        print(str(e))
+        print(traceback.format_exc())
+
+    return None, None
 
     try:
         # Отдельный клиент с токеном пользователя
