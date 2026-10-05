@@ -551,11 +551,22 @@
   // ============================================================
 
   function updateHeaderUI() {
-    const user = getCurrentUser();
-    const loginBtn = document.querySelector(".btn-login");
-    if (!loginBtn) return;
-    if (user) {
-      loginBtn.textContent = "Привет, " + (user.name || "друг").split(" ")[0];
+  const user = getCurrentUser();
+  const loginBtn = document.querySelector(".btn-login");
+  if (!loginBtn) return;
+  const helloWord = (window.I18N && window.I18N.t("profile_greeting")) || "Привет";
+  if (user) {
+    loginBtn.textContent = helloWord + ", " + (user.name || "друг").split(" ")[0];
+    loginBtn.href = "profile.html";
+    loginBtn.setAttribute("data-auth-user", "1");
+    loginBtn.removeAttribute("data-auth-open");
+  } else {
+    loginBtn.textContent = (window.I18N && window.I18N.t("nav_login")) || "Войти";
+    loginBtn.href = "#";
+    loginBtn.removeAttribute("data-auth-user");
+    loginBtn.setAttribute("data-auth-open", "register");
+  }
+}
       loginBtn.href = "profile.html";
       loginBtn.setAttribute("data-auth-user", "1");
       loginBtn.removeAttribute("data-auth-open");
