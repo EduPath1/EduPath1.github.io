@@ -881,12 +881,18 @@
   // ============================================================
 
   function init() {
-    injectStyles();
-    buildBurgerMenu();
-    bindLangSwitcher();
-    applyAll();
-    document.documentElement.lang = getLang();
-  }
+  injectStyles();
+  buildBurgerMenu();
+  bindLangSwitcher();
+  applyAll();
+  document.documentElement.lang = getLang();
+
+  // Синхронизируем подсветку активного языка с сохранённым в localStorage
+  const current = getLang();
+  document.querySelectorAll(".lang-option").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === current);
+  });
+}
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
