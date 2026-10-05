@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduPath — Университеты</title>
+<title>EduPath — Universities</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -225,7 +225,7 @@
       <button type="button" class="icon-btn" id="searchBtn" aria-label="Поиск">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       </button>
-      <input type="text" class="search-input" id="searchInput" data-i18n-placeholder="catalog_search_placeholder" placeholder="Найти университет...">
+      <input type="text" class="search-input" id="searchInput" data-i18n-placeholder="catalog_search_placeholder" placeholder="Find a university...">
       <div class="search-results" id="searchResults"></div>
     </div>
   </nav>
@@ -233,13 +233,13 @@
 
 <div class="layout">
   <aside class="sidebar">
-    <h2 data-i18n="catalog_title">Университеты</h2>
-    <p class="subtitle" data-i18n="catalog_sub">Выбери страну и университет</p>
+    <h2 data-i18n="catalog_title">Universities</h2>
+    <p class="subtitle" data-i18n="catalog_sub">Pick a country and university</p>
     <div class="filters-wrap">
       <button type="button" class="filters-btn" id="filtersToggle">
         <span class="filters-btn-left">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
-          <span data-i18n="catalog_filters">Фильтры</span>
+          <span data-i18n="catalog_filters">Filters</span>
           <span class="filters-btn-badge" id="filtersBadge" style="display:none;">0</span>
         </span>
         <span class="filters-btn-arrow">▾</span>
@@ -247,58 +247,32 @@
 
       <div class="filters-panel" id="filtersPanel">
         <div class="filter-group">
-          <label data-i18n="catalog_budget_label">Бюджет на обучение (USD/год)</label>
+          <label data-i18n="catalog_budget_label">Tuition budget (USD/year)</label>
           <div class="filter-row">
-            <input type="number" id="filterBudgetMin" data-i18n-placeholder="catalog_budget_from" placeholder="от" min="0">
+            <input type="number" id="filterBudgetMin" data-i18n-placeholder="catalog_budget_from" placeholder="from" min="0">
             <span>—</span>
-            <input type="number" id="filterBudgetMax" data-i18n-placeholder="catalog_budget_to" placeholder="до" min="0">
+            <input type="number" id="filterBudgetMax" data-i18n-placeholder="catalog_budget_to" placeholder="to" min="0">
           </div>
         </div>
 
         <div class="filter-group">
-          <label data-i18n="catalog_country_label">Страна</label>
+          <label data-i18n="catalog_country_label">Country</label>
           <select class="filter-select" id="filterCountry">
-            <option value="" data-i18n="catalog_country_all">Все страны</option>
-            <option value="Австралия">Австралия</option>
-            <option value="Австрия">Австрия</option>
-            <option value="Бельгия">Бельгия</option>
-            <option value="Венгрия">Венгрия</option>
-            <option value="Великобритания">Великобритания</option>
-            <option value="Германия">Германия</option>
-            <option value="Гонконг">Гонконг</option>
-            <option value="Дания">Дания</option>
-            <option value="Испания">Испания</option>
-            <option value="Италия">Италия</option>
-            <option value="Канада">Канада</option>
-            <option value="Катар">Катар</option>
-            <option value="Китай">Китай</option>
-            <option value="Латвия">Латвия</option>
-            <option value="Нидерланды">Нидерланды</option>
-            <option value="ОАЭ">ОАЭ</option>
-            <option value="Польша">Польша</option>
-            <option value="Сингапур">Сингапур</option>
-            <option value="США">США</option>
-            <option value="Турция">Турция</option>
-            <option value="Финляндия">Финляндия</option>
-            <option value="Чехия">Чехия</option>
-            <option value="Швейцария">Швейцария</option>
-            <option value="Швеция">Швеция</option>
-            <option value="Южная Корея">Южная Корея</option>
-            <option value="Япония">Япония</option>
+            <option value="" data-i18n="catalog_country_all">All countries</option>
           </select>
         </div>
 
         <div class="filter-group">
-          <label data-i18n="catalog_grant_label">Финансовая помощь</label>
+          <label data-i18n="catalog_grant_label">Financial aid</label>
           <label class="filter-check">
             <input type="checkbox" id="filterFullGrant">
-            <span data-i18n="catalog_grant_only">Только с полным грантом</span>
+            <span data-i18n="catalog_grant_only">Only with full scholarship</span>
           </label>
         </div>
 
         <div class="filter-actions">
-          <button type="button" class="filter-btn-reset" id="filterReset" data-i18n="catalog_reset">Сбросить</button>
-          <button type="button" class="filter-btn-apply" id="filterApply" data-i18n="catalog_apply">Применить</button>
+          <button type="button" class="filter-btn-reset" id="filterReset" data-i18n="catalog_reset">Reset</button>
+          <button type="button" class="filter-btn-apply" id="filterApply" data-i18n="catalog_apply">Apply</button>
         </div>
       </div>
     </div>
@@ -311,8 +285,8 @@
         <path d="M12 4L3 8l9 4 9-4-9-4z"/>
         <path d="M6 10v6c0 1.5 2.7 3 6 3s6-1.5 6-3v-6"/>
       </svg>
-      <h2 data-i18n="catalog_choose_uni">Выбери университет</h2>
-      <p data-i18n="catalog_choose_hint">Кликни на страну слева, потом на университет, чтобы увидеть подробную информацию.</p>
+      <h2 data-i18n="catalog_choose_uni">Pick a university</h2>
+      <p data-i18n="catalog_choose_hint">Click on a country on the left, then a university to see details.</p>
     </div>
     <div class="detail-content" id="detailContent"></div>
   </main>
@@ -321,43 +295,44 @@
 <script>
 // ============================================================
 // EduPath — каталог университетов
+// Страны: name — английский (для JSON и fallback), key — ключ i18n
 // ============================================================
 
 const COUNTRY_FILES = [
-  { file: "Australia.json",      name: "Австралия" },
-  { file: "Austria.json",        name: "Австрия" },
-  { file: "Belgium.json",        name: "Бельгия" },
-  { file: "Canada.json",         name: "Канада" },
-  { file: "China.json",          name: "Китай" },
-  { file: "Czech Republic.json", name: "Чехия" },
-  { file: "Denmark.json",        name: "Дания" },
-  { file: "Finland.json",        name: "Финляндия" },
-  { file: "Germany.json",        name: "Германия" },
-  { file: "Hong Kong.json",      name: "Гонконг" },
-  { file: "Hungary.json",        name: "Венгрия" },
-  { file: "Italy.json",          name: "Италия" },
-  { file: "Japan.json",          name: "Япония" },
-  { file: "Latvia.json",         name: "Латвия" },
-  { file: "Netherlands.json",    name: "Нидерланды" },
-  { file: "Poland.json",         name: "Польша" },
-  { file: "Qatar.json",          name: "Катар" },
-  { file: "Singapore.json",      name: "Сингапур" },
-  { file: "South Korea.json",    name: "Южная Корея" },
-  { file: "Spain.json",          name: "Испания" },
-  { file: "Sweden.json",         name: "Швеция" },
-  { file: "Switzerland.json",    name: "Швейцария" },
-  { file: "Turkey.json",         name: "Турция" },
-  { file: "UAE.json",            name: "ОАЭ" },
-  { file: "UK.json",             name: "Великобритания" },
-  { file: "USA.json",            name: "США" }
+  { file: "Australia.json",      name: "Australia",       key: "country_australia" },
+  { file: "Austria.json",        name: "Austria",         key: "country_austria" },
+  { file: "Belgium.json",        name: "Belgium",         key: "country_belgium" },
+  { file: "Canada.json",         name: "Canada",          key: "country_canada" },
+  { file: "China.json",          name: "China",           key: "country_china" },
+  { file: "Czech Republic.json", name: "Czech Republic",  key: "country_czech" },
+  { file: "Denmark.json",        name: "Denmark",         key: "country_denmark" },
+  { file: "Finland.json",        name: "Finland",         key: "country_finland" },
+  { file: "Germany.json",        name: "Germany",         key: "country_germany" },
+  { file: "Hong Kong.json",      name: "Hong Kong",       key: "country_hongkong" },
+  { file: "Hungary.json",        name: "Hungary",         key: "country_hungary" },
+  { file: "Italy.json",          name: "Italy",           key: "country_italy" },
+  { file: "Japan.json",          name: "Japan",           key: "country_japan" },
+  { file: "Latvia.json",         name: "Latvia",          key: "country_latvia" },
+  { file: "Netherlands.json",    name: "Netherlands",     key: "country_netherlands" },
+  { file: "Poland.json",         name: "Poland",          key: "country_poland" },
+  { file: "Qatar.json",          name: "Qatar",           key: "country_qatar" },
+  { file: "Singapore.json",      name: "Singapore",       key: "country_singapore" },
+  { file: "South Korea.json",    name: "South Korea",     key: "country_southkorea" },
+  { file: "Spain.json",          name: "Spain",           key: "country_spain" },
+  { file: "Sweden.json",         name: "Sweden",          key: "country_sweden" },
+  { file: "Switzerland.json",    name: "Switzerland",     key: "country_switzerland" },
+  { file: "Turkey.json",         name: "Turkey",          key: "country_turkey" },
+  { file: "UAE.json",            name: "UAE",             key: "country_uae" },
+  { file: "UK.json",             name: "United Kingdom",  key: "country_uk" },
+  { file: "USA.json",            name: "USA",             key: "country_usa" }
 ];
 
 const FLAGS = {
-  "Австралия":"🇦🇺","Австрия":"🇦🇹","Бельгия":"🇧🇪","Канада":"🇨🇦","Китай":"🇨🇳",
-  "Чехия":"🇨🇿","Дания":"🇩🇰","Финляндия":"🇫🇮","Германия":"🇩🇪","Гонконг":"🇭🇰",
-  "Венгрия":"🇭🇺","Италия":"🇮🇹","Япония":"🇯🇵","Латвия":"🇱🇻","Нидерланды":"🇳🇱",
-  "Польша":"🇵🇱","Катар":"🇶🇦","Сингапур":"🇸🇬","Южная Корея":"🇰🇷","Испания":"🇪🇸",
-  "Швеция":"🇸🇪","Швейцария":"🇨🇭","Турция":"🇹🇷","ОАЭ":"🇦🇪","Великобритания":"🇬🇧","США":"🇺🇸"
+  "Australia":"🇦🇺","Austria":"🇦🇹","Belgium":"🇧🇪","Canada":"🇨🇦","China":"🇨🇳",
+  "Czech Republic":"🇨🇿","Denmark":"🇩🇰","Finland":"🇫🇮","Germany":"🇩🇪","Hong Kong":"🇭🇰",
+  "Hungary":"🇭🇺","Italy":"🇮🇹","Japan":"🇯🇵","Latvia":"🇱🇻","Netherlands":"🇳🇱",
+  "Poland":"🇵🇱","Qatar":"🇶🇦","Singapore":"🇸🇬","South Korea":"🇰🇷","Spain":"🇪🇸",
+  "Sweden":"🇸🇪","Switzerland":"🇨🇭","Turkey":"🇹🇷","UAE":"🇦🇪","United Kingdom":"🇬🇧","USA":"🇺🇸"
 };
 
 let ALL_DATA = [];
@@ -385,16 +360,17 @@ async function loadAll(){
       const res = await fetch(c.file);
       if(!res.ok) throw new Error(c.file);
       const data = await res.json();
-      return { country: c.name, items: data };
+      return { country: c.name, key: c.key, items: data };
     })
   );
 
   results.forEach(r => {
     if(r.status === "fulfilled"){
-      const { country, items } = r.value;
+      const { country, key, items } = r.value;
       items.forEach(uni => {
         if(uni && uni["Университет"] && String(uni["Университет"]).trim() !== ""){
-          uni._country_ru = country;
+          uni._country = country;
+          uni._country_key = key;
           uni._flag = FLAGS[country] || "🌍";
           ALL_DATA.push(uni);
         }
@@ -403,8 +379,8 @@ async function loadAll(){
   });
 
   ALL_DATA.sort((a,b) => {
-    const ai = COUNTRY_FILES.findIndex(c => c.name === a._country_ru);
-    const bi = COUNTRY_FILES.findIndex(c => c.name === b._country_ru);
+    const ai = COUNTRY_FILES.findIndex(c => c.name === a._country);
+    const bi = COUNTRY_FILES.findIndex(c => c.name === b._country);
     if(ai !== bi) return ai - bi;
     return String(a["Университет"]).localeCompare(String(b["Университет"]));
   });
@@ -413,6 +389,7 @@ async function loadAll(){
     try { await window.EduAuth.getSaved(); } catch(e) {}
   }
 
+  buildCountryFilter();
   renderSidebar();
 }
 
@@ -426,6 +403,34 @@ function isFullGrant(uni){
 }
 
 // ============================================================
+// ФИЛЬТР СТРАН
+// ============================================================
+
+function buildCountryFilter(){
+  const sel = document.getElementById("filterCountry");
+  if(!sel) return;
+
+  const current = sel.value;
+  sel.innerHTML = "";
+
+  const allOpt = document.createElement("option");
+  allOpt.value = "";
+  allOpt.setAttribute("data-i18n", "catalog_country_all");
+  allOpt.textContent = t("catalog_country_all", "All countries");
+  sel.appendChild(allOpt);
+
+  COUNTRY_FILES.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c.name;
+    opt.setAttribute("data-i18n", c.key);
+    opt.textContent = t(c.key, c.name);
+    sel.appendChild(opt);
+  });
+
+  sel.value = current || "";
+}
+
+// ============================================================
 // SIDEBAR
 // ============================================================
 
@@ -435,7 +440,7 @@ function renderSidebar(){
   const filtered = applyFilters(ALL_DATA);
 
   COUNTRY_FILES.forEach(c => {
-    let items = filtered.filter(u => u._country_ru === c.name);
+    let items = filtered.filter(u => u._country === c.name);
     if(items.length === 0) return;
 
     const div = document.createElement("div");
@@ -444,7 +449,7 @@ function renderSidebar(){
     const header = document.createElement("button");
     header.type = "button";
     header.className = "country-header";
-    header.innerHTML = `<span>${FLAGS[c.name] || "🌍"} ${c.name}<span class="country-count">${items.length}</span></span><span class="country-arrow">▾</span>`;
+    header.innerHTML = `<span>${FLAGS[c.name] || "🌍"} ${t(c.key, c.name)}<span class="country-count">${items.length}</span></span><span class="country-arrow">▾</span>`;
     header.addEventListener("click", () => div.classList.toggle("open"));
 
     const list = document.createElement("div");
@@ -508,28 +513,28 @@ document.addEventListener("click", async (e) => {
   if(!uni) return;
 
   if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-    window.EduAuth.showToast(t("catalog_need_login", "Чтобы сохранять вузы, войдите в аккаунт"), "info");
+    window.EduAuth.showToast(t("catalog_need_login", "Log in to save universities"), "info");
     window.EduAuth.openModal("register");
     return;
   }
 
   const result = await window.EduAuth.toggleSave({
     name: uni["Университет"],
-    country: uni["_country_ru"],
+    country: uni._country,
     city: uni["Город"]
   });
 
   if(!result || !result.ok){
-    window.EduAuth.showToast((result && result.error) || "Ошибка", "error");
+    window.EduAuth.showToast((result && result.error) || "Error", "error");
     return;
   }
 
   if(result.added){
     starBtn.classList.add("active");
-    window.EduAuth.showToast(t("catalog_saved_ok", "Успешно сохранили университет"), "success");
+    window.EduAuth.showToast(t("catalog_saved_ok", "University saved successfully"), "success");
   } else if(result.removed){
     starBtn.classList.remove("active");
-    window.EduAuth.showToast(t("catalog_saved_remove", "Университет убран из избранного"), "info");
+    window.EduAuth.showToast(t("catalog_saved_remove", "University removed from favorites"), "info");
   }
 });
 
@@ -573,16 +578,17 @@ function renderDetail(uni){
   };
 
   const row = (label, value) => {
-    const val = value ? String(value) : t("uni_value_not_specified", "не указано");
+    const val = value ? String(value) : t("uni_value_not_specified", "not specified");
     const cls = value ? "" : " empty";
     return `<div class="info-card"><div class="info-label">${label}</div><div class="info-value${cls}">${val}</div></div>`;
   };
 
   const title = g("Университет") || "—";
-  const country = g("Страна") || uni._country_ru;
+  const countryKey = uni._country_key || "";
+  const country = countryKey ? t(countryKey, uni._country) : (g("Страна") || uni._country || "");
   const city = g("Город");
   const grantBadge = isFullGrant(uni)
-    ? `<div class="grant-badge">${t("uni_full_grant_badge", "✨ Полный грант")}</div>`
+    ? `<div class="grant-badge">${t("uni_full_grant_badge", "✨ Full scholarship")}</div>`
     : "";
 
   const saved = window.EduAuth ? window.EduAuth.isSaved(title) : false;
@@ -592,53 +598,53 @@ function renderDetail(uni){
     <div class="uni-location">📍 ${country}${city ? " · " + city : ""}</div>
     ${grantBadge}
 
-    <h3 class="section-title">${t("uni_section_finance", "Финансы")}</h3>
+    <h3 class="section-title">${t("uni_section_finance", "Finance")}</h3>
     <div class="info-grid">
-      ${row(t("uni_field_tuition", "Стоимость обучения"), g("Стоимость обучения (USD/год)"))}
-      ${row(t("uni_field_admission", "Процент поступления"), g("Процент Поступления"))}
-      ${row(t("uni_field_aid", "Финансовая помощь"), g("Максимальная Финансовая помощь (USD)"))}
-      ${row(t("uni_field_grant", "Полный грант"), isFullGrant(uni) ? t("uni_value_yes", "ДА") : t("uni_value_no", "нет"))}
+      ${row(t("uni_field_tuition", "Tuition"), g("Стоимость обучения (USD/год)"))}
+      ${row(t("uni_field_admission", "Admission rate"), g("Процент Поступления"))}
+      ${row(t("uni_field_aid", "Financial aid"), g("Максимальная Финансовая помощь (USD)"))}
+      ${row(t("uni_field_grant", "Full scholarship"), isFullGrant(uni) ? t("uni_value_yes", "YES") : t("uni_value_no", "no"))}
     </div>
 
-    <h3 class="section-title">${t("uni_section_deadlines", "Сроки")}</h3>
+    <h3 class="section-title">${t("uni_section_deadlines", "Deadlines")}</h3>
     <div class="info-grid">
-      ${row(t("uni_field_early_deadline", "Дедлайн ранней подачи"), g("Дедлайн Ранней Подачи"))}
-      ${row(t("uni_field_main_deadline", "Дедлайн основной подачи"), g("Дедлайн Основной Подачи"))}
+      ${row(t("uni_field_early_deadline", "Early deadline"), g("Дедлайн Ранней Подачи"))}
+      ${row(t("uni_field_main_deadline", "Regular deadline"), g("Дедлайн Основной Подачи"))}
     </div>
 
-    <h3 class="section-title">${t("uni_section_requirements", "Требования")}</h3>
+    <h3 class="section-title">${t("uni_section_requirements", "Requirements")}</h3>
     <div class="info-grid">
       ${row(t("uni_field_toefl", "TOEFL / IELTS"), g("TOEFL/IELTS"))}
       ${row(t("uni_field_sat", "SAT"), g("SAT"))}
-      ${row(t("uni_field_essay", "Эссе"), g("Эссе"))}
-      ${row(t("uni_field_recs", "Рекомендательные письма"), g("Рекомендательные Письма"))}
-      ${row(t("uni_field_app_fee", "Стоимость заявки"), g("Стоимость Заявки"))}
-      ${row(t("uni_field_apply_link", "Ссылка на подачу"), g("Ссылка на заполнение заявки"))}
+      ${row(t("uni_field_essay", "Essay"), g("Эссе"))}
+      ${row(t("uni_field_recs", "Recommendation letters"), g("Рекомендательные Письма"))}
+      ${row(t("uni_field_app_fee", "Application fee"), g("Стоимость Заявки"))}
+      ${row(t("uni_field_apply_link", "Application link"), g("Ссылка на заполнение заявки"))}
     </div>
 
-    <h3 class="section-title">${t("uni_section_ratings", "Рейтинги")}</h3>
+    <h3 class="section-title">${t("uni_section_ratings", "Rankings")}</h3>
     <div class="info-grid">
-      ${row(t("uni_field_rank_country", "Рейтинг по стране"), g("Рейтинг по Стране"))}
-      ${row(t("uni_field_rank_world", "Рейтинг в мире"), g("Рейтинг в Мире"))}
+      ${row(t("uni_field_rank_country", "Country rank"), g("Рейтинг по Стране"))}
+      ${row(t("uni_field_rank_world", "World rank"), g("Рейтинг в Мире"))}
     </div>
 
-    <h3 class="section-title">${t("uni_section_majors", "Профессии")}</h3>
+    <h3 class="section-title">${t("uni_section_majors", "Majors")}</h3>
     <div class="info-grid">
-      ${row(t("uni_field_majors", "Направления"), g("Профессии"))}
+      ${row(t("uni_field_majors", "Majors"), g("Профессии"))}
     </div>
 
-    <h3 class="section-title">${t("uni_section_extra", "Дополнительно")}</h3>
+    <h3 class="section-title">${t("uni_section_extra", "Additional")}</h3>
     <div class="info-grid">
-      ${row(t("uni_field_comments", "Комментарии"), g("Дополнительные Комментарии"))}
+      ${row(t("uni_field_comments", "Comments"), g("Дополнительные Комментарии"))}
     </div>
 
     <div class="action-buttons">
       <button class="btn-main ${saved ? "secondary" : "primary"}" id="detailStarBtn">
-        ⭐ ${saved ? t("catalog_saved_btn", "В избранном") : t("catalog_save_btn", "Сохранить в избранное")}
+        ⭐ ${saved ? t("catalog_saved_btn", "Saved") : t("catalog_save_btn", "Save to favorites")}
       </button>
-      ${uni["Сайт Университета"] ? `<a href="${uni["Сайт Университета"]}" target="_blank" rel="noopener" class="btn-main primary">${t("uni_open_site", "🌐 Официальный сайт")}</a>` : ""}
-      ${uni["Ссылка на заполнение заявки"] && String(uni["Ссылка на заполнение заявки"]).startsWith("http") ? `<a href="${uni["Ссылка на заполнение заявки"]}" target="_blank" rel="noopener" class="btn-main secondary">${t("uni_apply", "📝 Подать заявку")}</a>` : ""}
-      ${uni["Сайт Финансовой Помощи"] && String(uni["Сайт Финансовой Помощи"]).startsWith("http") ? `<a href="${uni["Сайт Финансовой Помощи"]}" target="_blank" rel="noopener" class="btn-main ghost">${t("uni_aid_link", "💰 Финансовая помощь")}</a>` : ""}
+      ${uni["Сайт Университета"] ? `<a href="${uni["Сайт Университета"]}" target="_blank" rel="noopener" class="btn-main primary">${t("uni_open_site", "🌐 Official website")}</a>` : ""}
+      ${uni["Ссылка на заполнение заявки"] && String(uni["Ссылка на заполнение заявки"]).startsWith("http") ? `<a href="${uni["Ссылка на заполнение заявки"]}" target="_blank" rel="noopener" class="btn-main secondary">${t("uni_apply", "📝 Apply")}</a>` : ""}
+      ${uni["Сайт Финансовой Помощи"] && String(uni["Сайт Финансовой Помощи"]).startsWith("http") ? `<a href="${uni["Сайт Финансовой Помощи"]}" target="_blank" rel="noopener" class="btn-main ghost">${t("uni_aid_link", "💰 Financial aid")}</a>` : ""}
     </div>
   `;
 
@@ -646,25 +652,25 @@ function renderDetail(uni){
   if(detailBtn){
     detailBtn.addEventListener("click", async () => {
       if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-        window.EduAuth.showToast(t("catalog_need_login", "Чтобы сохранять вузы, войдите в аккаунт"), "info");
+        window.EduAuth.showToast(t("catalog_need_login", "Log in to save universities"), "info");
         window.EduAuth.openModal("register");
         return;
       }
       const result = await window.EduAuth.toggleSave({
         name: title,
-        country: uni._country_ru,
+        country: uni._country,
         city: city
       });
       if(!result || !result.ok){
-        window.EduAuth.showToast((result && result.error) || "Ошибка", "error");
+        window.EduAuth.showToast((result && result.error) || "Error", "error");
         return;
       }
       renderDetail(uni);
       renderSidebar();
       if(result.added){
-        window.EduAuth.showToast(t("catalog_saved_ok", "Успешно сохранили университет"), "success");
+        window.EduAuth.showToast(t("catalog_saved_ok", "University saved successfully"), "success");
       } else if(result.removed){
-        window.EduAuth.showToast(t("catalog_saved_remove", "Университет убран из избранного"), "info");
+        window.EduAuth.showToast(t("catalog_saved_remove", "University removed from favorites"), "info");
       }
     });
   }
@@ -698,7 +704,7 @@ function parsePrice(str){
 
 function applyFilters(items){
   return items.filter(uni => {
-    if(filters.country && uni._country_ru !== filters.country) return false;
+    if(filters.country && uni._country !== filters.country) return false;
     if(filters.fullGrant && !isFullGrant(uni)) return false;
     if(filters.budgetMin !== null || filters.budgetMax !== null){
       const price = parsePrice(uni["Стоимость обучения (USD/год)"]);
@@ -784,16 +790,16 @@ searchInput.addEventListener("input", () => {
   const found = ALL_DATA.filter(u => {
     const name = String(u["Университет"] || "").toLowerCase();
     const city = String(u["Город"] || "").toLowerCase();
-    const country = String(u._country_ru || "").toLowerCase();
+    const country = String(u._country || "").toLowerCase();
     return name.includes(q) || city.includes(q) || country.includes(q);
   }).slice(0, 12);
   if(found.length === 0){
-    searchResults.innerHTML = `<div class="search-empty">${t("catalog_search_empty", "Извините, мы пока работаем над добавлением этого университета")}</div>`;
+    searchResults.innerHTML = `<div class="search-empty">${t("catalog_search_empty", "Sorry, we're still working on adding this university")}</div>`;
   } else {
     searchResults.innerHTML = found.map(u => `
       <button class="search-result" data-name="${escapeAttr(u["Университет"])}">
         ${u["Университет"]}
-        <small>${u._flag} ${u._country_ru} · ${u["Город"] || ""}</small>
+        <small>${u._flag} ${t(u._country_key, u._country)} · ${u["Город"] || ""}</small>
       </button>
     `).join("");
   }
@@ -832,18 +838,15 @@ searchResults.addEventListener("click", (e) => e.stopPropagation());
 // ============================================================
 
 window.addEventListener("edupath-lang-change", () => {
+  buildCountryFilter();
   renderSidebar();
   if(_currentUni){
     renderDetail(_currentUni);
   }
-  applyAllStatic();
-});
-
-function applyAllStatic(){
   if(window.I18N && window.I18N.applyAll){
     window.I18N.applyAll();
   }
-}
+});
 
 // ============================================================
 // СТАРТ
