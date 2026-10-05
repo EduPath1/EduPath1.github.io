@@ -1,8 +1,10 @@
 // ============================================================
-// EduPath — i18n.js (v4)
+// EduPath — i18n.js (v5, full)
 // RU / EN / ZH / KK / KY
 // + Fun Zone
 // + Auth modal (register / login / confirm email)
+// + University detail keys
+// + Country names
 // ============================================================
 
 (function() {
@@ -11,6 +13,7 @@
   const LANG_KEY = "edupath_lang";
 
   const translations = {
+
     // ============================================================
     // РУССКИЙ
     // ============================================================
@@ -153,6 +156,64 @@
       fz_not_enough: "Заполни все поля, бро 😭",
       fz_loading: "Загружаем вузы...",
       fz_loading_error: "Не смогли загрузить список вузов. Проверь интернет.",
+
+      uni_section_finance: "Финансы",
+      uni_section_deadlines: "Сроки",
+      uni_section_requirements: "Требования",
+      uni_section_ratings: "Рейтинги",
+      uni_section_majors: "Профессии",
+      uni_section_extra: "Дополнительно",
+      uni_field_tuition: "Стоимость обучения",
+      uni_field_admission: "Процент поступления",
+      uni_field_aid: "Финансовая помощь",
+      uni_field_grant: "Полный грант",
+      uni_field_early_deadline: "Дедлайн ранней подачи",
+      uni_field_main_deadline: "Дедлайн основной подачи",
+      uni_field_toefl: "TOEFL / IELTS",
+      uni_field_sat: "SAT",
+      uni_field_essay: "Эссе",
+      uni_field_recs: "Рекомендательные письма",
+      uni_field_app_fee: "Стоимость заявки",
+      uni_field_apply_link: "Ссылка на подачу",
+      uni_field_rank_country: "Рейтинг по стране",
+      uni_field_rank_world: "Рейтинг в мире",
+      uni_field_majors: "Направления",
+      uni_field_comments: "Комментарии",
+      uni_value_yes: "ДА",
+      uni_value_no: "нет",
+      uni_value_not_specified: "не указано",
+      uni_full_grant_badge: "✨ Полный грант",
+      uni_open_site: "🌐 Официальный сайт",
+      uni_apply: "📝 Подать заявку",
+      uni_aid_link: "💰 Финансовая помощь",
+
+      country_australia: "Австралия",
+      country_austria: "Австрия",
+      country_belgium: "Бельгия",
+      country_canada: "Канада",
+      country_china: "Китай",
+      country_czech: "Чехия",
+      country_denmark: "Дания",
+      country_finland: "Финляндия",
+      country_germany: "Германия",
+      country_hongkong: "Гонконг",
+      country_hungary: "Венгрия",
+      country_italy: "Италия",
+      country_japan: "Япония",
+      country_latvia: "Латвия",
+      country_netherlands: "Нидерланды",
+      country_poland: "Польша",
+      country_qatar: "Катар",
+      country_singapore: "Сингапур",
+      country_southkorea: "Южная Корея",
+      country_spain: "Испания",
+      country_sweden: "Швеция",
+      country_switzerland: "Швейцария",
+      country_turkey: "Турция",
+      country_uae: "ОАЭ",
+      country_uk: "Великобритания",
+      country_usa: "США",
+
       footer_note: "Fun Zone — шутка. Реальные рекомендации — в тесте."
     },
 
@@ -185,9 +246,12 @@
       catalog_country_label: "Country", catalog_country_all: "All countries",
       catalog_grant_label: "Financial aid", catalog_grant_only: "Only with full scholarship",
       catalog_apply: "Apply", catalog_reset: "Reset",
-      catalog_choose_uni: "Pick a university", catalog_choose_hint: "Click on a country on the left, then a university to see details.",
-      catalog_search_placeholder: "Find a university...", catalog_search_empty: "Sorry, we're still working on adding this university",
-      catalog_saved_ok: "University saved successfully", catalog_saved_remove: "University removed from favorites",
+      catalog_choose_uni: "Pick a university",
+      catalog_choose_hint: "Click on a country on the left, then a university to see details.",
+      catalog_search_placeholder: "Find a university...",
+      catalog_search_empty: "Sorry, we're still working on adding this university",
+      catalog_saved_ok: "University saved successfully",
+      catalog_saved_remove: "University removed from favorites",
       catalog_need_login: "Log in to save universities",
       catalog_save_btn: "Save to favorites", catalog_saved_btn: "Saved",
 
@@ -285,6 +349,64 @@
       fz_not_enough: "Fill in all the fields, bro 😭",
       fz_loading: "Loading universities...",
       fz_loading_error: "Couldn't load the university list. Check your connection.",
+
+      uni_section_finance: "Finance",
+      uni_section_deadlines: "Deadlines",
+      uni_section_requirements: "Requirements",
+      uni_section_ratings: "Rankings",
+      uni_section_majors: "Majors",
+      uni_section_extra: "Additional",
+      uni_field_tuition: "Tuition",
+      uni_field_admission: "Admission rate",
+      uni_field_aid: "Financial aid",
+      uni_field_grant: "Full scholarship",
+      uni_field_early_deadline: "Early deadline",
+      uni_field_main_deadline: "Regular deadline",
+      uni_field_toefl: "TOEFL / IELTS",
+      uni_field_sat: "SAT",
+      uni_field_essay: "Essay",
+      uni_field_recs: "Recommendation letters",
+      uni_field_app_fee: "Application fee",
+      uni_field_apply_link: "Application link",
+      uni_field_rank_country: "Country rank",
+      uni_field_rank_world: "World rank",
+      uni_field_majors: "Majors",
+      uni_field_comments: "Comments",
+      uni_value_yes: "YES",
+      uni_value_no: "no",
+      uni_value_not_specified: "not specified",
+      uni_full_grant_badge: "✨ Full scholarship",
+      uni_open_site: "🌐 Official website",
+      uni_apply: "📝 Apply",
+      uni_aid_link: "💰 Financial aid",
+
+      country_australia: "Australia",
+      country_austria: "Austria",
+      country_belgium: "Belgium",
+      country_canada: "Canada",
+      country_china: "China",
+      country_czech: "Czech Republic",
+      country_denmark: "Denmark",
+      country_finland: "Finland",
+      country_germany: "Germany",
+      country_hongkong: "Hong Kong",
+      country_hungary: "Hungary",
+      country_italy: "Italy",
+      country_japan: "Japan",
+      country_latvia: "Latvia",
+      country_netherlands: "Netherlands",
+      country_poland: "Poland",
+      country_qatar: "Qatar",
+      country_singapore: "Singapore",
+      country_southkorea: "South Korea",
+      country_spain: "Spain",
+      country_sweden: "Sweden",
+      country_switzerland: "Switzerland",
+      country_turkey: "Turkey",
+      country_uae: "UAE",
+      country_uk: "United Kingdom",
+      country_usa: "USA",
+
       footer_note: "Fun Zone is a joke. Real recommendations — in the test."
     },
 
@@ -316,9 +438,12 @@
       catalog_country_label: "国家", catalog_country_all: "所有国家",
       catalog_grant_label: "经济援助", catalog_grant_only: "仅显示全额奖学金",
       catalog_apply: "应用", catalog_reset: "重置",
-      catalog_choose_uni: "选择一所大学", catalog_choose_hint: "点击左侧的国家，然后点击大学查看详细信息。",
-      catalog_search_placeholder: "查找大学...", catalog_search_empty: "抱歉，我们正在努力添加这所大学",
-      catalog_saved_ok: "大学已成功保存", catalog_saved_remove: "大学已从收藏中移除",
+      catalog_choose_uni: "选择一所大学",
+      catalog_choose_hint: "点击左侧的国家，然后点击大学查看详细信息。",
+      catalog_search_placeholder: "查找大学...",
+      catalog_search_empty: "抱歉，我们正在努力添加这所大学",
+      catalog_saved_ok: "大学已成功保存",
+      catalog_saved_remove: "大学已从收藏中移除",
       catalog_need_login: "登录后才能保存大学",
       catalog_save_btn: "保存到收藏", catalog_saved_btn: "已收藏",
 
@@ -415,6 +540,64 @@
       fz_not_enough: "把所有字段都填了，兄弟 😭",
       fz_loading: "正在加载大学...",
       fz_loading_error: "无法加载大学列表。检查网络。",
+
+      uni_section_finance: "财务",
+      uni_section_deadlines: "截止日期",
+      uni_section_requirements: "要求",
+      uni_section_ratings: "排名",
+      uni_section_majors: "专业",
+      uni_section_extra: "其他",
+      uni_field_tuition: "学费",
+      uni_field_admission: "录取率",
+      uni_field_aid: "经济援助",
+      uni_field_grant: "全额奖学金",
+      uni_field_early_deadline: "提前批截止",
+      uni_field_main_deadline: "常规批截止",
+      uni_field_toefl: "TOEFL / IELTS",
+      uni_field_sat: "SAT",
+      uni_field_essay: "文书",
+      uni_field_recs: "推荐信",
+      uni_field_app_fee: "申请费",
+      uni_field_apply_link: "申请链接",
+      uni_field_rank_country: "国内排名",
+      uni_field_rank_world: "世界排名",
+      uni_field_majors: "专业方向",
+      uni_field_comments: "备注",
+      uni_value_yes: "是",
+      uni_value_no: "否",
+      uni_value_not_specified: "未指定",
+      uni_full_grant_badge: "✨ 全额奖学金",
+      uni_open_site: "🌐 官方网站",
+      uni_apply: "📝 申请",
+      uni_aid_link: "💰 经济援助",
+
+      country_australia: "澳大利亚",
+      country_austria: "奥地利",
+      country_belgium: "比利时",
+      country_canada: "加拿大",
+      country_china: "中国",
+      country_czech: "捷克",
+      country_denmark: "丹麦",
+      country_finland: "芬兰",
+      country_germany: "德国",
+      country_hongkong: "香港",
+      country_hungary: "匈牙利",
+      country_italy: "意大利",
+      country_japan: "日本",
+      country_latvia: "拉脱维亚",
+      country_netherlands: "荷兰",
+      country_poland: "波兰",
+      country_qatar: "卡塔尔",
+      country_singapore: "新加坡",
+      country_southkorea: "韩国",
+      country_spain: "西班牙",
+      country_sweden: "瑞典",
+      country_switzerland: "瑞士",
+      country_turkey: "土耳其",
+      country_uae: "阿联酋",
+      country_uk: "英国",
+      country_usa: "美国",
+
       footer_note: "Fun Zone 是玩笑。真正的推荐在测试里。"
     },
 
@@ -450,8 +633,10 @@
       catalog_apply: "Қолдану", catalog_reset: "Тазарту",
       catalog_choose_uni: "Университет таңда",
       catalog_choose_hint: "Сол жақтағы елді басып, содан кейін университетті басып, толық ақпаратты көріңіз.",
-      catalog_search_placeholder: "Университет іздеу...", catalog_search_empty: "Кешіріңіз, біз бұл университетті қосып жатырмыз",
-      catalog_saved_ok: "Университет сәтті сақталды", catalog_saved_remove: "Университет таңдаулылардан алынды",
+      catalog_search_placeholder: "Университет іздеу...",
+      catalog_search_empty: "Кешіріңіз, біз бұл университетті қосып жатырмыз",
+      catalog_saved_ok: "Университет сәтті сақталды",
+      catalog_saved_remove: "Университет таңдаулылардан алынды",
       catalog_need_login: "Университеттерді сақтау үшін аккаунтқа кіріңіз",
       catalog_save_btn: "Таңдаулыларға сақтау", catalog_saved_btn: "Таңдаулыларда",
 
@@ -552,6 +737,64 @@
       fz_not_enough: "Барлық өрісті толтыр, бауырым 😭",
       fz_loading: "Университеттер жүктелуде...",
       fz_loading_error: "Университет тізімін жүктей алмадық. Интернетті тексер.",
+
+      uni_section_finance: "Қаржы",
+      uni_section_deadlines: "Мерзімдер",
+      uni_section_requirements: "Талаптар",
+      uni_section_ratings: "Рейтингтер",
+      uni_section_majors: "Мамандықтар",
+      uni_section_extra: "Қосымша",
+      uni_field_tuition: "Оқу құны",
+      uni_field_admission: "Түсу пайызы",
+      uni_field_aid: "Қаржылық көмек",
+      uni_field_grant: "Толық грант",
+      uni_field_early_deadline: "Ерте дедлайн",
+      uni_field_main_deadline: "Негізгі дедлайн",
+      uni_field_toefl: "TOEFL / IELTS",
+      uni_field_sat: "SAT",
+      uni_field_essay: "Эссе",
+      uni_field_recs: "Ұсыныс хаттар",
+      uni_field_app_fee: "Өтінім құны",
+      uni_field_apply_link: "Өтінім сілтемесі",
+      uni_field_rank_country: "Елдегі рейтинг",
+      uni_field_rank_world: "Әлемдік рейтинг",
+      uni_field_majors: "Бағыттар",
+      uni_field_comments: "Түсініктемелер",
+      uni_value_yes: "ИӘ",
+      uni_value_no: "жоқ",
+      uni_value_not_specified: "көрсетілмеген",
+      uni_full_grant_badge: "✨ Толық грант",
+      uni_open_site: "🌐 Ресми сайт",
+      uni_apply: "📝 Өтінім беру",
+      uni_aid_link: "💰 Қаржылық көмек",
+
+      country_australia: "Австралия",
+      country_austria: "Австрия",
+      country_belgium: "Бельгия",
+      country_canada: "Канада",
+      country_china: "Қытай",
+      country_czech: "Чехия",
+      country_denmark: "Дания",
+      country_finland: "Финляндия",
+      country_germany: "Германия",
+      country_hongkong: "Гонконг",
+      country_hungary: "Венгрия",
+      country_italy: "Италия",
+      country_japan: "Жапония",
+      country_latvia: "Латвия",
+      country_netherlands: "Нидерланд",
+      country_poland: "Польша",
+      country_qatar: "Катар",
+      country_singapore: "Сингапур",
+      country_southkorea: "Оңтүстік Корея",
+      country_spain: "Испания",
+      country_sweden: "Швеция",
+      country_switzerland: "Швейцария",
+      country_turkey: "Түркия",
+      country_uae: "БАӘ",
+      country_uk: "Ұлыбритания",
+      country_usa: "АҚШ",
+
       footer_note: "Fun Zone — әзіл. Нақты ұсыныстар — тестте."
     },
 
@@ -587,8 +830,10 @@
       catalog_apply: "Колдонуу", catalog_reset: "Тазалоо",
       catalog_choose_uni: "Университет танда",
       catalog_choose_hint: "Сол жактагы өлкөнү басып, анан университетти басып, толук маалыматты көрүңүз.",
-      catalog_search_placeholder: "Университет издөө...", catalog_search_empty: "Кечиресиз, биз бул университетти кошуп жатабыз",
-      catalog_saved_ok: "Университет ийгиликтүү сакталды", catalog_saved_remove: "Университет тандалмалардан алынды",
+      catalog_search_placeholder: "Университет издөө...",
+      catalog_search_empty: "Кечиресиз, биз бул университетти кошуп жатабыз",
+      catalog_saved_ok: "Университет ийгиликтүү сакталды",
+      catalog_saved_remove: "Университет тандалмалардан алынды",
       catalog_need_login: "Университеттерди сактоо үчүн аккаунтка кириңиз",
       catalog_save_btn: "Тандалмаларга сактоо", catalog_saved_btn: "Тандалмаларда",
 
@@ -689,6 +934,64 @@
       fz_not_enough: "Бардык талааларды толтур, байке 😭",
       fz_loading: "Университеттер жүктөлүүдө...",
       fz_loading_error: "Университеттердин тизмесин жүктөй албадык. Интернетти текшер.",
+
+      uni_section_finance: "Каржы",
+      uni_section_deadlines: "Мөөнөттөр",
+      uni_section_requirements: "Талаптар",
+      uni_section_ratings: "Рейтингдер",
+      uni_section_majors: "Адистиктер",
+      uni_section_extra: "Кошумча",
+      uni_field_tuition: "Окуу акысы",
+      uni_field_admission: "Кабыл алуу пайызы",
+      uni_field_aid: "Каржылык жардам",
+      uni_field_grant: "Толук грант",
+      uni_field_early_deadline: "Эрте дедлайн",
+      uni_field_main_deadline: "Негизги дедлайн",
+      uni_field_toefl: "TOEFL / IELTS",
+      uni_field_sat: "SAT",
+      uni_field_essay: "Эссе",
+      uni_field_recs: "Сунуштама каттар",
+      uni_field_app_fee: "Арыздын баасы",
+      uni_field_apply_link: "Арыз шилтемеси",
+      uni_field_rank_country: "Өлкөдөгү рейтинг",
+      uni_field_rank_world: "Дүйнөлүк рейтинг",
+      uni_field_majors: "Багыттар",
+      uni_field_comments: "Комментарийлер",
+      uni_value_yes: "ООБА",
+      uni_value_no: "жок",
+      uni_value_not_specified: "көрсөтүлгөн эмес",
+      uni_full_grant_badge: "✨ Толук грант",
+      uni_open_site: "🌐 Расмий сайт",
+      uni_apply: "📝 Арыз берүү",
+      uni_aid_link: "💰 Каржылык жардам",
+
+      country_australia: "Австралия",
+      country_austria: "Австрия",
+      country_belgium: "Бельгия",
+      country_canada: "Канада",
+      country_china: "Кытай",
+      country_czech: "Чехия",
+      country_denmark: "Дания",
+      country_finland: "Финляндия",
+      country_germany: "Германия",
+      country_hongkong: "Гонконг",
+      country_hungary: "Венгрия",
+      country_italy: "Италия",
+      country_japan: "Жапония",
+      country_latvia: "Латвия",
+      country_netherlands: "Нидерланд",
+      country_poland: "Польша",
+      country_qatar: "Катар",
+      country_singapore: "Сингапур",
+      country_southkorea: "Түштүк Корея",
+      country_spain: "Испания",
+      country_sweden: "Швеция",
+      country_switzerland: "Швейцария",
+      country_turkey: "Түркия",
+      country_uae: "БАЭ",
+      country_uk: "Улуу Британия",
+      country_usa: "АКШ",
+
       footer_note: "Fun Zone — тамаша. Чыныгы сунуштар — тестте."
     }
   };
@@ -881,18 +1184,18 @@
   // ============================================================
 
   function init() {
-  injectStyles();
-  buildBurgerMenu();
-  bindLangSwitcher();
-  applyAll();
-  document.documentElement.lang = getLang();
+    injectStyles();
+    buildBurgerMenu();
+    bindLangSwitcher();
+    applyAll();
+    document.documentElement.lang = getLang();
 
-  // Синхронизируем подсветку активного языка с сохранённым в localStorage
-  const current = getLang();
-  document.querySelectorAll(".lang-option").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.lang === current);
-  });
-}
+    // Подсветка активного языка в меню
+    const current = getLang();
+    document.querySelectorAll(".lang-option").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.lang === current);
+    });
+  }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
@@ -900,7 +1203,6 @@
     init();
   }
 
-  // ЭКСПОРТ
   window.I18N = {
     t: t,
     getLang: getLang,
