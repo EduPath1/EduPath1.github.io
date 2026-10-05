@@ -585,6 +585,10 @@
       getTests().catch(e => console.warn("preload tests failed:", e));
     }
   });
+  
+  window.addEventListener("edupath-lang-change", () => {
+  updateHeaderUI();
+  });
 
   // ============================================================
   // ЭКСПОРТ
