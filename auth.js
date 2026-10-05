@@ -1,5 +1,8 @@
 // ============================================================
-// EduPath — auth.js (настоящий бэкенд, v2)
+// EduPath — auth.js (v3)
+// + Подтверждение email
+// + i18n для модалки
+// + Supabase-совместимый возврат после confirm
 // ============================================================
 
 (function() {
@@ -9,8 +12,15 @@
   const TOKEN_KEY = "edupath_token";
   const USER_KEY = "edupath_user";
 
+  // ------------------------------------------------------------
+  // i18n helper
+  // ------------------------------------------------------------
+  function t(key, fallback) {
+    return (window.I18N && window.I18N.t(key)) || fallback || key;
+  }
+
   // ============================================================
-  // РАБОТА С ТОКЕНОМ / ЮЗЕРОМ
+  // ТОКЕН / ЮЗЕР
   // ============================================================
 
   function getToken() {
@@ -34,7 +44,7 @@
     try {
       const s = localStorage.getItem(USER_KEY);
       return s ? JSON.parse(s) : null;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
@@ -48,10 +58,9 @@
   }
 
   // ============================================================
-  // СЕТЕВОЙ СЛОЙ — с обработкой «спящего сервера»
+  // СЕТЕВОЙ СЛОЙ
   // ============================================================
 
-  // Проверяет: сервер вернул ошибку «спит»?
   function isServerSleeping(status) {
     return status === 0 || status === 502 || status === 503 || status === 504 || status >= 500;
   }
@@ -67,61 +76,39 @@
     if (token) headers["Authorization"] = "Bearer " + token;
 
     try {
-      const res = await fetch(
-        API_URL + path,
-        Object.assign({}, options, { headers })
-      );
+      const res = await fetch(API_URL + path, Object.assign({}, options, { headers }));
 
       let data = null;
-      try {
-        data = await res.json();
-      } catch(e) {}
+      try { data = await res.json(); } catch (e) {}
 
-      return {
-        ok: res.ok,
-        status: res.status,
-        data
-      };
-    } catch(networkError) {
-      // fetch не смог дозвониться — сервер точно спит или нет интернета
-      return {
-        ok: false,
-        status: 0,
-        data: null,
-        networkError: true
-      };
+      return { ok: res.ok, status: res.status, data };
+    } catch (networkError) {
+      return { ok: false, status: 0, data: null, networkError: true };
     }
   }
 
-  // Универсальная обёртка: повторяет запрос один раз, если сервер спал
   async function apiFetchWithRetry(path, options, retryDelayMs) {
     retryDelayMs = retryDelayMs || 2000;
 
     let res = await apiFetch(path, options);
 
-    // Если сервер спал или вернул 5xx — ждём и пробуем ещё раз
     if (!res.ok && isServerSleeping(res.status)) {
       console.warn("Server seems asleep, retrying in", retryDelayMs, "ms");
-
       await new Promise(r => setTimeout(r, retryDelayMs));
-
       res = await apiFetch(path, options);
     }
 
     return res;
   }
 
-  // Человеческое сообщение об ошибке
-  function humanError(res, fallback) {
+  function humanError(res, fallbackKey, fallbackText) {
     if (res && isServerSleeping(res.status)) {
-      return "Сервер просыпается. Подожди 30 секунд и попробуй снова.";
+      return t("modal_server_waking", fallbackText || "Сервер просыпается. Подожди 30 секунд и попробуй снова.");
     }
-
     if (res && res.data && res.data.error) {
       return res.data.error;
     }
-
-    return fallback || "Что-то пошло не так. Попробуй ещё раз.";
+    return t(fallbackKey, fallbackText) || fallbackText;
   }
 
   // ============================================================
@@ -130,26 +117,16 @@
 
   async function register(name, email, password) {
     if (!name || !email || !password) {
-      return {
-        ok: false,
-        error: "Заполните все поля"
-      };
+      return { ok: false, error: t("modal_fill_all", "Заполните все поля") };
     }
 
     const res = await apiFetchWithRetry("/api/register", {
       method: "POST",
-      body: JSON.stringify({
-        name,
-        email,
-        password
-      })
+      body: JSON.stringify({ name, email, password })
     });
 
     if (!res.ok) {
-      return {
-        ok: false,
-        error: humanError(res, "Ошибка регистрации")
-      };
+      return { ok: false, error: humanError(res, "modal_error_register", "Ошибка регистрации") };
     }
 
     const session = res.data && res.data.session;
@@ -157,41 +134,36 @@
 
     if (session && session.access_token) {
       setToken(session.access_token);
-
       setCachedUser({
         name: (user && user.name) || name,
         email: (user && user.email) || email,
         id: user && user.id
       });
+
+      return { ok: true, user: user, needsConfirmation: false };
     }
 
+    // Supabase вернул user без session — значит включён Confirm email
     return {
       ok: true,
-      user: user
+      user: user,
+      needsConfirmation: true,
+      email: (user && user.email) || email
     };
   }
 
   async function login(email, password) {
     if (!email || !password) {
-      return {
-        ok: false,
-        error: "Заполните все поля"
-      };
+      return { ok: false, error: t("modal_fill_all", "Заполните все поля") };
     }
 
     const res = await apiFetchWithRetry("/api/login", {
       method: "POST",
-      body: JSON.stringify({
-        email,
-        password
-      })
+      body: JSON.stringify({ email, password })
     });
 
     if (!res.ok) {
-      return {
-        ok: false,
-        error: humanError(res, "Неверный email или пароль")
-      };
+      return { ok: false, error: humanError(res, "modal_error_login", "Неверный email или пароль") };
     }
 
     const session = res.data && res.data.session;
@@ -199,7 +171,6 @@
 
     if (session && session.access_token) {
       setToken(session.access_token);
-
       setCachedUser({
         name: (user && user.name) || "",
         email: user && user.email,
@@ -207,10 +178,22 @@
       });
     }
 
-    return {
-      ok: true,
-      user: user
-    };
+    return { ok: true, user: user };
+  }
+
+  async function resendConfirmation(email) {
+    // Если у тебя в app.py уже есть /api/resend-confirmation — используем его.
+    // Если нет — фронт не упадёт, просто вернём ok:false.
+    const res = await apiFetchWithRetry("/api/resend-confirmation", {
+      method: "POST",
+      body: JSON.stringify({ email })
+    });
+
+    if (!res.ok) {
+      return { ok: false, error: humanError(res, "modal_error_generic", "Что-то пошло не так") };
+    }
+
+    return { ok: true };
   }
 
   function logout() {
@@ -231,14 +214,8 @@
       return [];
     }
 
-    const res = await apiFetch("/api/saved", {
-      method: "GET"
-    });
-
-    if (!res.ok) {
-      // Не ломаем интерфейс — возвращаем прошлый кэш или пустой массив
-      return _savedCache || [];
-    }
+    const res = await apiFetch("/api/saved", { method: "GET" });
+    if (!res.ok) return _savedCache || [];
 
     const list = (res.data && res.data.saved) || [];
 
@@ -253,47 +230,33 @@
 
   function isSaved(name) {
     if (!_savedCache) return false;
-
     return _savedCache.some(u => u.name === name);
   }
 
   async function toggleSave(uni) {
     if (!isLoggedIn()) {
-      return {
-        ok: false,
-        error: "Не вошёл"
-      };
+      return { ok: false, error: "Не вошёл" };
     }
 
-    // 1) Подгружаем актуальный список
     await getSaved();
 
     const currentlySaved = isSaved(uni.name);
 
-    // 2) Отправляем запрос (с retry при спящем сервере)
     if (currentlySaved) {
       const res = await apiFetchWithRetry(
         "/api/saved/" + encodeURIComponent(uni.name),
-        {
-          method: "DELETE"
-        }
+        { method: "DELETE" }
       );
 
       if (!res.ok) {
-        return {
-          ok: false,
-          error: humanError(res, "Не удалось удалить")
-        };
+        return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось удалить") };
       }
 
       if (_savedCache) {
         _savedCache = _savedCache.filter(u => u.name !== uni.name);
       }
 
-      return {
-        ok: true,
-        removed: true
-      };
+      return { ok: true, removed: true };
     } else {
       const res = await apiFetchWithRetry("/api/saved", {
         method: "POST",
@@ -305,24 +268,17 @@
       });
 
       if (!res.ok) {
-        return {
-          ok: false,
-          error: humanError(res, "Не удалось сохранить")
-        };
+        return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить") };
       }
 
       if (!_savedCache) _savedCache = [];
-
       _savedCache.unshift({
         name: uni.name,
         country: uni.country || "",
         city: uni.city || ""
       });
 
-      return {
-        ok: true,
-        added: true
-      };
+      return { ok: true, added: true };
     }
   }
 
@@ -338,13 +294,8 @@
       return [];
     }
 
-    const res = await apiFetch("/api/tests", {
-      method: "GET"
-    });
-
-    if (!res.ok) {
-      return _testsCache || [];
-    }
+    const res = await apiFetch("/api/tests", { method: "GET" });
+    if (!res.ok) return _testsCache || [];
 
     const list = (res.data && res.data.tests) || [];
 
@@ -359,10 +310,7 @@
 
   async function saveTestResult(finalData) {
     if (!isLoggedIn()) {
-      return {
-        ok: false,
-        error: "Не вошёл"
-      };
+      return { ok: false, error: "Не вошёл" };
     }
 
     const res = await apiFetchWithRetry("/api/tests", {
@@ -374,17 +322,11 @@
     });
 
     if (!res.ok) {
-      return {
-        ok: false,
-        error: humanError(res, "Не удалось сохранить тест")
-      };
+      return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить тест") };
     }
 
     _testsCache = null;
-
-    return {
-      ok: true
-    };
+    return { ok: true };
   }
 
   // ============================================================
@@ -396,63 +338,32 @@
     if (existing) existing.remove();
 
     const toast = document.createElement("div");
-
-    toast.className =
-      "edupath-toast edupath-toast-" + (type || "success");
-
+    toast.className = "edupath-toast edupath-toast-" + (type || "success");
     toast.textContent = message;
 
     if (!document.getElementById("edupath-toast-style")) {
       const style = document.createElement("style");
-
       style.id = "edupath-toast-style";
-
       style.textContent = `
         .edupath-toast {
           position: fixed;
-          bottom: 32px;
-          left: 50%;
+          bottom: 32px; left: 50%;
           transform: translateX(-50%) translateY(20px);
-          background: #2B1B10;
-          color: #F7EFE1;
-          padding: 14px 24px;
-          border-radius: 10px;
-          font-family: 'Work Sans', sans-serif;
-          font-size: 14px;
-          font-weight: 500;
+          background: #2B1B10; color: #F7EFE1;
+          padding: 14px 24px; border-radius: 10px;
+          font-family: 'Work Sans', sans-serif; font-size: 14px; font-weight: 500;
           box-shadow: 0 12px 28px -10px rgba(43,27,16,0.5);
-          z-index: 9999;
-          opacity: 0;
+          z-index: 9999; opacity: 0;
           animation: toastIn .3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          pointer-events: none;
-          max-width: 90vw;
-          text-align: center;
-          line-height: 1.4;
+          pointer-events: none; max-width: 90vw; text-align: center; line-height: 1.4;
         }
-
-        .edupath-toast-success {
-          background: #2B1B10;
-          color: #F7EFE1;
-        }
-
-        .edupath-toast-error {
-          background: #B84A3A;
-          color: #FBF6EC;
-        }
-
-        .edupath-toast-info {
-          background: #8C5A34;
-          color: #FBF6EC;
-        }
-
+        .edupath-toast-success { background: #2B1B10; color: #F7EFE1; }
+        .edupath-toast-error   { background: #B84A3A; color: #FBF6EC; }
+        .edupath-toast-info    { background: #8C5A34; color: #FBF6EC; }
         @keyframes toastIn {
-          to {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-          }
+          to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
       `;
-
       document.head.appendChild(style);
     }
 
@@ -461,9 +372,7 @@
     setTimeout(() => {
       toast.style.transition = "opacity .3s ease, transform .3s ease";
       toast.style.opacity = "0";
-      toast.style.transform =
-        "translateX(-50%) translateY(20px)";
-
+      toast.style.transform = "translateX(-50%) translateY(20px)";
       setTimeout(() => toast.remove(), 300);
     }, 3200);
   }
@@ -473,266 +382,185 @@
   // ============================================================
 
   let modalEl = null;
-  let modalMode = "register";
+  let modalMode = "register"; // register | login | confirm
+  let pendingEmail = "";
 
   function buildModal() {
     if (modalEl) return modalEl;
 
     const overlay = document.createElement("div");
-
     overlay.className = "edupath-modal-overlay";
     overlay.id = "edupathAuthModal";
 
     overlay.innerHTML = `
       <div class="edupath-modal">
-        <button
-          class="edupath-modal-close"
-          type="button"
-          aria-label="Закрыть"
-        >×</button>
+        <button class="edupath-modal-close" type="button" aria-label="Close">×</button>
 
-        <h2 class="edupath-modal-title">Добро пожаловать</h2>
+        <h2 class="edupath-modal-title"></h2>
+        <p class="edupath-modal-sub" id="edupathModalSub"></p>
 
-        <p
-          class="edupath-modal-sub"
-          id="edupathModalSub"
-        >Создай аккаунт, чтобы сохранять университеты</p>
-
+        <!-- FORM (register / login) -->
         <form id="edupathAuthForm" autocomplete="off">
-
-          <div
-            class="edupath-field"
-            id="edupathNameField"
-          >
-            <label>Имя</label>
-
-            <input
-              type="text"
-              id="edupathName"
-              placeholder="Например, Айсана"
-            >
+          <div class="edupath-field" id="edupathNameField">
+            <label data-i18n="modal_name">Имя</label>
+            <input type="text" id="edupathName" data-i18n-placeholder="modal_name_ph" placeholder="Например, Айсана">
           </div>
 
           <div class="edupath-field">
-            <label>Email</label>
-
-            <input
-              type="email"
-              id="edupathEmail"
-              placeholder="you@mail.com"
-            >
+            <label data-i18n="modal_email">Email</label>
+            <input type="email" id="edupathEmail" placeholder="you@mail.com">
           </div>
 
           <div class="edupath-field">
-            <label>Пароль</label>
-
-            <input
-              type="password"
-              id="edupathPassword"
-              placeholder="Минимум 6 символов"
-            >
+            <label data-i18n="modal_password">Пароль</label>
+            <input type="password" id="edupathPassword" data-i18n-placeholder="modal_password_ph" placeholder="Минимум 6 символов">
           </div>
 
-          <div
-            class="edupath-error"
-            id="edupathAuthError"
-          ></div>
+          <div class="edupath-error" id="edupathAuthError"></div>
 
-          <button
-            type="submit"
-            class="edupath-btn-submit"
-            id="edupathSubmitBtn"
-          >Создать аккаунт</button>
-
+          <button type="submit" class="edupath-btn-submit" id="edupathSubmitBtn"></button>
         </form>
 
-        <div class="edupath-switch">
-          <span id="edupathSwitchText">Уже есть аккаунт?</span>
+        <!-- CONFIRM EMAIL SCREEN -->
+        <div id="edupathConfirmBlock" style="display:none;">
+          <div class="edupath-confirm-icon">📧</div>
+          <p class="edupath-confirm-sub" id="edupathConfirmSub"></p>
+          <button type="button" class="edupath-btn-submit" id="edupathResendBtn"></button>
+          <button type="button" class="edupath-btn-ghost" id="edupathOpenMailBtn"></button>
+          <button type="button" class="edupath-btn-link" id="edupathAlreadyConfirmedBtn"></button>
+        </div>
 
-          <button
-            type="button"
-            id="edupathSwitchBtn"
-          >Войти</button>
+        <div class="edupath-switch" id="edupathSwitchWrap">
+          <span id="edupathSwitchText"></span>
+          <button type="button" id="edupathSwitchBtn"></button>
         </div>
       </div>
     `;
 
     if (!document.getElementById("edupath-modal-style")) {
       const style = document.createElement("style");
-
       style.id = "edupath-modal-style";
-
       style.textContent = `
         .edupath-modal-overlay {
-          position: fixed;
-          inset: 0;
+          position: fixed; inset: 0;
           background: rgba(43,27,16,0.55);
           backdrop-filter: blur(4px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 9998;
-          opacity: 0;
-          visibility: hidden;
-          transition:
-            opacity .3s cubic-bezier(0.22,1,0.36,1),
-            visibility .3s;
+          display: flex; align-items: center; justify-content: center;
+          z-index: 9998; opacity: 0; visibility: hidden;
+          transition: opacity .3s cubic-bezier(0.22,1,0.36,1), visibility .3s;
           padding: 20px;
         }
-
-        .edupath-modal-overlay.open {
-          opacity: 1;
-          visibility: visible;
-        }
+        .edupath-modal-overlay.open { opacity: 1; visibility: visible; }
 
         .edupath-modal {
-          background: #FBF6EC;
-          border-radius: 20px;
+          background: #FBF6EC; border-radius: 20px;
           padding: 40px 36px 32px;
-          width: 100%;
-          max-width: 440px;
-          position: relative;
+          width: 100%; max-width: 440px; position: relative;
           box-shadow: 0 30px 60px -20px rgba(43,27,16,0.4);
           transform: translateY(20px);
-          transition:
-            transform .35s cubic-bezier(0.22,1,0.36,1);
+          transition: transform .35s cubic-bezier(0.22,1,0.36,1);
         }
-
-        .edupath-modal-overlay.open .edupath-modal {
-          transform: translateY(0);
-        }
+        .edupath-modal-overlay.open .edupath-modal { transform: translateY(0); }
 
         .edupath-modal-close {
-          position: absolute;
-          top: 16px;
-          right: 16px;
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          background: transparent;
-          color: #7A6552;
-          font-size: 24px;
-          line-height: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          position: absolute; top: 16px; right: 16px;
+          width: 36px; height: 36px; border-radius: 50%;
+          background: transparent; color: #7A6552;
+          font-size: 24px; line-height: 1;
+          display: flex; align-items: center; justify-content: center;
           transition: background .2s;
         }
-
-        .edupath-modal-close:hover {
-          background: #EFE1C6;
-          color: #2B1B10;
-        }
+        .edupath-modal-close:hover { background: #EFE1C6; color: #2B1B10; }
 
         .edupath-modal-title {
-          font-family: 'Fraunces', serif;
-          font-size: 28px;
-          color: #2B1B10;
-          margin-bottom: 8px;
+          font-family: 'Fraunces', serif; font-size: 28px;
+          color: #2B1B10; margin-bottom: 8px;
         }
-
         .edupath-modal-sub {
-          font-size: 14px;
-          color: #7A6552;
-          margin-bottom: 28px;
-          line-height: 1.5;
+          font-size: 14px; color: #7A6552;
+          margin-bottom: 28px; line-height: 1.5;
         }
 
-        .edupath-field {
-          margin-bottom: 16px;
-        }
-
+        .edupath-field { margin-bottom: 16px; }
         .edupath-field label {
-          display: block;
-          font-size: 13px;
-          color: #7A6552;
-          margin-bottom: 6px;
-          font-weight: 500;
+          display: block; font-size: 13px; color: #7A6552;
+          margin-bottom: 6px; font-weight: 500;
         }
-
         .edupath-field input {
-          width: 100%;
-          padding: 13px 16px;
-          font-family: inherit;
-          font-size: 15px;
-          background: #F7EFE1;
-          color: #2B1B10;
+          width: 100%; padding: 13px 16px;
+          font-family: inherit; font-size: 15px;
+          background: #F7EFE1; color: #2B1B10;
           border: 1.5px solid rgba(43,27,16,0.14);
           border-radius: 10px;
           transition: border-color .2s, background .2s;
         }
-
         .edupath-field input:focus {
-          outline: none;
-          border-color: #8C5A34;
-          background: #FBF6EC;
+          outline: none; border-color: #8C5A34; background: #FBF6EC;
         }
 
         .edupath-error {
-          font-size: 13px;
-          color: #B84A3A;
-          min-height: 18px;
-          margin-bottom: 12px;
-          line-height: 1.4;
+          font-size: 13px; color: #B84A3A;
+          min-height: 18px; margin-bottom: 12px; line-height: 1.4;
         }
 
         .edupath-btn-submit {
-          width: 100%;
-          padding: 15px;
-          background: #2B1B10;
-          color: #F7EFE1;
-          border-radius: 10px;
-          font-size: 15px;
-          font-weight: 600;
+          width: 100%; padding: 15px;
+          background: #2B1B10; color: #F7EFE1;
+          border-radius: 10px; font-size: 15px; font-weight: 600;
           transition: background .2s, transform .2s;
         }
+        .edupath-btn-submit:hover { background: #5A3B26; transform: translateY(-1px); }
+        .edupath-btn-submit:disabled { opacity: 0.6; cursor: wait; }
 
-        .edupath-btn-submit:hover {
-          background: #5A3B26;
-          transform: translateY(-1px);
+        .edupath-btn-ghost {
+          width: 100%; padding: 13px; margin-top: 10px;
+          background: #EFE1C6; color: #2B1B10;
+          border-radius: 10px; font-size: 14px; font-weight: 600;
+          transition: background .2s;
         }
+        .edupath-btn-ghost:hover { background: #D9BD93; }
 
-        .edupath-btn-submit:disabled {
-          opacity: 0.6;
-          cursor: wait;
+        .edupath-btn-link {
+          display: block; width: 100%; margin-top: 14px;
+          background: transparent; color: #8C5A34;
+          font-size: 14px; font-weight: 600;
+          text-decoration: underline; text-underline-offset: 3px;
         }
+        .edupath-btn-link:hover { color: #5A3B26; }
+
+        .edupath-confirm-icon {
+          font-size: 48px; text-align: center; margin-bottom: 16px;
+        }
+        .edupath-confirm-sub {
+          font-size: 14px; color: #7A6552;
+          line-height: 1.6; margin-bottom: 24px; text-align: center;
+        }
+        .edupath-confirm-sub b { color: #2B1B10; }
 
         .edupath-switch {
-          text-align: center;
-          margin-top: 20px;
-          font-size: 14px;
-          color: #7A6552;
+          text-align: center; margin-top: 20px;
+          font-size: 14px; color: #7A6552;
         }
-
         .edupath-switch button {
-          color: #8C5A34;
-          font-weight: 600;
-          text-decoration: underline;
-          text-underline-offset: 3px;
+          color: #8C5A34; font-weight: 600;
+          text-decoration: underline; text-underline-offset: 3px;
           padding: 0 4px;
         }
 
         @media (max-width: 480px) {
-          .edupath-modal {
-            padding: 32px 24px 24px;
-          }
-
-          .edupath-modal-title {
-            font-size: 24px;
-          }
+          .edupath-modal { padding: 32px 24px 24px; }
+          .edupath-modal-title { font-size: 24px; }
         }
       `;
-
       document.head.appendChild(style);
     }
 
     document.body.appendChild(overlay);
-
     modalEl = overlay;
-
     return overlay;
   }
 
+  // -------- Открыть модалку в нужном режиме --------
   function openModal(mode) {
     mode = mode || "register";
     modalMode = mode;
@@ -740,58 +568,65 @@
     const overlay = buildModal();
     overlay.classList.add("open");
 
-    const nameField =
-      document.getElementById("edupathNameField");
-
-    const submitBtn =
-      document.getElementById("edupathSubmitBtn");
-
-    const switchText =
-      document.getElementById("edupathSwitchText");
-
-    const switchBtn =
-      document.getElementById("edupathSwitchBtn");
-
-    const sub =
-      document.getElementById("edupathModalSub");
-
-    const errEl =
-      document.getElementById("edupathAuthError");
-
-    const title =
-      overlay.querySelector(".edupath-modal-title");
+    const title       = overlay.querySelector(".edupath-modal-title");
+    const sub         = document.getElementById("edupathModalSub");
+    const form        = document.getElementById("edupathAuthForm");
+    const confirmBox  = document.getElementById("edupathConfirmBlock");
+    const nameField   = document.getElementById("edupathNameField");
+    const submitBtn   = document.getElementById("edupathSubmitBtn");
+    const switchWrap  = document.getElementById("edupathSwitchWrap");
+    const switchText  = document.getElementById("edupathSwitchText");
+    const switchBtn   = document.getElementById("edupathSwitchBtn");
+    const errEl       = document.getElementById("edupathAuthError");
 
     errEl.textContent = "";
 
+    if (mode === "confirm") {
+      // Экран «подтверди почту»
+      form.style.display = "none";
+      confirmBox.style.display = "block";
+      switchWrap.style.display = "none";
+
+      title.textContent = t("modal_confirm_title", "Подтверди почту");
+      sub.textContent = "";
+
+      const confirmSub = document.getElementById("edupathConfirmSub");
+      confirmSub.innerHTML = t(
+        "modal_confirm_sub",
+        "Мы отправили письмо на {email}. Открой Gmail и нажми на ссылку подтверждения."
+      ).replace("{email}", "<b>" + (pendingEmail || "") + "</b>");
+
+      document.getElementById("edupathResendBtn").textContent = t("modal_confirm_resend", "Отправить письмо заново");
+      document.getElementById("edupathOpenMailBtn").textContent = t("modal_confirm_open_mail", "Открыть Gmail");
+      document.getElementById("edupathAlreadyConfirmedBtn").textContent = t("modal_confirm_already", "Я подтвердил — войти");
+      return;
+    }
+
+    // Обычные режимы register / login
+    form.style.display = "block";
+    confirmBox.style.display = "none";
+    switchWrap.style.display = "block";
+
     if (mode === "register") {
-      title.textContent = "Добро пожаловать";
-      sub.textContent =
-        "Создай аккаунт, чтобы сохранять университеты";
-
+      title.textContent = t("modal_hello", "Добро пожаловать");
+      sub.textContent   = t("modal_hello_sub", "Создай аккаунт, чтобы сохранять университеты");
       nameField.style.display = "block";
-
-      submitBtn.textContent = "Создать аккаунт";
-
-      switchText.textContent = "Уже есть аккаунт?";
-      switchBtn.textContent = "Войти";
+      submitBtn.textContent = t("modal_submit_register", "Создать аккаунт");
+      switchText.textContent = t("modal_switch_register", "Уже есть аккаунт?");
+      switchBtn.textContent  = t("modal_switch_register_btn", "Войти");
     } else {
-      title.textContent = "С возвращением";
-      sub.textContent = "Войди в свой аккаунт";
-
+      title.textContent = t("modal_welcome_back", "С возвращением");
+      sub.textContent   = t("modal_welcome_back_sub", "Войди в свой аккаунт");
       nameField.style.display = "none";
-
-      submitBtn.textContent = "Войти";
-
-      switchText.textContent = "Нет аккаунта?";
-      switchBtn.textContent = "Создать";
+      submitBtn.textContent = t("modal_submit_login", "Войти");
+      switchText.textContent = t("modal_switch_login", "Нет аккаунта?");
+      switchBtn.textContent  = t("modal_switch_login_btn", "Создать");
     }
 
     setTimeout(() => {
-      const firstInput =
-        mode === "register"
-          ? document.getElementById("edupathName")
-          : document.getElementById("edupathEmail");
-
+      const firstInput = mode === "register"
+        ? document.getElementById("edupathName")
+        : document.getElementById("edupathEmail");
       if (firstInput) firstInput.focus();
     }, 250);
   }
@@ -800,16 +635,14 @@
     if (modalEl) modalEl.classList.remove("open");
   }
 
+  // ------------------------------------------------------------
+  // Делегированные клики
+  // ------------------------------------------------------------
   document.addEventListener("click", (e) => {
     const openBtn = e.target.closest("[data-auth-open]");
-
     if (openBtn) {
       e.preventDefault();
-
-      openModal(
-        openBtn.dataset.authOpen || "register"
-      );
-
+      openModal(openBtn.dataset.authOpen || "register");
       return;
     }
 
@@ -818,92 +651,89 @@
       return;
     }
 
-    if (
-      e.target.classList &&
-      e.target.classList.contains("edupath-modal-overlay")
-    ) {
+    if (e.target.classList && e.target.classList.contains("edupath-modal-overlay")) {
       closeModal();
       return;
     }
 
     if (e.target.id === "edupathSwitchBtn") {
-      openModal(
-        modalMode === "register"
-          ? "login"
-          : "register"
-      );
+      openModal(modalMode === "register" ? "login" : "register");
+      return;
+    }
 
+    // Переотправить письмо
+    if (e.target.id === "edupathResendBtn") {
+      e.preventDefault();
+      const btn = e.target;
+      const oldText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = t("modal_wait", "Подождите...");
+
+      resendConfirmation(pendingEmail).then(res => {
+        btn.disabled = false;
+        btn.textContent = oldText;
+        if (res.ok) {
+          showToast(t("modal_confirm_resent", "Письмо отправлено снова"), "success");
+        } else {
+          showToast(res.error || t("modal_error_generic", "Что-то пошло не так"), "error");
+        }
+      });
+      return;
+    }
+
+    // Открыть Gmail
+    if (e.target.id === "edupathOpenMailBtn") {
+      e.preventDefault();
+      window.open("https://mail.google.com", "_blank");
+      return;
+    }
+
+    // «Я подтвердил — войти»
+    if (e.target.id === "edupathAlreadyConfirmedBtn") {
+      e.preventDefault();
+      openModal("login");
       return;
     }
 
     if (e.target.closest("[data-auth-logout]")) {
       e.preventDefault();
-
       logout();
-
-      showToast(
-        "Вы вышли из аккаунта",
-        "info"
-      );
-
+      showToast(t("modal_logout_success", "Вы вышли из аккаунта"), "info");
       updateHeaderUI();
 
-      if (
-        window.location.pathname.includes("profile")
-      ) {
+      if (window.location.pathname.includes("profile")) {
         window.location.href = "index.html";
       }
-
       return;
     }
   });
 
+  // ------------------------------------------------------------
+  // Отправка формы (register / login)
+  // ------------------------------------------------------------
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "edupathAuthForm") return;
-
     e.preventDefault();
 
-    const errEl =
-      document.getElementById("edupathAuthError");
-
-    const submitBtn =
-      document.getElementById("edupathSubmitBtn");
+    const errEl     = document.getElementById("edupathAuthError");
+    const submitBtn = document.getElementById("edupathSubmitBtn");
 
     errEl.textContent = "";
-
     submitBtn.disabled = true;
 
     const oldText = submitBtn.textContent;
+    submitBtn.textContent = t("modal_wait", "Подождите...");
 
-    submitBtn.textContent = "Подождите...";
-
-    const name =
-      document.getElementById("edupathName")
-        .value
-        .trim();
-
-    const email =
-      document.getElementById("edupathEmail")
-        .value
-        .trim();
-
-    const password =
-      document.getElementById("edupathPassword")
-        .value;
+    const name     = document.getElementById("edupathName").value.trim();
+    const email    = document.getElementById("edupathEmail").value.trim();
+    const password = document.getElementById("edupathPassword").value;
 
     let result;
 
     if (modalMode === "register") {
-      result = await register(
-        name,
-        email,
-        password
-      );
+      result = await register(name, email, password);
     } else {
-      result = await login(
-        email,
-        password
-      );
+      result = await login(email, password);
     }
 
     submitBtn.disabled = false;
@@ -914,23 +744,73 @@
       return;
     }
 
-    closeModal();
+    // -------- Кейс: нужно подтвердить email --------
+    if (result.needsConfirmation) {
+      pendingEmail = result.email || email;
+      openModal("confirm"); // остаёмся в модалке, меняем контент
+      return;
+    }
 
+    // -------- Обычный успех --------
+    closeModal();
     showToast(
       modalMode === "register"
-        ? "Аккаунт создан. Привет!"
-        : "С возвращением!",
+        ? t("modal_register_success", "Аккаунт создан. Привет!")
+        : t("modal_login_success", "С возвращением!"),
       "success"
     );
 
     updateHeaderUI();
 
-    if (
-      window.location.pathname.includes("profile")
-    ) {
+    if (window.location.pathname.includes("profile")) {
       window.location.reload();
     }
   });
+
+  // ------------------------------------------------------------
+  // Возврат после подтверждения email (Supabase redirect)
+  // Поддерживаем #access_token=...&refresh_token=... и ?code=...
+  // ------------------------------------------------------------
+  function handleAuthRedirect() {
+    const hash = window.location.hash || "";
+    const search = window.location.search || "";
+
+    // 1) Implicit flow: #access_token=...&refresh_token=...&type=signup
+    if (hash.includes("access_token=")) {
+      const params = new URLSearchParams(hash.replace(/^#/, ""));
+      const access = params.get("access_token");
+      const type = params.get("type");
+
+      if (access) {
+        setToken(access);
+        // чистим hash
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+        updateHeaderUI();
+
+        if (type === "signup") {
+          showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
+        } else {
+          showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
+        }
+        return true;
+      }
+    }
+
+    // 2) PKCE flow: ?code=...
+    if (search.includes("code=")) {
+      // Без обмена кода на токен на бэкенде мы не можем завершить вход.
+      // Но хотя бы покажем подсказку.
+      history.replaceState(null, "", window.location.pathname);
+      // Открываем модалку логина
+      setTimeout(() => {
+        openModal("login");
+        showToast(t("modal_after_confirm_sub", "Теперь войди со своим паролем"), "info");
+      }, 300);
+      return true;
+    }
+
+    return false;
+  }
 
   // ============================================================
   // ШАПКА
@@ -939,71 +819,51 @@
   function updateHeaderUI() {
     const user = getCurrentUser();
     const loginBtn = document.querySelector(".btn-login");
-
     if (!loginBtn) return;
-
-    const helloWord =
-      (window.I18N &&
-        window.I18N.t("profile_greeting")) ||
-      "Привет";
 
     if (user) {
       loginBtn.textContent =
-        helloWord +
-        ", " +
-        (user.name || "друг").split(" ")[0];
-
+        t("nav_hello", "Привет") + ", " + (user.name || "друг").split(" ")[0];
       loginBtn.href = "profile.html";
-
-      loginBtn.setAttribute(
-        "data-auth-user",
-        "1"
-      );
-
-      loginBtn.removeAttribute(
-        "data-auth-open"
-      );
+      loginBtn.setAttribute("data-auth-user", "1");
+      loginBtn.removeAttribute("data-auth-open");
     } else {
-      loginBtn.textContent =
-        (window.I18N &&
-          window.I18N.t("nav_login")) ||
-        "Войти";
-
+      loginBtn.textContent = t("nav_login", "Войти");
       loginBtn.href = "#";
-
-      loginBtn.removeAttribute(
-        "data-auth-user"
-      );
-
-      loginBtn.setAttribute(
-        "data-auth-open",
-        "register"
-      );
+      loginBtn.removeAttribute("data-auth-user");
+      loginBtn.setAttribute("data-auth-open", "register");
     }
   }
 
+  // ============================================================
+  // ИНИЦИАЛИЗАЦИЯ
+  // ============================================================
+
   document.addEventListener("DOMContentLoaded", () => {
+    // Сначала пробуем поймать редирект от Supabase
+    const handled = handleAuthRedirect();
+
     updateHeaderUI();
 
+    // Если после редиректа уже есть токен — просто подгружаем данные
     if (isLoggedIn()) {
-      getSaved().catch(e =>
-        console.warn(
-          "preload saved failed:",
-          e
-        )
-      );
+      getSaved().catch(e => console.warn("preload saved failed:", e));
+      getTests().catch(e => console.warn("preload tests failed:", e));
+    }
 
-      getTests().catch(e =>
-        console.warn(
-          "preload tests failed:",
-          e
-        )
-      );
+    // Если это была PKCE-ссылка — откроется login-модалка через 300мс
+    if (!handled && window.location.hash.includes("error=")) {
+      showToast(t("modal_error_generic", "Что-то пошло не так"), "error");
+      history.replaceState(null, "", window.location.pathname);
     }
   });
 
+  // При смене языка — перерисовать шапку и открытую модалку
   window.addEventListener("edupath-lang-change", () => {
     updateHeaderUI();
+    if (modalEl && modalEl.classList.contains("open")) {
+      openModal(modalMode);
+    }
   });
 
   // ============================================================
@@ -1017,6 +877,7 @@
     register,
     login,
     logout,
+    resendConfirmation,
     getSaved,
     isSaved,
     toggleSave,
