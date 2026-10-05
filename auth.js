@@ -1,8 +1,9 @@
 // ============================================================
-// EduPath — auth.js (v3)
-// + Подтверждение email
-// + i18n для модалки
-// + Supabase-совместимый возврат после confirm
+// EduPath — auth.js (final)
+// Supabase + Render backend
+// + Полный i18n (5 языков)
+// + Confirm email экран
+// + Auto-login по redirect от Supabase
 // ============================================================
 
 (function() {
@@ -20,7 +21,7 @@
   }
 
   // ============================================================
-  // ТОКЕН / ЮЗЕР
+  // TOKEN / USER
   // ============================================================
 
   function getToken() {
@@ -58,7 +59,7 @@
   }
 
   // ============================================================
-  // СЕТЕВОЙ СЛОЙ
+  // NETWORK
   // ============================================================
 
   function isServerSleeping(status) {
@@ -103,7 +104,7 @@
 
   function humanError(res, fallbackKey, fallbackText) {
     if (res && isServerSleeping(res.status)) {
-      return t("modal_server_waking", fallbackText || "Сервер просыпается. Подожди 30 секунд и попробуй снова.");
+      return t("modal_server_waking", "Сервер просыпается. Подожди 30 секунд и попробуй снова.");
     }
     if (res && res.data && res.data.error) {
       return res.data.error;
@@ -112,7 +113,7 @@
   }
 
   // ============================================================
-  // РЕГИСТРАЦИЯ / ВХОД / ВЫХОД
+  // AUTH: REGISTER / LOGIN / LOGOUT
   // ============================================================
 
   async function register(name, email, password) {
@@ -143,7 +144,7 @@
       return { ok: true, user: user, needsConfirmation: false };
     }
 
-    // Supabase вернул user без session — значит включён Confirm email
+    // Confirm email включён — Supabase не дал session
     return {
       ok: true,
       user: user,
@@ -182,8 +183,6 @@
   }
 
   async function resendConfirmation(email) {
-    // Если у тебя в app.py уже есть /api/resend-confirmation — используем его.
-    // Если нет — фронт не упадёт, просто вернём ok:false.
     const res = await apiFetchWithRetry("/api/resend-confirmation", {
       method: "POST",
       body: JSON.stringify({ email })
@@ -203,7 +202,7 @@
   }
 
   // ============================================================
-  // СОХРАНЁННЫЕ УНИВЕРСИТЕТЫ
+  // SAVED UNIVERSITIES
   // ============================================================
 
   let _savedCache = null;
@@ -283,7 +282,7 @@
   }
 
   // ============================================================
-  // РЕЗУЛЬТАТЫ ТЕСТОВ
+  // TEST RESULTS
   // ============================================================
 
   let _testsCache = null;
@@ -378,7 +377,7 @@
   }
 
   // ============================================================
-  // МОДАЛКА
+  // MODAL
   // ============================================================
 
   let modalEl = null;
@@ -399,7 +398,6 @@
         <h2 class="edupath-modal-title"></h2>
         <p class="edupath-modal-sub" id="edupathModalSub"></p>
 
-        <!-- FORM (register / login) -->
         <form id="edupathAuthForm" autocomplete="off">
           <div class="edupath-field" id="edupathNameField">
             <label data-i18n="modal_name">Имя</label>
@@ -418,21 +416,20 @@
 
           <div class="edupath-error" id="edupathAuthError"></div>
 
-          <button type="submit" class="edupath-btn-submit" id="edupathSubmitBtn"></button>
+          <button type="submit" class="edupath-btn-submit" id="edupathSubmitBtn">Создать аккаунт</button>
         </form>
 
-        <!-- CONFIRM EMAIL SCREEN -->
         <div id="edupathConfirmBlock" style="display:none;">
           <div class="edupath-confirm-icon">📧</div>
           <p class="edupath-confirm-sub" id="edupathConfirmSub"></p>
-          <button type="button" class="edupath-btn-submit" id="edupathResendBtn"></button>
-          <button type="button" class="edupath-btn-ghost" id="edupathOpenMailBtn"></button>
-          <button type="button" class="edupath-btn-link" id="edupathAlreadyConfirmedBtn"></button>
+          <button type="button" class="edupath-btn-submit" id="edupathResendBtn">Отправить письмо заново</button>
+          <button type="button" class="edupath-btn-ghost" id="edupathOpenMailBtn">Открыть Gmail</button>
+          <button type="button" class="edupath-btn-link" id="edupathAlreadyConfirmedBtn">Я подтвердил — войти</button>
         </div>
 
         <div class="edupath-switch" id="edupathSwitchWrap">
-          <span id="edupathSwitchText"></span>
-          <button type="button" id="edupathSwitchBtn"></button>
+          <span id="edupathSwitchText">Уже есть аккаунт?</span>
+          <button type="button" id="edupathSwitchBtn">Войти</button>
         </div>
       </div>
     `;
@@ -560,7 +557,7 @@
     return overlay;
   }
 
-  // -------- Открыть модалку в нужном режиме --------
+  // -------- Open modal --------
   function openModal(mode) {
     mode = mode || "register";
     modalMode = mode;
@@ -581,8 +578,10 @@
 
     errEl.textContent = "";
 
+    // Сначала подставим все data-i18n
+    if (window.I18N) window.I18N.applyAll();
+
     if (mode === "confirm") {
-      // Экран «подтверди почту»
       form.style.display = "none";
       confirmBox.style.display = "block";
       switchWrap.style.display = "none";
@@ -596,13 +595,12 @@
         "Мы отправили письмо на {email}. Открой Gmail и нажми на ссылку подтверждения."
       ).replace("{email}", "<b>" + (pendingEmail || "") + "</b>");
 
-      document.getElementById("edupathResendBtn").textContent = t("modal_confirm_resend", "Отправить письмо заново");
-      document.getElementById("edupathOpenMailBtn").textContent = t("modal_confirm_open_mail", "Открыть Gmail");
+      document.getElementById("edupathResendBtn").textContent       = t("modal_confirm_resend", "Отправить письмо заново");
+      document.getElementById("edupathOpenMailBtn").textContent     = t("modal_confirm_open_mail", "Открыть Gmail");
       document.getElementById("edupathAlreadyConfirmedBtn").textContent = t("modal_confirm_already", "Я подтвердил — войти");
       return;
     }
 
-    // Обычные режимы register / login
     form.style.display = "block";
     confirmBox.style.display = "none";
     switchWrap.style.display = "block";
@@ -635,9 +633,10 @@
     if (modalEl) modalEl.classList.remove("open");
   }
 
-  // ------------------------------------------------------------
-  // Делегированные клики
-  // ------------------------------------------------------------
+  // ============================================================
+  // CLICK HANDLERS
+  // ============================================================
+
   document.addEventListener("click", (e) => {
     const openBtn = e.target.closest("[data-auth-open]");
     if (openBtn) {
@@ -661,7 +660,6 @@
       return;
     }
 
-    // Переотправить письмо
     if (e.target.id === "edupathResendBtn") {
       e.preventDefault();
       const btn = e.target;
@@ -681,14 +679,12 @@
       return;
     }
 
-    // Открыть Gmail
     if (e.target.id === "edupathOpenMailBtn") {
       e.preventDefault();
       window.open("https://mail.google.com", "_blank");
       return;
     }
 
-    // «Я подтвердил — войти»
     if (e.target.id === "edupathAlreadyConfirmedBtn") {
       e.preventDefault();
       openModal("login");
@@ -708,9 +704,10 @@
     }
   });
 
-  // ------------------------------------------------------------
-  // Отправка формы (register / login)
-  // ------------------------------------------------------------
+  // ============================================================
+  // FORM SUBMIT
+  // ============================================================
+
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "edupathAuthForm") return;
     e.preventDefault();
@@ -744,14 +741,14 @@
       return;
     }
 
-    // -------- Кейс: нужно подтвердить email --------
+    // Нужно подтвердить email — остаёмся в модалке
     if (result.needsConfirmation) {
       pendingEmail = result.email || email;
-      openModal("confirm"); // остаёмся в модалке, меняем контент
+      openModal("confirm");
       return;
     }
 
-    // -------- Обычный успех --------
+    // Успешный вход
     closeModal();
     showToast(
       modalMode === "register"
@@ -767,41 +764,38 @@
     }
   });
 
-  // ------------------------------------------------------------
-  // Возврат после подтверждения email (Supabase redirect)
-  // Поддерживаем #access_token=...&refresh_token=... и ?code=...
-  // ------------------------------------------------------------
+  // ============================================================
+  // HANDLE SUPABASE REDIRECT AFTER CONFIRM
+  // ============================================================
+
   function handleAuthRedirect() {
     const hash = window.location.hash || "";
     const search = window.location.search || "";
 
-    // 1) Implicit flow: #access_token=...&refresh_token=...&type=signup
     if (hash.includes("access_token=")) {
       const params = new URLSearchParams(hash.replace(/^#/, ""));
       const access = params.get("access_token");
-      const type = params.get("type");
 
       if (access) {
         setToken(access);
-        // чистим hash
         history.replaceState(null, "", window.location.pathname + window.location.search);
         updateHeaderUI();
 
-        if (type === "signup") {
-          showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
-        } else {
-          showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
-        }
+        // Пытаемся подтянуть имя пользователя
+        apiFetch("/api/me", { method: "GET" }).then(res => {
+          if (res.ok && res.data && res.data.user) {
+            setCachedUser(res.data.user);
+            updateHeaderUI();
+          }
+        });
+
+        showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
         return true;
       }
     }
 
-    // 2) PKCE flow: ?code=...
     if (search.includes("code=")) {
-      // Без обмена кода на токен на бэкенде мы не можем завершить вход.
-      // Но хотя бы покажем подсказку.
       history.replaceState(null, "", window.location.pathname);
-      // Открываем модалку логина
       setTimeout(() => {
         openModal("login");
         showToast(t("modal_after_confirm_sub", "Теперь войди со своим паролем"), "info");
@@ -813,7 +807,7 @@
   }
 
   // ============================================================
-  // ШАПКА
+  // HEADER
   // ============================================================
 
   function updateHeaderUI() {
@@ -836,29 +830,20 @@
   }
 
   // ============================================================
-  // ИНИЦИАЛИЗАЦИЯ
+  // INIT
   // ============================================================
 
   document.addEventListener("DOMContentLoaded", () => {
-    // Сначала пробуем поймать редирект от Supabase
-    const handled = handleAuthRedirect();
-
+    handleAuthRedirect();
     updateHeaderUI();
 
-    // Если после редиректа уже есть токен — просто подгружаем данные
     if (isLoggedIn()) {
       getSaved().catch(e => console.warn("preload saved failed:", e));
       getTests().catch(e => console.warn("preload tests failed:", e));
     }
-
-    // Если это была PKCE-ссылка — откроется login-модалка через 300мс
-    if (!handled && window.location.hash.includes("error=")) {
-      showToast(t("modal_error_generic", "Что-то пошло не так"), "error");
-      history.replaceState(null, "", window.location.pathname);
-    }
   });
 
-  // При смене языка — перерисовать шапку и открытую модалку
+  // Перерисовка при смене языка
   window.addEventListener("edupath-lang-change", () => {
     updateHeaderUI();
     if (modalEl && modalEl.classList.contains("open")) {
@@ -867,7 +852,7 @@
   });
 
   // ============================================================
-  // ЭКСПОРТ
+  // EXPORT
   // ============================================================
 
   window.EduAuth = {
