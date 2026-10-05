@@ -1,6 +1,7 @@
 // ============================================================
-// EduPath — i18n.js (v2)
-// Переводы + мобильное бургер-меню + событие смены языка
+// EduPath — i18n.js (v3)
+// Переводы RU / EN / ZH / KK / KY + мобильное бургер-меню
+// + Fun Zone
 // ============================================================
 
 (function() {
@@ -11,6 +12,7 @@
   const translations = {
     ru: {
       nav_home: "Главная", nav_universities: "Университеты", nav_profile: "Профиль",
+      nav_fanzone: "🤡 Fun Zone",
       nav_login: "Войти", nav_logout: "Выйти", nav_hello: "Привет",
 
       home_eyebrow: "Тест на подбор университета",
@@ -88,11 +90,61 @@
       modal_submit_register: "Создать аккаунт", modal_submit_login: "Войти",
       modal_switch_register: "Уже есть аккаунт?", modal_switch_login: "Нет аккаунта?",
       modal_switch_register_btn: "Войти", modal_switch_login_btn: "Создать",
-      modal_welcome_back: "С возвращением", modal_welcome_back_sub: "Войди в свой аккаунт"
+      modal_welcome_back: "С возвращением", modal_welcome_back_sub: "Войди в свой аккаунт",
+
+      // ===== FUN ZONE =====
+      fz_title: "FUN ZONE",
+      fz_warning_1: "⚠️ Эта страница абсолютно бесполезна.",
+      fz_warning_2: "Мы могли бы потратить это время на улучшение алгоритма поступления. Мы выбрали это.",
+      fz_aura_title: "University Aura 🗿",
+      fz_aura_sub: "Введи свои данные — получи бессмысленный, но очень серьёзный показатель.",
+      fz_gpa: "GPA", fz_sat: "SAT", fz_ielts: "IELTS",
+      fz_sleep: "Часов сна", fz_study: "Часов учёбы в день",
+      fz_calc_aura: "🔥 ПОСЧИТАТЬ АУРУ",
+      fz_your_aura: "YOUR ACADEMIC AURA",
+      fz_aura_hint: "Это НЕ настоящий академический показатель. Это шутка.",
+
+      fz_roulette_title: "Randomize My Future 🎰",
+      fz_roulette_sub: "Пусть сайт решит твою судьбу. Отменить нельзя. (Можно, кнопка ниже.)",
+      fz_roulette_btn: "🎰 ПУСТЬ САЙТ РЕШИТ МОЮ СУДЬБУ",
+      fz_roulette_spinning: "Крутим...",
+      fz_roulette_congrats: "Поздравляем.",
+      fz_roulette_again: "🔄 Я НЕ ПРИНИМАЮ СВОЮ СУДЬБУ",
+
+      fz_battle_title: "University Smash or Pass ⚔️",
+      fz_battle_sub: "Выбери двух бойцов. Победитель определится абсолютно честно (нет).",
+      fz_battle_pick1: "Боец 1", fz_battle_pick2: "Боец 2",
+      fz_battle_go: "⚔️ В БОЙ",
+      fz_battle_winner: "ПОБЕДИТЕЛЬ",
+      fz_battle_reason: "Причина",
+      fz_battle_random: "🎲 Случайная пара",
+
+      fz_cat_aura: "Aura",
+      fz_cat_drip: "Drip",
+      fz_cat_parent: "Parent Approval",
+      fz_cat_suffering: "Academic Suffering",
+      fz_cat_sleep: "Sleep",
+      fz_cat_mc: "Main Character Energy",
+      fz_cat_scholarship: "Scholarship Energy",
+      fz_cat_npc: "NPC Level",
+
+      fz_cooked_title: "How Cooked Am I? 💀",
+      fz_cooked_sub: "Реальные данные. Нереальный вердикт.",
+      fz_cooked_btn: "💀 НАСКОЛЬКО Я ПРОЖАРЕН",
+      fz_cooked_verdict: "YOU ARE COOKED",
+      fz_cooked_days: "Дней до дедлайна",
+      fz_cooked_disclaimer: "Результат ни на что не влияет. Успокойся.",
+
+      fz_not_enough: "Заполни все поля, бро 😭",
+      fz_loading: "Загружаем вузы...",
+      fz_loading_error: "Не смогли загрузить список вузов. Проверь интернет.",
+
+      footer_note: "Fun Zone — шутка. Реальные рекомендации — в тесте."
     },
 
     en: {
       nav_home: "Home", nav_universities: "Universities", nav_profile: "Profile",
+      nav_fanzone: "🤡 Fun Zone",
       nav_login: "Log in", nav_logout: "Log out", nav_hello: "Hi",
 
       home_eyebrow: "University matching test",
@@ -157,11 +209,61 @@
       modal_submit_register: "Create account", modal_submit_login: "Log in",
       modal_switch_register: "Already have an account?", modal_switch_login: "No account?",
       modal_switch_register_btn: "Log in", modal_switch_login_btn: "Create",
-      modal_welcome_back: "Welcome back", modal_welcome_back_sub: "Log in to your account"
+      modal_welcome_back: "Welcome back", modal_welcome_back_sub: "Log in to your account",
+
+      // ===== FUN ZONE =====
+      fz_title: "FUN ZONE",
+      fz_warning_1: "⚠️ This page is completely useless.",
+      fz_warning_2: "We could have spent this development time improving the admission algorithm. We chose this instead.",
+      fz_aura_title: "University Aura 🗿",
+      fz_aura_sub: "Enter your stats — get a meaningless but very serious score.",
+      fz_gpa: "GPA", fz_sat: "SAT", fz_ielts: "IELTS",
+      fz_sleep: "Hours of sleep", fz_study: "Hours of study per day",
+      fz_calc_aura: "🔥 CALCULATE MY AURA",
+      fz_your_aura: "YOUR ACADEMIC AURA",
+      fz_aura_hint: "This is NOT a real academic metric. It's a joke.",
+
+      fz_roulette_title: "Randomize My Future 🎰",
+      fz_roulette_sub: "Let the website decide your fate. You cannot refuse. (You can, button below.)",
+      fz_roulette_btn: "🎰 LET THE WEBSITE DECIDE MY FUTURE",
+      fz_roulette_spinning: "Spinning...",
+      fz_roulette_congrats: "Congratulations.",
+      fz_roulette_again: "🔄 I DON'T ACCEPT MY FATE",
+
+      fz_battle_title: "University Smash or Pass ⚔️",
+      fz_battle_sub: "Pick two fighters. Winner decided absolutely fairly (not).",
+      fz_battle_pick1: "Fighter 1", fz_battle_pick2: "Fighter 2",
+      fz_battle_go: "⚔️ FIGHT",
+      fz_battle_winner: "WINNER",
+      fz_battle_reason: "Reason",
+      fz_battle_random: "🎲 Random pair",
+
+      fz_cat_aura: "Aura",
+      fz_cat_drip: "Drip",
+      fz_cat_parent: "Parent Approval",
+      fz_cat_suffering: "Academic Suffering",
+      fz_cat_sleep: "Sleep",
+      fz_cat_mc: "Main Character Energy",
+      fz_cat_scholarship: "Scholarship Energy",
+      fz_cat_npc: "NPC Level",
+
+      fz_cooked_title: "How Cooked Am I? 💀",
+      fz_cooked_sub: "Real data. Unreal verdict.",
+      fz_cooked_btn: "💀 HOW COOKED AM I",
+      fz_cooked_verdict: "YOU ARE COOKED",
+      fz_cooked_days: "Days until deadline",
+      fz_cooked_disclaimer: "The result changes nothing. Chill.",
+
+      fz_not_enough: "Fill in all the fields, bro 😭",
+      fz_loading: "Loading universities...",
+      fz_loading_error: "Couldn't load the university list. Check your connection.",
+
+      footer_note: "Fun Zone is a joke. Real recommendations — in the test."
     },
 
     zh: {
       nav_home: "首页", nav_universities: "大学", nav_profile: "个人主页",
+      nav_fanzone: "🤡 Fun Zone",
       nav_login: "登录", nav_logout: "退出", nav_hello: "你好",
 
       home_eyebrow: "大学匹配测试",
@@ -224,11 +326,61 @@
       modal_submit_register: "创建账号", modal_submit_login: "登录",
       modal_switch_register: "已有账号？", modal_switch_login: "没有账号？",
       modal_switch_register_btn: "登录", modal_switch_login_btn: "创建",
-      modal_welcome_back: "欢迎回来", modal_welcome_back_sub: "登录你的账号"
+      modal_welcome_back: "欢迎回来", modal_welcome_back_sub: "登录你的账号",
+
+      // ===== FUN ZONE =====
+      fz_title: "FUN ZONE",
+      fz_warning_1: "⚠️ 这个页面完全没有用。",
+      fz_warning_2: "我们本可以用这些开发时间改进录取算法。但我们选择了这个。",
+      fz_aura_title: "University Aura 🗿",
+      fz_aura_sub: "输入你的数据，获得一个毫无意义但非常严肃的分数。",
+      fz_gpa: "GPA", fz_sat: "SAT", fz_ielts: "IELTS",
+      fz_sleep: "睡眠小时数", fz_study: "每天学习小时数",
+      fz_calc_aura: "🔥 计算我的气场",
+      fz_your_aura: "你的学术气场",
+      fz_aura_hint: "这不是真实的学术指标。这只是个玩笑。",
+
+      fz_roulette_title: "Randomize My Future 🎰",
+      fz_roulette_sub: "让网站决定你的命运。你无法拒绝。（可以，按钮在下面。）",
+      fz_roulette_btn: "🎰 让网站决定我的未来",
+      fz_roulette_spinning: "旋转中...",
+      fz_roulette_congrats: "恭喜。",
+      fz_roulette_again: "🔄 我不接受我的命运",
+
+      fz_battle_title: "University Smash or Pass ⚔️",
+      fz_battle_sub: "选两个战士。胜者将绝对公平地决出（并不）。",
+      fz_battle_pick1: "战士 1", fz_battle_pick2: "战士 2",
+      fz_battle_go: "⚔️ 开战",
+      fz_battle_winner: "获胜者",
+      fz_battle_reason: "原因",
+      fz_battle_random: "🎲 随机组合",
+
+      fz_cat_aura: "气场",
+      fz_cat_drip: "潮度",
+      fz_cat_parent: "家长认可度",
+      fz_cat_suffering: "学业痛苦",
+      fz_cat_sleep: "睡眠",
+      fz_cat_mc: "主角能量",
+      fz_cat_scholarship: "奖学金能量",
+      fz_cat_npc: "NPC 等级",
+
+      fz_cooked_title: "How Cooked Am I? 💀",
+      fz_cooked_sub: "真实数据。离谱判决。",
+      fz_cooked_btn: "💀 我有多惨",
+      fz_cooked_verdict: "你完蛋了",
+      fz_cooked_days: "距截止日期还有几天",
+      fz_cooked_disclaimer: "结果不影响任何事。冷静。",
+
+      fz_not_enough: "把所有字段都填了，兄弟 😭",
+      fz_loading: "正在加载大学...",
+      fz_loading_error: "无法加载大学列表。检查网络。",
+
+      footer_note: "Fun Zone 是玩笑。真正的推荐在测试里。"
     },
 
     kk: {
       nav_home: "Басты бет", nav_universities: "Университеттер", nav_profile: "Профиль",
+      nav_fanzone: "🤡 Fun Zone",
       nav_login: "Кіру", nav_logout: "Шығу", nav_hello: "Сәлем",
 
       home_eyebrow: "Университет таңдау тесті",
@@ -298,7 +450,180 @@
       modal_submit_register: "Аккаунт жасау", modal_submit_login: "Кіру",
       modal_switch_register: "Аккаунтың бар ма?", modal_switch_login: "Аккаунтың жоқ па?",
       modal_switch_register_btn: "Кіру", modal_switch_login_btn: "Жасау",
-      modal_welcome_back: "Қайта келдің", modal_welcome_back_sub: "Аккаунтыңа кір"
+      modal_welcome_back: "Қайта келдің", modal_welcome_back_sub: "Аккаунтыңа кір",
+
+      // ===== FUN ZONE =====
+      fz_title: "FUN ZONE",
+      fz_warning_1: "⚠️ Бұл бет мүлдем пайдасыз.",
+      fz_warning_2: "Біз бұл уақытты қабылдау алгоритмін жақсартуға жұмсай алар едік. Біз мұны таңдадық.",
+      fz_aura_title: "University Aura 🗿",
+      fz_aura_sub: "Деректеріңді енгіз — мағынасыз, бірақ өте байсалды көрсеткіш ал.",
+      fz_gpa: "GPA", fz_sat: "SAT", fz_ielts: "IELTS",
+      fz_sleep: "Ұйқы сағаттары", fz_study: "Күніне оқу сағаттары",
+      fz_calc_aura: "🔥 АУРАМДЫ ЕСЕПТЕУ",
+      fz_your_aura: "СЕНІҢ АКАДЕМИЯЛЫҚ АУРАҢ",
+      fz_aura_hint: "Бұл НАҚТЫ академиялық көрсеткіш ЕМЕС. Бұл әзіл.",
+
+      fz_roulette_title: "Randomize My Future 🎰",
+      fz_roulette_sub: "Сайт тағдырыңды шешсін. Бас тарта алмайсың. (Аласың, төмендегі батырма.)",
+      fz_roulette_btn: "🎰 САЙТ ТАҒДЫРЫМДЫ ШЕШСІН",
+      fz_roulette_spinning: "Айналдырып жатырмыз...",
+      fz_roulette_congrats: "Құттықтаймыз.",
+      fz_roulette_again: "🔄 МЕН ТАҒДЫРЫМДЫ ҚАБЫЛДАМАЙМЫН",
+
+      fz_battle_title: "University Smash or Pass ⚔️",
+      fz_battle_sub: "Екі жауынгерді таңда. Жеңімпаз мүлдем әділ анықталады (жоқ).",
+      fz_battle_pick1: "Жауынгер 1", fz_battle_pick2: "Жауынгер 2",
+      fz_battle_go: "⚔️ ШАЙҚАС",
+      fz_battle_winner: "ЖЕҢІМПАЗ",
+      fz_battle_reason: "Себебі",
+      fz_battle_random: "🎲 Кездейсоқ жұп",
+
+      fz_cat_aura: "Аура",
+      fz_cat_drip: "Drip",
+      fz_cat_parent: "Ата-ана мақұлдауы",
+      fz_cat_suffering: "Академиялық азап",
+      fz_cat_sleep: "Ұйқы",
+      fz_cat_mc: "Басты кейіпкер энергиясы",
+      fz_cat_scholarship: "Стипендия энергиясы",
+      fz_cat_npc: "NPC деңгейі",
+
+      fz_cooked_title: "How Cooked Am I? 💀",
+      fz_cooked_sub: "Нақты деректер. Нақты емес үкім.",
+      fz_cooked_btn: "💀 ҚАНШАЛЫҚ ЖАНЫП ТҰРМЫН",
+      fz_cooked_verdict: "СЕН ЖАНЫП ТҰРСЫҢ",
+      fz_cooked_days: "Дедлайнға дейінгі күндер",
+      fz_cooked_disclaimer: "Нәтиже ештеңеге әсер етпейді. Тыныштал.",
+
+      fz_not_enough: "Барлық өрісті толтыр, бауырым 😭",
+      fz_loading: "Университеттер жүктелуде...",
+      fz_loading_error: "Университет тізімін жүктей алмадық. Интернетті тексер.",
+
+      footer_note: "Fun Zone — әзіл. Нақты ұсыныстар — тестте."
+    },
+
+    ky: {
+      nav_home: "Башкы бет", nav_universities: "Университеттер", nav_profile: "Профиль",
+      nav_fanzone: "🤡 Fun Zone",
+      nav_login: "Кирүү", nav_logout: "Чыгуу", nav_hello: "Салам",
+
+      home_eyebrow: "Университет тандоо тести",
+      home_title_pre: "Тесттен өт — ", home_title_em: "өзүңө ылайык", home_title_post: " университет тап",
+      home_sub: "Каалоолоруңа, тест жыйынтыктарыңа жана бюджетіңе ылайык багыттар мен университеттерди тандайбыз.",
+      home_cta: "Профилди толтурууну баштоо",
+      home_note: "Атайын ЖИ сага кайсы университет ылайыктуу экенин аныктайт",
+      home_quote_top: "«Биз менен —", home_quote_bottom: "ыңгайлуураак, практикалык, натыйжалуу»",
+      home_seam_desc_top: "Окуу көрсөткүчтөрүнөн тышкары, абитуриенттин кандай чөйрөдө жашагысы келгени да маанилүү.",
+      home_seam_desc_bottom: "Биз сага чындап ылайыктуу университеттерди гана сунуштайбыз.",
+      home_how_title: "Бул кантип иштейт",
+      home_how_sub: "Биринчи суроодон ылайыктуу университеттердин тизмесине чейин үч кадам.",
+      home_step1_title: "Жеке маалыматтар", home_step1_desc: "Сенин кызыгууларың, хоббииң, өлкө жана окуу форматы боюнча каалоолоруң.",
+      home_step2_title: "Көрсөткүчтөр", home_step2_desc: "Баалар, тест жыйынтыктары (SAT, IELTS ж.б.) жана болжолдуу бюджет.",
+      home_step3_title: "Тест жыйынтыктары", home_step3_desc: "Сага эң ылайыктуу университеттердин тизмеси, түшүндүрмөлөр менен.",
+      home_footer: "EduPath © 2026. Бардык укуктар корголгон",
+      city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
+
+      catalog_title: "Университеттер", catalog_sub: "Өлкө жана университет танда",
+      catalog_filters: "Фильтрлер", catalog_budget_label: "Окуу бюджети (USD/жыл)",
+      catalog_budget_from: "баштап", catalog_budget_to: "чейин",
+      catalog_country_label: "Өлкө", catalog_country_all: "Бардык өлкөлөр",
+      catalog_grant_label: "Каржылык жардам", catalog_grant_only: "Толук грант менен гана",
+      catalog_apply: "Колдонуу", catalog_reset: "Тазалоо",
+      catalog_choose_uni: "Университет танда",
+      catalog_choose_hint: "Сол жактагы өлкөнү басып, анан университетти басып, толук маалыматты көрүңүз.",
+      catalog_search_placeholder: "Университет издөө...", catalog_search_empty: "Кечиресиз, биз бул университетти кошуп жатабыз",
+      catalog_saved_ok: "Университет ийгиликтүү сакталды", catalog_saved_remove: "Университет тандалмалардан алынды",
+      catalog_need_login: "Университеттерди сактоо үчүн аккаунтка кириңиз",
+      catalog_save_btn: "Тандалмаларга сактоо", catalog_saved_btn: "Тандалмаларда",
+
+      profile_greeting: "Салам", profile_logout: "Чыгуу",
+      profile_saved_title: "⭐ Жаккан университеттер",
+      profile_saved_sub: "Каталогдо жылдызча менен белгилегендериңиз",
+      profile_tests_title: "🎯 Тест жыйынтыктары",
+      profile_tests_sub: "ЖИ сенин жоопторуңа ылайык тандаган университеттер",
+      profile_empty_saved: "Сен азырынча бир да университет сактаган жоксуң.",
+      profile_empty_saved_hint: "Каталогго кирип, университеттин жанындагы жылдызчаны басыңыз.",
+      profile_empty_tests: "Сен азырынча тест тапшырган жоксуң.",
+      profile_empty_tests_hint: "Университет тандоо тестинен өтүү →",
+      profile_need_login_title: "Адеги аккаунтка кириңиз",
+      profile_need_login_desc: "Университеттерди сактоо жана тест жыйынтыктарын көрүү үчүн аккаунт түзүңүз же кириңиз.",
+      profile_create_account: "Аккаунт түзүү", profile_loading: "Профиль жүктөлүүдө",
+      profile_last_test: "Акыркы тест", profile_test: "Тест",
+      profile_unis_found: "университет табылды",
+
+      test_title: "Өзүңө ылайыктуу университетти табабыз",
+      test_sub: "Окуу, кыялдагы өлкө, климат жана жашоо образы тууралуу бир нече суроого жооп бер.",
+      test_start: "Баштоо", test_question: "Суроо", test_of: "/",
+      test_ask: "ЖИ сурайт", test_thinking: "ЖИ ойлонуп жатат",
+      test_answer_placeholder: "Жообуңду ушул жерге жаз...", test_send: "Жөнөтүү",
+      test_restart: "Кайра өтүү",
+      test_final_title: "Даяр! Мына сенин университеттериң",
+      test_final_sub: "ЖИ жоопторуңду талдап, 4 категория боюнча варианттарды тандады.",
+      test_saved_banner: "Жыйынтыгың профилде сакталды", test_saved_hint: "Профилде көрүү →",
+      test_not_saved_banner: "Жыйынтыкты сактоо үчүн кириңиз", test_not_saved_hint: "Кирүү",
+      test_cat_academic: "Окуу көрсөткүчтөрү боюнча ылайыктуу",
+      test_cat_lifestyle: "Жашоо образы боюнча ылайыктуу",
+      test_cat_safe: "Тапшыруу мүмкүнчүлүгү жогору",
+      test_cat_reach: "Мүмкүнчүлүк бар, бирок күчөтүү керек",
+      test_empty_category: "Бул категорияда эч нерсе ылайыктуу болгон жок",
+      test_more: "Кененирээк →", test_analyzing: "ЖИ 250 университетти талдап жатат",
+
+      modal_hello: "Кош келиңиз", modal_hello_sub: "Университеттерди сактоо үчүн аккаунт түзүңүз",
+      modal_name: "Аты", modal_name_ph: "Мисалы, Айсана", modal_email: "Email",
+      modal_password: "Сырсөз", modal_password_ph: "Жок дегенде 6 белги",
+      modal_submit_register: "Аккаунт түзүү", modal_submit_login: "Кирүү",
+      modal_switch_register: "Аккаунтуңуз барбы?", modal_switch_login: "Аккаунтуңуз жокпу?",
+      modal_switch_register_btn: "Кирүү", modal_switch_login_btn: "Түзүү",
+      modal_welcome_back: "Кайра кош келиңиз", modal_welcome_back_sub: "Аккаунтуңузга кириңиз",
+
+      // ===== FUN ZONE =====
+      fz_title: "FUN ZONE",
+      fz_warning_1: "⚠️ Бул барак толугу менен пайдасыз.",
+      fz_warning_2: "Биз бул убакытты кабыл алуу алгоритмин жакшыртууга жумшай алмакпыз. Биз муну тандадык.",
+      fz_aura_title: "University Aura 🗿",
+      fz_aura_sub: "Маалыматтарыңды киргиз — маанисиз, бирок абдан олуттуу көрсөткүч ал.",
+      fz_gpa: "GPA", fz_sat: "SAT", fz_ielts: "IELTS",
+      fz_sleep: "Уйку сааттары", fz_study: "Күнүнө окуу сааттары",
+      fz_calc_aura: "🔥 АУРАМДЫ ЭСЕПТЕ",
+      fz_your_aura: "СЕНИН АКАДЕМИЯЛЫК АУРАҢ",
+      fz_aura_hint: "Бул НАКЫЙ академиялык көрсөткүч ЭМЕС. Бул тамаша.",
+
+      fz_roulette_title: "Randomize My Future 🎰",
+      fz_roulette_sub: "Сайт тагдырыңды чечсин. Баш тарта албайсың. (Аласың, төмөнкү баскыч.)",
+      fz_roulette_btn: "🎰 САЙТ ТАГДЫРЫМДЫ ЧЕЧСИН",
+      fz_roulette_spinning: "Айлантып жатабыз...",
+      fz_roulette_congrats: "Куттуктайбыз.",
+      fz_roulette_again: "🔄 МЕН ТАГДЫРЫМДЫ КАБЫЛ АЛБАЙМЫН",
+
+      fz_battle_title: "University Smash or Pass ⚔️",
+      fz_battle_sub: "Эки жоокерди танда. Жеңүүчү толугу менен адилеттүү аныкталат (жок).",
+      fz_battle_pick1: "Жоокер 1", fz_battle_pick2: "Жоокер 2",
+      fz_battle_go: "⚔️ САЛГЫЛАШУУ",
+      fz_battle_winner: "ЖЕҢҮҮЧҮ",
+      fz_battle_reason: "Себеби",
+      fz_battle_random: "🎲 Кокустан жуп",
+
+      fz_cat_aura: "Аура",
+      fz_cat_drip: "Drip",
+      fz_cat_parent: "Ата-эне жактыруусу",
+      fz_cat_suffering: "Академиялык азап",
+      fz_cat_sleep: "Уйку",
+      fz_cat_mc: "Башкы каарман энергиясы",
+      fz_cat_scholarship: "Стипендия энергиясы",
+      fz_cat_npc: "NPC деңгээли",
+
+      fz_cooked_title: "How Cooked Am I? 💀",
+      fz_cooked_sub: "Чыныгы маалыматтар. Чыныгы эмес өкүм.",
+      fz_cooked_btn: "💀 КАНЧАЛЫК КҮЙҮП ЖАТАМ",
+      fz_cooked_verdict: "СЕН КҮЙҮП ЖАТАСЫҢ",
+      fz_cooked_days: "Дедлайнга чейинки күндөр",
+      fz_cooked_disclaimer: "Жыйынтык эч нерсеге таасир этпейт. Тынчтан.",
+
+      fz_not_enough: "Бардык талааларды толтур, байке 😭",
+      fz_loading: "Университеттер жүктөлүүдө...",
+      fz_loading_error: "Университеттердин тизмесин жүктөй албадык. Интернетти текшер.",
+
+      footer_note: "Fun Zone — тамаша. Чыныгы сунуштар — тестте."
     }
   };
 
@@ -371,6 +696,7 @@
         <a href="index.html" data-i18n="nav_home">Главная</a>
         <a href="universities.html" data-i18n="nav_universities">Университеты</a>
         <a href="profile.html" data-i18n="nav_profile">Профиль</a>
+        <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
       </div>
     `;
 
@@ -434,7 +760,7 @@
         transform: translateY(-10px);
         transition: max-height .35s cubic-bezier(0.22,1,0.36,1), opacity .25s, transform .25s;
       }
-      .burger-panel.open { max-height: 300px; opacity: 1; transform: translateY(0); }
+      .burger-panel.open { max-height: 360px; opacity: 1; transform: translateY(0); }
       .burger-panel-inner { display: flex; flex-direction: column; padding: 16px 24px; }
       .burger-panel-inner a {
         font-family: 'Work Sans', sans-serif; font-size: 17px;
