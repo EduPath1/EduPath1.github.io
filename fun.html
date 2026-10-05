@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPath — Fun Zone 🤡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
+    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
+    --caramel:#C79256; --sand:#D9BD93;
+    --text-main:#2B1B10; --text-muted:#7A6552;
+    --line:rgba(43,27,16,0.14);
+    --ease:cubic-bezier(0.22, 1, 0.36, 1);
+    --neon:#E63946;
+    --gold:#FFD700;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
+  a{ text-decoration:none; color:inherit; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; }
+
+  header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; position:relative; }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo svg{ width:38px; height:38px; flex-shrink:0; }
+  .nav-links{ display:flex; align-items:center; gap:8px; }
+  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .25s var(--ease), color .25s var(--ease); }
+  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
+  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
+  .nav-right{ display:flex; align-items:center; gap:14px; }
+  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; }
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; }
+
+  .lang-dropdown{ position:relative; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
+
+  /* HERO FUN ZONE */
+  .fz-hero{
+    position:relative;
+    text-align:center;
+    padding:72px 24px 40px;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(199,146,86,0.25), transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(230,57,70,0.18), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(140,90,52,0.22), transparent 55%),
+      var(--cream);
+    overflow:hidden;
+  }
+  .fz-hero::before, .fz-hero::after{
+    content:"🗿"; position:absolute; font-size:64px; opacity:0.18; pointer-events:none;
+    animation: floaty 6s ease-in-out infinite;
+  }
+  .fz-hero::before{ top:14%; left:6%; }
+  .fz-hero::after{ bottom:8%; right:8%; animation-delay:1.5s; content:"💀"; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(-6deg);} 50%{ transform:translateY(-16px) rotate(6deg);} }
+
+  .fz-badge{
+    display:inline-block; font-family:'Work Sans', sans-serif;
+    font-weight:900; font-size:12px; letter-spacing:0.25em;
+    padding:8px 16px; border-radius:999px;
+    background:var(--espresso); color:var(--paper);
+    margin-bottom:24px;
+    transform: rotate(-2deg);
+    box-shadow: 0 8px 20px -12px rgba(43,27,16,0.5);
+  }
+  .fz-title{
+    font-size: clamp(56px, 12vw, 130px);
+    font-weight:900;
+    line-height:0.9;
+    letter-spacing:-0.04em;
+    background: linear-gradient(135deg, var(--espresso) 0%, var(--clay) 50%, var(--neon) 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:20px;
+    text-transform:uppercase;
+    animation: titleWobble 6s ease-in-out infinite;
+  }
+  @keyframes titleWobble{ 0%,100%{ transform:rotate(-1deg);} 50%{ transform:rotate(1deg);} }
+
+  .fz-warning{
+    max-width:640px; margin:0 auto;
+    font-size:15px; color:var(--bark);
+    background: var(--paper);
+    border:2px dashed var(--clay);
+    border-radius:16px;
+    padding:20px 24px;
+    line-height:1.6;
+    transform: rotate(0.5deg);
+  }
+  .fz-warning strong{ color:var(--espresso); }
+
+  /* GENERAL SECTIONS */
+  main{ max-width:1100px; margin:0 auto; padding:24px 24px 96px; }
+  .fz-section{
+    background: var(--paper);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:36px 32px;
+    margin-bottom:32px;
+    position:relative;
+    overflow:hidden;
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .fz-section:hover{ box-shadow: 0 24px 48px -30px rgba(43,27,16,0.35); }
+  .fz-section-tag{
+    display:inline-block;
+    font-family:'Work Sans', sans-serif;
+    font-weight:900; font-size:11px; letter-spacing:0.2em;
+    color:var(--clay);
+    padding:6px 12px; border-radius:999px;
+    background: var(--cream-deep);
+    margin-bottom:14px;
+  }
+  .fz-section h2{
+    font-size: clamp(28px, 4vw, 40px);
+    color:var(--espresso);
+    margin-bottom:8px;
+    font-weight:700;
+  }
+  .fz-section .fz-sub{
+    font-size:15px; color:var(--text-muted);
+    margin-bottom:28px; max-width:640px;
+  }
+
+  /* INPUTS */
+  .fz-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+    gap:14px;
+    margin-bottom:20px;
+  }
+  .fz-field label{
+    display:block;
+    font-size:11px; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:6px;
+  }
+  .fz-field input, .fz-field select{
+    width:100%;
+    padding:14px 16px;
+    font-family:inherit;
+    font-size:16px;
+    background:var(--cream);
+    color:var(--text-main);
+    border:1.5px solid transparent;
+    border-radius:12px;
+    transition: border-color .25s var(--ease), background .25s var(--ease);
+  }
+  .fz-field input:focus, .fz-field select:focus{
+    outline:none; border-color:var(--clay); background:var(--paper);
+  }
+
+  .fz-btn{
+    display:inline-flex; align-items:center; gap:10px;
+    background: var(--espresso); color: var(--paper);
+    padding:16px 28px; border-radius:12px;
+    font-size:15px; font-weight:700;
+    letter-spacing:0.02em;
+    transition: transform .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .fz-btn:hover{ transform:translateY(-3px); background:var(--bark); box-shadow: 0 14px 28px -14px rgba(43,27,16,0.5); }
+  .fz-btn:active{ transform:translateY(0); }
+  .fz-btn.big{ font-size:18px; padding:22px 40px; }
+  .fz-btn.accent{ background: var(--neon); color:var(--paper); }
+  .fz-btn.accent:hover{ background:#C22531; }
+  .fz-btn.ghost{ background: var(--cream-deep); color:var(--espresso); }
+  .fz-btn.ghost:hover{ background: var(--sand); }
+
+  /* AURA RESULT */
+  .aura-box{
+    margin-top:24px;
+    text-align:center;
+    padding:32px 20px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,215,0,0.15), transparent 60%),
+      var(--cream);
+    border-radius:20px;
+    border:2px dashed var(--caramel);
+    display:none;
+  }
+  .aura-box.show{ display:block; animation: popIn .6s var(--ease); }
+  @keyframes popIn{ 0%{ transform:scale(0.85); opacity:0;} 60%{ transform:scale(1.04);} 100%{ transform:scale(1); opacity:1;} }
+  .aura-label{
+    font-size:12px; letter-spacing:0.3em; color:var(--clay); font-weight:900;
+    margin-bottom:12px; text-transform:uppercase;
+  }
+  .aura-value{
+    font-family:'Fraunces', serif;
+    font-weight:900;
+    font-size: clamp(48px, 10vw, 96px);
+    line-height:1;
+    color:var(--espresso);
+    margin-bottom:12px;
+    letter-spacing:-0.03em;
+  }
+  .aura-value .unit{ font-size:0.4em; color:var(--clay); margin-left:8px; }
+  .aura-phrase{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size: clamp(18px, 2.6vw, 24px);
+    color:var(--bark);
+    max-width:640px; margin:0 auto 14px;
+    line-height:1.4;
+  }
+  .aura-hint{ font-size:12px; color:var(--text-muted); }
+
+  /* ROULETTE */
+  .roulette-stage{
+    display:flex; flex-direction:column; align-items:center;
+    gap:24px;
+    padding:36px 20px;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(199,146,86,0.18), transparent 65%),
+      var(--cream);
+    border-radius:20px;
+    border:1px solid var(--line);
+    margin-top:8px;
+  }
+  .roulette-display{
+    font-family:'Fraunces', serif;
+    font-weight:900;
+    font-size: clamp(28px, 5vw, 52px);
+    color:var(--espresso);
+    text-align:center;
+    min-height:1.2em;
+    line-height:1.1;
+    letter-spacing:-0.02em;
+    transition: transform .2s var(--ease);
+  }
+  .roulette-display.spinning{ animation: shake 0.15s infinite; }
+  @keyframes shake{
+    0%{ transform:translate(0,0) rotate(0deg);}
+    25%{ transform:translate(-2px,1px) rotate(-0.5deg);}
+    50%{ transform:translate(2px,-1px) rotate(0.5deg);}
+    75%{ transform:translate(-1px,2px) rotate(-0.4deg);}
+    100%{ transform:translate(1px,-2px) rotate(0.4deg);}
+  }
+  .roulette-flag{ font-size: clamp(40px, 7vw, 72px); }
+  .roulette-message{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size: clamp(16px, 2vw, 20px);
+    color:var(--bark);
+    text-align:center;
+    max-width:560px;
+    line-height:1.45;
+  }
+  .roulette-congrats{
+    font-size:12px; letter-spacing:0.3em; font-weight:900;
+    color:var(--clay); text-transform:uppercase;
+  }
+
+  /* BATTLE */
+  .battle-pickers{
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap:16px; align-items:end;
+    margin-bottom:24px;
+  }
+  .battle-vs{
+    font-family:'Fraunces', serif;
+    font-weight:900;
+    font-size:44px;
+    color:var(--neon);
+    padding-bottom:14px;
+    text-align:center;
+  }
+  .battle-table-wrap{ display:none; }
+  .battle-table-wrap.show{ display:block; animation: fadeInUp .5s var(--ease); }
+  @keyframes fadeInUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
+
+  .battle-table{
+    width:100%;
+    border-collapse: separate;
+    border-spacing:0 8px;
+    margin-bottom:24px;
+  }
+  .battle-table th, .battle-table td{
+    padding:14px 16px;
+    text-align:left;
+    font-size:15px;
+  }
+  .battle-table th{
+    font-family:'Fraunces', serif;
+    font-size:14px;
+    letter-spacing:0.05em;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    background:transparent;
+  }
+  .battle-table td{
+    background: var(--cream);
+    color:var(--espresso);
+    font-weight:600;
+  }
+  .battle-table tr td:first-child{
+    border-radius:12px 0 0 12px;
+    color:var(--text-muted);
+    font-weight:500;
+  }
+  .battle-table tr td:last-child{ border-radius:0 12px 12px 0; }
+  .battle-table td.winner{ color:var(--clay); font-weight:900; background: linear-gradient(90deg, var(--cream) 0%, var(--cream-deep) 100%); }
+  .battle-table td.loser{ opacity:0.65; }
+
+  .battle-verdict{
+    text-align:center;
+    padding:28px 20px;
+    background: linear-gradient(135deg, var(--cream-deep) 0%, var(--paper) 100%);
+    border-radius:20px;
+    border:2px solid var(--caramel);
+  }
+  .battle-verdict-trophy{ font-size:48px; margin-bottom:8px; }
+  .battle-verdict-name{
+    font-family:'Fraunces', serif;
+    font-weight:900;
+    font-size: clamp(28px, 5vw, 44px);
+    color:var(--espresso);
+    margin-bottom:10px;
+  }
+  .battle-verdict-reason{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size: clamp(16px, 2vw, 19px);
+    color:var(--bark);
+    max-width:560px; margin:0 auto;
+  }
+
+  /* COOKED */
+  .cooked-box{
+    text-align:center;
+    padding:40px 24px;
+    background:
+      radial-gradient(circle at 50% 40%, rgba(230,57,70,0.15), transparent 65%),
+      var(--cream);
+    border-radius:20px;
+    margin-top:16px;
+    border:2px dashed var(--neon);
+    display:none;
+  }
+  .cooked-box.show{ display:block; animation: popIn .6s var(--ease); }
+  .cooked-label{
+    font-size:12px; letter-spacing:0.3em; font-weight:900;
+    color:var(--neon); text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .cooked-value{
+    font-family:'Fraunces', serif;
+    font-weight:900;
+    font-size: clamp(72px, 14vw, 140px);
+    line-height:0.95;
+    color:var(--espresso);
+    letter-spacing:-0.04em;
+    margin-bottom:8px;
+  }
+  .cooked-value .pct{ font-size:0.5em; color:var(--neon); }
+  .cooked-phrase{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size: clamp(18px, 2.6vw, 24px);
+    color:var(--bark);
+    max-width:640px; margin:0 auto 14px;
+    line-height:1.4;
+  }
+  .cooked-disclaimer{ font-size:12px; color:var(--text-muted); }
+
+  footer{
+    background:var(--cream-deep);
+    padding:24px;
+    text-align:center;
+    font-size:13px;
+    color:var(--text-muted);
+  }
+
+  /* MOBILE */
+  @media (max-width:900px){
+    .nav-links{ display:none !important; }
+  }
+  @media (max-width:700px){
+    nav.wrap{ height:72px; padding:0 18px; }
+    .logo{ font-size:21px; gap:9px; }
+    .logo svg{ width:30px; height:30px; }
+    main{ padding:16px 16px 64px; }
+    .fz-section{ padding:24px 20px; border-radius:18px; }
+    .battle-pickers{ grid-template-columns:1fr; gap:8px; }
+    .battle-vs{ padding:0; }
+    .fz-hero{ padding:48px 18px 32px; }
+    .fz-hero::before, .fz-hero::after{ font-size:40px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
+        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
+        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
+      </svg>
+      EduPath
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
+      <a href="fanzone.html" class="active" data-i18n="nav_fanzone">🤡 Fun Zone</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
+        </div>
+      </div>
+      <a href="#" class="btn-login" data-auth-open="register" data-i18n="nav_login">Войти</a>
+    </div>
+  </nav>
+</header>
+
+<section class="fz-hero">
+  <div class="fz-badge">⚠️ ENTER AT YOUR OWN RISK</div>
+  <h1 class="fz-title" data-i18n="fz_title">FUN ZONE</h1>
+  <div class="fz-warning">
+    <strong data-i18n="fz_warning_1">⚠️ Эта страница абсолютно бесполезна.</strong><br>
+    <span data-i18n="fz_warning_2">Мы могли бы потратить это время на улучшение алгоритма поступления. Мы выбрали это.</span>
+  </div>
+</section>
+
+<main>
+
+  <!-- ============ AURA ============ -->
+  <section class="fz-section" id="aura">
+    <span class="fz-section-tag">01 · CHAOS MODE</span>
+    <h2 data-i18n="fz_aura_title">University Aura 🗿</h2>
+    <p class="fz-sub" data-i18n="fz_aura_sub">Введи свои данные — получи бессмысленный, но очень серьёзный показатель.</p>
+
+    <div class="fz-grid">
+      <div class="fz-field">
+        <label data-i18n="fz_gpa">GPA</label>
+        <input type="number" id="auraGpa" placeholder="3.8" step="0.01" min="0" max="5">
+      </div>
+      <div class="fz-field">
+        <label data-i18n="fz_sat">SAT</label>
+        <input type="number" id="auraSat" placeholder="1450" min="400" max="1600">
+      </div>
+      <div class="fz-field">
+        <label data-i18n="fz_ielts">IELTS</label>
+        <input type="number" id="auraIelts" placeholder="7.5" step="0.5" min="0" max="9">
+      </div>
+      <div class="fz-field">
+        <label data-i18n="fz_sleep">Часов сна</label>
+        <input type="number" id="auraSleep" placeholder="5" step="0.5" min="0" max="24">
+      </div>
+      <div class="fz-field">
+        <label data-i18n="fz_study">Часов учёбы в день</label>
+        <input type="number" id="auraStudy" placeholder="3" step="0.5" min="0" max="24">
+      </div>
+    </div>
+
+    <button class="fz-btn big" id="auraBtn">
+      <span data-i18n="fz_calc_aura">🔥 ПОСЧИТАТЬ АУРУ</span>
+    </button>
+
+    <div class="aura-box" id="auraBox">
+      <div class="aura-label" data-i18n="fz_your_aura">YOUR ACADEMIC AURA</div>
+      <div class="aura-value" id="auraValue">🗿 0 <span class="unit">AURA</span></div>
+      <div class="aura-phrase" id="auraPhrase"></div>
+      <div class="aura-hint" data-i18n="fz_aura_hint">Это НЕ настоящий академический показатель. Это шутка.</div>
+    </div>
+  </section>
+
+  <!-- ============ ROULETTE ============ -->
+  <section class="fz-section" id="roulette">
+    <span class="fz-section-tag">02 · GAMBLING</span>
+    <h2 data-i18n="fz_roulette_title">Randomize My Future 🎰</h2>
+    <p class="fz-sub" data-i18n="fz_roulette_sub">Пусть сайт решит твою судьбу. Отменить нельзя. (Можно, кнопка ниже.)</p>
+
+    <div class="roulette-stage">
+      <div class="roulette-congrats" id="rouletteCongrats" style="display:none;" data-i18n="fz_roulette_congrats">Поздравляем.</div>
+      <div class="roulette-flag" id="rouletteFlag">🎰</div>
+      <div class="roulette-display" id="rouletteDisplay">???</div>
+      <div class="roulette-message" id="rouletteMessage"></div>
+
+      <button class="fz-btn big accent" id="rouletteBtn">
+        <span data-i18n="fz_roulette_btn">🎰 ПУСТЬ САЙТ РЕШИТ МОЮ СУДЬБУ</span>
+      </button>
+      <button class="fz-btn ghost" id="rouletteAgain" style="display:none;">
+        <span data-i18n="fz_roulette_again">🔄 Я НЕ ПРИНИМАЮ СВОЮ СУДЬБУ</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ BATTLE ============ -->
+  <section class="fz-section" id="battle">
+    <span class="fz-section-tag">03 · SMASH OR PASS</span>
+    <h2 data-i18n="fz_battle_title">University Smash or Pass ⚔️</h2>
+    <p class="fz-sub" data-i18n="fz_battle_sub">Выбери двух бойцов. Победитель определится абсолютно честно (нет).</p>
+
+    <div class="battle-pickers">
+      <div class="fz-field">
+        <label data-i18n="fz_battle_pick1">Боец 1</label>
+        <select id="battleA"><option value="">—</option></select>
+      </div>
+      <div class="battle-vs">VS</div>
+      <div class="fz-field">
+        <label data-i18n="fz_battle_pick2">Боец 2</label>
+        <select id="battleB"><option value="">—</option></select>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+      <button class="fz-btn" id="battleGo">
+        <span data-i18n="fz_battle_go">⚔️ В БОЙ</span>
+      </button>
+      <button class="fz-btn ghost" id="battleRandom">
+        <span data-i18n="fz_battle_random">🎲 Случайная пара</span>
+      </button>
+    </div>
+
+    <div class="battle-table-wrap" id="battleResult">
+      <table class="battle-table" id="battleTable"></table>
+
+      <div class="battle-verdict">
+        <div class="battle-verdict-trophy">🏆</div>
+        <div class="battle-verdict-name" id="battleWinnerName">—</div>
+        <div class="battle-verdict-reason" id="battleWinnerReason"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COOKED ============ -->
+  <section class="fz-section" id="cooked">
+    <span class="fz-section-tag">04 · REALITY CHECK</span>
+    <h2 data-i18n="fz_cooked_title">How Cooked Am I? 💀</h2>
+    <p class="fz-sub" data-i18n="fz_cooked_sub">Реальные данные. Нереальный вердикт.</p>
+
+    <div class="fz-grid">
+      <div class="fz-field">
+        <label data-i18n="fz_gpa">GPA</label>
+        <input type="number" id="cookedGpa" placeholder="3.8" step="0.01" min="0" max="5">
+      </div>
+      <div class="fz-field">
+        <label data-i18n="fz_sat">SAT</label>
+        <input type="number" id="cookedSat" placeholder="1450" min="400" max="1600">
+      </div>
+      <div class="fz-field">
+        <label data-i18n="fz_ielts">IELTS</label>
+        <input type="number" id="cookedIelts" placeholder="7.5" step="0.5" min="0" max="9">
+      </div>
+      <div class="fz-field">
+        <label data-i18n="fz_cooked_days">Дней до дедлайна</label>
+        <input type="number" id="cookedDays" placeholder="30" min="0" max="3650">
+      </div>
+    </div>
+
+    <button class="fz-btn big accent" id="cookedBtn">
+      <span data-i18n="fz_cooked_btn">💀 НАСКОЛЬКО Я ПРОЖАРЕН</span>
+    </button>
+
+    <div class="cooked-box" id="cookedBox">
+      <div class="cooked-label" data-i18n="fz_cooked_verdict">YOU ARE COOKED</div>
+      <div class="cooked-value" id="cookedValue">0<span class="pct">%</span> 💀</div>
+      <div class="cooked-phrase" id="cookedPhrase"></div>
+      <div class="cooked-disclaimer" data-i18n="fz_cooked_disclaimer">Результат ни на что не влияет. Успокойся.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span data-i18n="footer_note">Fun Zone — шутка. Реальные рекомендации — в тесте.</span>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="auth.js"></script>
+<script>
+// ============================================================
+// EduPath — Fun Zone 🗿
+// Чисто фронт. Никаких новых авторизаций. Максимум кринжа.
+// ============================================================
+
+const COUNTRY_FILES = [
+  "Australia.json", "Austria.json", "Belgium.json", "Canada.json",
+  "China.json", "Czech Republic.json", "Denmark.json", "Finland.json",
+  "Germany.json", "Hong Kong.json", "Hungary.json", "Italy.json",
+  "Japan.json", "Latvia.json", "Netherlands.json", "Poland.json",
+  "Qatar.json", "Singapore.json", "South Korea.json", "Spain.json",
+  "Sweden.json", "Switzerland.json", "Turkey.json", "UAE.json",
+  "UK.json", "USA.json"
+];
+
+const FLAGS = {
+  "Австралия":"🇦🇺","Австрия":"🇦🇹","Бельгия":"🇧🇪","Канада":"🇨🇦","Китай":"🇨🇳",
+  "Чехия":"🇨🇿","Дания":"🇩🇰","Финляндия":"🇫🇮","Германия":"🇩🇪","Гонконг":"🇭🇰",
+  "Венгрия":"🇭🇺","Италия":"🇮🇹","Япония":"🇯🇵","Латвия":"🇱🇻","Нидерланды":"🇳🇱",
+  "Польша":"🇵🇱","Катар":"🇶🇦","Сингапур":"🇸🇬","Южная Корея":"🇰🇷","Испания":"🇪🇸",
+  "Швеция":"🇸🇪","Швейцария":"🇨🇭","Турция":"🇹🇷","ОАЭ":"🇦🇪","Великобритания":"🇬🇧","США":"🇺🇸"
+};
+
+let ALL_UNIS = [];
+
+function t(key, fallback){
+  return (window.I18N && window.I18N.t(key)) || fallback || key;
+}
+function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+// ============================================================
+// ЗАГРУЗКА УНИВЕРСИТЕТОВ
+// ============================================================
+
+async function loadUnis(){
+  const results = await Promise.allSettled(
+    COUNTRY_FILES.map(async (file) => {
+      const res = await fetch(file);
+      if(!res.ok) throw new Error(file);
+      return { file, data: await res.json() };
+    })
+  );
+
+  results.forEach(r => {
+    if(r.status !== "fulfilled") return;
+    const countryRaw = r.value.file.replace(".json", "");
+    const items = r.value.data;
+    items.forEach(uni => {
+      if(!uni || !uni["Университет"]) return;
+      const name = String(uni["Университет"]).trim();
+      if(!name) return;
+      ALL_UNIS.push({
+        name,
+        countryRaw,
+        country: uni["Страна"] || countryRaw,
+        city: uni["Город"] || "",
+        flag: FLAGS[countryRaw] || "🌍"
+      });
+    });
+  });
+
+  // Уникализируем
+  const seen = new Set();
+  ALL_UNIS = ALL_UNIS.filter(u => {
+    const k = u.name.toLowerCase();
+    if(seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+
+  console.log("Fun Zone loaded unis:", ALL_UNIS.length);
+}
+
+// ============================================================
+// 1. AURA
+// ============================================================
+
+const AURA_PHRASES = {
+  ru: [
+    "Ты академически опасен.",
+    "Бро учился 14 минут и думает, что поступит в MIT 💀",
+    "SAT Math обнаружен. R&W всё ещё борется за жизнь.",
+    "Бро реально залочен. 🔒",
+    "Твоя аура покинула сервер.",
+    "С уважением, ты прожарен 💀",
+    "Бро думает, что GPA — это черта характера.",
+    "Учёные изучают тебя. Осторожно.",
+    "Твой сон — это миф. Аура — легенда.",
+    "Это не GPA. Это образ жизни."
+  ],
+  en: [
+    "You are academically dangerous.",
+    "Bro studied for 14 minutes and thinks he's getting into MIT 💀",
+    "SAT Math detected. R&W is still fighting for its life.",
+    "Bro is actually locked in.",
+    "Your academic aura has left the server.",
+    "Respectfully, you are cooked 💀",
+    "Bro thinks GPA is a personality trait.",
+    "Scientists are studying you. Careful.",
+    "Your sleep is a myth. The aura is legend.",
+    "This isn't a GPA. It's a lifestyle."
+  ],
+  zh: [
+    "你在学业上很危险。",
+    "兄弟学了14分钟就以为能进MIT 💀",
+    "检测到SAT数学。R&W还在为生存而战。",
+    "兄弟真的锁定了。",
+    "你的学术气场已经离开了服务器。",
+    "恕我直言，你完蛋了 💀",
+    "兄弟以为GPA是性格特征。",
+    "科学家正在研究你。小心。",
+    "你的睡眠是个传说。气场才是传奇。",
+    "这不是GPA。这是一种生活方式。"
+  ],
+  kk: [
+    "Сен академиялық тұрғыдан қауіптісің.",
+    "Бауырым 14 минут оқып, MIT-ке түсемін деп ойлайды 💀",
+    "SAT Math анықталды. R&W әлі өмір үшін күресіп жатыр.",
+    "Бауырым шынымен локталып қалды. 🔒",
+    "Сенің аураң серверден шығып кетті.",
+    "Құрметпен, сен жанып тұрсың 💀",
+    "Бауырым GPA-ны мінез қасиеті деп ойлайды.",
+    "Ғалымдар сені зерттеп жатыр. Абайла.",
+    "Сенің ұйқың — миф. Аура — аңыз.",
+    "Бұл GPA емес. Бұл өмір салты."
+  ],
+  ky: [
+    "Сен академиялык жактан коркунучтуусуң.",
+    "Байке 14 мүнөт окуду эле, MITге кирем деп ойлойт 💀",
+    "SAT Math аныкталды. R&W дагы эле жашоо үчүн күрөшүп жатат.",
+    "Байке чындап эле локтолду. 🔒",
+    "Сенин аураң серверден чыгып кетти.",
+    "Урматтоо менен, сен күйүп турасың 💀",
+    "Байке GPAны мүнөз деп ойлойт.",
+    "Окумуштуулар сени изилдеп жатышат. Этият бол.",
+    "Сенин уйкуң — уламыш. Аура — легенда.",
+    "Бул GPA эмес. Бул жашоо образы."
+  ]
+};
+
+document.getElementById("auraBtn").addEventListener("click", () => {
+  const gpa   = parseFloat(document.getElementById("auraGpa").value);
+  const sat   = parseFloat(document.getElementById("auraSat").value);
+  const ielts = parseFloat(document.getElementById("auraIelts").value);
+  const sleep = parseFloat(document.getElementById("auraSleep").value);
+  const study = parseFloat(document.getElementById("auraStudy").value);
+
+  if([gpa, sat, ielts, sleep, study].some(v => isNaN(v))){
+    alert(t("fz_not_enough", "Заполни все поля, бро 😭"));
+    return;
+  }
+
+  // Псевдонаучная формула
+  const base =
+    gpa * 500000 +
+    sat * 1500 +
+    ielts * 200000 +
+    Math.max(0, 8 - sleep) * 40000 +
+    study * 90000 +
+    Math.random() * 500000;
+
+  const aura = Math.round(base).toLocaleString("ru-RU");
+
+  document.getElementById("auraValue").innerHTML = `🗿 ${aura} <span class="unit">AURA</span>`;
+
+  const lang = (window.I18N && window.I18N.getLang()) || "ru";
+  const phrases = AURA_PHRASES[lang] || AURA_PHRASES.ru;
+  document.getElementById("auraPhrase").textContent = pick(phrases);
+
+  const box = document.getElementById("auraBox");
+  box.classList.remove("show");
+  void box.offsetWidth;
+  box.classList.add("show");
+});
+
+// ============================================================
+// 2. ROULETTE
+// ============================================================
+
+const ROULETTE_MESSAGES = {
+  ru: [
+    "Ты теперь инженер. Пути назад нет.",
+    "Поздравляем. Ты теперь юрист. Смирись.",
+    "Судьба решила: ты — врач. Учи биологию. Срочно.",
+    "Ты теперь программист. Добро пожаловать в ад.",
+    "Ты теперь экономист. Удачи с графиками.",
+    "Ты теперь дизайнер. Купи iPad.",
+    "Ты теперь физик. Прощай, сон.",
+    "Ты теперь филолог. Будешь объяснять это маме всю жизнь.",
+    "Ты теперь маркетолог. Продай мне эту кнопку."
+  ],
+  en: [
+    "You are now an engineer. There is no escape.",
+    "Congratulations. You are now a lawyer. Accept it.",
+    "Fate has decided: you're a doctor. Study biology. Now.",
+    "You are now a programmer. Welcome to hell.",
+    "You are now an economist. Good luck with the charts.",
+    "You are now a designer. Buy an iPad.",
+    "You are now a physicist. Say goodbye to sleep.",
+    "You are now a linguist. You'll explain this to your mom forever.",
+    "You are now a marketer. Sell me this button."
+  ],
+  zh: [
+    "你现在是工程师。无路可退。",
+    "恭喜。你现在是律师。接受吧。",
+    "命运已定：你是医生。学生物。现在。",
+    "你现在是程序员。欢迎来到地狱。",
+    "你现在是经济学家。祝你看图表好运。",
+    "你现在是设计师。买个iPad吧。",
+    "你现在是物理学家。跟睡眠说再见。",
+    "你现在是语言学家。你要跟你妈解释一辈子。",
+    "你现在是营销人员。把这按钮卖给我。"
+  ],
+  kk: [
+    "Сен енді инженерсің. Қайту жоқ.",
+    "Құттықтаймыз. Сен енді заңгерсің. Келістің.",
+    "Тағдыр шешті: сен — дәрігерсің. Биологияны оқы. Қазір.",
+    "Сен енді программиссің. Тозаққа қош келдің.",
+    "Сен енді экономиссің. Графиктермен сәттілік.",
+    "Сен енді дизайнерсің. iPad сатып ал.",
+    "Сен енді физиксің. Ұйқымен қоштас.",
+    "Сен енді филологсың. Мұны анаңа өмір бойы түсіндіресің.",
+    "Сен енді маркетологсың. Маған мына батырманы сат."
+  ],
+  ky: [
+    "Сен эми инженерсиң. Кайтуу жок.",
+    "Куттуктайбыз. Сен эми юристсиң. Көнүң.",
+    "Тагдыр чечти: сен — дарыгерсиң. Биология оку. Азыр.",
+    "Сен эми программистсиң. Тозокко кош келиңиз.",
+    "Сен эми экономистсиң. Графиктер менен ийгилик.",
+    "Сен эми дизайнерсиң. iPad сатып ал.",
+    "Сен эми физиксиң. Уйку менен коштош.",
+    "Сен эми филологсуң. Муну апаңа өмүр бою түшүндүрөсүң.",
+    "Сен эми маркетологсуң. Мага ушул баскычты сат."
+  ]
+};
+
+let rouletteInterval = null;
+
+function spinRoulette(){
+  const display = document.getElementById("rouletteDisplay");
+  const flag = document.getElementById("rouletteFlag");
+  const msg = document.getElementById("rouletteMessage");
+  const congrats = document.getElementById("rouletteCongrats");
+  const againBtn = document.getElementById("rouletteAgain");
+  const spinBtn = document.getElementById("rouletteBtn");
+
+  if(ALL_UNIS.length === 0){
+    alert(t("fz_loading_error", "Не смогли загрузить список вузов."));
+    return;
+  }
+
+  spinBtn.style.display = "none";
+  againBtn.style.display = "none";
+  congrats.style.display = "none";
+  msg.textContent = "";
+  display.classList.add("spinning");
+
+  let ticks = 0;
+  const totalTicks = 28;
+
+  rouletteInterval = setInterval(() => {
+    const u = pick(ALL_UNIS);
+    display.textContent = u.name;
+    flag.textContent = u.flag;
+    ticks++;
+
+    if(ticks >= totalTicks){
+      clearInterval(rouletteInterval);
+      display.classList.remove("spinning");
+
+      const winner = pick(ALL_UNIS);
+      display.textContent = winner.name;
+      flag.textContent = winner.flag;
+      congrats.style.display = "block";
+
+      const lang = (window.I18N && window.I18N.getLang()) || "ru";
+      const messages = ROULETTE_MESSAGES[lang] || ROULETTE_MESSAGES.ru;
+      msg.textContent = pick(messages);
+
+      againBtn.style.display = "inline-flex";
+    }
+  }, 70);
+}
+
+document.getElementById("rouletteBtn").addEventListener("click", spinRoulette);
+document.getElementById("rouletteAgain").addEventListener("click", spinRoulette);
+
+// ============================================================
+// 3. BATTLE
+// ============================================================
+
+const BATTLE_CATS = [
+  { key: "aura",        i18n: "fz_cat_aura" },
+  { key: "drip",        i18n: "fz_cat_drip" },
+  { key: "parent",      i18n: "fz_cat_parent" },
+  { key: "suffering",   i18n: "fz_cat_suffering" },
+  { key: "sleep",       i18n: "fz_cat_sleep" },
+  { key: "mc",          i18n: "fz_cat_mc" },
+  { key: "scholarship", i18n: "fz_cat_scholarship" },
+  { key: "npc",         i18n: "fz_cat_npc" }
+];
+
+const BATTLE_REASONS = {
+  ru: [
+    "Бро нужен грант 💀",
+    "Аура решает всё.",
+    "Мама одобрила этот вариант.",
+    "NPC level слишком высокий.",
+    "Сон — это роскошь.",
+    "Drip непобедим.",
+    "Main character energy зашкаливает.",
+    "Academic suffering — это база."
+  ],
+  en: [
+    "Bro needs a scholarship 💀",
+    "Aura decides everything.",
+    "Mom approved this one.",
+    "NPC level too high.",
+    "Sleep is a luxury.",
+    "Drip is undefeated.",
+    "Main character energy off the charts.",
+    "Academic suffering is the base."
+  ],
+  zh: [
+    "兄弟需要奖学金 💀",
+    "气场决定一切。",
+    "妈妈批准了这个。",
+    "NPC等级太高了。",
+    "睡眠是奢侈品。",
+    "潮度无敌。",
+    "主角能量爆表。",
+    "学业痛苦是基础。"
+  ],
+  kk: [
+    "Бауырымға стипендия керек 💀",
+    "Аура бәрін шешеді.",
+    "Анамыз осыны мақұлдады.",
+    "NPC деңгейі тым жоғары.",
+    "Ұйқы — сән-салтанат.",
+    "Drip жеңілмейді.",
+    "Басты кейіпкер энергиясы шектен шықты.",
+    "Академиялық азап — база."
+  ],
+  ky: [
+    "Байкеге стипендия керек 💀",
+    "Аура баарын чечет.",
+    "Апам ушуну жактырды.",
+    "NPC деңгээли өтө жогору.",
+    "Уйку — люкс.",
+    "Drip жеңилбейт.",
+    "Башкы каарман энергиясы чектен ашты.",
+    "Академиялык азап — база."
+  ]
+};
+
+function fillBattleSelects(){
+  const a = document.getElementById("battleA");
+  const b = document.getElementById("battleB");
+  if(!a || !b || ALL_UNIS.length === 0) return;
+
+  const options = ALL_UNIS
+    .slice()
+    .sort((x, y) => x.name.localeCompare(y.name))
+    .map(u => `<option value="${u.name.replace(/"/g, "&quot;")}">${u.flag} ${u.name}</option>`)
+    .join("");
+
+  a.innerHTML = `<option value="">—</option>` + options;
+  b.innerHTML = `<option value="">—</option>` + options;
+}
+
+function genStat(){
+  return randInt(40, 100);
+}
+function genSuffering(){
+  const n = randInt(1, 5);
+  return "☠️".repeat(n);
+}
+
+function renderBattle(uniA, uniB){
+  // Случайные статы
+  const statsA = {}, statsB = {};
+  BATTLE_CATS.forEach(c => {
+    if(c.key === "suffering"){
+      statsA[c.key] = genSuffering();
+      statsB[c.key] = genSuffering();
+    } else {
+      statsA[c.key] = genStat();
+      statsB[c.key] = genStat();
+    }
+  });
+
+  // Определяем победителя по "сумме очков"
+  let scoreA = 0, scoreB = 0;
+  BATTLE_CATS.forEach(c => {
+    if(c.key === "suffering"){
+      const a = statsA[c.key].length;
+      const b = statsB[c.key].length;
+      // меньше страданий = лучше
+      if(a < b) scoreA += 1; else if(b < a) scoreB += 1;
+    } else {
+      if(statsA[c.key] > statsB[c.key]) scoreA += 1;
+      else if(statsB[c.key] > statsA[c.key]) scoreB += 1;
+    }
+  });
+
+  const winner = scoreA >= scoreB ? uniA : uniB;
+  const isAWin = winner === uniA;
+
+  const lang = (window.I18N && window.I18N.getLang()) || "ru";
+  const reasons = BATTLE_REASONS[lang] || BATTLE_REASONS.ru;
+
+  // Заполняем таблицу
+  const table = document.getElementById("battleTable");
+  let html = `<thead><tr><th></th><th>${uniA.flag} ${uniA.name}</th><th>${uniB.flag} ${uniB.name}</th></tr></thead><tbody>`;
+  BATTLE_CATS.forEach(c => {
+    const label = t(c.i18n, c.key);
+    let aCell = statsA[c.key];
+    let bCell = statsB[c.key];
+    let aCls = "", bCls = "";
+    if(c.key === "suffering"){
+      const a = statsA[c.key].length;
+      const b = statsB[c.key].length;
+      if(a < b){ aCls = "winner"; bCls = "loser"; }
+      else if(b < a){ bCls = "winner"; aCls = "loser"; }
+    } else {
+      if(statsA[c.key] > statsB[c.key]){ aCls = "winner"; bCls = "loser"; }
+      else if(statsB[c.key] > statsA[c.key]){ bCls = "winner"; aCls = "loser"; }
+    }
+    html += `<tr>
+      <td>${label}</td>
+      <td class="${aCls}">${aCell}</td>
+      <td class="${bCls}">${bCell}</td>
+    </tr>`;
+  });
+  html += `</tbody>`;
+  table.innerHTML = html;
+
+  document.getElementById("battleWinnerName").textContent = `${winner.flag} ${winner.name}`;
+  document.getElementById("battleWinnerReason").textContent = `${t("fz_battle_reason", "Причина")}: ${pick(reasons)}`;
+
+  const wrap = document.getElementById("battleResult");
+  wrap.classList.remove("show");
+  void wrap.offsetWidth;
+  wrap.classList.add("show");
+  wrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+document.getElementById("battleGo").addEventListener("click", () => {
+  const nameA = document.getElementById("battleA").value;
+  const nameB = document.getElementById("battleB").value;
+  if(!nameA || !nameB || nameA === nameB){
+    alert(t("fz_not_enough", "Заполни все поля, бро 😭"));
+    return;
+  }
+  const uniA = ALL_UNIS.find(u => u.name === nameA);
+  const uniB = ALL_UNIS.find(u => u.name === nameB);
+  if(!uniA || !uniB) return;
+  renderBattle(uniA, uniB);
+});
+
+document.getElementById("battleRandom").addEventListener("click", () => {
+  if(ALL_UNIS.length < 2) return;
+  const a = pick(ALL_UNIS);
+  let b = pick(ALL_UNIS);
+  let guard = 0;
+  while(b.name === a.name && guard++ < 20) b = pick(ALL_UNIS);
+  document.getElementById("battleA").value = a.name;
+  document.getElementById("battleB").value = b.name;
+  renderBattle(a, b);
+});
+
+// ============================================================
+// 4. COOKED
+// ============================================================
+
+const COOKED_PHRASES = {
+  ru: {
+    high: [
+      "Бро узнал о поступлении за 12 дней до дедлайна.",
+      "Бро думает, что эссе напишется само. Нет, бро. Нет.",
+      "Рекомендательные письма? Бро, ты уверен?",
+      "SAT в октябре. Дедлайн в ноябре. Удачи.",
+      "Бро, у тебя всё под контролем. (Нет.)"
+    ],
+    mid: [
+      "Так себе. Но не смертельно.",
+      "Бро в процессе. В процессе чего — вопрос.",
+      "Могло быть хуже. Могло быть намного лучше.",
+      "Бро между 'всё ок' и 'всё плохо'."
+    ],
+    low: [
+      "Бро реально спланировал всё заранее. Редкие кадры.",
+      "Бро НЕ прожарен. Это подозрительно.",
+      "Бро знает, что делает. Кто ты вообще?",
+      "Уважение. Просто уважение."
+    ]
+  },
+  en: {
+    high: [
+      "Bro discovered university applications 12 days before the deadline.",
+      "Bro thinks the essay writes itself. No, bro. No.",
+      "Recommendation letters? Bro, are you sure?",
+      "SAT in October. Deadline in November. Good luck.",
+      "Bro, you've got this under control. (You don't.)"
+    ],
+    mid: [
+      "Mid. But not fatal.",
+      "Bro is in the process. Of what — questionable.",
+      "Could be worse. Could be much better.",
+      "Bro is between 'it's fine' and 'it's over'."
+    ],
+    low: [
+      "Bro actually planned ahead. Rare footage.",
+      "Bro is NOT cooked. This is getting suspicious.",
+      "Bro knows what he's doing. Who even are you?",
+      "Respect. Just respect."
+    ]
+  },
+  zh: {
+    high: [
+      "兄弟在截止前12天才知道大学申请。",
+      "兄弟以为文书会自己写出来。不，兄弟。不。",
+      "推荐信？兄弟，你确定吗？",
+      "10月SAT。11月截止。祝好运。",
+      "兄弟，你掌控了一切。（你没有。）"
+    ],
+    mid: [
+      "一般。但还不致命。",
+      "兄弟正在进行中。进行什么——存疑。",
+      "本可以更糟。本可以好得多。",
+      "兄弟介于'没事'和'完了'之间。"
+    ],
+    low: [
+      "兄弟真的提前规划了。罕见画面。",
+      "兄弟没完蛋。这越来越可疑了。",
+      "兄弟知道自己在做什么。你究竟是谁？",
+      "敬佩。只是敬佩。"
+    ]
+  },
+  kk: {
+    high: [
+      "Бауырым дедлайнға 12 күн қалғанда университетке өтінім туралы білді.",
+      "Бауырым эссе өзі жазылады деп ойлайды. Жоқ, бауырым. Жоқ.",
+      "Ұсыныс хаттар? Бауырым, сен сенімдісің бе?",
+      "SAT қазанда. Дедлайн қарашада. Сәттілік.",
+      "Бауырым, сенің бәрі бақылауда. (Жоқ.)"
+    ],
+    mid: [
+      "Орташа. Бірақ өлімге әкелмейді.",
+      "Бауырым процесте. Не процесте — сұрақ.",
+      "Нашар болуы мүмкін еді. Әлдеқайда жақсы болуы мүмкін еді.",
+      "Бауырым 'бәрі жақсы' мен 'бәрі бітті' арасында."
+    ],
+    low: [
+      "Бауырым шынымен алдын ала жоспарлады. Сирек кадрлар.",
+      "Бауырым ЖАНЫП ТҰРҒАН ЖОҚ. Бұл күдікті.",
+      "Бауырым не істеп жатқанын біледі. Сен кімсің өзі?",
+      "Құрмет. Жай ғана құрмет."
+    ]
+  },
+  ky: {
+    high: [
+      "Байке дедлайнга 12 күн калганда университетке арыз жөнүндө билди.",
+      "Байке эссе өзү жазылат деп ойлойт. Жок, байке. Жок.",
+      "Сунуштама каттар? Байке, сен ишенесиңби?",
+      "SAT октябрда. Дедлайн ноябрда. Ийгилик.",
+      "Байке, сенин баары көзөмөлдө. (Жок.)"
+    ],
+    mid: [
+      "Орточо. Бирок өлүмгө алып барбайт.",
+      "Байке процессте. Эмне процессинде — суроо.",
+      "Жаман болушу мүмкүн эле. Алда канча жакшы болмок.",
+      "Байке 'баары жакшы' менен 'баары бүттү' ортосунда."
+    ],
+    low: [
+      "Байке чындап эле алдын ала пландады. Сейрек кадрлар.",
+      "Байке КҮЙҮП ЖАТКАН ЖОК. Бул шектүү.",
+      "Байке эмне кылып жатканын билет. Сен кимсиң өзү?",
+      "Урмат. Жөн эле урмат."
+    ]
+  }
+};
+
+document.getElementById("cookedBtn").addEventListener("click", () => {
+  const gpa   = parseFloat(document.getElementById("cookedGpa").value);
+  const sat   = parseFloat(document.getElementById("cookedSat").value);
+  const ielts = parseFloat(document.getElementById("cookedIelts").value);
+  const days  = parseFloat(document.getElementById("cookedDays").value);
+
+  if([gpa, sat, ielts, days].some(v => isNaN(v))){
+    alert(t("fz_not_enough", "Заполни все поля, бро 😭"));
+    return;
+  }
+
+  // Псевдоформула "прожаренности"
+  // Хорошие показатели снижают %, близкий дедлайн повышает
+  let cook = 0;
+  cook += Math.max(0, (4.0 - gpa) * 12);          // низкий GPA = +%
+  cook += Math.max(0, (1400 - sat) / 20);          // низкий SAT = +%
+  cook += Math.max(0, (7.0 - ielts) * 10);         // низкий IELTS = +%
+  cook += Math.max(0, (60 - days) * 0.8);          // мало дней = +%
+  cook -= Math.max(0, (gpa - 3.8) * 8);            // отличный GPA = -%
+  cook -= Math.max(0, (sat - 1450) / 30);          // топ SAT = -%
+  cook -= Math.max(0, (ielts - 7.5) * 6);          // топ IELTS = -%
+  cook -= Math.max(0, (days - 90) * 0.15);         // много времени = -%
+
+  cook = Math.round(Math.max(0, Math.min(100, cook)));
+
+  const lang = (window.I18N && window.I18N.getLang()) || "ru";
+  const phrases = COOKED_PHRASES[lang] || COOKED_PHRASES.ru;
+  let bucket = "mid";
+  if(cook >= 60) bucket = "high";
+  else if(cook <= 15) bucket = "low";
+
+  document.getElementById("cookedValue").innerHTML = `${cook}<span class="pct">%</span> 💀`;
+  document.getElementById("cookedPhrase").textContent = pick(phrases[bucket]);
+
+  const box = document.getElementById("cookedBox");
+  box.classList.remove("show");
+  void box.offsetWidth;
+  box.classList.add("show");
+});
+
+// ============================================================
+// ПЕРЕРИСОВКА ПРИ СМЕНЕ ЯЗЫКА
+// ============================================================
+
+window.addEventListener("edupath-lang-change", () => {
+  // Если таблица баттла открыта — оставим как есть (значения не языковые)
+  // Кнопки и заголовки обновляет i18n.applyAll() автоматически.
+});
+
+// ============================================================
+// ИНИЦИАЛИЗАЦИЯ
+// ============================================================
+
+(async function initFunZone(){
+  try {
+    await loadUnis();
+    fillBattleSelects();
+  } catch(e){
+    console.error(e);
+  }
+})();
+</script>
+</body>
+</html>
