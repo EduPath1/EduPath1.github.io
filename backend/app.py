@@ -50,24 +50,7 @@ def get_user_and_client():
     try:
         user_response = supabase.auth.get_user(token)
         if user_response and user_response.user:
-            # Возвращаем глобальный клиент — он работает с anon key + RLS
-            # (RLS должен быть отключён для таблиц)
             return user_response.user, supabase
-    except Exception as e:
-        print("=== TOKEN ERROR ===")
-        print(str(e))
-        print(traceback.format_exc())
-
-    return None, None
-
-    try:
-        # Отдельный клиент с токеном пользователя
-        user_client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-        user_client.auth.set_session(token, "")
-
-        user_response = user_client.auth.get_user()
-        if user_response and user_response.user:
-            return user_response.user, user_client
     except Exception as e:
         print("=== TOKEN ERROR ===")
         print(str(e))
@@ -194,9 +177,37 @@ def login():
         msg = str(e)
         print("=== LOGIN ERROR ===")
         print(traceback.format_exc())
+        if "email not confirmed" in msg.lower() or "email_not_confirmed" in msg.lower():
+            return jsonify({"error": "Email не подтверждён. Проверь почту."}), 401
         if "invalid" in msg.lower() or "credentials" in msg.lower():
             return jsonify({"error": "Неверный email или пароль"}), 401
         return jsonify({"error": msg}), 401
+
+
+@app.route("/api/resend-confirmation", methods=["POST"])
+def resend_confirmation():
+    """
+    Повторно отправляет письмо с подтверждением email.
+    Используется кнопкой «Отправить письмо заново» в auth.js.
+    """
+    data = request.json or {}
+    email = (data.get("email") or "").strip().lower()
+
+    if not email:
+        return jsonify({"error": "Email обязателен"}), 400
+
+    try:
+        supabase.auth.resend({
+            "type": "signup",
+            "email": email
+        })
+        return jsonify({"ok": True, "message": "Письмо отправлено заново"}), 200
+
+    except Exception as e:
+        msg = str(e)
+        print("=== RESEND ERROR ===")
+        print(traceback.format_exc())
+        return jsonify({"error": msg}), 400
 
 
 @app.route("/api/me", methods=["GET"])
@@ -249,7 +260,6 @@ def add_saved(user, client):
         return jsonify({"error": "name required"}), 400
 
     try:
-        # Проверка дубликата
         existing = client.table("saved_universities") \
             .select("id") \
             .eq("user_id", user.id) \
