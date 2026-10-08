@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduPath — Fun Zone 🤡</title>
+<title>EduPath — Fun Zone 🧠</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -16,15 +16,18 @@
     --ease:cubic-bezier(0.22, 1, 0.36, 1);
     --neon:#E63946;
     --gold:#FFD700;
+    --green:#27AE60;
+    --blue:#4A7FE6;
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
+  h1,h2,h3,h4{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
   a{ text-decoration:none; color:inherit; }
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
+  /* HEADER */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; position:relative; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1300px; margin:0 auto; padding:0 32px; position:relative; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; }
   .nav-links{ display:flex; align-items:center; gap:8px; }
@@ -34,7 +37,6 @@
   .nav-right{ display:flex; align-items:center; gap:14px; }
   .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; }
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; }
-
   .lang-dropdown{ position:relative; }
   .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
   .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
@@ -42,11 +44,11 @@
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
-  /* HERO FUN ZONE */
+  /* HERO */
   .fz-hero{
     position:relative;
     text-align:center;
-    padding:72px 24px 40px;
+    padding:64px 24px 32px;
     background:
       radial-gradient(circle at 15% 20%, rgba(199,146,86,0.25), transparent 45%),
       radial-gradient(circle at 85% 30%, rgba(230,57,70,0.18), transparent 45%),
@@ -55,7 +57,7 @@
     overflow:hidden;
   }
   .fz-hero::before, .fz-hero::after{
-    content:"🗿"; position:absolute; font-size:64px; opacity:0.18; pointer-events:none;
+    content:"🧠"; position:absolute; font-size:64px; opacity:0.18; pointer-events:none;
     animation: floaty 6s ease-in-out infinite;
   }
   .fz-hero::before{ top:14%; left:6%; }
@@ -67,12 +69,12 @@
     font-weight:900; font-size:12px; letter-spacing:0.25em;
     padding:8px 16px; border-radius:999px;
     background:var(--espresso); color:var(--paper);
-    margin-bottom:24px;
+    margin-bottom:20px;
     transform: rotate(-2deg);
     box-shadow: 0 8px 20px -12px rgba(43,27,16,0.5);
   }
   .fz-title{
-    font-size: clamp(56px, 12vw, 130px);
+    font-size: clamp(48px, 10vw, 100px);
     font-weight:900;
     line-height:0.9;
     letter-spacing:-0.04em;
@@ -85,315 +87,535 @@
   }
   @keyframes titleWobble{ 0%,100%{ transform:rotate(-1deg);} 50%{ transform:rotate(1deg);} }
 
-  .fz-warning{
-    max-width:640px; margin:0 auto;
-    font-size:15px; color:var(--bark);
-    background: var(--paper);
-    border:2px dashed var(--clay);
-    border-radius:16px;
-    padding:20px 24px;
-    line-height:1.6;
-    transform: rotate(0.5deg);
+  .fz-sub {
+    max-width: 640px; margin: 0 auto 12px;
+    font-size: 16px; color: var(--bark);
+    line-height: 1.6;
   }
-  .fz-warning strong{ color:var(--espresso); }
+  .fz-sub-small {
+    max-width: 640px; margin: 0 auto;
+    font-size: 14px; color: var(--text-muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
 
-  /* GENERAL SECTIONS */
-  main{ max-width:1100px; margin:0 auto; padding:24px 24px 96px; }
-  .fz-section{
+  /* MAIN */
+  main{ max-width:1300px; margin:0 auto; padding:24px 24px 96px; }
+
+  /* DASHBOARD GRID */
+  .fz-dash-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap:16px;
+  }
+  .fz-card{
     background: var(--paper);
     border:1px solid var(--line);
-    border-radius:24px;
-    padding:36px 32px;
-    margin-bottom:32px;
+    border-radius:20px;
+    padding:22px 20px;
+    cursor:pointer;
     position:relative;
     overflow:hidden;
-    transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+    display:flex;
+    flex-direction:column;
+    min-height:150px;
   }
-  .fz-section:hover{ box-shadow: 0 24px 48px -30px rgba(43,27,16,0.35); }
-  .fz-section-tag{
-    display:inline-block;
-    font-family:'Work Sans', sans-serif;
-    font-weight:900; font-size:11px; letter-spacing:0.2em;
-    color:var(--clay);
-    padding:6px 12px; border-radius:999px;
-    background: var(--cream-deep);
-    margin-bottom:14px;
+  .fz-card:hover{
+    transform:translateY(-6px);
+    border-color:var(--caramel);
+    box-shadow: 0 20px 40px -24px rgba(43,27,16,0.35);
   }
-  .fz-section h2{
-    font-size: clamp(28px, 4vw, 40px);
-    color:var(--espresso);
-    margin-bottom:8px;
+  .fz-card-icon{
+    font-size:36px;
+    margin-bottom:12px;
+    display:block;
+    filter: drop-shadow(0 4px 6px rgba(43,27,16,0.15));
+  }
+  .fz-card-title{
+    font-family:'Fraunces', serif;
     font-weight:700;
+    font-size:18px;
+    color:var(--espresso);
+    margin-bottom:6px;
+    line-height:1.25;
   }
-  .fz-section .fz-sub{
-    font-size:15px; color:var(--text-muted);
-    margin-bottom:28px; max-width:640px;
+  .fz-card-desc{
+    font-size:13px;
+    color:var(--text-muted);
+    line-height:1.4;
+    margin-bottom:auto;
   }
+  .fz-card-open{
+    margin-top:14px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.1em;
+    color:var(--clay);
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .fz-card:hover .fz-card-open{ color:var(--neon); }
 
-  /* INPUTS */
-  .fz-grid{
+  /* MODAL */
+  .fz-modal-overlay{
+    position: fixed; inset: 0;
+    background: rgba(43,27,16,0.6);
+    backdrop-filter: blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    z-index: 9000;
+    opacity: 0; visibility: hidden;
+    transition: opacity .3s var(--ease), visibility .3s var(--ease);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .fz-modal-overlay.open{ opacity:1; visibility:visible; }
+  .fz-modal{
+    background: var(--paper);
+    border-radius: 24px;
+    width: 100%; max-width: 640px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 36px 32px 32px;
+    position: relative;
+    box-shadow: 0 40px 80px -32px rgba(43,27,16,0.5);
+    transform: translateY(20px) scale(0.98);
+    transition: transform .35s var(--ease);
+  }
+  .fz-modal-overlay.open .fz-modal{ transform: translateY(0) scale(1); }
+  .fz-modal-close{
+    position:absolute; top:16px; right:16px;
+    width:38px; height:38px; border-radius:50%;
+    background: transparent; color: var(--text-muted);
+    font-size: 24px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    transition: background .2s;
+  }
+  .fz-modal-close:hover{ background: var(--cream-deep); color: var(--espresso); }
+  .fz-modal-head{
+    display:flex; align-items:center; gap:14px;
+    margin-bottom:22px;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--line);
+  }
+  .fz-modal-head-icon{ font-size:32px; flex-shrink:0; }
+  .fz-modal-head-text{ flex:1; }
+  .fz-modal-title{ font-family:'Fraunces', serif; font-size:24px; font-weight:700; color: var(--espresso); line-height:1.2; }
+  .fz-modal-sub{ font-size:13px; color: var(--text-muted); margin-top:4px; }
+
+  /* FORM ELEMENTS */
+  .fz-grid-2{
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
-    gap:14px;
-    margin-bottom:20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap:12px;
+    margin-bottom:18px;
   }
   .fz-field label{
     display:block;
     font-size:11px; font-weight:700;
-    letter-spacing:0.1em; text-transform:uppercase;
-    color:var(--text-muted);
+    letter-spacing:0.08em; text-transform:uppercase;
+    color: var(--text-muted);
     margin-bottom:6px;
   }
   .fz-field input, .fz-field select{
     width:100%;
-    padding:14px 16px;
+    padding:12px 14px;
     font-family:inherit;
-    font-size:16px;
-    background:var(--cream);
-    color:var(--text-main);
+    font-size:15px;
+    background: var(--cream);
+    color: var(--text-main);
     border:1.5px solid transparent;
-    border-radius:12px;
+    border-radius:10px;
     transition: border-color .25s var(--ease), background .25s var(--ease);
   }
   .fz-field input:focus, .fz-field select:focus{
-    outline:none; border-color:var(--clay); background:var(--paper);
+    outline:none; border-color: var(--clay); background: var(--paper);
   }
 
   .fz-btn{
-    display:inline-flex; align-items:center; gap:10px;
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
     background: var(--espresso); color: var(--paper);
-    padding:16px 28px; border-radius:12px;
-    font-size:15px; font-weight:700;
+    padding:14px 24px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:700;
     letter-spacing:0.02em;
     transition: transform .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+    width: 100%;
+    margin-top: 8px;
   }
-  .fz-btn:hover{ transform:translateY(-3px); background:var(--bark); box-shadow: 0 14px 28px -14px rgba(43,27,16,0.5); }
+  .fz-btn:hover{ transform:translateY(-2px); background: var(--bark); box-shadow: 0 14px 28px -14px rgba(43,27,16,0.5); }
   .fz-btn:active{ transform:translateY(0); }
-  .fz-btn.big{ font-size:18px; padding:22px 40px; }
-  .fz-btn.accent{ background: var(--neon); color:var(--paper); }
+  .fz-btn.accent{ background: var(--neon); }
   .fz-btn.accent:hover{ background:#C22531; }
-  .fz-btn.ghost{ background: var(--cream-deep); color:var(--espresso); }
+  .fz-btn.ghost{ background: var(--cream-deep); color: var(--espresso); }
   .fz-btn.ghost:hover{ background: var(--sand); }
+  .fz-btn.gold{ background: var(--caramel); color: var(--espresso); }
+  .fz-btn.gold:hover{ background: #B07E3E; }
 
-  /* AURA RESULT */
-  .aura-box{
-    margin-top:24px;
-    text-align:center;
-    padding:32px 20px;
-    background:
-      radial-gradient(circle at 50% 0%, rgba(255,215,0,0.15), transparent 60%),
-      var(--cream);
-    border-radius:20px;
+  .fz-inline-btns{ display:flex; gap:10px; margin-top:10px; }
+  .fz-inline-btns .fz-btn{ flex:1; }
+
+  /* RESULT BLOCKS */
+  .fz-result{
+    margin-top:22px;
+    padding:24px 20px;
+    background: var(--cream);
+    border-radius:16px;
     border:2px dashed var(--caramel);
     display:none;
+    text-align:center;
+    animation: popIn .5s var(--ease);
   }
-  .aura-box.show{ display:block; animation: popIn .6s var(--ease); }
-  @keyframes popIn{ 0%{ transform:scale(0.85); opacity:0;} 60%{ transform:scale(1.04);} 100%{ transform:scale(1); opacity:1;} }
-  .aura-label{
-    font-size:12px; letter-spacing:0.3em; color:var(--clay); font-weight:900;
-    margin-bottom:12px; text-transform:uppercase;
-  }
-  .aura-value{
+  .fz-result.show{ display:block; }
+  @keyframes popIn{ 0%{ transform:scale(0.92); opacity:0;} 60%{ transform:scale(1.03);} 100%{ transform:scale(1); opacity:1;} }
+
+  .fz-big-number{
     font-family:'Fraunces', serif;
     font-weight:900;
-    font-size: clamp(48px, 10vw, 96px);
+    font-size: clamp(44px, 8vw, 72px);
     line-height:1;
-    color:var(--espresso);
-    margin-bottom:12px;
-    letter-spacing:-0.03em;
+    color: var(--espresso);
+    letter-spacing: -0.03em;
+    margin: 8px 0 14px;
   }
-  .aura-value .unit{ font-size:0.4em; color:var(--clay); margin-left:8px; }
-  .aura-phrase{
+  .fz-big-number .unit{ font-size:0.35em; color: var(--clay); margin-left:8px; }
+
+  .fz-meme-phrase{
     font-family:'Fraunces', serif;
-    font-style:italic;
-    font-size: clamp(18px, 2.6vw, 24px);
-    color:var(--bark);
-    max-width:640px; margin:0 auto 14px;
+    font-style: italic;
+    font-size: clamp(16px, 2.4vw, 20px);
+    color: var(--bark);
     line-height:1.4;
   }
-  .aura-hint{ font-size:12px; color:var(--text-muted); }
+
+  .fz-label-mini{
+    font-size:11px; font-weight:900;
+    letter-spacing:0.25em;
+    color: var(--clay);
+    text-transform: uppercase;
+    margin-bottom:6px;
+  }
+
+  /* STAT ROWS */
+  .fz-stat-row{
+    display:flex; justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .fz-stat-row:last-child{ border-bottom: none; }
+  .fz-stat-row .label{ color: var(--text-muted); font-weight:500; }
+  .fz-stat-row .value{ font-weight:700; color: var(--espresso); }
+
+  /* PROGRESS BARS */
+  .fz-bar{
+    height: 12px;
+    background: var(--cream-deep);
+    border-radius: 6px;
+    overflow:hidden;
+    margin-top: 6px;
+  }
+  .fz-bar-fill{
+    height:100%;
+    background: linear-gradient(90deg, var(--caramel), var(--clay));
+    border-radius: 6px;
+    transition: width .8s var(--ease);
+    width: 0;
+  }
 
   /* ROULETTE */
-  .roulette-stage{
-    display:flex; flex-direction:column; align-items:center;
-    gap:24px;
-    padding:36px 20px;
-    background:
-      radial-gradient(circle at 50% 50%, rgba(199,146,86,0.18), transparent 65%),
-      var(--cream);
-    border-radius:20px;
-    border:1px solid var(--line);
-    margin-top:8px;
-  }
-  .roulette-display{
-    font-family:'Fraunces', serif;
-    font-weight:900;
-    font-size: clamp(28px, 5vw, 52px);
-    color:var(--espresso);
+  .fz-roulette-stage{
     text-align:center;
-    min-height:1.2em;
-    line-height:1.1;
-    letter-spacing:-0.02em;
-    transition: transform .2s var(--ease);
+    padding: 28px 16px;
+    background: radial-gradient(circle at 50% 50%, rgba(199,146,86,0.18), transparent 65%), var(--cream);
+    border-radius: 16px;
+    margin-bottom: 14px;
   }
-  .roulette-display.spinning{ animation: shake 0.15s infinite; }
-  @keyframes shake{
+  .fz-roulette-display{
+    font-family:'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(22px, 4.5vw, 40px);
+    color: var(--espresso);
+    min-height: 1.2em;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-align:center;
+    margin: 8px 0;
+  }
+  .fz-roulette-display.spinning{ animation: shakeRoulette 0.12s infinite; }
+  @keyframes shakeRoulette{
     0%{ transform:translate(0,0) rotate(0deg);}
     25%{ transform:translate(-2px,1px) rotate(-0.5deg);}
     50%{ transform:translate(2px,-1px) rotate(0.5deg);}
     75%{ transform:translate(-1px,2px) rotate(-0.4deg);}
     100%{ transform:translate(1px,-2px) rotate(0.4deg);}
   }
-  .roulette-flag{ font-size: clamp(40px, 7vw, 72px); }
-  .roulette-message{
-    font-family:'Fraunces', serif;
-    font-style:italic;
-    font-size: clamp(16px, 2vw, 20px);
-    color:var(--bark);
-    text-align:center;
-    max-width:560px;
-    line-height:1.45;
-  }
-  .roulette-congrats{
-    font-size:12px; letter-spacing:0.3em; font-weight:900;
-    color:var(--clay); text-transform:uppercase;
-  }
+  .fz-roulette-flag{ font-size: 44px; }
 
-  /* BATTLE */
-  .battle-pickers{
-    display:grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap:16px; align-items:end;
-    margin-bottom:24px;
-  }
-  .battle-vs{
-    font-family:'Fraunces', serif;
-    font-weight:900;
-    font-size:44px;
-    color:var(--neon);
-    padding-bottom:14px;
-    text-align:center;
-  }
-  .battle-table-wrap{ display:none; }
-  .battle-table-wrap.show{ display:block; animation: fadeInUp .5s var(--ease); }
-  @keyframes fadeInUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
-
-  .battle-table{
+  /* BATTLE TABLE */
+  .fz-battle-table{
     width:100%;
     border-collapse: separate;
-    border-spacing:0 8px;
-    margin-bottom:24px;
+    border-spacing: 0 6px;
+    margin: 14px 0;
+    font-size: 14px;
   }
-  .battle-table th, .battle-table td{
-    padding:14px 16px;
+  .fz-battle-table th, .fz-battle-table td{
+    padding:10px 12px;
     text-align:left;
-    font-size:15px;
   }
-  .battle-table th{
-    font-family:'Fraunces', serif;
-    font-size:14px;
-    letter-spacing:0.05em;
-    color:var(--text-muted);
-    text-transform:uppercase;
-    background:transparent;
+  .fz-battle-table th{
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
   }
-  .battle-table td{
+  .fz-battle-table td{
     background: var(--cream);
-    color:var(--espresso);
     font-weight:600;
+    color: var(--espresso);
   }
-  .battle-table tr td:first-child{
-    border-radius:12px 0 0 12px;
-    color:var(--text-muted);
+  .fz-battle-table tr td:first-child{
+    border-radius: 10px 0 0 10px;
+    color: var(--text-muted);
     font-weight:500;
   }
-  .battle-table tr td:last-child{ border-radius:0 12px 12px 0; }
-  .battle-table td.winner{ color:var(--clay); font-weight:900; background: linear-gradient(90deg, var(--cream) 0%, var(--cream-deep) 100%); }
-  .battle-table td.loser{ opacity:0.65; }
-
-  .battle-verdict{
-    text-align:center;
-    padding:28px 20px;
-    background: linear-gradient(135deg, var(--cream-deep) 0%, var(--paper) 100%);
-    border-radius:20px;
-    border:2px solid var(--caramel);
+  .fz-battle-table tr td:last-child{
+    border-radius: 0 10px 10px 0;
   }
-  .battle-verdict-trophy{ font-size:48px; margin-bottom:8px; }
-  .battle-verdict-name{
+  .fz-battle-table td.winner{
+    color: var(--clay);
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--cream), var(--cream-deep));
+  }
+  .fz-battle-table td.loser{ opacity: 0.6; }
+
+  /* ACHIEVEMENT POPUP */
+  .fz-achievement-popup{
+    position: fixed;
+    top: 100px;
+    right: 24px;
+    background: linear-gradient(135deg, var(--caramel), var(--clay));
+    color: var(--paper);
+    padding: 16px 22px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px -20px rgba(140,90,52,0.6);
+    z-index: 9999;
+    display: flex; align-items:center; gap:14px;
+    transform: translateX(120%);
+    transition: transform .5s var(--ease);
+    max-width: 320px;
+  }
+  .fz-achievement-popup.show{ transform: translateX(0); }
+  .fz-achievement-popup-icon{ font-size: 28px; flex-shrink:0; }
+  .fz-achievement-popup-title{ font-weight:700; font-size:14px; }
+  .fz-achievement-popup-desc{ font-size:12px; opacity:0.9; margin-top:2px; }
+
+  /* ACHIEVEMENTS WALL */
+  .fz-ach-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap:12px;
+    margin-top: 16px;
+  }
+  .fz-ach{
+    padding: 16px 14px;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    text-align: center;
+    opacity: 0.4;
+    transition: all .3s var(--ease);
+  }
+  .fz-ach.unlocked{
+    opacity:1;
+    border-color: var(--caramel);
+    background: linear-gradient(135deg, var(--cream-deep), var(--paper));
+    box-shadow: 0 12px 24px -16px rgba(199,146,86,0.5);
+  }
+  .fz-ach-icon{ font-size: 28px; margin-bottom:6px; }
+  .fz-ach-name{ font-size: 12px; font-weight:700; color: var(--espresso); line-height:1.2; }
+  .fz-ach-desc{ font-size: 11px; color: var(--text-muted); margin-top:4px; line-height:1.3; }
+
+  /* GACHA CARDS */
+  .fz-gacha-result{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .fz-gacha-card{
+    padding: 14px 12px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 13px;
+    animation: gachaPop .5s var(--ease);
+    color: var(--espresso);
+  }
+  @keyframes gachaPop{ 0%{ transform: scale(0.3) rotate(-10deg); opacity:0; } 60%{ transform: scale(1.1) rotate(2deg);} 100%{ transform: scale(1) rotate(0); opacity:1; } }
+  .fz-gacha-card.common{    background: linear-gradient(135deg, #D9BD93, #BEA06F); }
+  .fz-gacha-card.rare{      background: linear-gradient(135deg, #88B7F0, #4A7FE6); color: #fff; }
+  .fz-gacha-card.epic{      background: linear-gradient(135deg, #B87FE6, #7C3ACD); color: #fff; }
+  .fz-gacha-card.legendary{ background: linear-gradient(135deg, #FFD700, #E8A100); color: #2B1B10; }
+  .fz-gacha-card.mythic{    background: linear-gradient(135deg, #E63946, #2B1B10); color: #fff; }
+  .fz-gacha-rarity{
+    font-size: 10px; font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+  .fz-gacha-name{ font-weight: 700; font-size: 12px; line-height: 1.3; }
+
+  /* WALLET HP */
+  .fz-wallet-hp{
+    display: flex; align-items:center; gap: 4px;
+    margin: 16px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .fz-hp-heart{
+    font-size: 24px;
+    transition: all .5s var(--ease);
+  }
+  .fz-hp-heart.lost{
+    opacity: 0.2;
+    filter: grayscale(100%);
+    transform: scale(0.85);
+  }
+
+  /* BRAIN CAPACITY */
+  .fz-brain-stage{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+    min-height: 240px;
+  }
+  .fz-brain-cell{
+    background: var(--cream);
+    border-radius: 10px;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 22px;
     font-family:'Fraunces', serif;
+    cursor: pointer;
+    transition: all .2s var(--ease);
+    padding: 6px;
+    text-align: center;
+    line-height: 1.1;
+    min-height: 60px;
+  }
+  .fz-brain-cell:hover{ background: var(--cream-deep); transform: scale(1.05); }
+  .fz-brain-cell.correct{ background: var(--green); color: white; }
+  .fz-brain-cell.wrong{ background: var(--neon); color: white; animation: shakeWrong .4s; }
+  @keyframes shakeWrong{
+    0%,100%{ transform: translateX(0); }
+    25%{ transform: translateX(-4px); }
+    75%{ transform: translateX(4px); }
+  }
+
+  /* FINAL BOSS */
+  .fz-boss-hp{
+    display: flex; gap: 3px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 14px 0;
+  }
+  .fz-boss-hp-heart{
+    font-size: 22px;
+    transition: opacity .4s var(--ease);
+  }
+  .fz-boss-hp-heart.lost{ opacity: 0.15; }
+
+  .fz-boss-buttons{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  /* NUCLEAR RESET */
+  .fz-nuclear-btn{
+    display:block;
+    margin: 0 auto;
+    padding: 20px 40px;
+    background: var(--neon);
+    color: var(--paper);
     font-weight:900;
-    font-size: clamp(28px, 5vw, 44px);
-    color:var(--espresso);
-    margin-bottom:10px;
+    font-size: 20px;
+    letter-spacing: 0.15em;
+    border-radius: 14px;
+    transition: all .25s var(--ease);
+    animation: nukePulse 2s infinite;
   }
-  .battle-verdict-reason{
-    font-family:'Fraunces', serif;
-    font-style:italic;
-    font-size: clamp(16px, 2vw, 19px);
-    color:var(--bark);
-    max-width:560px; margin:0 auto;
+  @keyframes nukePulse{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(230,57,70,0.7); }
+    50%{ box-shadow: 0 0 0 20px rgba(230,57,70,0); }
+  }
+  .fz-nuclear-btn:hover{ background:#C22531; transform: scale(1.05); }
+
+  /* STOCK CHART */
+  .fz-stock-chart{
+    position: relative;
+    height: 140px;
+    background: var(--cream);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 14px 0;
+  }
+  .fz-stock-chart svg{ width: 100%; height: 100%; }
+  .fz-stock-line{
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 2;
+    transition: all .6s var(--ease);
+  }
+  .fz-stock-line.down{ stroke: var(--neon); }
+
+  /* MISC */
+  .fz-mono{
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    background: var(--cream);
+    padding: 14px 16px;
+    border-radius: 10px;
+    color: var(--espresso);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
-  /* COOKED */
-  .cooked-box{
-    text-align:center;
-    padding:40px 24px;
-    background:
-      radial-gradient(circle at 50% 40%, rgba(230,57,70,0.15), transparent 65%),
-      var(--cream);
-    border-radius:20px;
-    margin-top:16px;
-    border:2px dashed var(--neon);
-    display:none;
+  .fz-badges{
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 14px;
   }
-  .cooked-box.show{ display:block; animation: popIn .6s var(--ease); }
-  .cooked-label{
-    font-size:12px; letter-spacing:0.3em; font-weight:900;
-    color:var(--neon); text-transform:uppercase;
-    margin-bottom:12px;
-  }
-  .cooked-value{
-    font-family:'Fraunces', serif;
-    font-weight:900;
-    font-size: clamp(72px, 14vw, 140px);
-    line-height:0.95;
-    color:var(--espresso);
-    letter-spacing:-0.04em;
-    margin-bottom:8px;
-  }
-  .cooked-value .pct{ font-size:0.5em; color:var(--neon); }
-  .cooked-phrase{
-    font-family:'Fraunces', serif;
-    font-style:italic;
-    font-size: clamp(18px, 2.6vw, 24px);
-    color:var(--bark);
-    max-width:640px; margin:0 auto 14px;
-    line-height:1.4;
-  }
-  .cooked-disclaimer{ font-size:12px; color:var(--text-muted); }
-
-  footer{
-    background:var(--cream-deep);
-    padding:24px;
-    text-align:center;
-    font-size:13px;
-    color:var(--text-muted);
+  .fz-badge-mini{
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 10px;
+    background: var(--cream-deep);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--espresso);
   }
 
-  /* MOBILE */
   @media (max-width:900px){
     .nav-links{ display:none !important; }
   }
-  @media (max-width:700px){
-    nav.wrap{ height:72px; padding:0 18px; }
-    .logo{ font-size:21px; gap:9px; }
-    .logo svg{ width:30px; height:30px; }
-    main{ padding:16px 16px 64px; }
-    .fz-section{ padding:24px 20px; border-radius:18px; }
-    .battle-pickers{ grid-template-columns:1fr; gap:8px; }
-    .battle-vs{ padding:0; }
-    .fz-hero{ padding:48px 18px 32px; }
-    .fz-hero::before, .fz-hero::after{ font-size:40px; }
+  @media (max-width:640px){
+    nav.wrap{ height: 72px; padding: 0 18px; }
+    .logo{ font-size: 21px; gap: 9px; }
+    .logo svg{ width: 30px; height: 30px; }
+    main{ padding: 16px 16px 64px; }
+    .fz-modal{ padding: 28px 22px 22px; border-radius: 18px; }
+    .fz-modal-title{ font-size: 20px; }
+    .fz-grid-2{ grid-template-columns: 1fr; }
+    .fz-brain-stage{ grid-template-columns: repeat(4, 1fr); }
   }
 </style>
 </head>
@@ -417,7 +639,7 @@
     </div>
     <div class="nav-right">
       <div class="lang-dropdown">
-        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Language">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
         </button>
         <div class="lang-menu" id="langMenu" role="menu">
@@ -434,808 +656,1335 @@
 </header>
 
 <section class="fz-hero">
-  <div class="fz-badge">⚠️ ENTER AT YOUR OWN RISK</div>
-  <h1 class="fz-title" data-i18n="fz_title">FUN ZONE</h1>
-  <div class="fz-warning">
-    <strong data-i18n="fz_warning_1">⚠️ Эта страница абсолютно бесполезна.</strong><br>
-    <span data-i18n="fz_warning_2">Мы могли бы потратить это время на улучшение алгоритма поступления. Мы выбрали это.</span>
-  </div>
+  <div class="fz-badge">⚠️ BRAINROT DEPARTMENT</div>
+  <h1 class="fz-title">🧠 Fun Zone</h1>
+  <p class="fz-sub">The most unnecessary part of EduPath.</p>
+  <p class="fz-sub-small">We could have improved the admission algorithm. We chose this instead.</p>
 </section>
 
 <main>
-
-  <!-- ============ AURA ============ -->
-  <section class="fz-section" id="aura">
-    <span class="fz-section-tag">01 · CHAOS MODE</span>
-    <h2 data-i18n="fz_aura_title">University Aura 🗿</h2>
-    <p class="fz-sub" data-i18n="fz_aura_sub">Введи свои данные — получи бессмысленный, но очень серьёзный показатель.</p>
-
-    <div class="fz-grid">
-      <div class="fz-field">
-        <label data-i18n="fz_gpa">GPA</label>
-        <input type="number" id="auraGpa" placeholder="3.8" step="0.01" min="0" max="5">
-      </div>
-      <div class="fz-field">
-        <label data-i18n="fz_sat">SAT</label>
-        <input type="number" id="auraSat" placeholder="1450" min="400" max="1600">
-      </div>
-      <div class="fz-field">
-        <label data-i18n="fz_ielts">IELTS</label>
-        <input type="number" id="auraIelts" placeholder="7.5" step="0.5" min="0" max="9">
-      </div>
-      <div class="fz-field">
-        <label data-i18n="fz_sleep">Часов сна</label>
-        <input type="number" id="auraSleep" placeholder="5" step="0.5" min="0" max="24">
-      </div>
-      <div class="fz-field">
-        <label data-i18n="fz_study">Часов учёбы в день</label>
-        <input type="number" id="auraStudy" placeholder="3" step="0.5" min="0" max="24">
-      </div>
-    </div>
-
-    <button class="fz-btn big" id="auraBtn">
-      <span data-i18n="fz_calc_aura">🔥 ПОСЧИТАТЬ АУРУ</span>
-    </button>
-
-    <div class="aura-box" id="auraBox">
-      <div class="aura-label" data-i18n="fz_your_aura">YOUR ACADEMIC AURA</div>
-      <div class="aura-value" id="auraValue">🗿 0 <span class="unit">AURA</span></div>
-      <div class="aura-phrase" id="auraPhrase"></div>
-      <div class="aura-hint" data-i18n="fz_aura_hint">Это НЕ настоящий академический показатель. Это шутка.</div>
-    </div>
-  </section>
-
-  <!-- ============ ROULETTE ============ -->
-  <section class="fz-section" id="roulette">
-    <span class="fz-section-tag">02 · GAMBLING</span>
-    <h2 data-i18n="fz_roulette_title">Randomize My Future 🎰</h2>
-    <p class="fz-sub" data-i18n="fz_roulette_sub">Пусть сайт решит твою судьбу. Отменить нельзя. (Можно, кнопка ниже.)</p>
-
-    <div class="roulette-stage">
-      <div class="roulette-congrats" id="rouletteCongrats" style="display:none;" data-i18n="fz_roulette_congrats">Поздравляем.</div>
-      <div class="roulette-flag" id="rouletteFlag">🎰</div>
-      <div class="roulette-display" id="rouletteDisplay">???</div>
-      <div class="roulette-message" id="rouletteMessage"></div>
-
-      <button class="fz-btn big accent" id="rouletteBtn">
-        <span data-i18n="fz_roulette_btn">🎰 ПУСТЬ САЙТ РЕШИТ МОЮ СУДЬБУ</span>
-      </button>
-      <button class="fz-btn ghost" id="rouletteAgain" style="display:none;">
-        <span data-i18n="fz_roulette_again">🔄 Я НЕ ПРИНИМАЮ СВОЮ СУДЬБУ</span>
-      </button>
-    </div>
-  </section>
-
-  <!-- ============ BATTLE ============ -->
-  <section class="fz-section" id="battle">
-    <span class="fz-section-tag">03 · SMASH OR PASS</span>
-    <h2 data-i18n="fz_battle_title">University Smash or Pass ⚔️</h2>
-    <p class="fz-sub" data-i18n="fz_battle_sub">Выбери двух бойцов. Победитель определится абсолютно честно (нет).</p>
-
-    <div class="battle-pickers">
-      <div class="fz-field">
-        <label data-i18n="fz_battle_pick1">Боец 1</label>
-        <select id="battleA"><option value="">—</option></select>
-      </div>
-      <div class="battle-vs">VS</div>
-      <div class="fz-field">
-        <label data-i18n="fz_battle_pick2">Боец 2</label>
-        <select id="battleB"><option value="">—</option></select>
-      </div>
-    </div>
-
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
-      <button class="fz-btn" id="battleGo">
-        <span data-i18n="fz_battle_go">⚔️ В БОЙ</span>
-      </button>
-      <button class="fz-btn ghost" id="battleRandom">
-        <span data-i18n="fz_battle_random">🎲 Случайная пара</span>
-      </button>
-    </div>
-
-    <div class="battle-table-wrap" id="battleResult">
-      <table class="battle-table" id="battleTable"></table>
-
-      <div class="battle-verdict">
-        <div class="battle-verdict-trophy">🏆</div>
-        <div class="battle-verdict-name" id="battleWinnerName">—</div>
-        <div class="battle-verdict-reason" id="battleWinnerReason"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ COOKED ============ -->
-  <section class="fz-section" id="cooked">
-    <span class="fz-section-tag">04 · REALITY CHECK</span>
-    <h2 data-i18n="fz_cooked_title">How Cooked Am I? 💀</h2>
-    <p class="fz-sub" data-i18n="fz_cooked_sub">Реальные данные. Нереальный вердикт.</p>
-
-    <div class="fz-grid">
-      <div class="fz-field">
-        <label data-i18n="fz_gpa">GPA</label>
-        <input type="number" id="cookedGpa" placeholder="3.8" step="0.01" min="0" max="5">
-      </div>
-      <div class="fz-field">
-        <label data-i18n="fz_sat">SAT</label>
-        <input type="number" id="cookedSat" placeholder="1450" min="400" max="1600">
-      </div>
-      <div class="fz-field">
-        <label data-i18n="fz_ielts">IELTS</label>
-        <input type="number" id="cookedIelts" placeholder="7.5" step="0.5" min="0" max="9">
-      </div>
-      <div class="fz-field">
-        <label data-i18n="fz_cooked_days">Дней до дедлайна</label>
-        <input type="number" id="cookedDays" placeholder="30" min="0" max="3650">
-      </div>
-    </div>
-
-    <button class="fz-btn big accent" id="cookedBtn">
-      <span data-i18n="fz_cooked_btn">💀 НАСКОЛЬКО Я ПРОЖАРЕН</span>
-    </button>
-
-    <div class="cooked-box" id="cookedBox">
-      <div class="cooked-label" data-i18n="fz_cooked_verdict">YOU ARE COOKED</div>
-      <div class="cooked-value" id="cookedValue">0<span class="pct">%</span> 💀</div>
-      <div class="cooked-phrase" id="cookedPhrase"></div>
-      <div class="cooked-disclaimer" data-i18n="fz_cooked_disclaimer">Результат ни на что не влияет. Успокойся.</div>
-    </div>
-  </section>
-
+  <div class="fz-dash-grid" id="dashGrid"></div>
 </main>
 
-<footer>
-  <span data-i18n="footer_note">Fun Zone — шутка. Реальные рекомендации — в тесте.</span>
-</footer>
+<div class="fz-modal-overlay" id="fzModal">
+  <div class="fz-modal" id="fzModalContent"></div>
+</div>
 
-<script src="i18n.js"></script>
-<script src="auth.js"></script>
+<div class="fz-achievement-popup" id="achPopup">
+  <div class="fz-achievement-popup-icon" id="achPopupIcon">🏆</div>
+  <div>
+    <div class="fz-achievement-popup-title" id="achPopupTitle">Achievement unlocked</div>
+    <div class="fz-achievement-popup-desc" id="achPopupDesc"></div>
+  </div>
+</div>
+
 <script>
 // ============================================================
-// EduPath — Fun Zone 🗿
-// Чисто фронт. Никаких новых авторизаций. Максимум кринжа.
+// EduPath — Fun Zone 🧠
+// Brainrot department. No backend. localStorage for achievements.
 // ============================================================
 
-const COUNTRY_FILES = [
-  "Australia.json", "Austria.json", "Belgium.json", "Canada.json",
-  "China.json", "Czech Republic.json", "Denmark.json", "Finland.json",
-  "Germany.json", "Hong Kong.json", "Hungary.json", "Italy.json",
-  "Japan.json", "Latvia.json", "Netherlands.json", "Poland.json",
-  "Qatar.json", "Singapore.json", "South Korea.json", "Spain.json",
-  "Sweden.json", "Switzerland.json", "Turkey.json", "UAE.json",
-  "UK.json", "USA.json"
-];
-
-const FLAGS = {
-  "Австралия":"🇦🇺","Австрия":"🇦🇹","Бельгия":"🇧🇪","Канада":"🇨🇦","Китай":"🇨🇳",
-  "Чехия":"🇨🇿","Дания":"🇩🇰","Финляндия":"🇫🇮","Германия":"🇩🇪","Гонконг":"🇭🇰",
-  "Венгрия":"🇭🇺","Италия":"🇮🇹","Япония":"🇯🇵","Латвия":"🇱🇻","Нидерланды":"🇳🇱",
-  "Польша":"🇵🇱","Катар":"🇶🇦","Сингапур":"🇸🇬","Южная Корея":"🇰🇷","Испания":"🇪🇸",
-  "Швеция":"🇸🇪","Швейцария":"🇨🇭","Турция":"🇹🇷","ОАЭ":"🇦🇪","Великобритания":"🇬🇧","США":"🇺🇸"
-};
-
-let ALL_UNIS = [];
-
+// ------------------------------------------------------------
+// HELPERS
+// ------------------------------------------------------------
 function t(key, fallback){
   return (window.I18N && window.I18N.t(key)) || fallback || key;
 }
 function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
 function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randFloat(min, max){ return Math.random() * (max - min) + min; }
+function escapeHtml(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function $(sel, root){ return (root || document).querySelector(sel); }
+function $$(sel, root){ return Array.from((root || document).querySelectorAll(sel)); }
 
-// ============================================================
-// ЗАГРУЗКА УНИВЕРСИТЕТОВ
-// ============================================================
+// ------------------------------------------------------------
+// ACHIEVEMENTS SYSTEM
+// ------------------------------------------------------------
+const ACH_KEY = "edupath_fz_achievements";
+const ALL_ACHIEVEMENTS = [
+  { id: "aura_gen", icon: "🗿", name: "Aura Generator", desc: "Generated your academic aura" },
+  { id: "future", icon: "🎰", name: "Accept Your Fate", desc: "Randomized your future" },
+  { id: "battle", icon: "⚔️", name: "Fighter", desc: "Started a university battle" },
+  { id: "cooked", icon: "💀", name: "Bro Is Cooked", desc: "Checked how cooked you are" },
+  { id: "npc", icon: "🧙", name: "NPC Arc", desc: "Discovered your university NPC" },
+  { id: "potion", icon: "🧪", name: "Potion Master", desc: "Brewed your university potion" },
+  { id: "stock", icon: "📈", name: "GPA Trader", desc: "Watched your GPA stock" },
+  { id: "crash", icon: "📉", name: "Portfolio Crash", desc: "Witnessed the academic crash" },
+  { id: "gacha_1", icon: "🎲", name: "Gacha Rookie", desc: "Pulled 1 university" },
+  { id: "gacha_10", icon: "🎰", name: "Gacha Addict", desc: "Pulled 10 universities" },
+  { id: "gacha_mythic", icon: "🌟", name: "Mythic Pull", desc: "Pulled a MYTHIC university" },
+  { id: "wallet", icon: "💸", name: "Financially Devastated", desc: "Calculated tuition damage" },
+  { id: "sleep", icon: "🛌", name: "Sleep Simulator", desc: "Simulated sleep vs GPA" },
+  { id: "caffeine", icon: "☕", name: "Chemical Reaction", desc: "Tested caffeine levels" },
+  { id: "brain", icon: "🧠", name: "Brain Capacity", desc: "Tested your brain" },
+  { id: "sat", icon: "🎯", name: "SAT Guesser", desc: "Guessed SAT questions" },
+  { id: "officer", icon: "🧑‍💼", name: "Admissions Officer", desc: "Got a decision" },
+  { id: "rejection", icon: "📧", name: "Rejection Letter", desc: "Generated your rejection" },
+  { id: "career", icon: "🧭", name: "Career Found", desc: "Found your future job" },
+  { id: "car", icon: "🚗", name: "Car Generated", desc: "Got your university car" },
+  { id: "weather", icon: "🌡️", name: "Weather Personality", desc: "Checked your university weather" },
+  { id: "npc_gen", icon: "🧍", name: "NPC Factory", desc: "Created an NPC" },
+  { id: "skill", icon: "🧨", name: "Skill Issue Detector", desc: "Detected skill issue" },
+  { id: "spell", icon: "🪄", name: "Spellcaster", desc: "Cast a university spell" },
+  { id: "nuclear", icon: "💣", name: "Nuclear Survivor", desc: "Pressed the forbidden button" },
+  { id: "boss_win", icon: "👑", name: "Deadline Slayer", desc: "Defeated the Final Boss" },
+  { id: "boss_lose", icon: "🥀", name: "Cooked By Deadline", desc: "Lost to the Final Boss" },
+  { id: "explorer", icon: "🧭", name: "Explorer", desc: "Opened 10 Fun Zone blocks" },
+];
 
-async function loadUnis(){
-  const results = await Promise.allSettled(
-    COUNTRY_FILES.map(async (file) => {
-      const res = await fetch(file);
-      if(!res.ok) throw new Error(file);
-      return { file, data: await res.json() };
-    })
-  );
+function loadAchievements(){
+  try {
+    return JSON.parse(localStorage.getItem(ACH_KEY) || "{}");
+  } catch(e){ return {}; }
+}
+function saveAchievements(data){
+  localStorage.setItem(ACH_KEY, JSON.stringify(data));
+}
+function unlockAchievement(id){
+  const data = loadAchievements();
+  if(data[id]) return false;
+  data[id] = Date.now();
+  saveAchievements(data);
+  const ach = ALL_ACHIEVEMENTS.find(a => a.id === id);
+  if(ach) showAchievementPopup(ach);
+  updateExplorerCount();
+  return true;
+}
+function showAchievementPopup(ach){
+  const popup = $("#achPopup");
+  $("#achPopupIcon").textContent = ach.icon;
+  $("#achPopupTitle").textContent = "🏆 " + ach.name;
+  $("#achPopupDesc").textContent = ach.desc;
+  popup.classList.add("show");
+  setTimeout(() => popup.classList.remove("show"), 3400);
+}
+let _openedCount = 0;
+function updateExplorerCount(){
+  _openedCount++;
+  if(_openedCount >= 10) unlockAchievement("explorer");
+}
 
-  results.forEach(r => {
-    if(r.status !== "fulfilled") return;
-    const countryRaw = r.value.file.replace(".json", "");
-    const items = r.value.data;
-    items.forEach(uni => {
-      if(!uni || !uni["Университет"]) return;
-      const name = String(uni["Университет"]).trim();
-      if(!name) return;
-      ALL_UNIS.push({
-        name,
-        countryRaw,
-        country: uni["Страна"] || countryRaw,
-        city: uni["Город"] || "",
-        flag: FLAGS[countryRaw] || "🌍"
-      });
-    });
+// ------------------------------------------------------------
+// DASHBOARD CARDS
+// ------------------------------------------------------------
+const CARDS = [
+  { id: "aura",      icon: "🗿",  title: "Academic Aura",       desc: "Generate your totally real academic aura." },
+  { id: "future",    icon: "🎰",  title: "Randomize My Future", desc: "Let the website decide your fate." },
+  { id: "battle",    icon: "⚔️",  title: "University Battle",   desc: "Two universities enter. One leaves." },
+  { id: "cooked",    icon: "💀",  title: "How Cooked Am I?",    desc: "Find out if you're cooked." },
+  { id: "npc",       icon: "🧙",  title: "Which NPC Are You?",  desc: "Discover your university NPC." },
+  { id: "potion",    icon: "🧪",  title: "Compatibility Potion",desc: "Brew your university potion." },
+  { id: "stock",     icon: "📈",  title: "GPA Stock Market",    desc: "Watch your GPA trade live." },
+  { id: "crash",     icon: "📉",  title: "Portfolio Crash",     desc: "Trigger the academic crash." },
+  { id: "gacha",     icon: "🎲",  title: "University Gacha",    desc: "Pull universities. Feel nothing." },
+  { id: "wallet",    icon: "💸",  title: "Tuition Damage",      desc: "See how much your wallet takes." },
+  { id: "sleep",     icon: "🛌",  title: "Sleep vs GPA",        desc: "Simulate the eternal tradeoff." },
+  { id: "caffeine",  icon: "☕",  title: "Caffeine Calculator",  desc: "How much coffee is too much?" },
+  { id: "brain",     icon: "🧠",  title: "Brain Capacity Test", desc: "Test your RAM. Sort of." },
+  { id: "sat",       icon: "🎯",  title: "SAT Guessing",        desc: "Guess. Somehow get it right." },
+  { id: "officer",   icon: "🧑‍💼",title: "Admissions Officer",  desc: "Face the officer. No regrets." },
+  { id: "rejection", icon: "📧",  title: "Rejection Letter",    desc: "Receive a letter. Unfortunately." },
+  { id: "career",    icon: "🧭",  title: "Random Career",       desc: "Find out your true calling." },
+  { id: "car",       icon: "🚗",  title: "University Car",      desc: "Your university has a car. Obviously." },
+  { id: "weather",   icon: "🌡️",  title: "Weather Personality", desc: "Weather = personality. Real." },
+  { id: "npc_gen",   icon: "🧍",  title: "NPC Factory",         desc: "Create a random NPC student." },
+  { id: "skill",     icon: "🧨",  title: "Skill Issue Detector",desc: "Detects skill issues. Honest." },
+  { id: "spell",     icon: "🪄",  title: "University Spell",    desc: "Cast questionable spells." },
+  { id: "achievements", icon: "🏆", title: "Achievements",      desc: "Collect them all. Or don't." },
+  { id: "nuclear",   icon: "💣",  title: "Nuclear Reset",       desc: "Do NOT press this button." },
+  { id: "boss",      icon: "🕹️",  title: "Final Boss",          desc: "Face the Application Deadline." },
+];
+
+function renderDashboard(){
+  const grid = $("#dashGrid");
+  grid.innerHTML = CARDS.map(c => `
+    <div class="fz-card" data-open="${c.id}">
+      <span class="fz-card-icon">${c.icon}</span>
+      <div class="fz-card-title">${c.title}</div>
+      <div class="fz-card-desc">${c.desc}</div>
+      <div class="fz-card-open">Open →</div>
+    </div>
+  `).join("");
+  grid.querySelectorAll("[data-open]").forEach(el => {
+    el.addEventListener("click", () => openBlock(el.dataset.open));
   });
+}
 
-  // Уникализируем
-  const seen = new Set();
-  ALL_UNIS = ALL_UNIS.filter(u => {
-    const k = u.name.toLowerCase();
-    if(seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
+// ------------------------------------------------------------
+// MODAL CONTROL
+// ------------------------------------------------------------
+function openModal(html){
+  const overlay = $("#fzModal");
+  $("#fzModalContent").innerHTML = html;
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeModal(){
+  const overlay = $("#fzModal");
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+  $("#fzModalContent").innerHTML = "";
+}
+document.addEventListener("click", (e) => {
+  if(e.target.id === "fzModal") closeModal();
+  if(e.target.classList.contains("fz-modal-close")) closeModal();
+});
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape") closeModal();
+});
 
-  console.log("Fun Zone loaded unis:", ALL_UNIS.length);
+function modalHead(icon, title, sub){
+  return `
+    <button class="fz-modal-close" type="button" aria-label="Close">×</button>
+    <div class="fz-modal-head">
+      <div class="fz-modal-head-icon">${icon}</div>
+      <div class="fz-modal-head-text">
+        <div class="fz-modal-title">${title}</div>
+        ${sub ? `<div class="fz-modal-sub">${sub}</div>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+// ------------------------------------------------------------
+// BLOCK ROUTER
+// ------------------------------------------------------------
+function openBlock(id){
+  updateExplorerCount();
+  switch(id){
+    case "aura":         return openAura();
+    case "future":       return openFuture();
+    case "battle":       return openBattle();
+    case "cooked":       return openCooked();
+    case "npc":          return openNPC();
+    case "potion":       return openPotion();
+    case "stock":        return openStock();
+    case "crash":        return openCrash();
+    case "gacha":        return openGacha();
+    case "wallet":       return openWallet();
+    case "sleep":        return openSleep();
+    case "caffeine":     return openCaffeine();
+    case "brain":        return openBrain();
+    case "sat":          return openSAT();
+    case "officer":      return openOfficer();
+    case "rejection":    return openRejection();
+    case "career":       return openCareer();
+    case "car":          return openCar();
+    case "weather":      return openWeather();
+    case "npc_gen":      return openNPCGen();
+    case "skill":        return openSkill();
+    case "spell":        return openSpell();
+    case "achievements": return openAchievements();
+    case "nuclear":      return openNuclear();
+    case "boss":         return openBoss();
+    default:
+      openModal(modalHead("❓", "Unknown block", "This shouldn't happen."));
+  }
 }
 
 // ============================================================
 // 1. AURA
 // ============================================================
+const AURA_PHRASES = [
+  "You are academically dangerous.",
+  "Bro is locked in.",
+  "Bro studied for 14 minutes and thinks he's getting into MIT 💀",
+  "R&W is fighting for its life.",
+  "This GPA has aura.",
+  "Bro has negative academic aura.",
+  "Touch grass immediately.",
+  "The admissions officer has sensed your presence.",
+  "Absolutely cooked.",
+  "Suspiciously competent.",
+  "Bro is running on fumes and ambition.",
+  "Aura: yes. Sleep: no.",
+  "The universe respects this GPA.",
+];
 
-const AURA_PHRASES = {
-  ru: [
-    "Ты академически опасен.",
-    "Бро учился 14 минут и думает, что поступит в MIT 💀",
-    "SAT Math обнаружен. R&W всё ещё борется за жизнь.",
-    "Бро реально залочен. 🔒",
-    "Твоя аура покинула сервер.",
-    "С уважением, ты прожарен 💀",
-    "Бро думает, что GPA — это черта характера.",
-    "Учёные изучают тебя. Осторожно.",
-    "Твой сон — это миф. Аура — легенда.",
-    "Это не GPA. Это образ жизни."
-  ],
-  en: [
-    "You are academically dangerous.",
-    "Bro studied for 14 minutes and thinks he's getting into MIT 💀",
-    "SAT Math detected. R&W is still fighting for its life.",
-    "Bro is actually locked in.",
-    "Your academic aura has left the server.",
-    "Respectfully, you are cooked 💀",
-    "Bro thinks GPA is a personality trait.",
-    "Scientists are studying you. Careful.",
-    "Your sleep is a myth. The aura is legend.",
-    "This isn't a GPA. It's a lifestyle."
-  ],
-  zh: [
-    "你在学业上很危险。",
-    "兄弟学了14分钟就以为能进MIT 💀",
-    "检测到SAT数学。R&W还在为生存而战。",
-    "兄弟真的锁定了。",
-    "你的学术气场已经离开了服务器。",
-    "恕我直言，你完蛋了 💀",
-    "兄弟以为GPA是性格特征。",
-    "科学家正在研究你。小心。",
-    "你的睡眠是个传说。气场才是传奇。",
-    "这不是GPA。这是一种生活方式。"
-  ],
-  kk: [
-    "Сен академиялық тұрғыдан қауіптісің.",
-    "Бауырым 14 минут оқып, MIT-ке түсемін деп ойлайды 💀",
-    "SAT Math анықталды. R&W әлі өмір үшін күресіп жатыр.",
-    "Бауырым шынымен локталып қалды. 🔒",
-    "Сенің аураң серверден шығып кетті.",
-    "Құрметпен, сен жанып тұрсың 💀",
-    "Бауырым GPA-ны мінез қасиеті деп ойлайды.",
-    "Ғалымдар сені зерттеп жатыр. Абайла.",
-    "Сенің ұйқың — миф. Аура — аңыз.",
-    "Бұл GPA емес. Бұл өмір салты."
-  ],
-  ky: [
-    "Сен академиялык жактан коркунучтуусуң.",
-    "Байке 14 мүнөт окуду эле, MITге кирем деп ойлойт 💀",
-    "SAT Math аныкталды. R&W дагы эле жашоо үчүн күрөшүп жатат.",
-    "Байке чындап эле локтолду. 🔒",
-    "Сенин аураң серверден чыгып кетти.",
-    "Урматтоо менен, сен күйүп турасың 💀",
-    "Байке GPAны мүнөз деп ойлойт.",
-    "Окумуштуулар сени изилдеп жатышат. Этият бол.",
-    "Сенин уйкуң — уламыш. Аура — легенда.",
-    "Бул GPA эмес. Бул жашоо образы."
-  ]
-};
-
-document.getElementById("auraBtn").addEventListener("click", () => {
-  const gpa   = parseFloat(document.getElementById("auraGpa").value);
-  const sat   = parseFloat(document.getElementById("auraSat").value);
-  const ielts = parseFloat(document.getElementById("auraIelts").value);
-  const sleep = parseFloat(document.getElementById("auraSleep").value);
-  const study = parseFloat(document.getElementById("auraStudy").value);
-
-  if([gpa, sat, ielts, sleep, study].some(v => isNaN(v))){
-    alert(t("fz_not_enough", "Заполни все поля, бро 😭"));
-    return;
-  }
-
-  // Псевдонаучная формула
-  const base =
-    gpa * 500000 +
-    sat * 1500 +
-    ielts * 200000 +
-    Math.max(0, 8 - sleep) * 40000 +
-    study * 90000 +
-    Math.random() * 500000;
-
-  const aura = Math.round(base).toLocaleString("ru-RU");
-
-  document.getElementById("auraValue").innerHTML = `🗿 ${aura} <span class="unit">AURA</span>`;
-
-  const lang = (window.I18N && window.I18N.getLang()) || "ru";
-  const phrases = AURA_PHRASES[lang] || AURA_PHRASES.ru;
-  document.getElementById("auraPhrase").textContent = pick(phrases);
-
-  const box = document.getElementById("auraBox");
-  box.classList.remove("show");
-  void box.offsetWidth;
-  box.classList.add("show");
-});
-
-// ============================================================
-// 2. ROULETTE
-// ============================================================
-
-const ROULETTE_MESSAGES = {
-  ru: [
-    "Ты теперь инженер. Пути назад нет.",
-    "Поздравляем. Ты теперь юрист. Смирись.",
-    "Судьба решила: ты — врач. Учи биологию. Срочно.",
-    "Ты теперь программист. Добро пожаловать в ад.",
-    "Ты теперь экономист. Удачи с графиками.",
-    "Ты теперь дизайнер. Купи iPad.",
-    "Ты теперь физик. Прощай, сон.",
-    "Ты теперь филолог. Будешь объяснять это маме всю жизнь.",
-    "Ты теперь маркетолог. Продай мне эту кнопку."
-  ],
-  en: [
-    "You are now an engineer. There is no escape.",
-    "Congratulations. You are now a lawyer. Accept it.",
-    "Fate has decided: you're a doctor. Study biology. Now.",
-    "You are now a programmer. Welcome to hell.",
-    "You are now an economist. Good luck with the charts.",
-    "You are now a designer. Buy an iPad.",
-    "You are now a physicist. Say goodbye to sleep.",
-    "You are now a linguist. You'll explain this to your mom forever.",
-    "You are now a marketer. Sell me this button."
-  ],
-  zh: [
-    "你现在是工程师。无路可退。",
-    "恭喜。你现在是律师。接受吧。",
-    "命运已定：你是医生。学生物。现在。",
-    "你现在是程序员。欢迎来到地狱。",
-    "你现在是经济学家。祝你看图表好运。",
-    "你现在是设计师。买个iPad吧。",
-    "你现在是物理学家。跟睡眠说再见。",
-    "你现在是语言学家。你要跟你妈解释一辈子。",
-    "你现在是营销人员。把这按钮卖给我。"
-  ],
-  kk: [
-    "Сен енді инженерсің. Қайту жоқ.",
-    "Құттықтаймыз. Сен енді заңгерсің. Келістің.",
-    "Тағдыр шешті: сен — дәрігерсің. Биологияны оқы. Қазір.",
-    "Сен енді программиссің. Тозаққа қош келдің.",
-    "Сен енді экономиссің. Графиктермен сәттілік.",
-    "Сен енді дизайнерсің. iPad сатып ал.",
-    "Сен енді физиксің. Ұйқымен қоштас.",
-    "Сен енді филологсың. Мұны анаңа өмір бойы түсіндіресің.",
-    "Сен енді маркетологсың. Маған мына батырманы сат."
-  ],
-  ky: [
-    "Сен эми инженерсиң. Кайтуу жок.",
-    "Куттуктайбыз. Сен эми юристсиң. Көнүң.",
-    "Тагдыр чечти: сен — дарыгерсиң. Биология оку. Азыр.",
-    "Сен эми программистсиң. Тозокко кош келиңиз.",
-    "Сен эми экономистсиң. Графиктер менен ийгилик.",
-    "Сен эми дизайнерсиң. iPad сатып ал.",
-    "Сен эми физиксиң. Уйку менен коштош.",
-    "Сен эми филологсуң. Муну апаңа өмүр бою түшүндүрөсүң.",
-    "Сен эми маркетологсуң. Мага ушул баскычты сат."
-  ]
-};
-
-let rouletteInterval = null;
-
-function spinRoulette(){
-  const display = document.getElementById("rouletteDisplay");
-  const flag = document.getElementById("rouletteFlag");
-  const msg = document.getElementById("rouletteMessage");
-  const congrats = document.getElementById("rouletteCongrats");
-  const againBtn = document.getElementById("rouletteAgain");
-  const spinBtn = document.getElementById("rouletteBtn");
-
-  if(ALL_UNIS.length === 0){
-    alert(t("fz_loading_error", "Не смогли загрузить список вузов."));
-    return;
-  }
-
-  spinBtn.style.display = "none";
-  againBtn.style.display = "none";
-  congrats.style.display = "none";
-  msg.textContent = "";
-  display.classList.add("spinning");
-
-  let ticks = 0;
-  const totalTicks = 28;
-
-  rouletteInterval = setInterval(() => {
-    const u = pick(ALL_UNIS);
-    display.textContent = u.name;
-    flag.textContent = u.flag;
-    ticks++;
-
-    if(ticks >= totalTicks){
-      clearInterval(rouletteInterval);
-      display.classList.remove("spinning");
-
-      const winner = pick(ALL_UNIS);
-      display.textContent = winner.name;
-      flag.textContent = winner.flag;
-      congrats.style.display = "block";
-
-      const lang = (window.I18N && window.I18N.getLang()) || "ru";
-      const messages = ROULETTE_MESSAGES[lang] || ROULETTE_MESSAGES.ru;
-      msg.textContent = pick(messages);
-
-      againBtn.style.display = "inline-flex";
-    }
-  }, 70);
+function openAura(){
+  openModal(modalHead("🗿", "Academic Aura Generator", "Enter stats. Receive nonsense.")
+    + `
+    <div class="fz-grid-2">
+      <div class="fz-field"><label>GPA</label><input type="number" id="aGpa" placeholder="3.8" step="0.01"></div>
+      <div class="fz-field"><label>SAT</label><input type="number" id="aSat" placeholder="1450"></div>
+      <div class="fz-field"><label>IELTS</label><input type="number" id="aIelts" placeholder="7.5" step="0.5"></div>
+      <div class="fz-field"><label>Study hours/day</label><input type="number" id="aStudy" placeholder="3" step="0.5"></div>
+      <div class="fz-field"><label>Sleep hours/night</label><input type="number" id="aSleep" placeholder="6" step="0.5"></div>
+    </div>
+    <button class="fz-btn accent" id="aBtn">🗿 GENERATE MY AURA</button>
+    <div class="fz-result" id="aRes">
+      <div class="fz-label-mini">YOUR ACADEMIC AURA</div>
+      <div class="fz-big-number" id="aNum">0 <span class="unit">🗿</span></div>
+      <div class="fz-meme-phrase" id="aPhrase"></div>
+    </div>
+  `);
+  $("#aBtn").addEventListener("click", () => {
+    const gpa = parseFloat($("#aGpa").value) || 0;
+    const sat = parseFloat($("#aSat").value) || 0;
+    const ielts = parseFloat($("#aIelts").value) || 0;
+    const study = parseFloat($("#aStudy").value) || 0;
+    const sleep = parseFloat($("#aSleep").value) || 0;
+    let base = gpa*500000 + sat*1500 + ielts*200000 + Math.max(0, 8-sleep)*40000 + study*90000 + Math.random()*500000;
+    const aura = Math.round(base);
+    $("#aNum").innerHTML = aura.toLocaleString("en-US") + ' <span class="unit">🗿</span>';
+    $("#aPhrase").textContent = pick(AURA_PHRASES);
+    const res = $("#aRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("aura_gen");
+  });
 }
 
-document.getElementById("rouletteBtn").addEventListener("click", spinRoulette);
-document.getElementById("rouletteAgain").addEventListener("click", spinRoulette);
+// ============================================================
+// 2. FUTURE
+// ============================================================
+const UNIVERSITIES = [
+  "MIT","Oxford","Stanford","Cambridge","Harvard","Yale","Princeton",
+  "Nazarbayev University","KBTU","TUM","Tsinghua","UofT","Sorbonne",
+  "HKUST","KAIST","University of Warsaw","ETH Zurich","Imperial College",
+  "NUS","Tokyo University","Seoul National","KAIST","Bocconi","KU Leuven"
+];
+const FUTURE_MESSAGES = [
+  "You are now an engineer. There is no escape.",
+  "Congratulations. You are now a lawyer. Accept it.",
+  "Fate has decided: you're a doctor. Study biology. Now.",
+  "You are now a programmer. Welcome to hell.",
+  "You are now an economist. Good luck with the charts.",
+  "You are now a designer. Buy an iPad.",
+  "You are now a physicist. Say goodbye to sleep.",
+  "You are now a linguist. You'll explain this to your mom forever.",
+  "You are now a marketer. Sell me this button."
+];
+let _futureInterval = null;
+
+function openFuture(){
+  openModal(modalHead("🎰", "Randomize My Future", "Let the website decide.")
+    + `
+    <div class="fz-roulette-stage">
+      <div class="fz-roulette-flag" id="fFlag">🎰</div>
+      <div class="fz-roulette-display" id="fDisp">???</div>
+      <div class="fz-meme-phrase" id="fMsg"></div>
+    </div>
+    <button class="fz-btn accent" id="fBtn">🎰 LET THE WEBSITE DECIDE MY FUTURE</button>
+    <button class="fz-btn ghost" id="fAgain" style="display:none;">🔄 I DON'T ACCEPT MY FATE</button>
+  `);
+  const spin = () => {
+    const disp = $("#fDisp");
+    const msg = $("#fMsg");
+    const btn = $("#fBtn");
+    const again = $("#fAgain");
+    btn.style.display = "none";
+    again.style.display = "none";
+    msg.textContent = "";
+    disp.classList.add("spinning");
+    let ticks = 0;
+    const total = 28;
+    clearInterval(_futureInterval);
+    _futureInterval = setInterval(() => {
+      disp.textContent = pick(UNIVERSITIES);
+      ticks++;
+      if(ticks >= total){
+        clearInterval(_futureInterval);
+        disp.classList.remove("spinning");
+        disp.textContent = pick(UNIVERSITIES);
+        msg.textContent = pick(FUTURE_MESSAGES);
+        again.style.display = "inline-flex";
+        unlockAchievement("future");
+      }
+    }, 70);
+  };
+  $("#fBtn").addEventListener("click", spin);
+  $("#fAgain").addEventListener("click", spin);
+}
 
 // ============================================================
 // 3. BATTLE
 // ============================================================
-
-const BATTLE_CATS = [
-  { key: "aura",        i18n: "fz_cat_aura" },
-  { key: "drip",        i18n: "fz_cat_drip" },
-  { key: "parent",      i18n: "fz_cat_parent" },
-  { key: "suffering",   i18n: "fz_cat_suffering" },
-  { key: "sleep",       i18n: "fz_cat_sleep" },
-  { key: "mc",          i18n: "fz_cat_mc" },
-  { key: "scholarship", i18n: "fz_cat_scholarship" },
-  { key: "npc",         i18n: "fz_cat_npc" }
+const BATTLE_CATS = ["Aura","Drip","Parent Approval","Academic Suffering","Sleep","Main Character Energy","Scholarship Energy","NPC Level","Social Life","Coffee Dependency"];
+const BATTLE_REASONS = [
+  "bro needs scholarship 💀",
+  "aura decides everything.",
+  "mom approved this one.",
+  "NPC level too high.",
+  "sleep is a luxury.",
+  "drip is undefeated.",
+  "main character energy off the charts.",
+  "academic suffering is the base.",
+  "coffee intake beyond legal limits.",
+  "social life detected. suspicious.",
 ];
 
-const BATTLE_REASONS = {
-  ru: [
-    "Бро нужен грант 💀",
-    "Аура решает всё.",
-    "Мама одобрила этот вариант.",
-    "NPC level слишком высокий.",
-    "Сон — это роскошь.",
-    "Drip непобедим.",
-    "Main character energy зашкаливает.",
-    "Academic suffering — это база."
-  ],
-  en: [
-    "Bro needs a scholarship 💀",
-    "Aura decides everything.",
-    "Mom approved this one.",
-    "NPC level too high.",
-    "Sleep is a luxury.",
-    "Drip is undefeated.",
-    "Main character energy off the charts.",
-    "Academic suffering is the base."
-  ],
-  zh: [
-    "兄弟需要奖学金 💀",
-    "气场决定一切。",
-    "妈妈批准了这个。",
-    "NPC等级太高了。",
-    "睡眠是奢侈品。",
-    "潮度无敌。",
-    "主角能量爆表。",
-    "学业痛苦是基础。"
-  ],
-  kk: [
-    "Бауырымға стипендия керек 💀",
-    "Аура бәрін шешеді.",
-    "Анамыз осыны мақұлдады.",
-    "NPC деңгейі тым жоғары.",
-    "Ұйқы — сән-салтанат.",
-    "Drip жеңілмейді.",
-    "Басты кейіпкер энергиясы шектен шықты.",
-    "Академиялық азап — база."
-  ],
-  ky: [
-    "Байкеге стипендия керек 💀",
-    "Аура баарын чечет.",
-    "Апам ушуну жактырды.",
-    "NPC деңгээли өтө жогору.",
-    "Уйку — люкс.",
-    "Drip жеңилбейт.",
-    "Башкы каарман энергиясы чектен ашты.",
-    "Академиялык азап — база."
-  ]
-};
-
-function fillBattleSelects(){
-  const a = document.getElementById("battleA");
-  const b = document.getElementById("battleB");
-  if(!a || !b || ALL_UNIS.length === 0) return;
-
-  const options = ALL_UNIS
-    .slice()
-    .sort((x, y) => x.name.localeCompare(y.name))
-    .map(u => `<option value="${u.name.replace(/"/g, "&quot;")}">${u.flag} ${u.name}</option>`)
-    .join("");
-
-  a.innerHTML = `<option value="">—</option>` + options;
-  b.innerHTML = `<option value="">—</option>` + options;
+function openBattle(){
+  const opts = UNIVERSITIES.map(u => `<option value="${u}">${u}</option>`).join("");
+  openModal(modalHead("⚔️", "University Battle", "Two universities enter. One leaves.")
+    + `
+    <div class="fz-grid-2">
+      <div class="fz-field"><label>Fighter 1</label><select id="bA">${opts}</select></div>
+      <div class="fz-field"><label>Fighter 2</label><select id="bB">${opts}</select></div>
+    </div>
+    <div class="fz-inline-btns">
+      <button class="fz-btn" id="bGo">⚔️ FIGHT</button>
+      <button class="fz-btn ghost" id="bRand">🎲 Random pair</button>
+    </div>
+    <div id="bRes" style="margin-top:16px;"></div>
+  `);
+  $("#bGo").addEventListener("click", () => {
+    const a = $("#bA").value, b = $("#bB").value;
+    if(a === b) return;
+    renderBattle(a, b);
+    unlockAchievement("battle");
+  });
+  $("#bRand").addEventListener("click", () => {
+    let a = pick(UNIVERSITIES), b = pick(UNIVERSITIES);
+    while(b === a) b = pick(UNIVERSITIES);
+    $("#bA").value = a; $("#bB").value = b;
+    renderBattle(a, b);
+    unlockAchievement("battle");
+  });
 }
 
-function genStat(){
-  return randInt(40, 100);
-}
-function genSuffering(){
-  const n = randInt(1, 5);
-  return "☠️".repeat(n);
-}
-
-function renderBattle(uniA, uniB){
-  // Случайные статы
-  const statsA = {}, statsB = {};
+function renderBattle(a, b){
+  const stats = {};
   BATTLE_CATS.forEach(c => {
-    if(c.key === "suffering"){
-      statsA[c.key] = genSuffering();
-      statsB[c.key] = genSuffering();
+    stats[c] = { a: randInt(20, 100), b: randInt(20, 100) };
+  });
+  let aScore = 0, bScore = 0;
+  BATTLE_CATS.forEach(c => {
+    if(c === "Academic Suffering"){
+      if(stats[c].a < stats[c].b) aScore++; else bScore++;
     } else {
-      statsA[c.key] = genStat();
-      statsB[c.key] = genStat();
+      if(stats[c].a > stats[c].b) aScore++; else bScore++;
     }
   });
+  const winner = aScore >= bScore ? a : b;
+  const reason = pick(BATTLE_REASONS);
 
-  // Определяем победителя по "сумме очков"
-  let scoreA = 0, scoreB = 0;
-  BATTLE_CATS.forEach(c => {
-    if(c.key === "suffering"){
-      const a = statsA[c.key].length;
-      const b = statsB[c.key].length;
-      // меньше страданий = лучше
-      if(a < b) scoreA += 1; else if(b < a) scoreB += 1;
-    } else {
-      if(statsA[c.key] > statsB[c.key]) scoreA += 1;
-      else if(statsB[c.key] > statsA[c.key]) scoreB += 1;
-    }
-  });
-
-  const winner = scoreA >= scoreB ? uniA : uniB;
-  const isAWin = winner === uniA;
-
-  const lang = (window.I18N && window.I18N.getLang()) || "ru";
-  const reasons = BATTLE_REASONS[lang] || BATTLE_REASONS.ru;
-
-  // Заполняем таблицу
-  const table = document.getElementById("battleTable");
-  let html = `<thead><tr><th></th><th>${uniA.flag} ${uniA.name}</th><th>${uniB.flag} ${uniB.name}</th></tr></thead><tbody>`;
-  BATTLE_CATS.forEach(c => {
-    const label = t(c.i18n, c.key);
-    let aCell = statsA[c.key];
-    let bCell = statsB[c.key];
+  const rows = BATTLE_CATS.map(c => {
+    const s = stats[c];
     let aCls = "", bCls = "";
-    if(c.key === "suffering"){
-      const a = statsA[c.key].length;
-      const b = statsB[c.key].length;
-      if(a < b){ aCls = "winner"; bCls = "loser"; }
-      else if(b < a){ bCls = "winner"; aCls = "loser"; }
+    if(c === "Academic Suffering"){
+      if(s.a < s.b){ aCls = "winner"; bCls = "loser"; } else if(s.b < s.a){ bCls = "winner"; aCls = "loser"; }
     } else {
-      if(statsA[c.key] > statsB[c.key]){ aCls = "winner"; bCls = "loser"; }
-      else if(statsB[c.key] > statsA[c.key]){ bCls = "winner"; aCls = "loser"; }
+      if(s.a > s.b){ aCls = "winner"; bCls = "loser"; } else if(s.b > s.a){ bCls = "winner"; aCls = "loser"; }
     }
-    html += `<tr>
-      <td>${label}</td>
-      <td class="${aCls}">${aCell}</td>
-      <td class="${bCls}">${bCell}</td>
-    </tr>`;
-  });
-  html += `</tbody>`;
-  table.innerHTML = html;
+    return `<tr><td>${c}</td><td class="${aCls}">${s.a}</td><td class="${bCls}">${s.b}</td></tr>`;
+  }).join("");
 
-  document.getElementById("battleWinnerName").textContent = `${winner.flag} ${winner.name}`;
-  document.getElementById("battleWinnerReason").textContent = `${t("fz_battle_reason", "Причина")}: ${pick(reasons)}`;
-
-  const wrap = document.getElementById("battleResult");
-  wrap.classList.remove("show");
-  void wrap.offsetWidth;
-  wrap.classList.add("show");
-  wrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  $("#bRes").innerHTML = `
+    <table class="fz-battle-table">
+      <thead><tr><th></th><th>${a}</th><th>${b}</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="text-align:center; padding:20px; background:var(--cream); border-radius:14px; border:2px solid var(--caramel); margin-top:14px;">
+      <div style="font-size:36px;">🏆</div>
+      <div style="font-family:'Fraunces',serif; font-size:24px; font-weight:900; color:var(--espresso); margin:8px 0;">WINNER: ${escapeHtml(winner)}</div>
+      <div style="font-style:italic; color:var(--bark); font-size:15px;">Reason: ${escapeHtml(reason)}</div>
+    </div>
+  `;
 }
-
-document.getElementById("battleGo").addEventListener("click", () => {
-  const nameA = document.getElementById("battleA").value;
-  const nameB = document.getElementById("battleB").value;
-  if(!nameA || !nameB || nameA === nameB){
-    alert(t("fz_not_enough", "Заполни все поля, бро 😭"));
-    return;
-  }
-  const uniA = ALL_UNIS.find(u => u.name === nameA);
-  const uniB = ALL_UNIS.find(u => u.name === nameB);
-  if(!uniA || !uniB) return;
-  renderBattle(uniA, uniB);
-});
-
-document.getElementById("battleRandom").addEventListener("click", () => {
-  if(ALL_UNIS.length < 2) return;
-  const a = pick(ALL_UNIS);
-  let b = pick(ALL_UNIS);
-  let guard = 0;
-  while(b.name === a.name && guard++ < 20) b = pick(ALL_UNIS);
-  document.getElementById("battleA").value = a.name;
-  document.getElementById("battleB").value = b.name;
-  renderBattle(a, b);
-});
 
 // ============================================================
 // 4. COOKED
 // ============================================================
+function openCooked(){
+  openModal(modalHead("💀", "How Cooked Am I?", "Real data. Unreal verdict.")
+    + `
+    <div class="fz-grid-2">
+      <div class="fz-field"><label>GPA</label><input type="number" id="cGpa" placeholder="3.8" step="0.01"></div>
+      <div class="fz-field"><label>SAT</label><input type="number" id="cSat" placeholder="1450"></div>
+      <div class="fz-field"><label>IELTS</label><input type="number" id="cIelts" placeholder="7.5" step="0.5"></div>
+      <div class="fz-field"><label>Days until deadline</label><input type="number" id="cDays" placeholder="30"></div>
+      <div class="fz-field"><label>Preparation (0-100)</label><input type="number" id="cPrep" placeholder="50"></div>
+    </div>
+    <button class="fz-btn accent" id="cBtn">💀 HOW COOKED AM I</button>
+    <div class="fz-result" id="cRes">
+      <div class="fz-label-mini">YOU ARE</div>
+      <div class="fz-big-number" id="cNum">0<span class="unit">%</span> 💀</div>
+      <div class="fz-meme-phrase" id="cMsg"></div>
+    </div>
+  `);
+  $("#cBtn").addEventListener("click", () => {
+    const gpa = parseFloat($("#cGpa").value) || 0;
+    const sat = parseFloat($("#cSat").value) || 0;
+    const ielts = parseFloat($("#cIelts").value) || 0;
+    const days = parseFloat($("#cDays").value) || 0;
+    const prep = parseFloat($("#cPrep").value) || 0;
+    let cook = 0;
+    cook += Math.max(0, (4.0 - gpa) * 15);
+    cook += Math.max(0, (1500 - sat) / 20);
+    cook += Math.max(0, (7.5 - ielts) * 12);
+    cook += Math.max(0, (60 - days) * 0.9);
+    cook -= prep * 0.4;
+    cook = Math.round(Math.max(0, Math.min(100, cook)));
 
-const COOKED_PHRASES = {
-  ru: {
-    high: [
-      "Бро узнал о поступлении за 12 дней до дедлайна.",
-      "Бро думает, что эссе напишется само. Нет, бро. Нет.",
-      "Рекомендательные письма? Бро, ты уверен?",
-      "SAT в октябре. Дедлайн в ноябре. Удачи.",
-      "Бро, у тебя всё под контролем. (Нет.)"
-    ],
-    mid: [
-      "Так себе. Но не смертельно.",
-      "Бро в процессе. В процессе чего — вопрос.",
-      "Могло быть хуже. Могло быть намного лучше.",
-      "Бро между 'всё ок' и 'всё плохо'."
-    ],
-    low: [
-      "Бро реально спланировал всё заранее. Редкие кадры.",
-      "Бро НЕ прожарен. Это подозрительно.",
-      "Бро знает, что делает. Кто ты вообще?",
-      "Уважение. Просто уважение."
-    ]
-  },
-  en: {
-    high: [
-      "Bro discovered university applications 12 days before the deadline.",
-      "Bro thinks the essay writes itself. No, bro. No.",
-      "Recommendation letters? Bro, are you sure?",
-      "SAT in October. Deadline in November. Good luck.",
-      "Bro, you've got this under control. (You don't.)"
-    ],
-    mid: [
-      "Mid. But not fatal.",
-      "Bro is in the process. Of what — questionable.",
-      "Could be worse. Could be much better.",
-      "Bro is between 'it's fine' and 'it's over'."
-    ],
-    low: [
-      "Bro actually planned ahead. Rare footage.",
-      "Bro is NOT cooked. This is getting suspicious.",
-      "Bro knows what he's doing. Who even are you?",
-      "Respect. Just respect."
-    ]
-  },
-  zh: {
-    high: [
-      "兄弟在截止前12天才知道大学申请。",
-      "兄弟以为文书会自己写出来。不，兄弟。不。",
-      "推荐信？兄弟，你确定吗？",
-      "10月SAT。11月截止。祝好运。",
-      "兄弟，你掌控了一切。（你没有。）"
-    ],
-    mid: [
-      "一般。但还不致命。",
-      "兄弟正在进行中。进行什么——存疑。",
-      "本可以更糟。本可以好得多。",
-      "兄弟介于'没事'和'完了'之间。"
-    ],
-    low: [
-      "兄弟真的提前规划了。罕见画面。",
-      "兄弟没完蛋。这越来越可疑了。",
-      "兄弟知道自己在做什么。你究竟是谁？",
-      "敬佩。只是敬佩。"
-    ]
-  },
-  kk: {
-    high: [
-      "Бауырым дедлайнға 12 күн қалғанда университетке өтінім туралы білді.",
-      "Бауырым эссе өзі жазылады деп ойлайды. Жоқ, бауырым. Жоқ.",
-      "Ұсыныс хаттар? Бауырым, сен сенімдісің бе?",
-      "SAT қазанда. Дедлайн қарашада. Сәттілік.",
-      "Бауырым, сенің бәрі бақылауда. (Жоқ.)"
-    ],
-    mid: [
-      "Орташа. Бірақ өлімге әкелмейді.",
-      "Бауырым процесте. Не процесте — сұрақ.",
-      "Нашар болуы мүмкін еді. Әлдеқайда жақсы болуы мүмкін еді.",
-      "Бауырым 'бәрі жақсы' мен 'бәрі бітті' арасында."
-    ],
-    low: [
-      "Бауырым шынымен алдын ала жоспарлады. Сирек кадрлар.",
-      "Бауырым ЖАНЫП ТҰРҒАН ЖОҚ. Бұл күдікті.",
-      "Бауырым не істеп жатқанын біледі. Сен кімсің өзі?",
-      "Құрмет. Жай ғана құрмет."
-    ]
-  },
-  ky: {
-    high: [
-      "Байке дедлайнга 12 күн калганда университетке арыз жөнүндө билди.",
-      "Байке эссе өзү жазылат деп ойлойт. Жок, байке. Жок.",
-      "Сунуштама каттар? Байке, сен ишенесиңби?",
-      "SAT октябрда. Дедлайн ноябрда. Ийгилик.",
-      "Байке, сенин баары көзөмөлдө. (Жок.)"
-    ],
-    mid: [
-      "Орточо. Бирок өлүмгө алып барбайт.",
-      "Байке процессте. Эмне процессинде — суроо.",
-      "Жаман болушу мүмкүн эле. Алда канча жакшы болмок.",
-      "Байке 'баары жакшы' менен 'баары бүттү' ортосунда."
-    ],
-    low: [
-      "Байке чындап эле алдын ала пландады. Сейрек кадрлар.",
-      "Байке КҮЙҮП ЖАТКАН ЖОК. Бул шектүү.",
-      "Байке эмне кылып жатканын билет. Сен кимсиң өзү?",
-      "Урмат. Жөн эле урмат."
-    ]
+    let msg;
+    if(cook < 10) msg = "Bro is chilling.";
+    else if(cook < 30) msg = "Mildly cooked.";
+    else if(cook < 60) msg = "The kitchen is warming up.";
+    else if(cook < 80) msg = "We have a situation.";
+    else if(cook < 95) msg = "BRO IS COOKED 💀";
+    else msg = "Call your counselor.";
+
+    $("#cNum").innerHTML = cook + '<span class="unit">%</span> 💀';
+    $("#cMsg").textContent = msg;
+    const res = $("#cRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("cooked");
+  });
+}
+
+// ============================================================
+// 5. NPC
+// ============================================================
+const NPC_TYPES = [
+  { icon: "🗿", title: "The Academic Weapon", desc: "You don't sleep. You don't touch grass. You calculate your GPA during lunch." },
+  { icon: "💀", title: "The Procrastinator", desc: "Deadline: tomorrow. You: \"I'll start tonight.\"" },
+  { icon: "💰", title: "The Scholarship Hunter", desc: "Tuition: $30,000. You: \"No.\"" },
+  { icon: "🏎️", title: "The Prestige Merchant", desc: "If the university isn't top 100, it doesn't exist." },
+  { icon: "🌴", title: "The Campus Enjoyer", desc: "GPA? We'll figure that out later." },
+  { icon: "☕", title: "The Caffeine Scholar", desc: "You've replaced blood with espresso. Nobody noticed." },
+  { icon: "📚", title: "The Library Ghost", desc: "You live there. You have a favorite chair." },
+  { icon: "🎧", title: "The Lo-fi Scholar", desc: "You study better with beats. That's the entire personality." },
+];
+function openNPC(){
+  openModal(modalHead("🧙", "Which University NPC Are You?", "Answer 7 questions. Get a personality.")
+    + `
+    <div class="fz-grid-2">
+      <div class="fz-field"><label>Sleep hours</label><input type="number" id="nQ1" placeholder="6"></div>
+      <div class="fz-field"><label>Study frequency (0-100)</label><input type="number" id="nQ2" placeholder="50"></div>
+      <div class="fz-field"><label>SAT score</label><input type="number" id="nQ3" placeholder="1400"></div>
+      <div class="fz-field"><label>Care about rankings (0-100)</label><input type="number" id="nQ4" placeholder="70"></div>
+      <div class="fz-field"><label>Care about campus life (0-100)</label><input type="number" id="nQ5" placeholder="60"></div>
+      <div class="fz-field"><label>Parents' opinion (0-100)</label><input type="number" id="nQ6" placeholder="90"></div>
+      <div class="fz-field"><label>Scholarship importance (0-100)</label><input type="number" id="nQ7" placeholder="80"></div>
+    </div>
+    <button class="fz-btn accent" id="nBtn">🧙 REVEAL MY NPC</button>
+    <div class="fz-result" id="nRes">
+      <div style="font-size:64px;" id="nIcon">🗿</div>
+      <div class="fz-big-number" style="font-size:24px;" id="nName"></div>
+      <div class="fz-meme-phrase" id="nDesc"></div>
+    </div>
+  `);
+  $("#nBtn").addEventListener("click", () => {
+    const sleep = parseFloat($("#nQ1").value) || 6;
+    const study = parseFloat($("#nQ2").value) || 50;
+    const sat = parseFloat($("#nQ3").value) || 1400;
+    const rank = parseFloat($("#nQ4").value) || 50;
+    const campus = parseFloat($("#nQ5").value) || 50;
+    const parents = parseFloat($("#nQ6").value) || 50;
+    const scholar = parseFloat($("#nQ7").value) || 50;
+
+    let npc = NPC_TYPES[0];
+    if(scholar >= 75) npc = NPC_TYPES.find(x => x.title === "The Scholarship Hunter");
+    else if(rank >= 75) npc = NPC_TYPES.find(x => x.title === "The Prestige Merchant");
+    else if(campus >= 75) npc = NPC_TYPES.find(x => x.title === "The Campus Enjoyer");
+    else if(sleep < 5) npc = NPC_TYPES.find(x => x.title === "The Academic Weapon");
+    else if(study < 30) npc = NPC_TYPES.find(x => x.title === "The Procrastinator");
+    else npc = pick(NPC_TYPES);
+
+    $("#nIcon").textContent = npc.icon;
+    $("#nName").textContent = npc.title;
+    $("#nDesc").textContent = npc.desc;
+    const res = $("#nRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("npc");
+  });
+}
+
+// ============================================================
+// 6. POTION
+// ============================================================
+function openPotion(){
+  openModal(modalHead("🧪", "University Compatibility Potion", "Brew your potion.")
+    + `
+    <button class="fz-btn accent" id="pBtn">🧪 BREW MY POTION</button>
+    <div class="fz-result" id="pRes">
+      <div class="fz-big-number">Your University Potion</div>
+      <div style="margin-top:14px;" id="pBars"></div>
+      <div class="fz-meme-phrase" style="margin-top:14px;">Side effects may include: overthinking university rankings.</div>
+    </div>
+  `);
+  $("#pBtn").addEventListener("click", () => {
+    const stats = [
+      { label: "Scholarship", color: "#88B7F0", val: randInt(30, 100) },
+      { label: "Academic", color: "#27AE60", val: randInt(30, 100) },
+      { label: "Social", color: "#C79256", val: randInt(30, 100) },
+      { label: "Suffering", color: "#E63946", val: randInt(30, 100) },
+    ];
+    $("#pBars").innerHTML = stats.map(s => `
+      <div style="text-align:left; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+          <span style="font-weight:600;">${s.label}</span>
+          <span style="font-weight:700;">${s.val}%</span>
+        </div>
+        <div class="fz-bar"><div class="fz-bar-fill" style="width:${s.val}%; background:${s.color};"></div></div>
+      </div>
+    `).join("");
+    const res = $("#pRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("potion");
+  });
+}
+
+// ============================================================
+// 7. STOCK
+// ============================================================
+function openStock(){
+  openModal(modalHead("📈", "GPA Stock Market", "Trade responsibly. Or not.")
+    + `
+    <div style="text-align:center; font-family:'Fraunces',serif; font-size:44px; font-weight:900; color:var(--espresso);">$GPA</div>
+    <div style="text-align:center; font-family:'Fraunces',serif; font-size:28px; font-weight:700; color:var(--green);" id="sPrice">+0.0% 📈</div>
+    <div class="fz-stock-chart"><svg id="sChart" viewBox="0 0 400 140" preserveAspectRatio="none"><polyline class="fz-stock-line" id="sLine" points="0,70 400,70" /></svg></div>
+    <div class="fz-mono" id="sNews">Initializing market...</div>
+    <button class="fz-btn" id="sBtn">📈 NEXT TRADING DAY</button>
+  `);
+  const events = [
+    { text: "Physics test detected.", delta: -8.7 },
+    { text: "Teacher gave everyone bonus points.", delta: +17.3 },
+    { text: "Pop quiz. No warning. No mercy.", delta: -12.4 },
+    { text: "Group project saved by one person.", delta: +6.2 },
+    { text: "Slept 4 hours. Brain: unavailable.", delta: -9.1 },
+    { text: "Teacher was in a good mood.", delta: +11.8 },
+    { text: "Homework actually done on time.", delta: +5.7 },
+    { text: "Essay submitted at 23:59.", delta: -3.3 },
+    { text: "Group chat: 'lol same'.", delta: -2.1 },
+    { text: "Found a scholarship.", delta: +14.6 },
+  ];
+  let price = 0;
+  const points = [];
+  $("#sBtn").addEventListener("click", () => {
+    const ev = pick(events);
+    price += ev.delta;
+    const el = $("#sPrice");
+    el.textContent = (price >= 0 ? "+" : "") + price.toFixed(1) + "% " + (price >= 0 ? "📈" : "📉");
+    el.style.color = price >= 0 ? "var(--green)" : "var(--neon)";
+    $("#sNews").textContent = ev.text;
+    points.push({ x: points.length * 40, y: Math.max(10, Math.min(130, 70 - price)) });
+    const lastPoint = points[points.length - 1];
+    if(points.length > 10) points.shift();
+    const pts = points.map(p => `${p.x},${p.y}`).join(" ");
+    const line = $("#sLine");
+    line.setAttribute("points", pts);
+    line.style.stroke = price >= 0 ? "var(--green)" : "var(--neon)";
+    unlockAchievement("stock");
+  });
+}
+
+// ============================================================
+// 8. CRASH
+// ============================================================
+function openCrash(){
+  openModal(modalHead("📉", "Academic Portfolio Crash", "Trigger the crash.")
+    + `
+    <div style="text-align:center; padding:40px 20px;">
+      <div class="fz-big-number" id="crNum" style="color:var(--neon);">0%</div>
+      <div style="font-size:40px; letter-spacing:8px; margin:14px 0;" id="crArrows">📉📉📉📉📉</div>
+      <div class="fz-meme-phrase" id="crMsg">Press the button.</div>
+    </div>
+    <button class="fz-btn accent" id="crBtn">📉 CRASH MY PORTFOLIO</button>
+  `);
+  const reasons = [
+    "SAT R&W score leaked.",
+    "Essay submitted with Comic Sans.",
+    "Physics exam happened.",
+    "Missed the early deadline.",
+    "Typo in the email to the professor.",
+    "Forgot to attach the essay.",
+    "Applied to 15 universities. Wrong major.",
+    "AI detector flagged the essay. Essay was 100% human.",
+  ];
+  $("#crBtn").addEventListener("click", () => {
+    const drop = randInt(30, 70);
+    $("#crNum").textContent = "-" + drop + "%";
+    $("#crMsg").textContent = pick(reasons);
+    unlockAchievement("crash");
+  });
+}
+
+// ============================================================
+// 9. GACHA
+// ============================================================
+function rollGacha(){
+  const r = Math.random();
+  if(r < 0.6){
+    return { rarity: "common", name: pick(["Local Polytechnic","Municipal College","Regional Institute","Community University"]) };
+  } else if(r < 0.85){
+    return { rarity: "rare", name: pick(["State Tech","University of Somewhere","Mid-tier Institute","Honestly Decent University"]) };
+  } else if(r < 0.95){
+    return { rarity: "epic", name: pick(["Top 200 University","Solid Research University","Well Known Institute","Ranked Something University"]) };
+  } else if(r < 0.99){
+    return { rarity: "legendary", name: pick(["MIT","Oxford","Stanford","Cambridge","Harvard","ETH Zurich","Tsinghua"]) };
+  } else {
+    return { rarity: "mythic", name: "University of Almaty International Quantum Business Engineering 💀" };
   }
+}
+function openGacha(){
+  openModal(modalHead("🎲", "University Gacha", "Pull. Regret. Repeat.")
+    + `
+    <button class="fz-btn accent" id="g1">PULL ×1</button>
+    <button class="fz-btn" id="g10" style="margin-top:8px;">PULL ×10</button>
+    <div class="fz-gacha-result" id="gRes"></div>
+  `);
+  function showPulls(n){
+    const container = $("#gRes");
+    container.innerHTML = "";
+    for(let i = 0; i < n; i++){
+      const res = rollGacha();
+      const div = document.createElement("div");
+      div.className = "fz-gacha-card " + res.rarity;
+      div.innerHTML = `<div class="fz-gacha-rarity">${res.rarity}</div><div class="fz-gacha-name">${escapeHtml(res.name)}</div>`;
+      container.appendChild(div);
+      if(res.rarity === "mythic") unlockAchievement("gacha_mythic");
+      if(res.rarity === "legendary") unlockAchievement("gacha_10");
+    }
+    unlockAchievement("gacha_1");
+    if(n >= 10) unlockAchievement("gacha_10");
+  }
+  $("#g1").addEventListener("click", () => showPulls(1));
+  $("#g10").addEventListener("click", () => showPulls(10));
+}
+
+// ============================================================
+// 10. WALLET
+// ============================================================
+function openWallet(){
+  openModal(modalHead("💸", "Tuition Damage Calculator", "How much is your wallet taking?")
+    + `
+    <div class="fz-grid-2">
+      <div class="fz-field"><label>Tuition (USD/year)</label><input type="number" id="wTui" placeholder="25000"></div>
+      <div class="fz-field"><label>Accommodation</label><input type="number" id="wAcc" placeholder="8000"></div>
+      <div class="fz-field"><label>Food</label><input type="number" id="wFood" placeholder="5000"></div>
+      <div class="fz-field"><label>Transportation</label><input type="number" id="wTrans" placeholder="1500"></div>
+      <div class="fz-field"><label>Scholarship (USD)</label><input type="number" id="wSchol" placeholder="0"></div>
+    </div>
+    <button class="fz-btn accent" id="wBtn">💸 CALCULATE DAMAGE</button>
+    <div class="fz-result" id="wRes">
+      <div class="fz-label-mini">YOUR WALLET HAS TAKEN</div>
+      <div class="fz-big-number" id="wNum">$0 <span class="unit">DAMAGE</span></div>
+      <div class="fz-wallet-hp" id="wHp"></div>
+      <div class="fz-meme-phrase" id="wMsg"></div>
+    </div>
+  `);
+  $("#wBtn").addEventListener("click", () => {
+    const tui = parseFloat($("#wTui").value) || 0;
+    const acc = parseFloat($("#wAcc").value) || 0;
+    const food = parseFloat($("#wFood").value) || 0;
+    const trans = parseFloat($("#wTrans").value) || 0;
+    const schol = parseFloat($("#wSchol").value) || 0;
+    const total = Math.max(0, tui + acc + food + trans - schol);
+    $("#wNum").innerHTML = "$" + total.toLocaleString("en-US") + ' <span class="unit">DAMAGE</span>';
+    const heartsCount = 10;
+    const hp = Math.max(0, 10 - Math.round(total / 5000));
+    let hpHtml = "";
+    for(let i = 0; i < heartsCount; i++){
+      hpHtml += `<span class="fz-hp-heart ${i < hp ? "" : "lost"}">❤️</span>`;
+    }
+    $("#wHp").innerHTML = hpHtml;
+    $("#wMsg").textContent = hp <= 0 ? "Financially devastated." : (hp >= 8 ? "Wallet survived." : "Wallet in critical condition.");
+    const res = $("#wRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("wallet");
+  });
+}
+
+// ============================================================
+// 11. SLEEP
+// ============================================================
+function openSleep(){
+  openModal(modalHead("🛌", "Sleep vs GPA Simulator", "Pick your poison.")
+    + `
+    <div class="fz-inline-btns">
+      <button class="fz-btn" data-sleep="4">4h</button>
+      <button class="fz-btn" data-sleep="6">6h</button>
+      <button class="fz-btn" data-sleep="8">8h</button>
+      <button class="fz-btn" data-sleep="10">10h</button>
+    </div>
+    <div class="fz-result" id="sRes" style="margin-top:14px;">
+      <div class="fz-label-mini" id="sLabel">SLEEP: 0h</div>
+      <div style="margin-top:12px;" id="sBars"></div>
+    </div>
+  `);
+  $$("[data-sleep]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const h = parseInt(btn.dataset.sleep);
+      const data = {
+        4: [["GPA", 2], ["Brain", -47], ["Sanity", -83]],
+        6: [["GPA", 7], ["Brain", 5], ["Sanity", -20]],
+        8: [["GPA", 12], ["Brain", 25], ["Sanity", 41]],
+        10: [["Academic performance", 3], ["Bed loyalty", 100], ["Sanity", 60]],
+      }[h];
+      $("#sLabel").textContent = `SLEEP: ${h}h`;
+      $("#sBars").innerHTML = data.map(([label, val]) => {
+        const display = (val >= 0 ? "+" : "") + val;
+        const color = val >= 0 ? "var(--green)" : "var(--neon)";
+        const pct = Math.min(100, Math.abs(val));
+        return `
+          <div style="text-align:left; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+              <span>${label}</span><span style="color:${color}; font-weight:700;">${display}</span>
+            </div>
+            <div class="fz-bar"><div class="fz-bar-fill" style="width:${pct}%; background:${color};"></div></div>
+          </div>`;
+      }).join("");
+      const res = $("#sRes");
+      res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+      unlockAchievement("sleep");
+    });
+  });
+}
+
+// ============================================================
+// 12. CAFFEINE
+// ============================================================
+function openCaffeine(){
+  openModal(modalHead("☕", "Caffeine Calculator", "How much coffee is too much?")
+    + `
+    <div class="fz-field"><label>How many coffees today?</label><input type="number" id="cfNum" placeholder="3"></div>
+    <button class="fz-btn accent" id="cfBtn" style="margin-top:10px;">☕ CHECK</button>
+    <div class="fz-result" id="cfRes">
+      <div class="fz-big-number" id="cfCount">0</div>
+      <div class="fz-meme-phrase" id="cfMsg"></div>
+    </div>
+  `);
+  $("#cfBtn").addEventListener("click", () => {
+    const n = parseInt($("#cfNum").value) || 0;
+    let msg;
+    if(n === 0) msg = "Are you okay?";
+    else if(n === 1) msg = "Normal human.";
+    else if(n <= 3) msg = "Functional.";
+    else if(n <= 5) msg = "Nervous, but productive.";
+    else if(n <= 7) msg = "You can hear colors.";
+    else if(n <= 9) msg = "You are vibrating slightly.";
+    else msg = "You are no longer a student. You are a chemical reaction.";
+    $("#cfCount").textContent = n;
+    $("#cfMsg").textContent = msg;
+    const res = $("#cfRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("caffeine");
+  });
+}
+
+// ============================================================
+// 13. BRAIN
+// ============================================================
+let _brainScore = 0, _brainTotal = 0, _brainTarget = "";
+function openBrain(){
+  openModal(modalHead("🧠", "Brain Capacity Test", "Click the matching number/word.")
+    + `
+    <div class="fz-field" style="margin-bottom:14px;">
+      <label>Target</label>
+      <div class="fz-big-number" id="brTarget" style="font-size:36px; text-align:center;">?</div>
+    </div>
+    <div class="fz-brain-stage" id="brStage"></div>
+    <div style="text-align:center; font-size:14px; color:var(--text-muted);" id="brScore">Score: 0 / 0</div>
+    <button class="fz-btn accent" id="brBtn" style="margin-top:12px;">🧠 START</button>
+  `);
+  const targets = ["42","1999","MIT","Oxford","A","3.14","🚀","👽","XYZ","Nobel","π","💀"];
+  let roundsLeft = 0;
+  function newRound(){
+    if(roundsLeft <= 0){
+      const pct = _brainTotal > 0 ? Math.round((_brainScore / _brainTotal) * 100) : 0;
+      let msg = pct >= 80 ? "Enough RAM to open Bluebook." : (pct >= 50 ? "Running on 2 tabs." : "Windows has stopped responding.");
+      $("#brStage").innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px;">
+        <div class="fz-label-mini">BRAIN CAPACITY</div>
+        <div class="fz-big-number">${pct}%</div>
+        <div class="fz-meme-phrase">${msg}</div>
+      </div>`;
+      $("#brBtn").textContent = "🧠 TEST AGAIN";
+      unlockAchievement("brain");
+      return;
+    }
+    roundsLeft--;
+    const stage = $("#brStage");
+    stage.innerHTML = "";
+    const options = [];
+    for(let i = 0; i < 12; i++) options.push(pick(targets));
+    _brainTarget = options[0];
+    $("#brTarget").textContent = _brainTarget;
+    const shuffled = options.sort(() => Math.random() - 0.5);
+    shuffled.forEach(opt => {
+      const cell = document.createElement("div");
+      cell.className = "fz-brain-cell";
+      cell.textContent = opt;
+      cell.addEventListener("click", () => {
+        if(opt === _brainTarget){
+          cell.classList.add("correct");
+          _brainScore++;
+        } else {
+          cell.classList.add("wrong");
+        }
+        _brainTotal++;
+        $("#brScore").textContent = `Score: ${_brainScore} / ${_brainTotal}`;
+        setTimeout(newRound, 400);
+      });
+      stage.appendChild(cell);
+    });
+  }
+  $("#brBtn").addEventListener("click", () => {
+    _brainScore = 0; _brainTotal = 0; roundsLeft = 5;
+    $("#brBtn").textContent = "🧠 RESTART";
+    newRound();
+  });
+}
+
+// ============================================================
+// 14. SAT
+// ============================================================
+const SAT_QUESTIONS = [
+  { q: "If a student studies 4 hours per day and spends 7 hours on Instagram, how many hours remain for touching grass?", a: ["-3 hours","3 hours","11 hours","Grass is a myth"] },
+  { q: "A train leaves Almaty at 6 AM. A student wakes up at 11 AM. Who is late?", a: ["The train","The student","Both","Math doesn't apply here"] },
+  { q: "If your GPA is 3.8 and your sleep is 4 hours, what is the value of X?", a: ["X = pain","X = 2.5","X = tomorrow","Who cares"] },
+  { q: "A student writes 500 words. The essay limit is 650. What is the essay missing?", a: ["150 words","Soul","Sleep","Everything"] },
+  { q: "If Oxford accepts 17% of students, and you apply, what's your chance?", a: ["17%","100%","0%","Depends on your aura"] },
+  { q: "The average SAT Math score is 521. You scored 780. What emotion is this?", a: ["Smug","Humble","Illegal","Suspicious"] },
+];
+function openSAT(){
+  openModal(modalHead("🎯", "SAT Guessing Simulator", "Guess. Somehow get it right.")
+    + `
+    <div id="satBox"></div>
+    <button class="fz-btn accent" id="satBtn" style="margin-top:12px;">🎯 NEXT QUESTION</button>
+  `);
+  function nextQ(){
+    const q = pick(SAT_QUESTIONS);
+    $("#satBox").innerHTML = `
+      <div class="fz-mono">${escapeHtml(q.q)}</div>
+      <div style="display:grid; gap:8px; margin-top:14px;">
+        ${q.a.map(a => `<button class="fz-btn ghost" data-ans="${escapeHtml(a)}">${escapeHtml(a)}</button>`).join("")}
+      </div>
+      <div id="satRes" style="margin-top:14px; display:none;"></div>
+    `;
+    $("#satBox").querySelectorAll("[data-ans]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const correct = Math.random() < 0.5;
+        const res = $("#satRes");
+        res.style.display = "block";
+        res.innerHTML = correct
+          ? `<div class="fz-result show"><div class="fz-big-number" style="font-size:36px;">Correct. Somehow.</div></div>`
+          : `<div class="fz-result show"><div class="fz-big-number" style="font-size:36px; color:var(--neon);">Wrong. Obviously.</div></div>`;
+        unlockAchievement("sat");
+      });
+    });
+  }
+  $("#satBtn").addEventListener("click", nextQ);
+  nextQ();
+}
+
+// ============================================================
+// 15. OFFICER
+// ============================================================
+function openOfficer(){
+  openModal(modalHead("🧑‍💼", "Admissions Officer Simulator", "Face the officer.")
+    + `
+    <div class="fz-grid-2">
+      <div class="fz-field"><label>GPA</label><input type="number" id="oGpa" placeholder="3.8" step="0.01"></div>
+      <div class="fz-field"><label>SAT</label><input type="number" id="oSat" placeholder="1450"></div>
+      <div class="fz-field"><label>IELTS</label><input type="number" id="oIelts" placeholder="7.5" step="0.5"></div>
+      <div class="fz-field"><label>Extracurriculars (0-100)</label><input type="number" id="oExtra" placeholder="70"></div>
+    </div>
+    <button class="fz-btn accent" id="oBtn">🧑‍💼 SUBMIT APPLICATION</button>
+    <div class="fz-result" id="oRes">
+      <div class="fz-meme-phrase" id="oThink" style="min-height:60px;"></div>
+      <div class="fz-big-number" id="oDecision" style="font-size:32px;"></div>
+      <div class="fz-meme-phrase" id="oReason"></div>
+    </div>
+  `);
+  $("#oBtn").addEventListener("click", async () => {
+    const think = $("#oThink");
+    const decisions = [
+      { text: "🟢 ACCEPTED", reason: "Your GPA is good. Your extracurriculars are good. But you used Comic Sans in your CV. We let it slide." },
+      { text: "🟡 WAITLISTED", reason: "We liked you. We also liked 4,000 other people. We will contact you eventually. Probably." },
+      { text: "🔴 REJECTED", reason: "Your application was beautiful. Unfortunately, you are simply too powerful." },
+      { text: "🟢 ACCEPTED", reason: "The committee argued for 3 hours. Your essay won." },
+      { text: "🔴 REJECTED", reason: "You mentioned 'world-class' 14 times. We counted." },
+    ];
+    const d = pick(decisions);
+    const steps = ["Hmm...", "Interesting...", "Very interesting...", "Let me consult the committee..."];
+    $("#oDecision").textContent = "";
+    $("#oReason").textContent = "";
+    $("#oRes").classList.add("show");
+    for(const s of steps){
+      think.textContent = s;
+      await new Promise(r => setTimeout(r, 600));
+    }
+    $("#oDecision").textContent = d.text;
+    $("#oReason").textContent = d.reason;
+    unlockAchievement("officer");
+  });
+}
+
+// ============================================================
+// 16. REJECTION
+// ============================================================
+function openRejection(){
+  const letters = [
+    "Dear Student,\n\nWe regret to inform you that we have decided to reject your application.\n\nThe admissions committee was impressed by your application.\n\nUnfortunately, we have decided that you are simply too powerful.\n\nSincerely,\nDefinitely Real University",
+    "Dear Applicant,\n\nThank you for your interest.\n\nAfter careful consideration, we have decided to reject you for the following reason:\n\nYour aura intimidated the committee.\n\nSincerely,\nA Very Real University",
+    "Dear Student,\n\nYour application was, quite frankly, unhinged in the best possible way.\n\nUnfortunately, we cannot accept unhinged applicants.\n\nWith respect,\nThe Committee",
+    "Dear Candidate,\n\nWe received 40,000 applications.\n\nWe accepted 12.\n\nYou were not one of them, but you were close. Sort of.\n\nBest,\nAn Actual University",
+  ];
+  openModal(modalHead("📧", "Rejection Letter Generator", "Get rejected. Professionally.")
+    + `
+    <button class="fz-btn accent" id="rBtn">📧 GENERATE MY REJECTION LETTER</button>
+    <div class="fz-result" id="rRes">
+      <div class="fz-mono" id="rText"></div>
+    </div>
+  `);
+  $("#rBtn").addEventListener("click", () => {
+    $("#rText").textContent = pick(letters);
+    const res = $("#rRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("rejection");
+  });
+}
+
+// ============================================================
+// 17. CAREER
+// ============================================================
+const CAREERS = [
+  "Quantum Car Mechanic","International Business Penguin","AI Lawyer","Professional University Tourist",
+  "Luxury Car Economist","Nuclear TikTok Analyst","Certified Spreadsheet Engineer","Global Coffee Consultant",
+  "Airport CEO","Supreme Homework Avoider","Crypto Barista","Simulation Theory Consultant",
+  "Blockchain Historian","Emotional Support Engineer","Formula 1 Tax Advisor","Astro Influencer",
+];
+function openCareer(){
+  openModal(modalHead("🧭", "Completely Random Career Generator", "Find your true calling.")
+    + `
+    <button class="fz-btn accent" id="crBtn">🧭 WHAT AM I GOING TO BECOME?</button>
+    <div class="fz-result" id="crRes">
+      <div class="fz-label-mini">YOUR FUTURE JOB</div>
+      <div class="fz-big-number" id="crJob" style="font-size:28px;"></div>
+      <div class="fz-stat-row"><span class="label">Salary</span><span class="value" id="crSalary">???</span></div>
+      <div class="fz-stat-row"><span class="label">Difficulty</span><span class="value" id="crDiff">💀💀💀</span></div>
+      <div class="fz-stat-row"><span class="label">Aura</span><span class="value" id="crAura">0</span></div>
+    </div>
+  `);
+  $("#crBtn").addEventListener("click", () => {
+    $("#crJob").textContent = pick(CAREERS);
+    $("#crSalary").textContent = "???" + "$".repeat(randInt(1,5));
+    $("#crDiff").textContent = "💀".repeat(randInt(1,5));
+    $("#crAura").textContent = randInt(100, 9999);
+    const res = $("#crRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("career");
+  });
+}
+
+// ============================================================
+// 18. CAR
+// ============================================================
+const CARS = {
+  "NU": "Mercedes E-Class W213",
+  "KBTU": "BMW G20 330i",
+  "Oxford": "2009 Toyota Prius",
+  "MIT": "Tesla Model S",
+  "Stanford": "Rivian R1T",
+  "Harvard": "Black Lexus LS",
+  "Cambridge": "Vintage Jaguar XJ",
+  "Tsinghua": "Hongqi H9",
+  "Nazarbayev University": "Mercedes E-Class W213",
 };
+const CAR_RANDOM = [
+  "2007 Mercedes GL550 with one air suspension problem 💀",
+  "Toyota Camry 2003 with 400,000 km",
+  "BMW 320i that makes weird noises at 60 km/h",
+  "Tesla Model 3 with 12% battery, no charger",
+  "Honda Civic with a spoiler it doesn't deserve",
+];
+function openCar(){
+  const opts = UNIVERSITIES.map(u => `<option value="${u}">${u}</option>`).join("");
+  openModal(modalHead("🚗", "University Car Generator", "Every university has a car.")
+    + `
+    <div class="fz-field"><label>Pick university</label><select id="carSel">${opts}<option value="random">Random</option></select></div>
+    <button class="fz-btn accent" id="carBtn" style="margin-top:12px;">🚗 GENERATE MY CAR</button>
+    <div class="fz-result" id="carRes">
+      <div class="fz-label-mini">YOUR UNIVERSITY CAR</div>
+      <div class="fz-big-number" id="carName" style="font-size:22px;"></div>
+      <div class="fz-stat-row"><span class="label">Reliability</span><span class="value" id="carRel">0</span></div>
+      <div class="fz-stat-row"><span class="label">Aura</span><span class="value" id="carAura">0</span></div>
+      <div class="fz-stat-row"><span class="label">Fuel consumption</span><span class="value" id="carFuel">💀</span></div>
+      <div class="fz-stat-row"><span class="label">Academic compatibility</span><span class="value" id="carComp">0</span></div>
+    </div>
+  `);
+  $("#carBtn").addEventListener("click", () => {
+    let uni = $("#carSel").value;
+    if(uni === "random") uni = pick(UNIVERSITIES);
+    const car = CARS[uni] || pick(CAR_RANDOM);
+    $("#carName").textContent = `${uni} → ${car}`;
+    $("#carRel").textContent = randInt(20, 100);
+    $("#carAura").textContent = randInt(20, 100);
+    $("#carFuel").textContent = "💀".repeat(randInt(1,5));
+    $("#carComp").textContent = randInt(20, 100);
+    const res = $("#carRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("car");
+  });
+}
 
-document.getElementById("cookedBtn").addEventListener("click", () => {
-  const gpa   = parseFloat(document.getElementById("cookedGpa").value);
-  const sat   = parseFloat(document.getElementById("cookedSat").value);
-  const ielts = parseFloat(document.getElementById("cookedIelts").value);
-  const days  = parseFloat(document.getElementById("cookedDays").value);
+// ============================================================
+// 19. WEATHER
+// ============================================================
+const WEATHERS = [
+  { city: "Astana", text: "-25°C\n\nUniversity difficulty: 87%\nSurvival difficulty: 100%" },
+  { city: "Almaty", text: "Mountains detected.\n\nTouch grass recommended." },
+  { city: "London", text: "Rain detected.\n\nAgain." },
+  { city: "Dubai", text: "Temperature: 💀" },
+  { city: "Boston", text: "Snowstorm + finals week.\n\nThere is no hope." },
+  { city: "Singapore", text: "Humidity: 92%.\n\nYou are soup." },
+  { city: "Tokyo", text: "Cherry blossoms + 3 exams.\n\nAesthetic suffering." },
+  { city: "Berlin", text: "Cloudy. Techno playing somewhere.\n\nGPA: uncertain." },
+];
+function openWeather(){
+  openModal(modalHead("🌡️", "University Weather Personality", "Weather = personality.")
+    + `
+    <button class="fz-btn accent" id="weBtn">🌡️ ROLL THE WEATHER</button>
+    <div class="fz-result" id="weRes">
+      <div class="fz-label-mini" id="weCity"></div>
+      <div class="fz-mono" id="weText" style="margin-top:10px;"></div>
+    </div>
+  `);
+  $("#weBtn").addEventListener("click", () => {
+    const w = pick(WEATHERS);
+    $("#weCity").textContent = w.city;
+    $("#weText").textContent = w.text;
+    const res = $("#weRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("weather");
+  });
+}
 
-  if([gpa, sat, ielts, days].some(v => isNaN(v))){
-    alert(t("fz_not_enough", "Заполни все поля, бро 😭"));
-    return;
+// ============================================================
+// 20. NPC GEN
+// ============================================================
+const NPC_NAMES = ["Timur","Aisana","Arman","Dana","Nikita","Alina","Bekzod","Aigerim","Miras","Kamila"];
+const NPC_MAJORS = ["Business","Computer Science","Law","Medicine","Design","Economics","Engineering","Psychology"];
+const NPC_CARS = ["BMW 330i","Toyota Camry","Tesla Model 3","Honda Civic","Mercedes C200","No car 💀"];
+const NPC_PERSONALITIES = [
+  "Bro thinks he's the CEO.",
+  "Bro is always late but somehow present.",
+  "Bro studies only the night before. Still passes.",
+  "Bro has 12 side projects. None finished.",
+  "Bro brings snacks to every class. Legend.",
+];
+function openNPCGen(){
+  openModal(modalHead("🧍", "NPC Generator", "Create a random NPC student.")
+    + `
+    <button class="fz-btn accent" id="ngBtn">🧍 GENERATE NPC</button>
+    <div class="fz-result" id="ngRes">
+      <div class="fz-stat-row"><span class="label">Name</span><span class="value" id="ngName"></span></div>
+      <div class="fz-stat-row"><span class="label">Major</span><span class="value" id="ngMajor"></span></div>
+      <div class="fz-stat-row"><span class="label">GPA</span><span class="value" id="ngGpa"></span></div>
+      <div class="fz-stat-row"><span class="label">Sleep</span><span class="value" id="ngSleep"></span></div>
+      <div class="fz-stat-row"><span class="label">Coffee</span><span class="value" id="ngCof"></span></div>
+      <div class="fz-stat-row"><span class="label">Car</span><span class="value" id="ngCar"></span></div>
+      <div class="fz-stat-row"><span class="label">Personality</span><span class="value" id="ngPer"></span></div>
+    </div>
+  `);
+  $("#ngBtn").addEventListener("click", () => {
+    $("#ngName").textContent = pick(NPC_NAMES);
+    $("#ngMajor").textContent = pick(NPC_MAJORS);
+    $("#ngGpa").textContent = (randInt(25, 40) / 10).toFixed(1);
+    $("#ngSleep").textContent = randInt(3, 9) + "h";
+    $("#ngCof").textContent = randInt(0, 8) + "/day";
+    $("#ngCar").textContent = pick(NPC_CARS);
+    $("#ngPer").textContent = pick(NPC_PERSONALITIES);
+    const res = $("#ngRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("npc_gen");
+  });
+}
+
+// ============================================================
+// 21. SKILL
+// ============================================================
+function openSkill(){
+  openModal(modalHead("🧨", "Skill Issue Detector", "Detects skill issues. Honestly.")
+    + `
+    <div class="fz-grid-2">
+      <div class="fz-field"><label>SAT</label><input type="number" id="skSat" placeholder="1040"></div>
+      <div class="fz-field"><label>GPA</label><input type="number" id="skGpa" placeholder="3.2" step="0.01"></div>
+    </div>
+    <button class="fz-btn accent" id="skBtn">🧨 DETECT SKILL ISSUE</button>
+    <div class="fz-result" id="skRes">
+      <div class="fz-big-number" id="skNum">0%</div>
+      <div class="fz-meme-phrase" id="skMsg"></div>
+      <div style="margin-top:14px; text-align:left;">
+        <div class="fz-stat-row"><span class="label">Math</span><span class="value" id="skMath"></span></div>
+        <div class="fz-stat-row"><span class="label">R&W</span><span class="value" id="skRW"></span></div>
+      </div>
+    </div>
+  `);
+  $("#skBtn").addEventListener("click", () => {
+    const sat = parseFloat($("#skSat").value) || 1040;
+    const gpa = parseFloat($("#skGpa").value) || 3.2;
+    let sev = Math.max(0, 100 - Math.round((sat - 400) / 12 + gpa * 10));
+    sev = Math.min(100, sev);
+    $("#skNum").textContent = sev + "%";
+    $("#skMsg").textContent = sev >= 60 ? "⚠️ Skill issue detected." : "No skill issue detected. Unfortunately, you now have to maintain it.";
+    $("#skMath").textContent = sat >= 1300 ? "actually decent" : "💀";
+    $("#skRW").textContent = sat >= 1400 ? "solid" : "💀";
+    const res = $("#skRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("skill");
+  });
+}
+
+// ============================================================
+// 22. SPELL
+// ============================================================
+const SPELLS = [
+  { name: "UNIVERSITAS MAXIMA", effect: "+50 GPA\n+20 Aura\n-30 Sleep" },
+  { name: "SCHOLARSHIPUS", effect: "Tuition: $20,000 → $0\nCooldown: 1 academic year" },
+  { name: "PROCRASTINATUS", effect: "-100 Motivation\n+50 Regret" },
+  { name: "SLEEPIUS MAXIMUS", effect: "+8 hours of sleep\n+100 Sanity\n-40 GPA (maybe)" },
+  { name: "AURAFICUS", effect: "+999 Aura\n-0 Everything Else" },
+  { name: "COFFEINUM INFINITUM", effect: "+6 coffees\n+∞ Energy\n-∞ Sleep" },
+];
+function openSpell(){
+  openModal(modalHead("🪄", "University Spell Generator", "Cast questionable spells.")
+    + `
+    <button class="fz-btn accent" id="spBtn">🪄 CAST A SPELL</button>
+    <div class="fz-result" id="spRes">
+      <div class="fz-big-number" id="spName" style="font-size:26px;"></div>
+      <div class="fz-label-mini" style="margin-top:14px;">EFFECT</div>
+      <div class="fz-mono" id="spEffect"></div>
+    </div>
+  `);
+  $("#spBtn").addEventListener("click", () => {
+    const s = pick(SPELLS);
+    $("#spName").textContent = s.name;
+    $("#spEffect").textContent = s.effect;
+    const res = $("#spRes");
+    res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
+    unlockAchievement("spell");
+  });
+}
+
+// ============================================================
+// 23. ACHIEVEMENTS WALL
+// ============================================================
+function openAchievements(){
+  const data = loadAchievements();
+  const unlocked = Object.keys(data).length;
+  openModal(modalHead("🏆", "Your Achievements", `${unlocked} / ${ALL_ACHIEVEMENTS.length} unlocked`)
+    + `
+    <div class="fz-ach-grid">
+      ${ALL_ACHIEVEMENTS.map(a => {
+        const isUnlocked = !!data[a.id];
+        return `
+          <div class="fz-ach ${isUnlocked ? "unlocked" : ""}">
+            <div class="fz-ach-icon">${isUnlocked ? a.icon : "🔒"}</div>
+            <div class="fz-ach-name">${a.name}</div>
+            <div class="fz-ach-desc">${a.desc}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `);
+}
+
+// ============================================================
+// 24. NUCLEAR
+// ============================================================
+let _nuclearStep = 0;
+function openNuclear(){
+  _nuclearStep = 0;
+  openModal(modalHead("💣", "Nuclear Reset", "Do NOT press this button.")
+    + `
+    <div style="text-align:center;">
+      <button class="fz-nuclear-btn" id="nukBtn">DO NOT PRESS</button>
+    </div>
+  `);
+  const messages = [
+    { text: "Are you sure?", next: "YES I'M SURE" },
+    { text: "REALLY?", next: "REALLY" },
+    { text: "BRO STOP.", next: "I CAN'T STOP" },
+    { text: "Fine.", next: "..." },
+    { text: "💀\n\nYou have wasted 7 seconds of your life.", next: null },
+  ];
+  $("#nukBtn").addEventListener("click", () => {
+    if(_nuclearStep >= messages.length) return;
+    const m = messages[_nuclearStep];
+    if(m.next === null){
+      $("#nukBtn").outerHTML = `<div class="fz-big-number" style="font-size:32px; white-space:pre-line;">${m.text}</div>`;
+      unlockAchievement("nuclear");
+      return;
+    }
+    const btn = $("#nukBtn");
+    btn.textContent = m.next;
+    const note = document.createElement("div");
+    note.style.cssText = "margin-top:16px; font-family:'Fraunces',serif; font-style:italic; color:var(--bark); font-size:16px;";
+    note.textContent = m.text;
+    const parent = btn.parentElement;
+    const existing = parent.querySelector(".fz-note");
+    if(existing) existing.remove();
+    note.classList.add("fz-note");
+    parent.appendChild(note);
+    _nuclearStep++;
+  });
+}
+
+// ============================================================
+// 25. BOSS
+// ============================================================
+function openBoss(){
+  openModal(modalHead("🕹️", "Final Boss: The Application Deadline", "Face your greatest enemy.")
+    + `
+    <div style="text-align:center;">
+      <div class="fz-boss-hp" id="bossHp"></div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">DEADLINE HP</div>
+    </div>
+    <div style="margin-top:24px;">
+      <div class="fz-stat-row"><span class="label">Your HP</span><span class="value" id="playerHp">100</span></div>
+      <div class="fz-stat-row"><span class="label">Deadline HP</span><span class="value" id="deadlineHp">100</span></div>
+    </div>
+    <div class="fz-boss-buttons">
+      <button class="fz-btn" data-boss="study">📚 STUDY</button>
+      <button class="fz-btn ghost" data-boss="sleep">😴 SLEEP</button>
+      <button class="fz-btn ghost" data-boss="proc">📱 PROCRASTINATE</button>
+      <button class="fz-btn accent" data-boss="panic">😱 PANIC</button>
+    </div>
+    <div class="fz-result" id="bossRes" style="margin-top:14px;"><div class="fz-meme-phrase" id="bossMsg"></div></div>
+  `);
+  let bossHp = 100, playerHp = 100;
+  function render(){
+    let hearts = "";
+    for(let i = 0; i < 10; i++){
+      hearts += `<span class="fz-boss-hp-heart ${i < Math.ceil(bossHp/10) ? "" : "lost"}">❤️</span>`;
+    }
+    $("#bossHp").innerHTML = hearts;
+    $("#playerHp").textContent = Math.max(0, playerHp);
+    $("#deadlineHp").textContent = Math.max(0, bossHp);
   }
+  render();
+  $$("[data-boss]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const a = btn.dataset.boss;
+      let msg = "";
+      if(a === "study"){ bossHp -= 10; msg = "Deadline HP -10"; }
+      else if(a === "sleep"){ playerHp += 20; msg = "Player HP +20. Deadline is annoyed."; }
+      else if(a === "proc"){ bossHp += 5; msg = "Deadline HP +5. Why would you do this."; }
+      else if(a === "panic"){ msg = "No effect. Deadline is confused but amused."; }
+      $("#bossMsg").textContent = msg;
+      render();
+      if(bossHp <= 0){ $("#bossMsg").innerHTML = "👑 <b>YOU DEFEATED THE APPLICATION DEADLINE</b>"; unlockAchievement("boss_win"); $$("[data-boss]").forEach(b => b.disabled = true); }
+      if(playerHp <= 0){ $("#bossMsg").innerHTML = "💀 <b>YOU GOT COOKED</b>"; unlockAchievement("boss_lose"); $$("[data-boss]").forEach(b => b.disabled = true); }
+    });
+  });
+}
 
-  // Псевдоформула "прожаренности"
-  // Хорошие показатели снижают %, близкий дедлайн повышает
-  let cook = 0;
-  cook += Math.max(0, (4.0 - gpa) * 12);          // низкий GPA = +%
-  cook += Math.max(0, (1400 - sat) / 20);          // низкий SAT = +%
-  cook += Math.max(0, (7.0 - ielts) * 10);         // низкий IELTS = +%
-  cook += Math.max(0, (60 - days) * 0.8);          // мало дней = +%
-  cook -= Math.max(0, (gpa - 3.8) * 8);            // отличный GPA = -%
-  cook -= Math.max(0, (sat - 1450) / 30);          // топ SAT = -%
-  cook -= Math.max(0, (ielts - 7.5) * 6);          // топ IELTS = -%
-  cook -= Math.max(0, (days - 90) * 0.15);         // много времени = -%
-
-  cook = Math.round(Math.max(0, Math.min(100, cook)));
-
-  const lang = (window.I18N && window.I18N.getLang()) || "ru";
-  const phrases = COOKED_PHRASES[lang] || COOKED_PHRASES.ru;
-  let bucket = "mid";
-  if(cook >= 60) bucket = "high";
-  else if(cook <= 15) bucket = "low";
-
-  document.getElementById("cookedValue").innerHTML = `${cook}<span class="pct">%</span> 💀`;
-  document.getElementById("cookedPhrase").textContent = pick(phrases[bucket]);
-
-  const box = document.getElementById("cookedBox");
-  box.classList.remove("show");
-  void box.offsetWidth;
-  box.classList.add("show");
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  renderDashboard();
 });
-
-// ============================================================
-// ПЕРЕРИСОВКА ПРИ СМЕНЕ ЯЗЫКА
-// ============================================================
-
-window.addEventListener("edupath-lang-change", () => {
-  // Если таблица баттла открыта — оставим как есть (значения не языковые)
-  // Кнопки и заголовки обновляет i18n.applyAll() автоматически.
-});
-
-// ============================================================
-// ИНИЦИАЛИЗАЦИЯ
-// ============================================================
-
-(async function initFunZone(){
-  try {
-    await loadUnis();
-    fillBattleSelects();
-  } catch(e){
-    console.error(e);
-  }
-})();
+if(document.readyState !== "loading") renderDashboard();
 </script>
+
+<script src="i18n.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>
