@@ -25,7 +25,6 @@
   a{ text-decoration:none; color:inherit; }
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
-  /* HEADER */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1300px; margin:0 auto; padding:0 32px; position:relative; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
@@ -44,11 +43,8 @@
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
-  /* HERO */
   .fz-hero{
-    position:relative;
-    text-align:center;
-    padding:64px 24px 32px;
+    position:relative; text-align:center; padding:64px 24px 32px;
     background:
       radial-gradient(circle at 15% 20%, rgba(199,146,86,0.25), transparent 45%),
       radial-gradient(circle at 85% 30%, rgba(230,57,70,0.18), transparent 45%),
@@ -69,117 +65,62 @@
     font-weight:900; font-size:12px; letter-spacing:0.25em;
     padding:8px 16px; border-radius:999px;
     background:var(--espresso); color:var(--paper);
-    margin-bottom:20px;
-    transform: rotate(-2deg);
+    margin-bottom:20px; transform: rotate(-2deg);
     box-shadow: 0 8px 20px -12px rgba(43,27,16,0.5);
   }
   .fz-title{
     font-size: clamp(48px, 10vw, 100px);
-    font-weight:900;
-    line-height:0.9;
-    letter-spacing:-0.04em;
+    font-weight:900; line-height:0.9; letter-spacing:-0.04em;
     background: linear-gradient(135deg, var(--espresso) 0%, var(--clay) 50%, var(--neon) 100%);
     -webkit-background-clip:text; background-clip:text;
     -webkit-text-fill-color:transparent;
-    margin-bottom:20px;
-    text-transform:uppercase;
+    margin-bottom:20px; text-transform:uppercase;
     animation: titleWobble 6s ease-in-out infinite;
   }
   @keyframes titleWobble{ 0%,100%{ transform:rotate(-1deg);} 50%{ transform:rotate(1deg);} }
 
-  .fz-sub {
-    max-width: 640px; margin: 0 auto 12px;
-    font-size: 16px; color: var(--bark);
-    line-height: 1.6;
-  }
-  .fz-sub-small {
-    max-width: 640px; margin: 0 auto;
-    font-size: 14px; color: var(--text-muted);
-    line-height: 1.6;
-    font-style: italic;
-  }
+  .fz-sub{ max-width: 640px; margin: 0 auto 12px; font-size: 16px; color: var(--bark); line-height: 1.6; }
+  .fz-sub-small{ max-width: 640px; margin: 0 auto; font-size: 14px; color: var(--text-muted); line-height: 1.6; font-style: italic; }
 
-  /* MAIN */
   main{ max-width:1300px; margin:0 auto; padding:24px 24px 96px; }
 
-  /* DASHBOARD GRID */
   .fz-dash-grid{
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap:16px;
   }
   .fz-card{
-    background: var(--paper);
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:22px 20px;
-    cursor:pointer;
-    position:relative;
-    overflow:hidden;
+    background: var(--paper); border:1px solid var(--line);
+    border-radius:20px; padding:22px 20px; cursor:pointer;
+    position:relative; overflow:hidden;
     transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
-    display:flex;
-    flex-direction:column;
-    min-height:150px;
+    display:flex; flex-direction:column; min-height:150px;
   }
   .fz-card:hover{
-    transform:translateY(-6px);
-    border-color:var(--caramel);
+    transform:translateY(-6px); border-color:var(--caramel);
     box-shadow: 0 20px 40px -24px rgba(43,27,16,0.35);
   }
-  .fz-card-icon{
-    font-size:36px;
-    margin-bottom:12px;
-    display:block;
-    filter: drop-shadow(0 4px 6px rgba(43,27,16,0.15));
-  }
-  .fz-card-title{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    font-size:18px;
-    color:var(--espresso);
-    margin-bottom:6px;
-    line-height:1.25;
-  }
-  .fz-card-desc{
-    font-size:13px;
-    color:var(--text-muted);
-    line-height:1.4;
-    margin-bottom:auto;
-  }
-  .fz-card-open{
-    margin-top:14px;
-    font-size:12px;
-    font-weight:700;
-    letter-spacing:0.1em;
-    color:var(--clay);
-    text-transform:uppercase;
-    display:flex;
-    align-items:center;
-    gap:6px;
-  }
+  .fz-card-icon{ font-size:36px; margin-bottom:12px; display:block; filter: drop-shadow(0 4px 6px rgba(43,27,16,0.15)); }
+  .fz-card-title{ font-family:'Fraunces', serif; font-weight:700; font-size:18px; color:var(--espresso); margin-bottom:6px; line-height:1.25; }
+  .fz-card-desc{ font-size:13px; color:var(--text-muted); line-height:1.4; margin-bottom:auto; }
+  .fz-card-open{ margin-top:14px; font-size:12px; font-weight:700; letter-spacing:0.1em; color:var(--clay); text-transform:uppercase; display:flex; align-items:center; gap:6px; }
   .fz-card:hover .fz-card-open{ color:var(--neon); }
 
-  /* MODAL */
   .fz-modal-overlay{
     position: fixed; inset: 0;
-    background: rgba(43,27,16,0.6);
-    backdrop-filter: blur(6px);
+    background: rgba(43,27,16,0.6); backdrop-filter: blur(6px);
     display:flex; align-items:center; justify-content:center;
     z-index: 9000;
     opacity: 0; visibility: hidden;
     transition: opacity .3s var(--ease), visibility .3s var(--ease);
-    padding: 20px;
-    overflow-y: auto;
+    padding: 20px; overflow-y: auto;
   }
   .fz-modal-overlay.open{ opacity:1; visibility:visible; }
   .fz-modal{
-    background: var(--paper);
-    border-radius: 24px;
+    background: var(--paper); border-radius: 24px;
     width: 100%; max-width: 640px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    padding: 36px 32px 32px;
-    position: relative;
+    max-height: calc(100vh - 40px); overflow-y: auto;
+    padding: 36px 32px 32px; position: relative;
     box-shadow: 0 40px 80px -32px rgba(43,27,16,0.5);
     transform: translateY(20px) scale(0.98);
     transition: transform .35s var(--ease);
@@ -194,57 +135,29 @@
     transition: background .2s;
   }
   .fz-modal-close:hover{ background: var(--cream-deep); color: var(--espresso); }
-  .fz-modal-head{
-    display:flex; align-items:center; gap:14px;
-    margin-bottom:22px;
-    padding-bottom:18px;
-    border-bottom:1px solid var(--line);
-  }
+  .fz-modal-head{ display:flex; align-items:center; gap:14px; margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--line); }
   .fz-modal-head-icon{ font-size:32px; flex-shrink:0; }
   .fz-modal-head-text{ flex:1; }
   .fz-modal-title{ font-family:'Fraunces', serif; font-size:24px; font-weight:700; color: var(--espresso); line-height:1.2; }
   .fz-modal-sub{ font-size:13px; color: var(--text-muted); margin-top:4px; }
 
-  /* FORM ELEMENTS */
-  .fz-grid-2{
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:12px;
-    margin-bottom:18px;
-  }
-  .fz-field label{
-    display:block;
-    font-size:11px; font-weight:700;
-    letter-spacing:0.08em; text-transform:uppercase;
-    color: var(--text-muted);
-    margin-bottom:6px;
-  }
+  .fz-grid-2{ display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:18px; }
+  .fz-field label{ display:block; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color: var(--text-muted); margin-bottom:6px; }
   .fz-field input, .fz-field select{
-    width:100%;
-    padding:12px 14px;
-    font-family:inherit;
-    font-size:15px;
-    background: var(--cream);
-    color: var(--text-main);
-    border:1.5px solid transparent;
-    border-radius:10px;
+    width:100%; padding:12px 14px; font-family:inherit; font-size:15px;
+    background: var(--cream); color: var(--text-main);
+    border:1.5px solid transparent; border-radius:10px;
     transition: border-color .25s var(--ease), background .25s var(--ease);
   }
-  .fz-field input:focus, .fz-field select:focus{
-    outline:none; border-color: var(--clay); background: var(--paper);
-  }
+  .fz-field input:focus, .fz-field select:focus{ outline:none; border-color: var(--clay); background: var(--paper); }
 
   .fz-btn{
     display:inline-flex; align-items:center; justify-content:center; gap:10px;
     background: var(--espresso); color: var(--paper);
-    padding:14px 24px;
-    border-radius:12px;
-    font-size:14px;
-    font-weight:700;
-    letter-spacing:0.02em;
+    padding:14px 24px; border-radius:12px;
+    font-size:14px; font-weight:700; letter-spacing:0.02em;
     transition: transform .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
-    width: 100%;
-    margin-top: 8px;
+    width: 100%; margin-top: 8px;
   }
   .fz-btn:hover{ transform:translateY(-2px); background: var(--bark); box-shadow: 0 14px 28px -14px rgba(43,27,16,0.5); }
   .fz-btn:active{ transform:translateY(0); }
@@ -258,92 +171,57 @@
   .fz-inline-btns{ display:flex; gap:10px; margin-top:10px; }
   .fz-inline-btns .fz-btn{ flex:1; }
 
-  /* RESULT BLOCKS */
   .fz-result{
-    margin-top:22px;
-    padding:24px 20px;
-    background: var(--cream);
-    border-radius:16px;
+    margin-top:22px; padding:24px 20px;
+    background: var(--cream); border-radius:16px;
     border:2px dashed var(--caramel);
-    display:none;
-    text-align:center;
+    display:none; text-align:center;
     animation: popIn .5s var(--ease);
   }
   .fz-result.show{ display:block; }
   @keyframes popIn{ 0%{ transform:scale(0.92); opacity:0;} 60%{ transform:scale(1.03);} 100%{ transform:scale(1); opacity:1;} }
 
   .fz-big-number{
-    font-family:'Fraunces', serif;
-    font-weight:900;
+    font-family:'Fraunces', serif; font-weight:900;
     font-size: clamp(44px, 8vw, 72px);
-    line-height:1;
-    color: var(--espresso);
-    letter-spacing: -0.03em;
-    margin: 8px 0 14px;
+    line-height:1; color: var(--espresso);
+    letter-spacing: -0.03em; margin: 8px 0 14px;
   }
   .fz-big-number .unit{ font-size:0.35em; color: var(--clay); margin-left:8px; }
 
   .fz-meme-phrase{
-    font-family:'Fraunces', serif;
-    font-style: italic;
+    font-family:'Fraunces', serif; font-style: italic;
     font-size: clamp(16px, 2.4vw, 20px);
-    color: var(--bark);
-    line-height:1.4;
+    color: var(--bark); line-height:1.4;
   }
 
   .fz-label-mini{
-    font-size:11px; font-weight:900;
-    letter-spacing:0.25em;
-    color: var(--clay);
-    text-transform: uppercase;
-    margin-bottom:6px;
+    font-size:11px; font-weight:900; letter-spacing:0.25em;
+    color: var(--clay); text-transform: uppercase; margin-bottom:6px;
   }
 
-  /* STAT ROWS */
   .fz-stat-row{
     display:flex; justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid var(--line);
-    font-size:14px;
+    padding:10px 0; border-bottom:1px solid var(--line); font-size:14px;
   }
   .fz-stat-row:last-child{ border-bottom: none; }
   .fz-stat-row .label{ color: var(--text-muted); font-weight:500; }
   .fz-stat-row .value{ font-weight:700; color: var(--espresso); }
 
-  /* PROGRESS BARS */
-  .fz-bar{
-    height: 12px;
-    background: var(--cream-deep);
-    border-radius: 6px;
-    overflow:hidden;
-    margin-top: 6px;
-  }
-  .fz-bar-fill{
-    height:100%;
-    background: linear-gradient(90deg, var(--caramel), var(--clay));
-    border-radius: 6px;
-    transition: width .8s var(--ease);
-    width: 0;
-  }
+  .fz-bar{ height: 12px; background: var(--cream-deep); border-radius: 6px; overflow:hidden; margin-top: 6px; }
+  .fz-bar-fill{ height:100%; background: linear-gradient(90deg, var(--caramel), var(--clay)); border-radius: 6px; transition: width .8s var(--ease); width: 0; }
 
-  /* ROULETTE */
   .fz-roulette-stage{
-    text-align:center;
-    padding: 28px 16px;
+    text-align:center; padding: 28px 16px;
     background: radial-gradient(circle at 50% 50%, rgba(199,146,86,0.18), transparent 65%), var(--cream);
-    border-radius: 16px;
-    margin-bottom: 14px;
+    border-radius: 16px; margin-bottom: 14px;
   }
   .fz-roulette-display{
-    font-family:'Fraunces', serif;
-    font-weight: 900;
+    font-family:'Fraunces', serif; font-weight: 900;
     font-size: clamp(22px, 4.5vw, 40px);
-    color: var(--espresso);
-    min-height: 1.2em;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    text-align:center;
-    margin: 8px 0;
+    color: var(--espresso); min-height: 1.2em;
+    line-height: 1.1; letter-spacing: -0.02em;
+    text-align:center; margin: 8px 0;
   }
   .fz-roulette-display.spinning{ animation: shakeRoulette 0.12s infinite; }
   @keyframes shakeRoulette{
@@ -355,57 +233,22 @@
   }
   .fz-roulette-flag{ font-size: 44px; }
 
-  /* BATTLE TABLE */
-  .fz-battle-table{
-    width:100%;
-    border-collapse: separate;
-    border-spacing: 0 6px;
-    margin: 14px 0;
-    font-size: 14px;
-  }
-  .fz-battle-table th, .fz-battle-table td{
-    padding:10px 12px;
-    text-align:left;
-  }
-  .fz-battle-table th{
-    font-size: 12px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 700;
-  }
-  .fz-battle-table td{
-    background: var(--cream);
-    font-weight:600;
-    color: var(--espresso);
-  }
-  .fz-battle-table tr td:first-child{
-    border-radius: 10px 0 0 10px;
-    color: var(--text-muted);
-    font-weight:500;
-  }
-  .fz-battle-table tr td:last-child{
-    border-radius: 0 10px 10px 0;
-  }
-  .fz-battle-table td.winner{
-    color: var(--clay);
-    font-weight: 900;
-    background: linear-gradient(90deg, var(--cream), var(--cream-deep));
-  }
+  .fz-battle-table{ width:100%; border-collapse: separate; border-spacing: 0 6px; margin: 14px 0; font-size: 14px; }
+  .fz-battle-table th, .fz-battle-table td{ padding:10px 12px; text-align:left; }
+  .fz-battle-table th{ font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+  .fz-battle-table td{ background: var(--cream); font-weight:600; color: var(--espresso); }
+  .fz-battle-table tr td:first-child{ border-radius: 10px 0 0 10px; color: var(--text-muted); font-weight:500; }
+  .fz-battle-table tr td:last-child{ border-radius: 0 10px 10px 0; }
+  .fz-battle-table td.winner{ color: var(--clay); font-weight: 900; background: linear-gradient(90deg, var(--cream), var(--cream-deep)); }
   .fz-battle-table td.loser{ opacity: 0.6; }
 
-  /* ACHIEVEMENT POPUP */
   .fz-achievement-popup{
-    position: fixed;
-    top: 100px;
-    right: 24px;
+    position: fixed; top: 100px; right: 24px;
     background: linear-gradient(135deg, var(--caramel), var(--clay));
-    color: var(--paper);
-    padding: 16px 22px;
+    color: var(--paper); padding: 16px 22px;
     border-radius: 14px;
     box-shadow: 0 20px 40px -20px rgba(140,90,52,0.6);
-    z-index: 9999;
-    display: flex; align-items:center; gap:14px;
+    z-index: 9999; display: flex; align-items:center; gap:14px;
     transform: translateX(120%);
     transition: transform .5s var(--ease);
     max-width: 320px;
@@ -415,25 +258,10 @@
   .fz-achievement-popup-title{ font-weight:700; font-size:14px; }
   .fz-achievement-popup-desc{ font-size:12px; opacity:0.9; margin-top:2px; }
 
-  /* ACHIEVEMENTS WALL */
-  .fz-ach-grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap:12px;
-    margin-top: 16px;
-  }
-  .fz-ach{
-    padding: 16px 14px;
-    background: var(--cream);
-    border: 1.5px solid var(--line);
-    border-radius: 14px;
-    text-align: center;
-    opacity: 0.4;
-    transition: all .3s var(--ease);
-  }
+  .fz-ach-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:12px; margin-top: 16px; }
+  .fz-ach{ padding: 16px 14px; background: var(--cream); border: 1.5px solid var(--line); border-radius: 14px; text-align: center; opacity: 0.4; transition: all .3s var(--ease); }
   .fz-ach.unlocked{
-    opacity:1;
-    border-color: var(--caramel);
+    opacity:1; border-color: var(--caramel);
     background: linear-gradient(135deg, var(--cream-deep), var(--paper));
     box-shadow: 0 12px 24px -16px rgba(199,146,86,0.5);
   }
@@ -441,114 +269,43 @@
   .fz-ach-name{ font-size: 12px; font-weight:700; color: var(--espresso); line-height:1.2; }
   .fz-ach-desc{ font-size: 11px; color: var(--text-muted); margin-top:4px; line-height:1.3; }
 
-  /* GACHA CARDS */
-  .fz-gacha-result{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-    margin-top: 14px;
-  }
-  .fz-gacha-card{
-    padding: 14px 12px;
-    border-radius: 12px;
-    text-align: center;
-    font-size: 13px;
-    animation: gachaPop .5s var(--ease);
-    color: var(--espresso);
-  }
+  .fz-gacha-result{ display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 14px; }
+  .fz-gacha-card{ padding: 14px 12px; border-radius: 12px; text-align: center; font-size: 13px; animation: gachaPop .5s var(--ease); color: var(--espresso); }
   @keyframes gachaPop{ 0%{ transform: scale(0.3) rotate(-10deg); opacity:0; } 60%{ transform: scale(1.1) rotate(2deg);} 100%{ transform: scale(1) rotate(0); opacity:1; } }
   .fz-gacha-card.common{    background: linear-gradient(135deg, #D9BD93, #BEA06F); }
   .fz-gacha-card.rare{      background: linear-gradient(135deg, #88B7F0, #4A7FE6); color: #fff; }
   .fz-gacha-card.epic{      background: linear-gradient(135deg, #B87FE6, #7C3ACD); color: #fff; }
   .fz-gacha-card.legendary{ background: linear-gradient(135deg, #FFD700, #E8A100); color: #2B1B10; }
   .fz-gacha-card.mythic{    background: linear-gradient(135deg, #E63946, #2B1B10); color: #fff; }
-  .fz-gacha-rarity{
-    font-size: 10px; font-weight: 900;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    opacity: 0.85;
-    margin-bottom: 6px;
-  }
+  .fz-gacha-rarity{ font-size: 10px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.85; margin-bottom: 6px; }
   .fz-gacha-name{ font-weight: 700; font-size: 12px; line-height: 1.3; }
 
-  /* WALLET HP */
-  .fz-wallet-hp{
-    display: flex; align-items:center; gap: 4px;
-    margin: 16px 0;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .fz-hp-heart{
-    font-size: 24px;
-    transition: all .5s var(--ease);
-  }
-  .fz-hp-heart.lost{
-    opacity: 0.2;
-    filter: grayscale(100%);
-    transform: scale(0.85);
-  }
+  .fz-wallet-hp{ display: flex; align-items:center; gap: 4px; margin: 16px 0; justify-content: center; flex-wrap: wrap; }
+  .fz-hp-heart{ font-size: 24px; transition: all .5s var(--ease); }
+  .fz-hp-heart.lost{ opacity: 0.2; filter: grayscale(100%); transform: scale(0.85); }
 
-  /* BRAIN CAPACITY */
-  .fz-brain-stage{
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin: 16px 0;
-    min-height: 240px;
-  }
+  .fz-brain-stage{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 16px 0; min-height: 240px; }
   .fz-brain-cell{
-    background: var(--cream);
-    border-radius: 10px;
-    display: flex;
-    align-items: center; justify-content: center;
-    font-size: 22px;
-    font-family:'Fraunces', serif;
-    cursor: pointer;
-    transition: all .2s var(--ease);
-    padding: 6px;
-    text-align: center;
-    line-height: 1.1;
-    min-height: 60px;
+    background: var(--cream); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-family:'Fraunces', serif;
+    cursor: pointer; transition: all .2s var(--ease);
+    padding: 6px; text-align: center; line-height: 1.1; min-height: 60px;
   }
   .fz-brain-cell:hover{ background: var(--cream-deep); transform: scale(1.05); }
   .fz-brain-cell.correct{ background: var(--green); color: white; }
   .fz-brain-cell.wrong{ background: var(--neon); color: white; animation: shakeWrong .4s; }
-  @keyframes shakeWrong{
-    0%,100%{ transform: translateX(0); }
-    25%{ transform: translateX(-4px); }
-    75%{ transform: translateX(4px); }
-  }
+  @keyframes shakeWrong{ 0%,100%{ transform: translateX(0); } 25%{ transform: translateX(-4px); } 75%{ transform: translateX(4px); } }
 
-  /* FINAL BOSS */
-  .fz-boss-hp{
-    display: flex; gap: 3px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 14px 0;
-  }
-  .fz-boss-hp-heart{
-    font-size: 22px;
-    transition: opacity .4s var(--ease);
-  }
+  .fz-boss-hp{ display: flex; gap: 3px; justify-content: center; flex-wrap: wrap; margin: 14px 0; }
+  .fz-boss-hp-heart{ font-size: 22px; transition: opacity .4s var(--ease); }
   .fz-boss-hp-heart.lost{ opacity: 0.15; }
+  .fz-boss-buttons{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
 
-  .fz-boss-buttons{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-top: 12px;
-  }
-
-  /* NUCLEAR RESET */
   .fz-nuclear-btn{
-    display:block;
-    margin: 0 auto;
-    padding: 20px 40px;
-    background: var(--neon);
-    color: var(--paper);
-    font-weight:900;
-    font-size: 20px;
-    letter-spacing: 0.15em;
+    display:block; margin: 0 auto; padding: 20px 40px;
+    background: var(--neon); color: var(--paper);
+    font-weight:900; font-size: 20px; letter-spacing: 0.15em;
     border-radius: 14px;
     transition: all .25s var(--ease);
     animation: nukePulse 2s infinite;
@@ -559,54 +316,19 @@
   }
   .fz-nuclear-btn:hover{ background:#C22531; transform: scale(1.05); }
 
-  /* STOCK CHART */
-  .fz-stock-chart{
-    position: relative;
-    height: 140px;
-    background: var(--cream);
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 14px 0;
-  }
+  .fz-stock-chart{ position: relative; height: 140px; background: var(--cream); border-radius: 12px; overflow: hidden; margin: 14px 0; }
   .fz-stock-chart svg{ width: 100%; height: 100%; }
-  .fz-stock-line{
-    fill: none;
-    stroke: var(--green);
-    stroke-width: 2;
-    transition: all .6s var(--ease);
-  }
-  .fz-stock-line.down{ stroke: var(--neon); }
+  .fz-stock-line{ fill: none; stroke: var(--green); stroke-width: 2; transition: all .6s var(--ease); }
 
-  /* MISC */
   .fz-mono{
     font-family: 'Courier New', monospace;
-    font-size: 13px;
-    background: var(--cream);
-    padding: 14px 16px;
-    border-radius: 10px;
-    color: var(--espresso);
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-break: break-word;
+    font-size: 13px; background: var(--cream);
+    padding: 14px 16px; border-radius: 10px;
+    color: var(--espresso); line-height: 1.6;
+    white-space: pre-wrap; word-break: break-word;
   }
 
-  .fz-badges{
-    display: flex; flex-wrap: wrap; gap: 8px;
-    margin-top: 14px;
-  }
-  .fz-badge-mini{
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 5px 10px;
-    background: var(--cream-deep);
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--espresso);
-  }
-
-  @media (max-width:900px){
-    .nav-links{ display:none !important; }
-  }
+  @media (max-width:900px){ .nav-links{ display:none !important; } }
   @media (max-width:640px){
     nav.wrap{ height: 72px; padding: 0 18px; }
     .logo{ font-size: 21px; gap: 9px; }
@@ -656,10 +378,10 @@
 </header>
 
 <section class="fz-hero">
-  <div class="fz-badge">⚠️ BRAINROT DEPARTMENT</div>
-  <h1 class="fz-title">🧠 Fun Zone</h1>
-  <p class="fz-sub">The most unnecessary part of EduPath.</p>
-  <p class="fz-sub-small">We could have improved the admission algorithm. We chose this instead.</p>
+  <div class="fz-badge" data-i18n="fz2_badge">⚠️ BRAINROT DEPARTMENT</div>
+  <h1 class="fz-title">🧠 <span data-i18n="fz2_hero_title">Fun Zone</span></h1>
+  <p class="fz-sub" data-i18n="fz2_hero_sub">The most unnecessary part of EduPath.</p>
+  <p class="fz-sub-small" data-i18n="fz2_hero_sub2">We could have improved the admission algorithm. We chose this instead.</p>
 </section>
 
 <main>
@@ -673,7 +395,7 @@
 <div class="fz-achievement-popup" id="achPopup">
   <div class="fz-achievement-popup-icon" id="achPopupIcon">🏆</div>
   <div>
-    <div class="fz-achievement-popup-title" id="achPopupTitle">Achievement unlocked</div>
+    <div class="fz-achievement-popup-title" id="achPopupTitle"></div>
     <div class="fz-achievement-popup-desc" id="achPopupDesc"></div>
   </div>
 </div>
@@ -682,11 +404,9 @@
 // ============================================================
 // EduPath — Fun Zone 🧠
 // Brainrot department. No backend. localStorage for achievements.
+// Interface translated (5 langs). Memes stay in English.
 // ============================================================
 
-// ------------------------------------------------------------
-// HELPERS
-// ------------------------------------------------------------
 function t(key, fallback){
   return (window.I18N && window.I18N.t(key)) || fallback || key;
 }
@@ -701,49 +421,46 @@ function escapeHtml(s){
 function $(sel, root){ return (root || document).querySelector(sel); }
 function $$(sel, root){ return Array.from((root || document).querySelectorAll(sel)); }
 
-// ------------------------------------------------------------
-// ACHIEVEMENTS SYSTEM
-// ------------------------------------------------------------
+// ============================================================
+// ACHIEVEMENTS
+// ============================================================
 const ACH_KEY = "edupath_fz_achievements";
 const ALL_ACHIEVEMENTS = [
-  { id: "aura_gen", icon: "🗿", name: "Aura Generator", desc: "Generated your academic aura" },
-  { id: "future", icon: "🎰", name: "Accept Your Fate", desc: "Randomized your future" },
-  { id: "battle", icon: "⚔️", name: "Fighter", desc: "Started a university battle" },
-  { id: "cooked", icon: "💀", name: "Bro Is Cooked", desc: "Checked how cooked you are" },
-  { id: "npc", icon: "🧙", name: "NPC Arc", desc: "Discovered your university NPC" },
-  { id: "potion", icon: "🧪", name: "Potion Master", desc: "Brewed your university potion" },
-  { id: "stock", icon: "📈", name: "GPA Trader", desc: "Watched your GPA stock" },
-  { id: "crash", icon: "📉", name: "Portfolio Crash", desc: "Witnessed the academic crash" },
-  { id: "gacha_1", icon: "🎲", name: "Gacha Rookie", desc: "Pulled 1 university" },
-  { id: "gacha_10", icon: "🎰", name: "Gacha Addict", desc: "Pulled 10 universities" },
-  { id: "gacha_mythic", icon: "🌟", name: "Mythic Pull", desc: "Pulled a MYTHIC university" },
-  { id: "wallet", icon: "💸", name: "Financially Devastated", desc: "Calculated tuition damage" },
-  { id: "sleep", icon: "🛌", name: "Sleep Simulator", desc: "Simulated sleep vs GPA" },
-  { id: "caffeine", icon: "☕", name: "Chemical Reaction", desc: "Tested caffeine levels" },
-  { id: "brain", icon: "🧠", name: "Brain Capacity", desc: "Tested your brain" },
-  { id: "sat", icon: "🎯", name: "SAT Guesser", desc: "Guessed SAT questions" },
-  { id: "officer", icon: "🧑‍💼", name: "Admissions Officer", desc: "Got a decision" },
-  { id: "rejection", icon: "📧", name: "Rejection Letter", desc: "Generated your rejection" },
-  { id: "career", icon: "🧭", name: "Career Found", desc: "Found your future job" },
-  { id: "car", icon: "🚗", name: "Car Generated", desc: "Got your university car" },
-  { id: "weather", icon: "🌡️", name: "Weather Personality", desc: "Checked your university weather" },
-  { id: "npc_gen", icon: "🧍", name: "NPC Factory", desc: "Created an NPC" },
-  { id: "skill", icon: "🧨", name: "Skill Issue Detector", desc: "Detected skill issue" },
-  { id: "spell", icon: "🪄", name: "Spellcaster", desc: "Cast a university spell" },
-  { id: "nuclear", icon: "💣", name: "Nuclear Survivor", desc: "Pressed the forbidden button" },
-  { id: "boss_win", icon: "👑", name: "Deadline Slayer", desc: "Defeated the Final Boss" },
-  { id: "boss_lose", icon: "🥀", name: "Cooked By Deadline", desc: "Lost to the Final Boss" },
-  { id: "explorer", icon: "🧭", name: "Explorer", desc: "Opened 10 Fun Zone blocks" },
+  { id: "aura_gen",    icon: "🗿",  nameKey: "fz2_ach_aura_gen" },
+  { id: "future",      icon: "🎰",  nameKey: "fz2_ach_future" },
+  { id: "battle",      icon: "⚔️",  nameKey: "fz2_ach_battle" },
+  { id: "cooked",      icon: "💀",  nameKey: "fz2_ach_cooked" },
+  { id: "npc",         icon: "🧙",  nameKey: "fz2_ach_npc" },
+  { id: "potion",      icon: "🧪",  nameKey: "fz2_ach_potion" },
+  { id: "stock",       icon: "📈",  nameKey: "fz2_ach_stock" },
+  { id: "crash",       icon: "📉",  nameKey: "fz2_ach_crash" },
+  { id: "gacha_1",     icon: "🎲",  nameKey: "fz2_ach_gacha_1" },
+  { id: "gacha_10",    icon: "🎰",  nameKey: "fz2_ach_gacha_10" },
+  { id: "gacha_mythic",icon: "🌟",  nameKey: "fz2_ach_gacha_mythic" },
+  { id: "wallet",      icon: "💸",  nameKey: "fz2_ach_wallet" },
+  { id: "sleep",       icon: "🛌",  nameKey: "fz2_ach_sleep" },
+  { id: "caffeine",    icon: "☕",  nameKey: "fz2_ach_caffeine" },
+  { id: "brain",       icon: "🧠",  nameKey: "fz2_ach_brain" },
+  { id: "sat",         icon: "🎯",  nameKey: "fz2_ach_sat" },
+  { id: "officer",     icon: "🧑‍💼",nameKey: "fz2_ach_officer" },
+  { id: "rejection",   icon: "📧",  nameKey: "fz2_ach_rejection" },
+  { id: "career",      icon: "🧭",  nameKey: "fz2_ach_career" },
+  { id: "car",         icon: "🚗",  nameKey: "fz2_ach_car" },
+  { id: "weather",     icon: "🌡️",  nameKey: "fz2_ach_weather" },
+  { id: "npc_gen",     icon: "🧍",  nameKey: "fz2_ach_npc_gen" },
+  { id: "skill",       icon: "🧨",  nameKey: "fz2_ach_skill" },
+  { id: "spell",       icon: "🪄",  nameKey: "fz2_ach_spell" },
+  { id: "nuclear",     icon: "💣",  nameKey: "fz2_ach_nuclear" },
+  { id: "boss_win",    icon: "👑",  nameKey: "fz2_ach_boss_win" },
+  { id: "boss_lose",   icon: "🥀",  nameKey: "fz2_ach_boss_lose" },
+  { id: "explorer",    icon: "🧭",  nameKey: "fz2_ach_explorer" },
 ];
 
 function loadAchievements(){
-  try {
-    return JSON.parse(localStorage.getItem(ACH_KEY) || "{}");
-  } catch(e){ return {}; }
+  try { return JSON.parse(localStorage.getItem(ACH_KEY) || "{}"); }
+  catch(e){ return {}; }
 }
-function saveAchievements(data){
-  localStorage.setItem(ACH_KEY, JSON.stringify(data));
-}
+function saveAchievements(data){ localStorage.setItem(ACH_KEY, JSON.stringify(data)); }
 function unlockAchievement(id){
   const data = loadAchievements();
   if(data[id]) return false;
@@ -757,8 +474,8 @@ function unlockAchievement(id){
 function showAchievementPopup(ach){
   const popup = $("#achPopup");
   $("#achPopupIcon").textContent = ach.icon;
-  $("#achPopupTitle").textContent = "🏆 " + ach.name;
-  $("#achPopupDesc").textContent = ach.desc;
+  $("#achPopupTitle").textContent = t("fz2_ach_popup_title", "🏆 Achievement unlocked") + " — " + t(ach.nameKey, ach.nameKey);
+  $("#achPopupDesc").textContent = t("fz2_ach_popup_desc", "");
   popup.classList.add("show");
   setTimeout(() => popup.classList.remove("show"), 3400);
 }
@@ -768,35 +485,35 @@ function updateExplorerCount(){
   if(_openedCount >= 10) unlockAchievement("explorer");
 }
 
-// ------------------------------------------------------------
+// ============================================================
 // DASHBOARD CARDS
-// ------------------------------------------------------------
+// ============================================================
 const CARDS = [
-  { id: "aura",      icon: "🗿",  title: "Academic Aura",       desc: "Generate your totally real academic aura." },
-  { id: "future",    icon: "🎰",  title: "Randomize My Future", desc: "Let the website decide your fate." },
-  { id: "battle",    icon: "⚔️",  title: "University Battle",   desc: "Two universities enter. One leaves." },
-  { id: "cooked",    icon: "💀",  title: "How Cooked Am I?",    desc: "Find out if you're cooked." },
-  { id: "npc",       icon: "🧙",  title: "Which NPC Are You?",  desc: "Discover your university NPC." },
-  { id: "potion",    icon: "🧪",  title: "Compatibility Potion",desc: "Brew your university potion." },
-  { id: "stock",     icon: "📈",  title: "GPA Stock Market",    desc: "Watch your GPA trade live." },
-  { id: "crash",     icon: "📉",  title: "Portfolio Crash",     desc: "Trigger the academic crash." },
-  { id: "gacha",     icon: "🎲",  title: "University Gacha",    desc: "Pull universities. Feel nothing." },
-  { id: "wallet",    icon: "💸",  title: "Tuition Damage",      desc: "See how much your wallet takes." },
-  { id: "sleep",     icon: "🛌",  title: "Sleep vs GPA",        desc: "Simulate the eternal tradeoff." },
-  { id: "caffeine",  icon: "☕",  title: "Caffeine Calculator",  desc: "How much coffee is too much?" },
-  { id: "brain",     icon: "🧠",  title: "Brain Capacity Test", desc: "Test your RAM. Sort of." },
-  { id: "sat",       icon: "🎯",  title: "SAT Guessing",        desc: "Guess. Somehow get it right." },
-  { id: "officer",   icon: "🧑‍💼",title: "Admissions Officer",  desc: "Face the officer. No regrets." },
-  { id: "rejection", icon: "📧",  title: "Rejection Letter",    desc: "Receive a letter. Unfortunately." },
-  { id: "career",    icon: "🧭",  title: "Random Career",       desc: "Find out your true calling." },
-  { id: "car",       icon: "🚗",  title: "University Car",      desc: "Your university has a car. Obviously." },
-  { id: "weather",   icon: "🌡️",  title: "Weather Personality", desc: "Weather = personality. Real." },
-  { id: "npc_gen",   icon: "🧍",  title: "NPC Factory",         desc: "Create a random NPC student." },
-  { id: "skill",     icon: "🧨",  title: "Skill Issue Detector",desc: "Detects skill issues. Honest." },
-  { id: "spell",     icon: "🪄",  title: "University Spell",    desc: "Cast questionable spells." },
-  { id: "achievements", icon: "🏆", title: "Achievements",      desc: "Collect them all. Or don't." },
-  { id: "nuclear",   icon: "💣",  title: "Nuclear Reset",       desc: "Do NOT press this button." },
-  { id: "boss",      icon: "🕹️",  title: "Final Boss",          desc: "Face the Application Deadline." },
+  { id: "aura",         icon: "🗿",  titleKey: "fz2_card_aura",      descKey: "fz2_card_aura_desc" },
+  { id: "future",       icon: "🎰",  titleKey: "fz2_card_future",    descKey: "fz2_card_future_desc" },
+  { id: "battle",       icon: "⚔️",  titleKey: "fz2_card_battle",    descKey: "fz2_card_battle_desc" },
+  { id: "cooked",       icon: "💀",  titleKey: "fz2_card_cooked",    descKey: "fz2_card_cooked_desc" },
+  { id: "npc",          icon: "🧙",  titleKey: "fz2_card_npc",       descKey: "fz2_card_npc_desc" },
+  { id: "potion",       icon: "🧪",  titleKey: "fz2_card_potion",    descKey: "fz2_card_potion_desc" },
+  { id: "stock",        icon: "📈",  titleKey: "fz2_card_stock",     descKey: "fz2_card_stock_desc" },
+  { id: "crash",        icon: "📉",  titleKey: "fz2_card_crash",     descKey: "fz2_card_crash_desc" },
+  { id: "gacha",        icon: "🎲",  titleKey: "fz2_card_gacha",     descKey: "fz2_card_gacha_desc" },
+  { id: "wallet",       icon: "💸",  titleKey: "fz2_card_wallet",    descKey: "fz2_card_wallet_desc" },
+  { id: "sleep",        icon: "🛌",  titleKey: "fz2_card_sleep",     descKey: "fz2_card_sleep_desc" },
+  { id: "caffeine",     icon: "☕",  titleKey: "fz2_card_caffeine",  descKey: "fz2_card_caffeine_desc" },
+  { id: "brain",        icon: "🧠",  titleKey: "fz2_card_brain",     descKey: "fz2_card_brain_desc" },
+  { id: "sat",          icon: "🎯",  titleKey: "fz2_card_sat",       descKey: "fz2_card_sat_desc" },
+  { id: "officer",      icon: "🧑‍💼",titleKey: "fz2_card_officer",   descKey: "fz2_card_officer_desc" },
+  { id: "rejection",    icon: "📧",  titleKey: "fz2_card_rejection", descKey: "fz2_card_rejection_desc" },
+  { id: "career",       icon: "🧭",  titleKey: "fz2_card_career",    descKey: "fz2_card_career_desc" },
+  { id: "car",          icon: "🚗",  titleKey: "fz2_card_car",       descKey: "fz2_card_car_desc" },
+  { id: "weather",      icon: "🌡️",  titleKey: "fz2_card_weather",   descKey: "fz2_card_weather_desc" },
+  { id: "npc_gen",      icon: "🧍",  titleKey: "fz2_card_npc_gen",   descKey: "fz2_card_npc_gen_desc" },
+  { id: "skill",        icon: "🧨",  titleKey: "fz2_card_skill",     descKey: "fz2_card_skill_desc" },
+  { id: "spell",        icon: "🪄",  titleKey: "fz2_card_spell",     descKey: "fz2_card_spell_desc" },
+  { id: "achievements", icon: "🏆",  titleKey: "fz2_card_achievements", descKey: "fz2_card_achievements_desc" },
+  { id: "nuclear",      icon: "💣",  titleKey: "fz2_card_nuclear",   descKey: "fz2_card_nuclear_desc" },
+  { id: "boss",         icon: "🕹️",  titleKey: "fz2_card_boss",      descKey: "fz2_card_boss_desc" },
 ];
 
 function renderDashboard(){
@@ -804,9 +521,9 @@ function renderDashboard(){
   grid.innerHTML = CARDS.map(c => `
     <div class="fz-card" data-open="${c.id}">
       <span class="fz-card-icon">${c.icon}</span>
-      <div class="fz-card-title">${c.title}</div>
-      <div class="fz-card-desc">${c.desc}</div>
-      <div class="fz-card-open">Open →</div>
+      <div class="fz-card-title">${t(c.titleKey, c.titleKey)}</div>
+      <div class="fz-card-desc">${t(c.descKey, c.descKey)}</div>
+      <div class="fz-card-open">${t("fz2_open", "Open")} →</div>
     </div>
   `).join("");
   grid.querySelectorAll("[data-open]").forEach(el => {
@@ -814,9 +531,9 @@ function renderDashboard(){
   });
 }
 
-// ------------------------------------------------------------
-// MODAL CONTROL
-// ------------------------------------------------------------
+// ============================================================
+// MODAL
+// ============================================================
 function openModal(html){
   const overlay = $("#fzModal");
   $("#fzModalContent").innerHTML = html;
@@ -833,26 +550,24 @@ document.addEventListener("click", (e) => {
   if(e.target.id === "fzModal") closeModal();
   if(e.target.classList.contains("fz-modal-close")) closeModal();
 });
-document.addEventListener("keydown", (e) => {
-  if(e.key === "Escape") closeModal();
-});
+document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(); });
 
-function modalHead(icon, title, sub){
+function modalHead(icon, titleKey, subKey){
   return `
     <button class="fz-modal-close" type="button" aria-label="Close">×</button>
     <div class="fz-modal-head">
       <div class="fz-modal-head-icon">${icon}</div>
       <div class="fz-modal-head-text">
-        <div class="fz-modal-title">${title}</div>
-        ${sub ? `<div class="fz-modal-sub">${sub}</div>` : ""}
+        <div class="fz-modal-title">${t(titleKey, titleKey)}</div>
+        ${subKey ? `<div class="fz-modal-sub">${t(subKey, "")}</div>` : ""}
       </div>
     </div>
   `;
 }
 
-// ------------------------------------------------------------
-// BLOCK ROUTER
-// ------------------------------------------------------------
+// ============================================================
+// ROUTER
+// ============================================================
 function openBlock(id){
   updateExplorerCount();
   switch(id){
@@ -882,7 +597,7 @@ function openBlock(id){
     case "nuclear":      return openNuclear();
     case "boss":         return openBoss();
     default:
-      openModal(modalHead("❓", "Unknown block", "This shouldn't happen."));
+      openModal(modalHead("❓", "fz2_unknown", ""));
   }
 }
 
@@ -906,18 +621,18 @@ const AURA_PHRASES = [
 ];
 
 function openAura(){
-  openModal(modalHead("🗿", "Academic Aura Generator", "Enter stats. Receive nonsense.")
+  openModal(modalHead("🗿", "fz2_aura_title", "fz2_aura_sub")
     + `
     <div class="fz-grid-2">
-      <div class="fz-field"><label>GPA</label><input type="number" id="aGpa" placeholder="3.8" step="0.01"></div>
-      <div class="fz-field"><label>SAT</label><input type="number" id="aSat" placeholder="1450"></div>
-      <div class="fz-field"><label>IELTS</label><input type="number" id="aIelts" placeholder="7.5" step="0.5"></div>
-      <div class="fz-field"><label>Study hours/day</label><input type="number" id="aStudy" placeholder="3" step="0.5"></div>
-      <div class="fz-field"><label>Sleep hours/night</label><input type="number" id="aSleep" placeholder="6" step="0.5"></div>
+      <div class="fz-field"><label>${t("fz2_label_gpa","GPA")}</label><input type="number" id="aGpa" placeholder="3.8" step="0.01"></div>
+      <div class="fz-field"><label>${t("fz2_label_sat","SAT")}</label><input type="number" id="aSat" placeholder="1450"></div>
+      <div class="fz-field"><label>${t("fz2_label_ielts","IELTS")}</label><input type="number" id="aIelts" placeholder="7.5" step="0.5"></div>
+      <div class="fz-field"><label>${t("fz2_label_study","Study hours/day")}</label><input type="number" id="aStudy" placeholder="3" step="0.5"></div>
+      <div class="fz-field"><label>${t("fz2_label_sleep","Sleep hours/night")}</label><input type="number" id="aSleep" placeholder="6" step="0.5"></div>
     </div>
-    <button class="fz-btn accent" id="aBtn">🗿 GENERATE MY AURA</button>
+    <button class="fz-btn accent" id="aBtn">🗿 ${t("fz2_aura_btn","GENERATE MY AURA")}</button>
     <div class="fz-result" id="aRes">
-      <div class="fz-label-mini">YOUR ACADEMIC AURA</div>
+      <div class="fz-label-mini">${t("fz2_aura_result_label","YOUR ACADEMIC AURA")}</div>
       <div class="fz-big-number" id="aNum">0 <span class="unit">🗿</span></div>
       <div class="fz-meme-phrase" id="aPhrase"></div>
     </div>
@@ -945,7 +660,7 @@ const UNIVERSITIES = [
   "MIT","Oxford","Stanford","Cambridge","Harvard","Yale","Princeton",
   "Nazarbayev University","KBTU","TUM","Tsinghua","UofT","Sorbonne",
   "HKUST","KAIST","University of Warsaw","ETH Zurich","Imperial College",
-  "NUS","Tokyo University","Seoul National","KAIST","Bocconi","KU Leuven"
+  "NUS","Tokyo University","Seoul National","Bocconi","KU Leuven"
 ];
 const FUTURE_MESSAGES = [
   "You are now an engineer. There is no escape.",
@@ -961,15 +676,15 @@ const FUTURE_MESSAGES = [
 let _futureInterval = null;
 
 function openFuture(){
-  openModal(modalHead("🎰", "Randomize My Future", "Let the website decide.")
+  openModal(modalHead("🎰", "fz2_future_title", "fz2_future_sub")
     + `
     <div class="fz-roulette-stage">
       <div class="fz-roulette-flag" id="fFlag">🎰</div>
       <div class="fz-roulette-display" id="fDisp">???</div>
       <div class="fz-meme-phrase" id="fMsg"></div>
     </div>
-    <button class="fz-btn accent" id="fBtn">🎰 LET THE WEBSITE DECIDE MY FUTURE</button>
-    <button class="fz-btn ghost" id="fAgain" style="display:none;">🔄 I DON'T ACCEPT MY FATE</button>
+    <button class="fz-btn accent" id="fBtn">🎰 ${t("fz2_future_btn","LET THE WEBSITE DECIDE MY FUTURE")}</button>
+    <button class="fz-btn ghost" id="fAgain" style="display:none;">🔄 ${t("fz2_future_again","I DON'T ACCEPT MY FATE")}</button>
   `);
   const spin = () => {
     const disp = $("#fDisp");
@@ -1003,7 +718,10 @@ function openFuture(){
 // ============================================================
 // 3. BATTLE
 // ============================================================
-const BATTLE_CATS = ["Aura","Drip","Parent Approval","Academic Suffering","Sleep","Main Character Energy","Scholarship Energy","NPC Level","Social Life","Coffee Dependency"];
+const BATTLE_CATS = [
+  "fz2_bcat_aura","fz2_bcat_drip","fz2_bcat_parent","fz2_bcat_suffering","fz2_bcat_sleep",
+  "fz2_bcat_mc","fz2_bcat_scholarship","fz2_bcat_npc","fz2_bcat_social","fz2_bcat_coffee"
+];
 const BATTLE_REASONS = [
   "bro needs scholarship 💀",
   "aura decides everything.",
@@ -1019,15 +737,15 @@ const BATTLE_REASONS = [
 
 function openBattle(){
   const opts = UNIVERSITIES.map(u => `<option value="${u}">${u}</option>`).join("");
-  openModal(modalHead("⚔️", "University Battle", "Two universities enter. One leaves.")
+  openModal(modalHead("⚔️", "fz2_battle_title", "fz2_battle_sub")
     + `
     <div class="fz-grid-2">
-      <div class="fz-field"><label>Fighter 1</label><select id="bA">${opts}</select></div>
-      <div class="fz-field"><label>Fighter 2</label><select id="bB">${opts}</select></div>
+      <div class="fz-field"><label>${t("fz2_battle_pick1","Fighter 1")}</label><select id="bA">${opts}</select></div>
+      <div class="fz-field"><label>${t("fz2_battle_pick2","Fighter 2")}</label><select id="bB">${opts}</select></div>
     </div>
     <div class="fz-inline-btns">
-      <button class="fz-btn" id="bGo">⚔️ FIGHT</button>
-      <button class="fz-btn ghost" id="bRand">🎲 Random pair</button>
+      <button class="fz-btn" id="bGo">⚔️ ${t("fz2_battle_go","FIGHT")}</button>
+      <button class="fz-btn ghost" id="bRand">🎲 ${t("fz2_battle_random","Random pair")}</button>
     </div>
     <div id="bRes" style="margin-top:16px;"></div>
   `);
@@ -1048,12 +766,10 @@ function openBattle(){
 
 function renderBattle(a, b){
   const stats = {};
-  BATTLE_CATS.forEach(c => {
-    stats[c] = { a: randInt(20, 100), b: randInt(20, 100) };
-  });
+  BATTLE_CATS.forEach(c => { stats[c] = { a: randInt(20, 100), b: randInt(20, 100) }; });
   let aScore = 0, bScore = 0;
   BATTLE_CATS.forEach(c => {
-    if(c === "Academic Suffering"){
+    if(c === "fz2_bcat_suffering"){
       if(stats[c].a < stats[c].b) aScore++; else bScore++;
     } else {
       if(stats[c].a > stats[c].b) aScore++; else bScore++;
@@ -1065,12 +781,12 @@ function renderBattle(a, b){
   const rows = BATTLE_CATS.map(c => {
     const s = stats[c];
     let aCls = "", bCls = "";
-    if(c === "Academic Suffering"){
+    if(c === "fz2_bcat_suffering"){
       if(s.a < s.b){ aCls = "winner"; bCls = "loser"; } else if(s.b < s.a){ bCls = "winner"; aCls = "loser"; }
     } else {
       if(s.a > s.b){ aCls = "winner"; bCls = "loser"; } else if(s.b > s.a){ bCls = "winner"; aCls = "loser"; }
     }
-    return `<tr><td>${c}</td><td class="${aCls}">${s.a}</td><td class="${bCls}">${s.b}</td></tr>`;
+    return `<tr><td>${t(c, c)}</td><td class="${aCls}">${s.a}</td><td class="${bCls}">${s.b}</td></tr>`;
   }).join("");
 
   $("#bRes").innerHTML = `
@@ -1080,8 +796,8 @@ function renderBattle(a, b){
     </table>
     <div style="text-align:center; padding:20px; background:var(--cream); border-radius:14px; border:2px solid var(--caramel); margin-top:14px;">
       <div style="font-size:36px;">🏆</div>
-      <div style="font-family:'Fraunces',serif; font-size:24px; font-weight:900; color:var(--espresso); margin:8px 0;">WINNER: ${escapeHtml(winner)}</div>
-      <div style="font-style:italic; color:var(--bark); font-size:15px;">Reason: ${escapeHtml(reason)}</div>
+      <div style="font-family:'Fraunces',serif; font-size:24px; font-weight:900; color:var(--espresso); margin:8px 0;">${t("fz2_battle_winner","WINNER")}: ${escapeHtml(winner)}</div>
+      <div style="font-style:italic; color:var(--bark); font-size:15px;">${t("fz2_battle_reason","Reason")}: ${escapeHtml(reason)}</div>
     </div>
   `;
 }
@@ -1090,18 +806,18 @@ function renderBattle(a, b){
 // 4. COOKED
 // ============================================================
 function openCooked(){
-  openModal(modalHead("💀", "How Cooked Am I?", "Real data. Unreal verdict.")
+  openModal(modalHead("💀", "fz2_cooked_title", "fz2_cooked_sub")
     + `
     <div class="fz-grid-2">
-      <div class="fz-field"><label>GPA</label><input type="number" id="cGpa" placeholder="3.8" step="0.01"></div>
-      <div class="fz-field"><label>SAT</label><input type="number" id="cSat" placeholder="1450"></div>
-      <div class="fz-field"><label>IELTS</label><input type="number" id="cIelts" placeholder="7.5" step="0.5"></div>
-      <div class="fz-field"><label>Days until deadline</label><input type="number" id="cDays" placeholder="30"></div>
-      <div class="fz-field"><label>Preparation (0-100)</label><input type="number" id="cPrep" placeholder="50"></div>
+      <div class="fz-field"><label>${t("fz2_label_gpa","GPA")}</label><input type="number" id="cGpa" placeholder="3.8" step="0.01"></div>
+      <div class="fz-field"><label>${t("fz2_label_sat","SAT")}</label><input type="number" id="cSat" placeholder="1450"></div>
+      <div class="fz-field"><label>${t("fz2_label_ielts","IELTS")}</label><input type="number" id="cIelts" placeholder="7.5" step="0.5"></div>
+      <div class="fz-field"><label>${t("fz2_label_days","Days until deadline")}</label><input type="number" id="cDays" placeholder="30"></div>
+      <div class="fz-field"><label>${t("fz2_label_prep","Preparation (0-100)")}</label><input type="number" id="cPrep" placeholder="50"></div>
     </div>
-    <button class="fz-btn accent" id="cBtn">💀 HOW COOKED AM I</button>
+    <button class="fz-btn accent" id="cBtn">💀 ${t("fz2_cooked_btn","HOW COOKED AM I")}</button>
     <div class="fz-result" id="cRes">
-      <div class="fz-label-mini">YOU ARE</div>
+      <div class="fz-label-mini">${t("fz2_cooked_result_label","YOU ARE")}</div>
       <div class="fz-big-number" id="cNum">0<span class="unit">%</span> 💀</div>
       <div class="fz-meme-phrase" id="cMsg"></div>
     </div>
@@ -1150,18 +866,18 @@ const NPC_TYPES = [
   { icon: "🎧", title: "The Lo-fi Scholar", desc: "You study better with beats. That's the entire personality." },
 ];
 function openNPC(){
-  openModal(modalHead("🧙", "Which University NPC Are You?", "Answer 7 questions. Get a personality.")
+  openModal(modalHead("🧙", "fz2_npc_title", "fz2_npc_sub")
     + `
     <div class="fz-grid-2">
-      <div class="fz-field"><label>Sleep hours</label><input type="number" id="nQ1" placeholder="6"></div>
-      <div class="fz-field"><label>Study frequency (0-100)</label><input type="number" id="nQ2" placeholder="50"></div>
-      <div class="fz-field"><label>SAT score</label><input type="number" id="nQ3" placeholder="1400"></div>
-      <div class="fz-field"><label>Care about rankings (0-100)</label><input type="number" id="nQ4" placeholder="70"></div>
-      <div class="fz-field"><label>Care about campus life (0-100)</label><input type="number" id="nQ5" placeholder="60"></div>
-      <div class="fz-field"><label>Parents' opinion (0-100)</label><input type="number" id="nQ6" placeholder="90"></div>
-      <div class="fz-field"><label>Scholarship importance (0-100)</label><input type="number" id="nQ7" placeholder="80"></div>
+      <div class="fz-field"><label>${t("fz2_npc_q1","Sleep hours")}</label><input type="number" id="nQ1" placeholder="6"></div>
+      <div class="fz-field"><label>${t("fz2_npc_q2","Study frequency (0-100)")}</label><input type="number" id="nQ2" placeholder="50"></div>
+      <div class="fz-field"><label>${t("fz2_npc_q3","SAT score")}</label><input type="number" id="nQ3" placeholder="1400"></div>
+      <div class="fz-field"><label>${t("fz2_npc_q4","Care about rankings (0-100)")}</label><input type="number" id="nQ4" placeholder="70"></div>
+      <div class="fz-field"><label>${t("fz2_npc_q5","Care about campus life (0-100)")}</label><input type="number" id="nQ5" placeholder="60"></div>
+      <div class="fz-field"><label>${t("fz2_npc_q6","Parents' opinion (0-100)")}</label><input type="number" id="nQ6" placeholder="90"></div>
+      <div class="fz-field"><label>${t("fz2_npc_q7","Scholarship importance (0-100)")}</label><input type="number" id="nQ7" placeholder="80"></div>
     </div>
-    <button class="fz-btn accent" id="nBtn">🧙 REVEAL MY NPC</button>
+    <button class="fz-btn accent" id="nBtn">🧙 ${t("fz2_npc_btn","REVEAL MY NPC")}</button>
     <div class="fz-result" id="nRes">
       <div style="font-size:64px;" id="nIcon">🗿</div>
       <div class="fz-big-number" style="font-size:24px;" id="nName"></div>
@@ -1171,10 +887,8 @@ function openNPC(){
   $("#nBtn").addEventListener("click", () => {
     const sleep = parseFloat($("#nQ1").value) || 6;
     const study = parseFloat($("#nQ2").value) || 50;
-    const sat = parseFloat($("#nQ3").value) || 1400;
     const rank = parseFloat($("#nQ4").value) || 50;
     const campus = parseFloat($("#nQ5").value) || 50;
-    const parents = parseFloat($("#nQ6").value) || 50;
     const scholar = parseFloat($("#nQ7").value) || 50;
 
     let npc = NPC_TYPES[0];
@@ -1198,21 +912,21 @@ function openNPC(){
 // 6. POTION
 // ============================================================
 function openPotion(){
-  openModal(modalHead("🧪", "University Compatibility Potion", "Brew your potion.")
+  openModal(modalHead("🧪", "fz2_potion_title", "fz2_potion_sub")
     + `
-    <button class="fz-btn accent" id="pBtn">🧪 BREW MY POTION</button>
+    <button class="fz-btn accent" id="pBtn">🧪 ${t("fz2_potion_btn","BREW MY POTION")}</button>
     <div class="fz-result" id="pRes">
-      <div class="fz-big-number">Your University Potion</div>
+      <div class="fz-big-number">${t("fz2_potion_result","Your University Potion")}</div>
       <div style="margin-top:14px;" id="pBars"></div>
       <div class="fz-meme-phrase" style="margin-top:14px;">Side effects may include: overthinking university rankings.</div>
     </div>
   `);
   $("#pBtn").addEventListener("click", () => {
     const stats = [
-      { label: "Scholarship", color: "#88B7F0", val: randInt(30, 100) },
-      { label: "Academic", color: "#27AE60", val: randInt(30, 100) },
-      { label: "Social", color: "#C79256", val: randInt(30, 100) },
-      { label: "Suffering", color: "#E63946", val: randInt(30, 100) },
+      { label: t("fz2_potion_sch","Scholarship"), color: "#88B7F0", val: randInt(30, 100) },
+      { label: t("fz2_potion_acad","Academic"),   color: "#27AE60", val: randInt(30, 100) },
+      { label: t("fz2_potion_soc","Social"),      color: "#C79256", val: randInt(30, 100) },
+      { label: t("fz2_potion_suf","Suffering"),   color: "#E63946", val: randInt(30, 100) },
     ];
     $("#pBars").innerHTML = stats.map(s => `
       <div style="text-align:left; margin-bottom:12px;">
@@ -1233,13 +947,13 @@ function openPotion(){
 // 7. STOCK
 // ============================================================
 function openStock(){
-  openModal(modalHead("📈", "GPA Stock Market", "Trade responsibly. Or not.")
+  openModal(modalHead("📈", "fz2_stock_title", "fz2_stock_sub")
     + `
     <div style="text-align:center; font-family:'Fraunces',serif; font-size:44px; font-weight:900; color:var(--espresso);">$GPA</div>
     <div style="text-align:center; font-family:'Fraunces',serif; font-size:28px; font-weight:700; color:var(--green);" id="sPrice">+0.0% 📈</div>
     <div class="fz-stock-chart"><svg id="sChart" viewBox="0 0 400 140" preserveAspectRatio="none"><polyline class="fz-stock-line" id="sLine" points="0,70 400,70" /></svg></div>
-    <div class="fz-mono" id="sNews">Initializing market...</div>
-    <button class="fz-btn" id="sBtn">📈 NEXT TRADING DAY</button>
+    <div class="fz-mono" id="sNews">${t("fz2_stock_init","Initializing market...")}</div>
+    <button class="fz-btn" id="sBtn">📈 ${t("fz2_stock_btn","NEXT TRADING DAY")}</button>
   `);
   const events = [
     { text: "Physics test detected.", delta: -8.7 },
@@ -1263,7 +977,6 @@ function openStock(){
     el.style.color = price >= 0 ? "var(--green)" : "var(--neon)";
     $("#sNews").textContent = ev.text;
     points.push({ x: points.length * 40, y: Math.max(10, Math.min(130, 70 - price)) });
-    const lastPoint = points[points.length - 1];
     if(points.length > 10) points.shift();
     const pts = points.map(p => `${p.x},${p.y}`).join(" ");
     const line = $("#sLine");
@@ -1277,14 +990,14 @@ function openStock(){
 // 8. CRASH
 // ============================================================
 function openCrash(){
-  openModal(modalHead("📉", "Academic Portfolio Crash", "Trigger the crash.")
+  openModal(modalHead("📉", "fz2_crash_title", "fz2_crash_sub")
     + `
     <div style="text-align:center; padding:40px 20px;">
       <div class="fz-big-number" id="crNum" style="color:var(--neon);">0%</div>
       <div style="font-size:40px; letter-spacing:8px; margin:14px 0;" id="crArrows">📉📉📉📉📉</div>
-      <div class="fz-meme-phrase" id="crMsg">Press the button.</div>
+      <div class="fz-meme-phrase" id="crMsg">${t("fz2_crash_ready","Press the button.")}</div>
     </div>
-    <button class="fz-btn accent" id="crBtn">📉 CRASH MY PORTFOLIO</button>
+    <button class="fz-btn accent" id="crBtn">📉 ${t("fz2_crash_btn","CRASH MY PORTFOLIO")}</button>
   `);
   const reasons = [
     "SAT R&W score leaked.",
@@ -1322,10 +1035,10 @@ function rollGacha(){
   }
 }
 function openGacha(){
-  openModal(modalHead("🎲", "University Gacha", "Pull. Regret. Repeat.")
+  openModal(modalHead("🎲", "fz2_gacha_title", "fz2_gacha_sub")
     + `
-    <button class="fz-btn accent" id="g1">PULL ×1</button>
-    <button class="fz-btn" id="g10" style="margin-top:8px;">PULL ×10</button>
+    <button class="fz-btn accent" id="g1">${t("fz2_gacha_pull1","PULL ×1")}</button>
+    <button class="fz-btn" id="g10" style="margin-top:8px;">${t("fz2_gacha_pull10","PULL ×10")}</button>
     <div class="fz-gacha-result" id="gRes"></div>
   `);
   function showPulls(n){
@@ -1335,10 +1048,10 @@ function openGacha(){
       const res = rollGacha();
       const div = document.createElement("div");
       div.className = "fz-gacha-card " + res.rarity;
-      div.innerHTML = `<div class="fz-gacha-rarity">${res.rarity}</div><div class="fz-gacha-name">${escapeHtml(res.name)}</div>`;
+      const rarityLabel = t("fz2_rarity_" + res.rarity, res.rarity);
+      div.innerHTML = `<div class="fz-gacha-rarity">${rarityLabel}</div><div class="fz-gacha-name">${escapeHtml(res.name)}</div>`;
       container.appendChild(div);
       if(res.rarity === "mythic") unlockAchievement("gacha_mythic");
-      if(res.rarity === "legendary") unlockAchievement("gacha_10");
     }
     unlockAchievement("gacha_1");
     if(n >= 10) unlockAchievement("gacha_10");
@@ -1351,19 +1064,19 @@ function openGacha(){
 // 10. WALLET
 // ============================================================
 function openWallet(){
-  openModal(modalHead("💸", "Tuition Damage Calculator", "How much is your wallet taking?")
+  openModal(modalHead("💸", "fz2_wallet_title", "fz2_wallet_sub")
     + `
     <div class="fz-grid-2">
-      <div class="fz-field"><label>Tuition (USD/year)</label><input type="number" id="wTui" placeholder="25000"></div>
-      <div class="fz-field"><label>Accommodation</label><input type="number" id="wAcc" placeholder="8000"></div>
-      <div class="fz-field"><label>Food</label><input type="number" id="wFood" placeholder="5000"></div>
-      <div class="fz-field"><label>Transportation</label><input type="number" id="wTrans" placeholder="1500"></div>
-      <div class="fz-field"><label>Scholarship (USD)</label><input type="number" id="wSchol" placeholder="0"></div>
+      <div class="fz-field"><label>${t("fz2_wallet_tui","Tuition (USD/year)")}</label><input type="number" id="wTui" placeholder="25000"></div>
+      <div class="fz-field"><label>${t("fz2_wallet_acc","Accommodation")}</label><input type="number" id="wAcc" placeholder="8000"></div>
+      <div class="fz-field"><label>${t("fz2_wallet_food","Food")}</label><input type="number" id="wFood" placeholder="5000"></div>
+      <div class="fz-field"><label>${t("fz2_wallet_trans","Transportation")}</label><input type="number" id="wTrans" placeholder="1500"></div>
+      <div class="fz-field"><label>${t("fz2_wallet_schol","Scholarship (USD)")}</label><input type="number" id="wSchol" placeholder="0"></div>
     </div>
-    <button class="fz-btn accent" id="wBtn">💸 CALCULATE DAMAGE</button>
+    <button class="fz-btn accent" id="wBtn">💸 ${t("fz2_wallet_btn","CALCULATE DAMAGE")}</button>
     <div class="fz-result" id="wRes">
-      <div class="fz-label-mini">YOUR WALLET HAS TAKEN</div>
-      <div class="fz-big-number" id="wNum">$0 <span class="unit">DAMAGE</span></div>
+      <div class="fz-label-mini">${t("fz2_wallet_result","YOUR WALLET HAS TAKEN")}</div>
+      <div class="fz-big-number" id="wNum">$0 <span class="unit">${t("fz2_wallet_damage","DAMAGE")}</span></div>
       <div class="fz-wallet-hp" id="wHp"></div>
       <div class="fz-meme-phrase" id="wMsg"></div>
     </div>
@@ -1375,11 +1088,10 @@ function openWallet(){
     const trans = parseFloat($("#wTrans").value) || 0;
     const schol = parseFloat($("#wSchol").value) || 0;
     const total = Math.max(0, tui + acc + food + trans - schol);
-    $("#wNum").innerHTML = "$" + total.toLocaleString("en-US") + ' <span class="unit">DAMAGE</span>';
-    const heartsCount = 10;
+    $("#wNum").innerHTML = "$" + total.toLocaleString("en-US") + ' <span class="unit">' + t("fz2_wallet_damage","DAMAGE") + '</span>';
     const hp = Math.max(0, 10 - Math.round(total / 5000));
     let hpHtml = "";
-    for(let i = 0; i < heartsCount; i++){
+    for(let i = 0; i < 10; i++){
       hpHtml += `<span class="fz-hp-heart ${i < hp ? "" : "lost"}">❤️</span>`;
     }
     $("#wHp").innerHTML = hpHtml;
@@ -1394,7 +1106,7 @@ function openWallet(){
 // 11. SLEEP
 // ============================================================
 function openSleep(){
-  openModal(modalHead("🛌", "Sleep vs GPA Simulator", "Pick your poison.")
+  openModal(modalHead("🛌", "fz2_sleep_title", "fz2_sleep_sub")
     + `
     <div class="fz-inline-btns">
       <button class="fz-btn" data-sleep="4">4h</button>
@@ -1403,7 +1115,7 @@ function openSleep(){
       <button class="fz-btn" data-sleep="10">10h</button>
     </div>
     <div class="fz-result" id="sRes" style="margin-top:14px;">
-      <div class="fz-label-mini" id="sLabel">SLEEP: 0h</div>
+      <div class="fz-label-mini" id="sLabel"></div>
       <div style="margin-top:12px;" id="sBars"></div>
     </div>
   `);
@@ -1416,7 +1128,7 @@ function openSleep(){
         8: [["GPA", 12], ["Brain", 25], ["Sanity", 41]],
         10: [["Academic performance", 3], ["Bed loyalty", 100], ["Sanity", 60]],
       }[h];
-      $("#sLabel").textContent = `SLEEP: ${h}h`;
+      $("#sLabel").textContent = t("fz2_sleep_label","SLEEP") + ": " + h + "h";
       $("#sBars").innerHTML = data.map(([label, val]) => {
         const display = (val >= 0 ? "+" : "") + val;
         const color = val >= 0 ? "var(--green)" : "var(--neon)";
@@ -1440,10 +1152,10 @@ function openSleep(){
 // 12. CAFFEINE
 // ============================================================
 function openCaffeine(){
-  openModal(modalHead("☕", "Caffeine Calculator", "How much coffee is too much?")
+  openModal(modalHead("☕", "fz2_caffeine_title", "fz2_caffeine_sub")
     + `
-    <div class="fz-field"><label>How many coffees today?</label><input type="number" id="cfNum" placeholder="3"></div>
-    <button class="fz-btn accent" id="cfBtn" style="margin-top:10px;">☕ CHECK</button>
+    <div class="fz-field"><label>${t("fz2_caffeine_label","How many coffees today?")}</label><input type="number" id="cfNum" placeholder="3"></div>
+    <button class="fz-btn accent" id="cfBtn" style="margin-top:10px;">☕ ${t("fz2_caffeine_btn","CHECK")}</button>
     <div class="fz-result" id="cfRes">
       <div class="fz-big-number" id="cfCount">0</div>
       <div class="fz-meme-phrase" id="cfMsg"></div>
@@ -1472,15 +1184,15 @@ function openCaffeine(){
 // ============================================================
 let _brainScore = 0, _brainTotal = 0, _brainTarget = "";
 function openBrain(){
-  openModal(modalHead("🧠", "Brain Capacity Test", "Click the matching number/word.")
+  openModal(modalHead("🧠", "fz2_brain_title", "fz2_brain_sub")
     + `
     <div class="fz-field" style="margin-bottom:14px;">
-      <label>Target</label>
+      <label>${t("fz2_brain_target","Target")}</label>
       <div class="fz-big-number" id="brTarget" style="font-size:36px; text-align:center;">?</div>
     </div>
     <div class="fz-brain-stage" id="brStage"></div>
-    <div style="text-align:center; font-size:14px; color:var(--text-muted);" id="brScore">Score: 0 / 0</div>
-    <button class="fz-btn accent" id="brBtn" style="margin-top:12px;">🧠 START</button>
+    <div style="text-align:center; font-size:14px; color:var(--text-muted);" id="brScore"></div>
+    <button class="fz-btn accent" id="brBtn" style="margin-top:12px;">🧠 ${t("fz2_brain_start","START")}</button>
   `);
   const targets = ["42","1999","MIT","Oxford","A","3.14","🚀","👽","XYZ","Nobel","π","💀"];
   let roundsLeft = 0;
@@ -1489,11 +1201,11 @@ function openBrain(){
       const pct = _brainTotal > 0 ? Math.round((_brainScore / _brainTotal) * 100) : 0;
       let msg = pct >= 80 ? "Enough RAM to open Bluebook." : (pct >= 50 ? "Running on 2 tabs." : "Windows has stopped responding.");
       $("#brStage").innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:40px;">
-        <div class="fz-label-mini">BRAIN CAPACITY</div>
+        <div class="fz-label-mini">${t("fz2_brain_capacity","BRAIN CAPACITY")}</div>
         <div class="fz-big-number">${pct}%</div>
         <div class="fz-meme-phrase">${msg}</div>
       </div>`;
-      $("#brBtn").textContent = "🧠 TEST AGAIN";
+      $("#brBtn").textContent = "🧠 " + t("fz2_brain_again","TEST AGAIN");
       unlockAchievement("brain");
       return;
     }
@@ -1510,14 +1222,10 @@ function openBrain(){
       cell.className = "fz-brain-cell";
       cell.textContent = opt;
       cell.addEventListener("click", () => {
-        if(opt === _brainTarget){
-          cell.classList.add("correct");
-          _brainScore++;
-        } else {
-          cell.classList.add("wrong");
-        }
+        if(opt === _brainTarget){ cell.classList.add("correct"); _brainScore++; }
+        else { cell.classList.add("wrong"); }
         _brainTotal++;
-        $("#brScore").textContent = `Score: ${_brainScore} / ${_brainTotal}`;
+        $("#brScore").textContent = t("fz2_brain_score","Score") + `: ${_brainScore} / ${_brainTotal}`;
         setTimeout(newRound, 400);
       });
       stage.appendChild(cell);
@@ -1525,7 +1233,7 @@ function openBrain(){
   }
   $("#brBtn").addEventListener("click", () => {
     _brainScore = 0; _brainTotal = 0; roundsLeft = 5;
-    $("#brBtn").textContent = "🧠 RESTART";
+    $("#brBtn").textContent = "🧠 " + t("fz2_brain_restart","RESTART");
     newRound();
   });
 }
@@ -1542,10 +1250,10 @@ const SAT_QUESTIONS = [
   { q: "The average SAT Math score is 521. You scored 780. What emotion is this?", a: ["Smug","Humble","Illegal","Suspicious"] },
 ];
 function openSAT(){
-  openModal(modalHead("🎯", "SAT Guessing Simulator", "Guess. Somehow get it right.")
+  openModal(modalHead("🎯", "fz2_sat_title", "fz2_sat_sub")
     + `
     <div id="satBox"></div>
-    <button class="fz-btn accent" id="satBtn" style="margin-top:12px;">🎯 NEXT QUESTION</button>
+    <button class="fz-btn accent" id="satBtn" style="margin-top:12px;">🎯 ${t("fz2_sat_next","NEXT QUESTION")}</button>
   `);
   function nextQ(){
     const q = pick(SAT_QUESTIONS);
@@ -1561,9 +1269,11 @@ function openSAT(){
         const correct = Math.random() < 0.5;
         const res = $("#satRes");
         res.style.display = "block";
+        const correctText = t("fz2_sat_correct","Correct. Somehow.");
+        const wrongText = t("fz2_sat_wrong","Wrong. Obviously.");
         res.innerHTML = correct
-          ? `<div class="fz-result show"><div class="fz-big-number" style="font-size:36px;">Correct. Somehow.</div></div>`
-          : `<div class="fz-result show"><div class="fz-big-number" style="font-size:36px; color:var(--neon);">Wrong. Obviously.</div></div>`;
+          ? `<div class="fz-result show"><div class="fz-big-number" style="font-size:36px;">${correctText}</div></div>`
+          : `<div class="fz-result show"><div class="fz-big-number" style="font-size:36px; color:var(--neon);">${wrongText}</div></div>`;
         unlockAchievement("sat");
       });
     });
@@ -1576,15 +1286,15 @@ function openSAT(){
 // 15. OFFICER
 // ============================================================
 function openOfficer(){
-  openModal(modalHead("🧑‍💼", "Admissions Officer Simulator", "Face the officer.")
+  openModal(modalHead("🧑‍💼", "fz2_officer_title", "fz2_officer_sub")
     + `
     <div class="fz-grid-2">
-      <div class="fz-field"><label>GPA</label><input type="number" id="oGpa" placeholder="3.8" step="0.01"></div>
-      <div class="fz-field"><label>SAT</label><input type="number" id="oSat" placeholder="1450"></div>
-      <div class="fz-field"><label>IELTS</label><input type="number" id="oIelts" placeholder="7.5" step="0.5"></div>
-      <div class="fz-field"><label>Extracurriculars (0-100)</label><input type="number" id="oExtra" placeholder="70"></div>
+      <div class="fz-field"><label>${t("fz2_label_gpa","GPA")}</label><input type="number" id="oGpa" placeholder="3.8" step="0.01"></div>
+      <div class="fz-field"><label>${t("fz2_label_sat","SAT")}</label><input type="number" id="oSat" placeholder="1450"></div>
+      <div class="fz-field"><label>${t("fz2_label_ielts","IELTS")}</label><input type="number" id="oIelts" placeholder="7.5" step="0.5"></div>
+      <div class="fz-field"><label>${t("fz2_officer_extra","Extracurriculars (0-100)")}</label><input type="number" id="oExtra" placeholder="70"></div>
     </div>
-    <button class="fz-btn accent" id="oBtn">🧑‍💼 SUBMIT APPLICATION</button>
+    <button class="fz-btn accent" id="oBtn">🧑‍💼 ${t("fz2_officer_btn","SUBMIT APPLICATION")}</button>
     <div class="fz-result" id="oRes">
       <div class="fz-meme-phrase" id="oThink" style="min-height:60px;"></div>
       <div class="fz-big-number" id="oDecision" style="font-size:32px;"></div>
@@ -1594,11 +1304,11 @@ function openOfficer(){
   $("#oBtn").addEventListener("click", async () => {
     const think = $("#oThink");
     const decisions = [
-      { text: "🟢 ACCEPTED", reason: "Your GPA is good. Your extracurriculars are good. But you used Comic Sans in your CV. We let it slide." },
-      { text: "🟡 WAITLISTED", reason: "We liked you. We also liked 4,000 other people. We will contact you eventually. Probably." },
-      { text: "🔴 REJECTED", reason: "Your application was beautiful. Unfortunately, you are simply too powerful." },
-      { text: "🟢 ACCEPTED", reason: "The committee argued for 3 hours. Your essay won." },
-      { text: "🔴 REJECTED", reason: "You mentioned 'world-class' 14 times. We counted." },
+      { text: "🟢 " + t("fz2_officer_accepted","ACCEPTED"), reason: "Your GPA is good. Your extracurriculars are good. But you used Comic Sans in your CV. We let it slide." },
+      { text: "🟡 " + t("fz2_officer_waitlist","WAITLISTED"), reason: "We liked you. We also liked 4,000 other people. We will contact you eventually. Probably." },
+      { text: "🔴 " + t("fz2_officer_rejected","REJECTED"), reason: "Your application was beautiful. Unfortunately, you are simply too powerful." },
+      { text: "🟢 " + t("fz2_officer_accepted","ACCEPTED"), reason: "The committee argued for 3 hours. Your essay won." },
+      { text: "🔴 " + t("fz2_officer_rejected","REJECTED"), reason: "You mentioned 'world-class' 14 times. We counted." },
     ];
     const d = pick(decisions);
     const steps = ["Hmm...", "Interesting...", "Very interesting...", "Let me consult the committee..."];
@@ -1625,9 +1335,9 @@ function openRejection(){
     "Dear Student,\n\nYour application was, quite frankly, unhinged in the best possible way.\n\nUnfortunately, we cannot accept unhinged applicants.\n\nWith respect,\nThe Committee",
     "Dear Candidate,\n\nWe received 40,000 applications.\n\nWe accepted 12.\n\nYou were not one of them, but you were close. Sort of.\n\nBest,\nAn Actual University",
   ];
-  openModal(modalHead("📧", "Rejection Letter Generator", "Get rejected. Professionally.")
+  openModal(modalHead("📧", "fz2_rejection_title", "fz2_rejection_sub")
     + `
-    <button class="fz-btn accent" id="rBtn">📧 GENERATE MY REJECTION LETTER</button>
+    <button class="fz-btn accent" id="rBtn">📧 ${t("fz2_rejection_btn","GENERATE MY REJECTION LETTER")}</button>
     <div class="fz-result" id="rRes">
       <div class="fz-mono" id="rText"></div>
     </div>
@@ -1650,15 +1360,15 @@ const CAREERS = [
   "Blockchain Historian","Emotional Support Engineer","Formula 1 Tax Advisor","Astro Influencer",
 ];
 function openCareer(){
-  openModal(modalHead("🧭", "Completely Random Career Generator", "Find your true calling.")
+  openModal(modalHead("🧭", "fz2_career_title", "fz2_career_sub")
     + `
-    <button class="fz-btn accent" id="crBtn">🧭 WHAT AM I GOING TO BECOME?</button>
+    <button class="fz-btn accent" id="crBtn">🧭 ${t("fz2_career_btn","WHAT AM I GOING TO BECOME?")}</button>
     <div class="fz-result" id="crRes">
-      <div class="fz-label-mini">YOUR FUTURE JOB</div>
+      <div class="fz-label-mini">${t("fz2_career_result","YOUR FUTURE JOB")}</div>
       <div class="fz-big-number" id="crJob" style="font-size:28px;"></div>
-      <div class="fz-stat-row"><span class="label">Salary</span><span class="value" id="crSalary">???</span></div>
-      <div class="fz-stat-row"><span class="label">Difficulty</span><span class="value" id="crDiff">💀💀💀</span></div>
-      <div class="fz-stat-row"><span class="label">Aura</span><span class="value" id="crAura">0</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_career_salary","Salary")}</span><span class="value" id="crSalary">???</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_career_diff","Difficulty")}</span><span class="value" id="crDiff">💀💀💀</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_career_aura","Aura")}</span><span class="value" id="crAura">0</span></div>
     </div>
   `);
   $("#crBtn").addEventListener("click", () => {
@@ -1695,17 +1405,17 @@ const CAR_RANDOM = [
 ];
 function openCar(){
   const opts = UNIVERSITIES.map(u => `<option value="${u}">${u}</option>`).join("");
-  openModal(modalHead("🚗", "University Car Generator", "Every university has a car.")
+  openModal(modalHead("🚗", "fz2_car_title", "fz2_car_sub")
     + `
-    <div class="fz-field"><label>Pick university</label><select id="carSel">${opts}<option value="random">Random</option></select></div>
-    <button class="fz-btn accent" id="carBtn" style="margin-top:12px;">🚗 GENERATE MY CAR</button>
+    <div class="fz-field"><label>${t("fz2_car_pick","Pick university")}</label><select id="carSel">${opts}<option value="random">${t("fz2_car_random","Random")}</option></select></div>
+    <button class="fz-btn accent" id="carBtn" style="margin-top:12px;">🚗 ${t("fz2_car_btn","GENERATE MY CAR")}</button>
     <div class="fz-result" id="carRes">
-      <div class="fz-label-mini">YOUR UNIVERSITY CAR</div>
+      <div class="fz-label-mini">${t("fz2_car_result","YOUR UNIVERSITY CAR")}</div>
       <div class="fz-big-number" id="carName" style="font-size:22px;"></div>
-      <div class="fz-stat-row"><span class="label">Reliability</span><span class="value" id="carRel">0</span></div>
-      <div class="fz-stat-row"><span class="label">Aura</span><span class="value" id="carAura">0</span></div>
-      <div class="fz-stat-row"><span class="label">Fuel consumption</span><span class="value" id="carFuel">💀</span></div>
-      <div class="fz-stat-row"><span class="label">Academic compatibility</span><span class="value" id="carComp">0</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_car_rel","Reliability")}</span><span class="value" id="carRel">0</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_car_aura","Aura")}</span><span class="value" id="carAura">0</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_car_fuel","Fuel consumption")}</span><span class="value" id="carFuel">💀</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_car_comp","Academic compatibility")}</span><span class="value" id="carComp">0</span></div>
     </div>
   `);
   $("#carBtn").addEventListener("click", () => {
@@ -1737,9 +1447,9 @@ const WEATHERS = [
   { city: "Berlin", text: "Cloudy. Techno playing somewhere.\n\nGPA: uncertain." },
 ];
 function openWeather(){
-  openModal(modalHead("🌡️", "University Weather Personality", "Weather = personality.")
+  openModal(modalHead("🌡️", "fz2_weather_title", "fz2_weather_sub")
     + `
-    <button class="fz-btn accent" id="weBtn">🌡️ ROLL THE WEATHER</button>
+    <button class="fz-btn accent" id="weBtn">🌡️ ${t("fz2_weather_btn","ROLL THE WEATHER")}</button>
     <div class="fz-result" id="weRes">
       <div class="fz-label-mini" id="weCity"></div>
       <div class="fz-mono" id="weText" style="margin-top:10px;"></div>
@@ -1769,17 +1479,17 @@ const NPC_PERSONALITIES = [
   "Bro brings snacks to every class. Legend.",
 ];
 function openNPCGen(){
-  openModal(modalHead("🧍", "NPC Generator", "Create a random NPC student.")
+  openModal(modalHead("🧍", "fz2_npc_gen_title", "fz2_npc_gen_sub")
     + `
-    <button class="fz-btn accent" id="ngBtn">🧍 GENERATE NPC</button>
+    <button class="fz-btn accent" id="ngBtn">🧍 ${t("fz2_npc_gen_btn","GENERATE NPC")}</button>
     <div class="fz-result" id="ngRes">
-      <div class="fz-stat-row"><span class="label">Name</span><span class="value" id="ngName"></span></div>
-      <div class="fz-stat-row"><span class="label">Major</span><span class="value" id="ngMajor"></span></div>
-      <div class="fz-stat-row"><span class="label">GPA</span><span class="value" id="ngGpa"></span></div>
-      <div class="fz-stat-row"><span class="label">Sleep</span><span class="value" id="ngSleep"></span></div>
-      <div class="fz-stat-row"><span class="label">Coffee</span><span class="value" id="ngCof"></span></div>
-      <div class="fz-stat-row"><span class="label">Car</span><span class="value" id="ngCar"></span></div>
-      <div class="fz-stat-row"><span class="label">Personality</span><span class="value" id="ngPer"></span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_npc_gen_name","Name")}</span><span class="value" id="ngName"></span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_npc_gen_major","Major")}</span><span class="value" id="ngMajor"></span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_label_gpa","GPA")}</span><span class="value" id="ngGpa"></span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_npc_gen_sleep","Sleep")}</span><span class="value" id="ngSleep"></span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_npc_gen_coffee","Coffee")}</span><span class="value" id="ngCof"></span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_npc_gen_car","Car")}</span><span class="value" id="ngCar"></span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_npc_gen_personality","Personality")}</span><span class="value" id="ngPer"></span></div>
     </div>
   `);
   $("#ngBtn").addEventListener("click", () => {
@@ -1800,13 +1510,13 @@ function openNPCGen(){
 // 21. SKILL
 // ============================================================
 function openSkill(){
-  openModal(modalHead("🧨", "Skill Issue Detector", "Detects skill issues. Honestly.")
+  openModal(modalHead("🧨", "fz2_skill_title", "fz2_skill_sub")
     + `
     <div class="fz-grid-2">
-      <div class="fz-field"><label>SAT</label><input type="number" id="skSat" placeholder="1040"></div>
-      <div class="fz-field"><label>GPA</label><input type="number" id="skGpa" placeholder="3.2" step="0.01"></div>
+      <div class="fz-field"><label>${t("fz2_label_sat","SAT")}</label><input type="number" id="skSat" placeholder="1040"></div>
+      <div class="fz-field"><label>${t("fz2_label_gpa","GPA")}</label><input type="number" id="skGpa" placeholder="3.2" step="0.01"></div>
     </div>
-    <button class="fz-btn accent" id="skBtn">🧨 DETECT SKILL ISSUE</button>
+    <button class="fz-btn accent" id="skBtn">🧨 ${t("fz2_skill_btn","DETECT SKILL ISSUE")}</button>
     <div class="fz-result" id="skRes">
       <div class="fz-big-number" id="skNum">0%</div>
       <div class="fz-meme-phrase" id="skMsg"></div>
@@ -1822,9 +1532,9 @@ function openSkill(){
     let sev = Math.max(0, 100 - Math.round((sat - 400) / 12 + gpa * 10));
     sev = Math.min(100, sev);
     $("#skNum").textContent = sev + "%";
-    $("#skMsg").textContent = sev >= 60 ? "⚠️ Skill issue detected." : "No skill issue detected. Unfortunately, you now have to maintain it.";
-    $("#skMath").textContent = sat >= 1300 ? "actually decent" : "💀";
-    $("#skRW").textContent = sat >= 1400 ? "solid" : "💀";
+    $("#skMsg").textContent = sev >= 60 ? t("fz2_skill_detected","⚠️ Skill issue detected.") : t("fz2_skill_none","No skill issue detected. Unfortunately, you now have to maintain it.");
+    $("#skMath").textContent = sat >= 1300 ? t("fz2_skill_decent","actually decent") : "💀";
+    $("#skRW").textContent = sat >= 1400 ? t("fz2_skill_solid","solid") : "💀";
     const res = $("#skRes");
     res.classList.remove("show"); void res.offsetWidth; res.classList.add("show");
     unlockAchievement("skill");
@@ -1843,12 +1553,12 @@ const SPELLS = [
   { name: "COFFEINUM INFINITUM", effect: "+6 coffees\n+∞ Energy\n-∞ Sleep" },
 ];
 function openSpell(){
-  openModal(modalHead("🪄", "University Spell Generator", "Cast questionable spells.")
+  openModal(modalHead("🪄", "fz2_spell_title", "fz2_spell_sub")
     + `
-    <button class="fz-btn accent" id="spBtn">🪄 CAST A SPELL</button>
+    <button class="fz-btn accent" id="spBtn">🪄 ${t("fz2_spell_btn","CAST A SPELL")}</button>
     <div class="fz-result" id="spRes">
       <div class="fz-big-number" id="spName" style="font-size:26px;"></div>
-      <div class="fz-label-mini" style="margin-top:14px;">EFFECT</div>
+      <div class="fz-label-mini" style="margin-top:14px;">${t("fz2_spell_effect","EFFECT")}</div>
       <div class="fz-mono" id="spEffect"></div>
     </div>
   `);
@@ -1868,7 +1578,8 @@ function openSpell(){
 function openAchievements(){
   const data = loadAchievements();
   const unlocked = Object.keys(data).length;
-  openModal(modalHead("🏆", "Your Achievements", `${unlocked} / ${ALL_ACHIEVEMENTS.length} unlocked`)
+  openModal(modalHead("🏆", "fz2_ach_title", "")
+    .replace("</div></div>", `</div><div class="fz-modal-sub">${unlocked} / ${ALL_ACHIEVEMENTS.length} ${t("fz2_ach_unlocked","unlocked")}</div></div>`)
     + `
     <div class="fz-ach-grid">
       ${ALL_ACHIEVEMENTS.map(a => {
@@ -1876,8 +1587,7 @@ function openAchievements(){
         return `
           <div class="fz-ach ${isUnlocked ? "unlocked" : ""}">
             <div class="fz-ach-icon">${isUnlocked ? a.icon : "🔒"}</div>
-            <div class="fz-ach-name">${a.name}</div>
-            <div class="fz-ach-desc">${a.desc}</div>
+            <div class="fz-ach-name">${t(a.nameKey, a.nameKey)}</div>
           </div>
         `;
       }).join("")}
@@ -1891,18 +1601,18 @@ function openAchievements(){
 let _nuclearStep = 0;
 function openNuclear(){
   _nuclearStep = 0;
-  openModal(modalHead("💣", "Nuclear Reset", "Do NOT press this button.")
+  openModal(modalHead("💣", "fz2_nuclear_title", "fz2_nuclear_sub")
     + `
     <div style="text-align:center;">
-      <button class="fz-nuclear-btn" id="nukBtn">DO NOT PRESS</button>
+      <button class="fz-nuclear-btn" id="nukBtn">${t("fz2_nuclear_btn","DO NOT PRESS")}</button>
     </div>
   `);
   const messages = [
-    { text: "Are you sure?", next: "YES I'M SURE" },
-    { text: "REALLY?", next: "REALLY" },
-    { text: "BRO STOP.", next: "I CAN'T STOP" },
-    { text: "Fine.", next: "..." },
-    { text: "💀\n\nYou have wasted 7 seconds of your life.", next: null },
+    { text: t("fz2_nuclear_m1","Are you sure?"), next: t("fz2_nuclear_n1","YES I'M SURE") },
+    { text: t("fz2_nuclear_m2","REALLY?"), next: t("fz2_nuclear_n2","REALLY") },
+    { text: t("fz2_nuclear_m3","BRO STOP."), next: t("fz2_nuclear_n3","I CAN'T STOP") },
+    { text: t("fz2_nuclear_m4","Fine."), next: "..." },
+    { text: t("fz2_nuclear_m5","💀\n\nYou have wasted 7 seconds of your life."), next: null },
   ];
   $("#nukBtn").addEventListener("click", () => {
     if(_nuclearStep >= messages.length) return;
@@ -1930,21 +1640,21 @@ function openNuclear(){
 // 25. BOSS
 // ============================================================
 function openBoss(){
-  openModal(modalHead("🕹️", "Final Boss: The Application Deadline", "Face your greatest enemy.")
+  openModal(modalHead("🕹️", "fz2_boss_title", "fz2_boss_sub")
     + `
     <div style="text-align:center;">
       <div class="fz-boss-hp" id="bossHp"></div>
-      <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">DEADLINE HP</div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">${t("fz2_boss_deadline_hp","DEADLINE HP")}</div>
     </div>
     <div style="margin-top:24px;">
-      <div class="fz-stat-row"><span class="label">Your HP</span><span class="value" id="playerHp">100</span></div>
-      <div class="fz-stat-row"><span class="label">Deadline HP</span><span class="value" id="deadlineHp">100</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_boss_player_hp","Your HP")}</span><span class="value" id="playerHp">100</span></div>
+      <div class="fz-stat-row"><span class="label">${t("fz2_boss_deadline_hp","Deadline HP")}</span><span class="value" id="deadlineHp">100</span></div>
     </div>
     <div class="fz-boss-buttons">
-      <button class="fz-btn" data-boss="study">📚 STUDY</button>
-      <button class="fz-btn ghost" data-boss="sleep">😴 SLEEP</button>
-      <button class="fz-btn ghost" data-boss="proc">📱 PROCRASTINATE</button>
-      <button class="fz-btn accent" data-boss="panic">😱 PANIC</button>
+      <button class="fz-btn" data-boss="study">📚 ${t("fz2_boss_study","STUDY")}</button>
+      <button class="fz-btn ghost" data-boss="sleep">😴 ${t("fz2_boss_sleep","SLEEP")}</button>
+      <button class="fz-btn ghost" data-boss="proc">📱 ${t("fz2_boss_proc","PROCRASTINATE")}</button>
+      <button class="fz-btn accent" data-boss="panic">😱 ${t("fz2_boss_panic","PANIC")}</button>
     </div>
     <div class="fz-result" id="bossRes" style="margin-top:14px;"><div class="fz-meme-phrase" id="bossMsg"></div></div>
   `);
@@ -1969,8 +1679,8 @@ function openBoss(){
       else if(a === "panic"){ msg = "No effect. Deadline is confused but amused."; }
       $("#bossMsg").textContent = msg;
       render();
-      if(bossHp <= 0){ $("#bossMsg").innerHTML = "👑 <b>YOU DEFEATED THE APPLICATION DEADLINE</b>"; unlockAchievement("boss_win"); $$("[data-boss]").forEach(b => b.disabled = true); }
-      if(playerHp <= 0){ $("#bossMsg").innerHTML = "💀 <b>YOU GOT COOKED</b>"; unlockAchievement("boss_lose"); $$("[data-boss]").forEach(b => b.disabled = true); }
+      if(bossHp <= 0){ $("#bossMsg").innerHTML = "👑 <b>" + t("fz2_boss_win","YOU DEFEATED THE APPLICATION DEADLINE") + "</b>"; unlockAchievement("boss_win"); $$("[data-boss]").forEach(b => b.disabled = true); }
+      if(playerHp <= 0){ $("#bossMsg").innerHTML = "💀 <b>" + t("fz2_boss_lose","YOU GOT COOKED") + "</b>"; unlockAchievement("boss_lose"); $$("[data-boss]").forEach(b => b.disabled = true); }
     });
   });
 }
@@ -1978,10 +1688,21 @@ function openBoss(){
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener("DOMContentLoaded", () => {
+function initFZ(){
   renderDashboard();
+}
+document.addEventListener("DOMContentLoaded", initFZ);
+if(document.readyState !== "loading") initFZ();
+
+// Перерисовка при смене языка
+window.addEventListener("edupath-lang-change", () => {
+  renderDashboard();
+  // Если открыта модалка — просто закрываем (не будем перерисовывать в открытом виде)
+  const overlay = document.getElementById("fzModal");
+  if(overlay && overlay.classList.contains("open")) {
+    closeModal();
+  }
 });
-if(document.readyState !== "loading") renderDashboard();
 </script>
 
 <script src="i18n.js"></script>
