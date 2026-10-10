@@ -388,14 +388,15 @@ async function callWorker(messages){
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: messages,
-          universities: universities,
-          meta: {
-            questionCount: state.questionCount,
-            minQuestions: state.minQuestions,
-            maxQuestions: state.maxQuestions
-          }
-        })
+  messages: messages,
+  universities: universities,
+  language: (window.I18N && window.I18N.getLang && window.I18N.getLang()) || "ru",
+  meta: {
+    questionCount: state.questionCount,
+    minQuestions: state.minQuestions,
+    maxQuestions: state.maxQuestions
+  }
+})
       });
 
       if(!res.ok){
