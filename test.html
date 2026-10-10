@@ -381,13 +381,11 @@ async function sendAnswer(){
 // ============================================================
 
 async function callWorker(messages){
-  let universities = null;
-  if(state.questionCount >= state.minQuestions){
-    if(!state.allUniversities){
-      state.allUniversities = await loadAllUniversities();
-    }
-    universities = state.allUniversities;
+  // ВСЕГДА грузим базу — чтобы фильтр работал с самого первого запроса
+  if(!state.allUniversities){
+    state.allUniversities = await loadAllUniversities();
   }
+  const universities = state.allUniversities;
 
   let lastError = null;
   for(let attempt = 0; attempt < 3; attempt++){
