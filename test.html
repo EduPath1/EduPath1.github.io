@@ -1,4 +1,4 @@
-￼Enter file conten<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -95,6 +95,9 @@
   .final-header h2{ font-size:38px; margin-bottom:14px; color:var(--espresso); }
   .final-header h2 em{ font-style:italic; color:var(--clay); }
   .final-header p{ font-size:16px; color:var(--text-muted); max-width:560px; margin:0 auto; line-height:1.7; }
+
+  .final-summary{ font-size:15px; color:var(--text-muted); max-width:640px; margin:18px auto 0; line-height:1.7; }
+  .save-banner-btn.retry{ cursor:pointer; }
 
   .category{ margin-bottom:36px; background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:32px; opacity:0; transform:translateY(12px); animation:fadeInUp .6s var(--ease) forwards; }
   .category:nth-child(1){ animation-delay:0.2s; }
@@ -227,6 +230,7 @@
     <div class="final-header">
       <h2><span data-i18n="test_final_title">Готово! Вот твои университеты</span></h2>
       <p data-i18n="test_final_sub">ИИ проанализировал твои ответы и подобрал варианты по 4 категориям.</p>
+      <p class="final-summary" id="finalSummary"></p>
     </div>
     <div id="categoriesContainer"></div>
     <div class="final-actions">
@@ -255,7 +259,7 @@ const COUNTRY_FILES = [
   "Germany.json", "Hong Kong.json", "Hungary.json", "Italy.json",
   "Japan.json", "Latvia.json", "Netherlands.json", "Poland.json",
   "Qatar.json", "Singapore.json", "South Korea.json", "Spain.json",
-  "Sweden.json", "Switzerland.json", "Turkey.json", "UAE.json",
+  "Sweden.json", "Switzerland.json", "Swizerland.json", "Turkey.json", "UAE.json",
   "UK.json", "USA.json"
 ];
 
@@ -266,7 +270,8 @@ let state = {
   minQuestions: 8,
   allUniversities: null,
   isLoading: false,
-  finalData: null
+  finalData: null,
+  saveStatus: null
 };
 
 function t(key, fallback){
@@ -299,10 +304,13 @@ function showScreen(id){
 // ============================================================
 
 async function startDialog(){
+  if(state.isLoading) return;
+  state.isLoading = true;
   state.messages = [];
   state.questionCount = 0;
   state.allUniversities = null;
   state.finalData = null;
+  state.saveStatus = null;
 
   showScreen("screenDialog");
   showThinking(true);
@@ -327,11 +335,14 @@ const res = await callWorker([
       renderQuestion(res.question);
     } else if(res.type === "final"){
       await renderFinal(res);
+    } else {
+      throw new Error("Неожиданный ответ ИИ: " + JSON.stringify(res).slice(0, 150));
     }
   } catch(e){
     alert("Ошибка при запуске теста: " + e.message);
     showScreen("screenIntro");
   } finally {
+    state.isLoading = false;
     showThinking(false);
   }
 }
@@ -361,6 +372,8 @@ async function sendAnswer(){
       renderQuestion(res.question);
     } else if(res.type === "final"){
       await renderFinal(res);
+    } else {
+      throw new Error("Неожиданный ответ ИИ: " + JSON.stringify(res).slice(0, 150));
     }
   } catch(e){
     alert("Ошибка: " + e.message);
@@ -368,8 +381,10 @@ async function sendAnswer(){
     input.disabled = false;
     document.getElementById("sendBtn").disabled = false;
     input.value = answer;
-    state.messages.pop();
-    state.messages.pop();
+    // убираем только ответ пользователя: вопрос ИИ перед ним должен остаться в истории
+    if(state.messages.length && state.messages[state.messages.length - 1].role === "user"){
+      state.messages.pop();
+    }
   } finally {
     state.isLoading = false;
     showThinking(false);
@@ -381,41 +396,48 @@ async function sendAnswer(){
 // ============================================================
 
 async function callWorker(messages){
+  // Worker сам загружает базу вузов. Базу отсюда отправляем только как запасной
+  // вариант, если Worker ответил 503 (не смог скачать файлы стран).
   let universities = null;
-  
-  // База грузится ТОЛЬКО когда задано 8 или больше вопросов.
-  // Раньше нельзя, иначе ИИ увидит список и сразу выдаст финал.
-  if (state.questionCount >= 8) {
-    if (!state.allUniversities) {
-      state.allUniversities = await loadAllUniversities();
-    }
-    universities = state.allUniversities;
-  }
   let lastError = null;
+
   for(let attempt = 0; attempt < 3; attempt++){
     try {
       const res = await fetch(WORKER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-  messages: messages,
-  universities: universities,
-  language: (window.I18N && window.I18N.getLang && window.I18N.getLang()) || "ru",
-  meta: {
-    questionCount: state.questionCount,
-    minQuestions: state.minQuestions,
-    maxQuestions: state.maxQuestions
-  }
-})
+          messages: messages,
+          universities: universities,
+          language: (window.I18N && window.I18N.getLang && window.I18N.getLang()) || "ru",
+          meta: {
+            questionCount: state.questionCount,
+            minQuestions: state.minQuestions,
+            maxQuestions: state.maxQuestions
+          }
+        })
       });
 
       if(!res.ok){
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status}: ${text}`);
+        let msg = "";
+        try { const j = await res.json(); msg = j && j.error ? j.error : ""; } catch(_){ }
+        if(res.status === 429){
+          const err = new Error(t("test_err_rate", "Слишком много запросов. Подожди пару минут и попробуй снова."));
+          err.fatal = true; throw err;
+        }
+        if(res.status === 503 && !universities && state.questionCount >= state.minQuestions){
+          state.allUniversities = state.allUniversities || await loadAllUniversities();
+          universities = state.allUniversities;
+          const err = new Error("база вузов недоступна на сервере, повторяем с локальной копией");
+          err.retryNow = true; throw err;
+        }
+        const err = new Error("HTTP " + res.status + (msg ? ": " + msg : ""));
+        if(res.status >= 400 && res.status < 500) err.fatal = true;
+        throw err;
       }
 
       const data = await res.json();
-      if(data.error) throw new Error(data.error + " " + (data.details || ""));
+      if(data.error) throw new Error(data.error);
 
       let content = String(data.result || "").trim();
       if(content.startsWith("```")){
@@ -438,10 +460,11 @@ async function callWorker(messages){
     } catch(e){
       lastError = e;
       console.warn("Попытка " + (attempt + 1) + " не удалась:", e.message);
-      if(attempt < 2) await new Promise(r => setTimeout(r, 800));
+      if(e.fatal) throw e;
+      if(attempt < 2 && !e.retryNow) await new Promise(r => setTimeout(r, 800));
     }
   }
-  throw new Error("ИИ не смог ответить после 3 попыток. " + (lastError ? lastError.message : ""));
+  throw new Error(t("test_err_ai", "ИИ не смог ответить после 3 попыток.") + " " + (lastError ? lastError.message : ""));
 }
 
 async function loadAllUniversities(){
@@ -494,9 +517,7 @@ function renderQuestion(questionText){
   const total = state.maxQuestions;
   const current = state.questionCount;
   document.getElementById("progressText").textContent =
-    current < state.minQuestions
-      ? `${t("test_question", "Вопрос")} ${current} ${t("test_of", "из")} ${state.minQuestions}`
-      : `${t("test_question", "Вопрос")} ${current}`;
+    `${t("test_question", "Вопрос")} ${current} ${t("test_of", "из")} ${state.minQuestions}–${state.maxQuestions}`;
 
   const dots = document.getElementById("progressDots");
   dots.innerHTML = "";
@@ -527,8 +548,9 @@ function showThinking(active, customText){
 function renderSaveBanner(){
   const banner = document.getElementById("saveBanner");
   const loggedIn = window.EduAuth && window.EduAuth.isLoggedIn();
+  const status = !loggedIn ? "anon" : (state.saveStatus || "saving");
 
-  if(loggedIn){
+  if(status === "saved"){
     banner.innerHTML = `
       <div class="save-banner">
         <div class="save-banner-icon">✓</div>
@@ -537,6 +559,28 @@ function renderSaveBanner(){
         </div>
         <div class="save-banner-actions">
           <a href="profile.html" class="save-banner-btn">${t("test_saved_hint", "Посмотреть в профиле →")}</a>
+        </div>
+      </div>
+    `;
+  } else if(status === "saving"){
+    banner.innerHTML = `
+      <div class="save-banner">
+        <div class="save-banner-icon">⏳</div>
+        <div class="save-banner-text">
+          <div class="save-banner-title">${t("test_saving_banner", "Сохраняем результат…")}</div>
+        </div>
+      </div>
+    `;
+  } else if(status === "failed"){
+    banner.innerHTML = `
+      <div class="save-banner">
+        <div class="save-banner-icon">⚠️</div>
+        <div class="save-banner-text">
+          <div class="save-banner-title">${t("test_save_failed_banner", "Не удалось сохранить результат")}</div>
+          <div class="save-banner-desc">${t("test_save_failed_desc", "Результат ниже виден, но в профиле его пока нет. Попробуй ещё раз.")}</div>
+        </div>
+        <div class="save-banner-actions">
+          <button type="button" class="save-banner-btn retry" onclick="retrySave()">${t("test_save_retry", "Повторить")}</button>
         </div>
       </div>
     `;
@@ -555,19 +599,34 @@ function renderSaveBanner(){
   }
 }
 
+async function saveResult(){
+  if(!(window.EduAuth && window.EduAuth.isLoggedIn()) || !state.finalData) return;
+  state.saveStatus = "saving";
+  renderSaveBanner();
+  let ok = false;
+  try {
+    const r = await window.EduAuth.saveTestResult(state.finalData);
+    ok = !(r === false || (r && r.error));
+  } catch(e){
+    console.warn("Не удалось сохранить результат:", e);
+  }
+  state.saveStatus = ok ? "saved" : "failed";
+  renderSaveBanner();
+}
+
+function retrySave(){ saveResult(); }
+
 // ============================================================
 // ФИНАЛ
 // ============================================================
 
-async function renderFinal(finalData){
+async function renderFinal(finalData, skipSave){
   showThinking(false);
   state.finalData = finalData;
   showScreen("screenFinal");
-  renderSaveBanner();
 
-  if(window.EduAuth && window.EduAuth.isLoggedIn()){
-    window.EduAuth.saveTestResult(finalData);
-  }
+  const summaryEl = document.getElementById("finalSummary");
+  if(summaryEl) summaryEl.textContent = finalData.summary || "";
 
   const container = document.getElementById("categoriesContainer");
   container.innerHTML = "";
@@ -605,6 +664,15 @@ async function renderFinal(finalData){
     `;
     container.appendChild(card);
   });
+
+  // Результат сохраняется один раз; при смене языка страница только перерисовывается
+  if(skipSave){
+    renderSaveBanner();
+  } else {
+    state.saveStatus = null;
+    await saveResult();
+    if(!(window.EduAuth && window.EduAuth.isLoggedIn())) renderSaveBanner();
+  }
 }
 
 // ============================================================
@@ -625,8 +693,7 @@ document.addEventListener("click", (e) => {
 
 window.addEventListener("edupath-lang-change", () => {
   if(state.finalData){
-    renderSaveBanner();
-    renderFinal(state.finalData);
+    renderFinal(state.finalData, true);
   }
 });
 
@@ -639,6 +706,7 @@ function restartTest(){
   state.questionCount = 0;
   state.allUniversities = null;
   state.finalData = null;
+  state.saveStatus = null;
   document.getElementById("answerInput").value = "";
   document.getElementById("sendBtn").disabled = true;
   document.getElementById("saveBanner").innerHTML = "";
@@ -646,4 +714,4 @@ function restartTest(){
 }
 </script>
 </body>
-</html>ts here
+</html>
