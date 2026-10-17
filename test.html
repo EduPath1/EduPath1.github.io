@@ -383,14 +383,14 @@ async function sendAnswer(){
 async function callWorker(messages){
   let universities = null;
   
-  // База нужна только на финальных вопросах (когда ИИ готов выдавать результат)
-  if (state.questionCount >= state.minQuestions - 1) {
+  // База грузится ТОЛЬКО когда задано 8 или больше вопросов.
+  // Раньше нельзя, иначе ИИ увидит список и сразу выдаст финал.
+  if (state.questionCount >= 8) {
     if (!state.allUniversities) {
       state.allUniversities = await loadAllUniversities();
     }
     universities = state.allUniversities;
   }
-
   let lastError = null;
   for(let attempt = 0; attempt < 3; attempt++){
     try {
