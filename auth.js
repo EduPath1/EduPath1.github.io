@@ -19,7 +19,9 @@
   // i18n helper
   // ------------------------------------------------------------
   function t(key, fallback) {
-    return (window.I18N && window.I18N.t(key)) || fallback || key;
+    const v = window.I18N && window.I18N.t(key);
+    // I18N.t возвращает сам ключ, если перевода нет: тогда берём запасной текст
+    return (v && v !== key) ? v : (fallback || key);
   }
 
   // ============================================================
