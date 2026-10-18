@@ -2213,4 +2213,133 @@
     nav.appendChild(burger);
     document.body.appendChild(panel);
 
-    burger.addEventListen
+    burger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      panel.classList.toggle("open");
+      burger.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!panel.contains(e.target) && !burger.contains(e.target)) {
+        panel.classList.remove("open");
+        burger.classList.remove("open");
+      }
+    });
+
+    panel.querySelectorAll("a").forEach(a => {
+      a.addEventListener("click", () => {
+        panel.classList.remove("open");
+        burger.classList.remove("open");
+      });
+    });
+  }
+
+  function injectStyles() {
+    if (document.getElementById("burger-styles")) return;
+    const style = document.createElement("style");
+    style.id = "burger-styles";
+    style.textContent = `
+      .burger-btn {
+        display: none;
+        width: 38px; height: 38px;
+        border-radius: 8px; padding: 0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        background: transparent;
+        transition: background .2s;
+      }
+      .burger-btn:hover { background: var(--cream-deep, #EFE1C6); }
+      .burger-btn span {
+        display: block; width: 20px; height: 2px;
+        background: #2B1B10; border-radius: 2px;
+        transition: transform .3s, opacity .3s;
+      }
+      .burger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .burger-btn.open span:nth-child(2) { opacity: 0; }
+      .burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      .burger-panel {
+        position: fixed; top: 84px; left: 0; right: 0;
+        background: #FBF6EC;
+        border-bottom: 1px solid rgba(43,27,16,0.14);
+        box-shadow: 0 20px 40px -20px rgba(43,27,16,0.25);
+        z-index: 99;
+        max-height: 0; overflow: hidden; opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height .35s cubic-bezier(0.22,1,0.36,1), opacity .25s, transform .25s;
+      }
+      .burger-panel.open { max-height: 360px; opacity: 1; transform: translateY(0); }
+      .burger-panel-inner { display: flex; flex-direction: column; padding: 16px 24px; }
+      .burger-panel-inner a {
+        font-family: 'Work Sans', sans-serif; font-size: 17px;
+        color: #2B1B10; padding: 14px 0;
+        border-bottom: 1px solid rgba(43,27,16,0.08);
+      }
+      .burger-panel-inner a:last-child { border-bottom: none; }
+      .burger-panel-inner a:hover { color: #8C5A34; }
+
+      @media (max-width: 900px) {
+        .burger-btn { display: flex; }
+        .nav-links { display: none !important; }
+      }
+      @media (min-width: 901px) {
+        .burger-panel { display: none; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function bindLangSwitcher() {
+    const langBtn = document.getElementById("langBtn");
+    const langMenu = document.getElementById("langMenu");
+    if (!langBtn || !langMenu) return;
+
+    langBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = langMenu.classList.toggle("open");
+      langBtn.setAttribute("aria-expanded", isOpen);
+    });
+
+    langMenu.addEventListener("click", (e) => {
+      const option = e.target.closest(".lang-option");
+      if (!option) return;
+      setLang(option.dataset.lang);
+      langMenu.classList.remove("open");
+      langBtn.setAttribute("aria-expanded", "false");
+    });
+
+    document.addEventListener("click", () => {
+      langMenu.classList.remove("open");
+      langBtn.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function init() {
+    injectStyles();
+    buildBurgerMenu();
+    bindLangSwitcher();
+    applyAll();
+    document.documentElement.lang = getLang();
+
+    const current = getLang();
+    document.querySelectorAll(".lang-option").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.lang === current);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  window.I18N = {
+    t: t,
+    getLang: getLang,
+    setLang: setLang,
+    applyAll: applyAll
+  };
+
+})();
