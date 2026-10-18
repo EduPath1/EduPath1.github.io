@@ -1,9 +1,10 @@
 // ============================================================
-// EduPath — auth.js (final)
+// EduPath — auth.js (v2: автообновление сессии)
 // Supabase + Render backend
 // + Полный i18n (5 языков)
 // + Confirm email экран
 // + Auto-login по redirect от Supabase
+// + Автообновление сессии по refresh_token (v2)
 // ============================================================
 
 (function() {
@@ -12,6 +13,7 @@
   const API_URL = "https://edupath1-github-io.onrender.com";
   const TOKEN_KEY = "edupath_token";
   const USER_KEY = "edupath_user";
+  const REFRESH_KEY = "edupath_refresh";
 
   // ------------------------------------------------------------
   // i18n helper
@@ -32,9 +34,34 @@
     if (token) localStorage.setItem(TOKEN_KEY, token);
   }
 
+  function getRefreshToken() {
+    return localStorage.getItem(REFRESH_KEY);
+  }
+
+  // Сохраняет обе части сессии: токен доступа (живёт около часа) и refresh-токен
+  function setSession(session) {
+    if (!session) return;
+    if (session.access_token) localStorage.setItem(TOKEN_KEY, session.access_token);
+    if (session.refresh_token) localStorage.setItem(REFRESH_KEY, session.refresh_token);
+  }
+
   function clearToken() {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_KEY);
     localStorage.removeItem(USER_KEY);
+  }
+
+  // Время истечения токена (мс) из самого токена; null, если прочитать не удалось
+  function tokenExpiry(token) {
+    try {
+      const part = String(token).split(".")[1];
+      const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
+      const json = atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4));
+      const exp = JSON.parse(json).exp;
+      return typeof exp === "number" ? exp * 1000 : null;
+    } catch (e) {
+      return null;
+    }
   }
 
   function setCachedUser(user) {
@@ -66,15 +93,105 @@
     return status === 0 || status === 502 || status === 503 || status === 504 || status >= 500;
   }
 
-  async function apiFetch(path, options) {
+  const NO_REFRESH_PATHS = ["/api/login", "/api/register", "/api/refresh", "/api/resend-confirmation"];
+
+  let _refreshPromise = null;
+  let _expiredToastAt = 0;
+
+  // Сессия закончилась и продлить её нельзя: честно выходим, а не делаем вид, что вошли
+  function expireSession() {
+    const hadSession = !!getToken() || !!getCurrentUser();
+    clearToken();
+    _savedCache = null;
+    _testsCache = null;
+    if (!hadSession) return;
+
+    updateHeaderUI();
+    if (Date.now() - _expiredToastAt > 5000) {
+      _expiredToastAt = Date.now();
+      showToast(t("modal_session_expired", "Сессия истекла. Войди снова."), "error");
+      if (window.location.pathname.includes("profile")) {
+        setTimeout(() => openModal("login"), 400);
+      }
+    }
+  }
+
+  // Меняет refresh-токен на новую пару токенов. Одновременные вызовы делят один запрос,
+  // потому что refresh-токен одноразовый.
+  // true: сессия продлена; false: не вышло (если сервер просто спит, вход сохраняется).
+  function refreshSession() {
+    if (_refreshPromise) return _refreshPromise;
+
+    _refreshPromise = (async () => {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) return false;
+
+      for (let attempt = 0; attempt < 2; attempt++) {
+        let res = null;
+        try {
+          const r = await fetch(API_URL + "/api/refresh", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh_token: refreshToken })
+          });
+          let data = null;
+          try { data = await r.json(); } catch (e) {}
+          res = { ok: r.ok, status: r.status, data };
+        } catch (e) {
+          res = { ok: false, status: 0, data: null };
+        }
+
+        if (res.ok && res.data && res.data.session && res.data.session.access_token) {
+          setSession(res.data.session);
+          if (res.data.user) setCachedUser(res.data.user);
+          return true;
+        }
+
+        // 400/401: refresh-токен недействителен, продлить нельзя
+        if (res.status === 400 || res.status === 401 || res.status === 403) {
+          expireSession();
+          return false;
+        }
+
+        // Сервер спит или нет сети: подождём и попробуем ещё раз, но не разлогиниваем
+        if (attempt === 0) await new Promise(r => setTimeout(r, 2000));
+      }
+      return false;
+    })().finally(() => { _refreshPromise = null; });
+
+    return _refreshPromise;
+  }
+
+  // Перед запросом: если токен уже истёк или вот-вот истечёт, обновляем его заранее
+  async function ensureFreshSession() {
+    const token = getToken();
+    if (!token) return false;
+
+    const exp = tokenExpiry(token);
+    if (exp === null || exp - Date.now() > 60 * 1000) return true;
+
+    if (getRefreshToken()) return refreshSession();
+
+    // Старая сессия без refresh-токена: если токен уже истёк, продлить нечем
+    if (exp - Date.now() <= 0) {
+      expireSession();
+      return false;
+    }
+    return true;
+  }
+
+  async function apiFetch(path, options, _retried) {
     options = options || {};
+
+    const isAuthPath = NO_REFRESH_PATHS.indexOf(path) !== -1;
+    if (!isAuthPath && !_retried) await ensureFreshSession();
 
     const headers = Object.assign({
       "Content-Type": "application/json"
     }, options.headers || {});
 
     const token = getToken();
-    if (token) headers["Authorization"] = "Bearer " + token;
+    if (token && !isAuthPath) headers["Authorization"] = "Bearer " + token;
 
     try {
       const res = await fetch(API_URL + path, Object.assign({}, options, { headers }));
@@ -82,7 +199,16 @@
       let data = null;
       try { data = await res.json(); } catch (e) {}
 
-      return { ok: res.ok, status: res.status, data };
+      // Токен отклонён: один раз продлеваем сессию и повторяем запрос
+      if (res.status === 401 && token && !isAuthPath && !_retried) {
+        if (getRefreshToken() && await refreshSession()) {
+          return apiFetch(path, options, true);
+        }
+        if (!getRefreshToken()) expireSession();
+      }
+
+      // sessionExpired: сервер отклонил токен, а продлить его не удалось
+      return { ok: res.ok, status: res.status, data, sessionExpired: res.status === 401 && !!token && !isAuthPath };
     } catch (networkError) {
       return { ok: false, status: 0, data: null, networkError: true };
     }
@@ -103,6 +229,9 @@
   }
 
   function humanError(res, fallbackKey, fallbackText) {
+    if (res && res.sessionExpired) {
+      return t("modal_session_expired", "Сессия истекла. Войди снова.");
+    }
     if (res && isServerSleeping(res.status)) {
       return t("modal_server_waking", "Сервер просыпается. Подожди 30 секунд и попробуй снова.");
     }
@@ -134,7 +263,7 @@
     const user = res.data && res.data.user;
 
     if (session && session.access_token) {
-      setToken(session.access_token);
+      setSession(session);
       setCachedUser({
         name: (user && user.name) || name,
         email: (user && user.email) || email,
@@ -171,7 +300,7 @@
     const user = res.data && res.data.user;
 
     if (session && session.access_token) {
-      setToken(session.access_token);
+      setSession(session);
       setCachedUser({
         name: (user && user.name) || "",
         email: user && user.email,
@@ -775,9 +904,10 @@
     if (hash.includes("access_token=")) {
       const params = new URLSearchParams(hash.replace(/^#/, ""));
       const access = params.get("access_token");
+      const refresh = params.get("refresh_token");
 
       if (access) {
-        setToken(access);
+        setSession({ access_token: access, refresh_token: refresh });
         history.replaceState(null, "", window.location.pathname + window.location.search);
         updateHeaderUI();
 
@@ -838,8 +968,12 @@
     updateHeaderUI();
 
     if (isLoggedIn()) {
-      getSaved().catch(e => console.warn("preload saved failed:", e));
-      getTests().catch(e => console.warn("preload tests failed:", e));
+      // Сначала проверяем/продлеваем сессию: так «Привет, имя» не остаётся при мёртвой сессии
+      ensureFreshSession().then(() => {
+        if (!isLoggedIn()) return;
+        getSaved().catch(e => console.warn("preload saved failed:", e));
+        getTests().catch(e => console.warn("preload tests failed:", e));
+      });
     }
   });
 
@@ -870,7 +1004,8 @@
     saveTestResult,
     showToast,
     openModal,
-    updateHeaderUI
+    updateHeaderUI,
+    refreshSession
   };
 
 })();
