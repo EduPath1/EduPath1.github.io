@@ -606,7 +606,7 @@ async function saveResult(){
   let ok = false;
   try {
     const r = await window.EduAuth.saveTestResult(state.finalData);
-    ok = !(r === false || (r && r.error));
+    ok = (r && typeof r === "object") ? r.ok !== false : r !== false;
   } catch(e){
     console.warn("Не удалось сохранить результат:", e);
   }
