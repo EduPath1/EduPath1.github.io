@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нашей команде — EduPath</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --bg-cream: #FDFBF7;
+            --bg-card: #F4EFE6;
+            --text-dark: #1F1A17;
+            --text-muted: #6B625B;
+            --accent-caramel: #C87A4B;
+            --border-color: rgba(31, 26, 23, 0.12);
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            line-height: 1.15;
+        }
+
+        .title-huge {
+            font-size: clamp(3.5rem, 8vw, 7.5rem);
+            letter-spacing: -0.02em;
+        }
+
+        .title-large {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+        }
+
+        .text-body-large {
+            font-size: clamp(1.2rem, 2vw, 1.75rem);
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .scene {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 8%;
+            position: relative;
+        }
+
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 3.5rem;
+            box-shadow: 0 20px 40px rgba(31, 26, 23, 0.04);
+            backdrop-filter: blur(10px);
+        }
+
+        .intro-container {
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .year-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 50px;
+            border: 1px solid var(--accent-caramel);
+            color: var(--accent-caramel);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 4rem;
+            align-items: center;
+            width: 100%;
+            max-width: 1300px;
+        }
+
+        .profile-grid.reverse {
+            grid-template-columns: 1.1fr 1fr;
+        }
+
+        .img-frame {
+            width: 100%;
+            height: 620px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+        }
+
+        .img-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease-out;
+        }
+
+        .role-number {
+            font-family: var(--font-serif);
+            font-size: 4rem;
+            color: var(--accent-caramel);
+            font-style: italic;
+        }
+
+        .responsibility-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .responsibility-item {
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .responsibility-item h4 {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .responsibility-item p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .dark-scene {
+            background-color: var(--text-dark);
+            color: var(--bg-cream);
+            border-radius: 32px;
+            margin: 4rem 2%;
+            width: 96%;
+        }
+
+        .graph-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 3rem auto;
+            position: relative;
+        }
+
+        .node-svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .horizontal-wrap {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .horizontal-scroll-container {
+            display: flex;
+            gap: 2.5rem;
+            width: max-content;
+        }
+
+        .build-card {
+            width: 420px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .svg-illustration {
+            width: 100%;
+            height: 220px;
+            border-radius: 14px;
+            background: rgba(31, 26, 23, 0.03);
+            border: 1px dashed var(--border-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-footer {
+            text-align: center;
+            padding: 6rem 2rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .email-link {
+            color: var(--accent-caramel);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: opacity 0.2s ease;
+        }
+
+        .email-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            background: var(--text-dark);
+            color: var(--bg-cream);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 2.5rem;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            background: var(--accent-caramel);
+        }
+
+        @media (max-width: 992px) {
+            .profile-grid, .profile-grid.reverse {
+                grid-template-columns: 1fr;
+            }
+            .img-frame {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCENE 01: INTRO -->
+    <section class="scene" id="scene-intro">
+        <div class="intro-container">
+            <h1 class="title-huge">EDUPATH</h1>
+            <p class="text-body-large" style="margin-top: 1rem;">A NEW WAY TO FIND YOUR PATH</p>
+            <div class="year-badge">2026</div>
+        </div>
+    </section>
+
+    <!-- SCENE 02: MISSION -->
+    <section class="scene">
+        <div class="content-card" style="max-width: 1000px; width: 100%;">
+            <h2 class="title-large" style="margin-bottom: 1.5rem;">WHY WE BUILT IT</h2>
+            <p class="text-body-large" style="font-size: 2rem; color: var(--text-dark); line-height: 1.3;">
+                Choosing your future shouldn't feel impossible.
+            </p>
+            <p class="text-body-large" style="margin-top: 1.5rem;">
+                EduPath was created to make university discovery more personal, structured and accessible.
+            </p>
+        </div>
+    </section>
+
+    <!-- SCENE 03: ALKAR -->
+    <section class="scene">
+        <div class="profile-grid">
+            <div class="profile-info">
+                <span class="role-number">01</span>
+                <h2 class="title-large">ALKAR</h2>
+                <p class="text-body-large" style="color: var(--accent-caramel); font-weight: 600;">Co-Founder · Backend · Architecture</p>
+                
+                <ul class="responsibility-list">
+                    <li class="responsibility-item">
+                        <h4>BACKEND</h4>
+                        <p>The core engine and systems driving EduPath forward.</p>
+                    </li>
+                    <li class="responsibility-item">
+                        <h4>DATABASE</h4>
+                        <p>High-performance data structuring & dynamic matching algorithms.</p>
+                    </li>
+                    <li class="responsibility-item">
+                        <h4>SYSTEM INTEGRATION</h4>
+                        <p>Connecting data endpoints into one seamless platform.</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="img-frame">
+                <img src="assets/team/alkar.jpg" alt="Alkar" onerror="this.src='https://via.placeholder.com/600x800/F4EFE6/1F1A17?text=Alkar+Photo'">
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 04: SYSTEM ARCHITECTURE (SVG HAND-DRAWN GRAPH) -->
+    <section class="scene dark-scene">
+        <div style="text-align: center; width: 100%; max-width: 900px;">
+            <h2 class="title-large" style="color: var(--bg-cream);">SYSTEM ARCHITECTURE</h2>
+            <p class="text-body-large" style="color: rgba(253, 251, 247, 0.7); margin-top: 1rem;">One Connected Platform</p>
+            
+            <div class="graph-container">
+                <svg class="node-svg" viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="150" y1="100" x2="400" y2="200" stroke="#C87A4B" stroke-width="3" stroke-dasharray="6 6"/>
+                    <line x1="150" y1="300" x2="400" y2="200" stroke="#C87A4B" stroke-width="3" stroke-dasharray="6 6"/>
+                    <line x1="650" y1="100" x2="400" y2="200" stroke="#C87A4B" stroke-width="3" stroke-dasharray="6 6"/>
+                    <line x1="650" y1="300" x2="400" y2="200" stroke="#C87A4B" stroke-width="3" stroke-dasharray="6 6"/>
+
+                    <circle cx="400" cy="200" r="50" fill="#C87A4B"/>
+                    <text x="400" y="205" fill="#FDFBF7" font-weight="700" text-anchor="middle">EDUPATH</text>
+
+                    <circle cx="150" cy="100" r="35" fill="#1F1A17" stroke="#C87A4B" stroke-width="2"/>
+                    <text x="150" y="105" fill="#FDFBF7" font-size="12" text-anchor="middle">DATABASE</text>
+
+                    <circle cx="150" cy="300" r="35" fill="#1F1A17" stroke="#C87A4B" stroke-width="2"/>
+                    <text x="150" y="305" fill="#FDFBF7" font-size="12" text-anchor="middle">BACKEND</text>
+
+                    <circle cx="650" cy="100" r="35" fill="#1F1A17" stroke="#C87A4B" stroke-width="2"/>
+                    <text x="650" y="105" fill="#FDFBF7" font-size="12" text-anchor="middle">AI ENGINE</text>
+
+                    <circle cx="650" cy="300" r="35" fill="#1F1A17" stroke="#C87A4B" stroke-width="2"/>
+                    <text x="650" y="305" fill="#FDFBF7" font-size="12" text-anchor="middle">FRONTEND</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 05: ARSHAT (WITH 5 CONTRIBUTIONS INCLUDING AI) -->
+    <section class="scene">
+        <div class="profile-grid reverse">
+            <div class="img-frame">
+                <img src="assets/team/arshat.jpg" alt="Arshat" onerror="this.src='https://via.placeholder.com/600x800/F4EFE6/1F1A17?text=Arshat+Photo'">
+            </div>
+            <div class="profile-info">
+                <span class="role-number">02</span>
+                <h2 class="title-large">ARSHAT</h2>
+                <p class="text-body-large" style="color: var(--accent-caramel); font-weight: 600;">Co-Founder · Frontend · AI Creator</p>
+                
+                <ul class="responsibility-list">
+                    <li class="responsibility-item">
+                        <h4>AI CREATOR & ADDER</h4>
+                        <p>Designed and built the intelligent AI matching engine for recommendations.</p>
+                    </li>
+                    <li class="responsibility-item">
+                        <h4>FRONTEND DEVELOPMENT</h4>
+                        <p>Transforming complex ideas into smooth, responsive interfaces.</p>
+                    </li>
+                    <li class="responsibility-item">
+                        <h4>UI & UX DESIGN</h4>
+                        <p>Crafting intuitive, premium user journeys for prospective students.</p>
+                    </li>
+                    <li class="responsibility-item">
+                        <h4>INTERACTION MOTION</h4>
+                        <p>Creating micro-interactions that make navigation feel seamless.</p>
+                    </li>
+                    <li class="responsibility-item">
+                        <h4>QUALITY ASSURANCE</h4>
+                        <p>Continuous refinement, debugging, and user experience testing.</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 06: BUILD WORKFLOW (HAND-DRAWN SVG GRAPHICS) -->
+    <section class="scene horizontal-wrap">
+        <div style="width: 100%;">
+            <h2 class="title-large" style="margin-bottom: 2rem; text-align: center;">THE BUILD</h2>
+            <div class="horizontal-scroll-container">
+                
+                <!-- CARD 1: IDEA -->
+                <div class="build-card">
+                    <div class="svg-illustration">
+                        <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#C87A4B" stroke-width="1.5">
+                            <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"></path>
+                            <path d="M9 21h6"></path>
+                        </svg>
+                    </div>
+                    <h3>01. IDEA</h3>
+                    <p class="text-body-large" style="font-size: 1rem;">Formulating the mission to redefine university discovery.</p>
+                </div>
+
+                <!-- CARD 2: ARCHITECTURE -->
+                <div class="build-card">
+                    <div class="svg-illustration">
+                        <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#C87A4B" stroke-width="1.5">
+                            <rect x="2" y="3" width="20" height="5" rx="2"></rect>
+                            <rect x="2" y="16" width="20" height="5" rx="2"></rect>
+                            <path d="M6 8v8M18 8v8"></path>
+                        </svg>
+                    </div>
+                    <h3>02. ARCHITECTURE</h3>
+                    <p class="text-body-large" style="font-size: 1rem;">Designing scalable databases and backend endpoints.</p>
+                </div>
+
+                <!-- CARD 3: DESIGN -->
+                <div class="build-card">
+                    <div class="svg-illustration">
+                        <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#C87A4B" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 3a9 9 0 0 0 0 18w"></path>
+                            <circle cx="12" cy="7" r="1.5" fill="#C87A4B"></circle>
+                            <circle cx="8" cy="12" r="1.5" fill="#C87A4B"></circle>
+                            <circle cx="16" cy="12" r="1.5" fill="#C87A4B"></circle>
+                        </svg>
+                    </div>
+                    <h3>03. DESIGN</h3>
+                    <p class="text-body-large" style="font-size: 1rem;">Crafting clean typography and milk-cream layouts.</p>
+                </div>
+
+                <!-- CARD 4: DEVELOPMENT -->
+                <div class="build-card">
+                    <div class="svg-illustration">
+                        <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#C87A4B" stroke-width="1.5">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3>04. DEVELOPMENT</h3>
+                    <p class="text-body-large" style="font-size: 1rem;">Building frontend interfaces & integrating AI engines.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER & CONTACT -->
+    <footer class="contact-footer">
+        <h2 class="title-large" style="margin-bottom: 1.5rem;">THE FUTURE IS A PATH.</h2>
+        <p class="text-body-large" style="margin-bottom: 2rem;">По сотрудничеству или по вопросам обращайтесь переходя по почтам:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.8rem; align-items: center;">
+            <a href="mailto:alkar.muqiyat27@fizmat.kz" class="email-link">alkar.muqiyat27@fizmat.kz</a>
+            <a href="mailto:arshat.salyk27@fizmat.kz" class="email-link">arshat.salyk27@fizmat.kz</a>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <a href="index.html" class="back-btn">
+                EXPLORE EDUPATH →
+            </a>
+        </div>
+    </footer>
+
+    <!-- GSAP Smooth Animations -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.utils.toArray('.scene').forEach((scene) => {
+            gsap.from(scene.children, {
+                opacity: 0,
+                y: 40,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: scene,
+                    start: "top 75%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+
+        gsap.to(".horizontal-scroll-container", {
+            x: "-50%",
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".horizontal-wrap",
+                pin: true,
+                scrub: 1,
+                end: () => "+=" + document.querySelector(".horizontal-scroll-container").offsetWidth
+            }
+        });
+    </script>
+</body>
+</html>
