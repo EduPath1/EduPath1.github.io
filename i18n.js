@@ -1,10 +1,11 @@
 // ============================================================
-// EduPath — i18n.js (v6, full)
+// EduPath — i18n.js (v7, full)
 // RU / EN / ZH / KK / KY
 // + Fun Zone (v2, dashboard)
 // + Auth modal
 // + University detail keys
 // + Country names
+// + Team page
 // ============================================================
 
 (function() {
@@ -20,6 +21,7 @@
     ru: {
       nav_home: "Главная", nav_universities: "Университеты", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
+      nav_team: "О нашей команде",
       nav_login: "Войти", nav_logout: "Выйти", nav_hello: "Привет",
 
       home_eyebrow: "Тест на подбор университета",
@@ -451,6 +453,54 @@
       fz2_boss_win: "ТЫ ПОБЕДИЛ ДЕДЛАЙН",
       fz2_boss_lose: "ТЕБЯ ПРОЖАРИЛИ",
 
+      // ===== TEAM PAGE =====
+      team_hero_eyebrow: "Наша команда · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "Новый способ найти свой путь",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Почему мы это сделали",
+      team_why_title: "ЗАЧЕМ МЫ ЭТО СОЗДАЛИ",
+      team_why_quote: "Выбор будущего не должен казаться невозможным.",
+      team_why_sub: "EduPath создан, чтобы поиск университета стал более личным, структурированным и доступным.",
+      team_alkar_role: "Соучредитель · Backend · Базы данных · Frontend",
+      team_alkar_build: "ЧТО Я СТРОЮ",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "Системы, на которых работает EduPath.",
+      team_alkar_r2_t: "БАЗЫ ДАННЫХ", team_alkar_r2_d: "Структура и управление данными.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Разработка интерфейса и взаимодействий.",
+      team_alkar_r4_t: "СИСТЕМА", team_alkar_r4_d: "Соединение всех частей в единую платформу.",
+      team_system_title: "КАК ВСЁ СОЕДИНЕНО",
+      team_system_center: "EDUPATH",
+      team_system_final: "ОДНА СИСТЕМА",
+      team_arshat_role: "Соучредитель · Frontend · UI · Разработка · AI",
+      team_arshat_build: "СОЗДАНИЕ ОПЫТА",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Превращение идей в интерфейсы.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Создание понятного и интуитивного опыта.",
+      team_arshat_r3_t: "ВЗАИМОДЕЙСТВИЕ", team_arshat_r3_d: "Чтобы каждое действие ощущалось естественно.",
+      team_arshat_r4_t: "КАЧЕСТВО", team_arshat_r4_d: "Поиск и устранение того, что не работает.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "Искусственный интеллект, который подбирает университеты.",
+      team_collab_sub: "Две роли. Один продукт.",
+      team_build_title: "СОЗДАНИЕ",
+      team_build_idea: "ИДЕЯ", team_build_idea_d: "Всё началось с блокнота, ручки и проблемы, которую стоит решить.",
+      team_build_arch: "АРХИТЕКТУРА", team_build_arch_d: "Проектирование системы до написания первой строки кода.",
+      team_build_design: "ДИЗАЙН", team_build_design_d: "Цвет, шрифт, отступы — всё продумано, ничего случайного.",
+      team_build_dev: "РАЗРАБОТКА", team_build_dev_d: "Строим, ломаем, чиним, повторяем.",
+      team_build_test: "ТЕСТИРОВАНИЕ", team_build_test_d: "Каждый крайний случай, каждый fallback, каждое состояние ошибки.",
+      team_build_product: "EDUPATH", team_build_product_d: "Работающий продукт. Живой, многоязычный, интеллектуальный.",
+      team_timeline_title: "ОТ ИДЕИ ДО EDUPATH",
+      team_tl_1: "Идея",
+      team_tl_2: "Первый прототип",
+      team_tl_3: "Backend и база данных",
+      team_tl_4: "Frontend",
+      team_tl_5: "Тестирование",
+      team_tl_6: "EduPath",
+      team_show_title: "РАБОТАЮЩИЙ ПРОДУКТ",
+      team_final_h1: "БУДУЩЕЕ — НЕ ПУНКТ НАЗНАЧЕНИЯ.",
+      team_final_h2: "Это путь.",
+      team_final_cta: "Исследовать EduPath",
+      team_contact_title: "Связаться с нами",
+      team_contact_sub: "По вопросам сотрудничества и любым другим — пишите на почты:",
+      team_footer: "EduPath © 2026 · Сделано с заботой Alkar & Arshat",
+
       footer_note: "Fun Zone — шутка. Реальные рекомендации — в тесте."
     },
 
@@ -460,6 +510,7 @@
     en: {
       nav_home: "Home", nav_universities: "Universities", nav_profile: "Profile",
       nav_fanzone: "🤡 Fun Zone",
+      nav_team: "Our Team",
       nav_login: "Log in", nav_logout: "Log out", nav_hello: "Hi",
 
       home_eyebrow: "University matching test",
@@ -881,6 +932,54 @@
       fz2_boss_win: "YOU DEFEATED THE APPLICATION DEADLINE",
       fz2_boss_lose: "YOU GOT COOKED",
 
+      // ===== TEAM PAGE =====
+      team_hero_eyebrow: "Our Team · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "A new way to find your path",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Why we built it",
+      team_why_title: "WHY WE BUILT IT",
+      team_why_quote: "Choosing your future shouldn't feel impossible.",
+      team_why_sub: "EduPath was created to make university discovery more personal, structured and accessible.",
+      team_alkar_role: "Co-Founder · Backend · Database · Frontend",
+      team_alkar_build: "WHAT I BUILD",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "The systems behind EduPath.",
+      team_alkar_r2_t: "DATABASE", team_alkar_r2_d: "Data structure & management.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Interface & interaction development.",
+      team_alkar_r4_t: "SYSTEM", team_alkar_r4_d: "Connecting the pieces into one platform.",
+      team_system_title: "HOW IT ALL FITS",
+      team_system_center: "EDUPATH",
+      team_system_final: "ONE SYSTEM",
+      team_arshat_role: "Co-Founder · Frontend · UI · Development · AI",
+      team_arshat_build: "CRAFTING THE EXPERIENCE",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Turning ideas into interfaces.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Designing a clear and intuitive experience.",
+      team_arshat_r3_t: "INTERACTION", team_arshat_r3_d: "Making every interaction feel natural.",
+      team_arshat_r4_t: "QUALITY", team_arshat_r4_d: "Finding and eliminating what doesn't work.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "The AI that recommends universities.",
+      team_collab_sub: "Two roles. One product.",
+      team_build_title: "THE BUILD",
+      team_build_idea: "IDEA", team_build_idea_d: "Where it all began — a notebook, a pen, and a problem worth solving.",
+      team_build_arch: "ARCHITECTURE", team_build_arch_d: "Mapping the system before writing a single line of code.",
+      team_build_design: "DESIGN", team_build_design_d: "Colour, type, spacing — everything deliberate, nothing accidental.",
+      team_build_dev: "DEVELOPMENT", team_build_dev_d: "Building, breaking, fixing, repeating.",
+      team_build_test: "TESTING", team_build_test_d: "Every edge case, every fallback, every fail state — covered.",
+      team_build_product: "EDUPATH", team_build_product_d: "A working product. Live, multilingual, intelligent.",
+      team_timeline_title: "FROM IDEA TO EDUPATH",
+      team_tl_1: "The idea",
+      team_tl_2: "First prototype",
+      team_tl_3: "Backend & Database",
+      team_tl_4: "Frontend",
+      team_tl_5: "Testing",
+      team_tl_6: "EduPath",
+      team_show_title: "A WORKING PRODUCT",
+      team_final_h1: "THE FUTURE ISN'T A DESTINATION.",
+      team_final_h2: "It's a path.",
+      team_final_cta: "Explore EduPath",
+      team_contact_title: "Get in touch",
+      team_contact_sub: "For collaboration or any questions — write to:",
+      team_footer: "EduPath © 2026 · Made with care by Alkar & Arshat",
+
       footer_note: "Fun Zone is a joke. Real recommendations — in the test."
     },
 
@@ -890,6 +989,7 @@
     zh: {
       nav_home: "首页", nav_universities: "大学", nav_profile: "个人主页",
       nav_fanzone: "🤡 Fun Zone",
+      nav_team: "我们的团队",
       nav_login: "登录", nav_logout: "退出", nav_hello: "你好",
 
       home_eyebrow: "大学匹配测试",
@@ -1295,6 +1395,54 @@
       fz2_boss_win: "你击败了申请截止日期",
       fz2_boss_lose: "你完蛋了",
 
+      // ===== TEAM PAGE =====
+      team_hero_eyebrow: "我们的团队 · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "寻找属于你的道路的新方式",
+      team_hero_year: "2026",
+      team_why_eyebrow: "为什么我们创建了它",
+      team_why_title: "我们为什么创建了它",
+      team_why_quote: "选择未来不该如此艰难。",
+      team_why_sub: "EduPath 旨在让大学探索变得更个性化、更有条理、更易获得。",
+      team_alkar_role: "联合创始人 · 后端 · 数据库 · 前端",
+      team_alkar_build: "我构建什么",
+      team_alkar_r1_t: "后端", team_alkar_r1_d: "EduPath 背后的系统。",
+      team_alkar_r2_t: "数据库", team_alkar_r2_d: "数据结构与管理。",
+      team_alkar_r3_t: "前端", team_alkar_r3_d: "界面与交互开发。",
+      team_alkar_r4_t: "系统", team_alkar_r4_d: "将各部分连接成一个平台。",
+      team_system_title: "它们如何连接",
+      team_system_center: "EDUPATH",
+      team_system_final: "一个系统",
+      team_arshat_role: "联合创始人 · 前端 · UI · 开发 · AI",
+      team_arshat_build: "打造体验",
+      team_arshat_r1_t: "前端", team_arshat_r1_d: "将想法转化为界面。",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "设计清晰直观的体验。",
+      team_arshat_r3_t: "交互", team_arshat_r3_d: "让每一次交互自然流畅。",
+      team_arshat_r4_t: "质量", team_arshat_r4_d: "发现并消除不起作用的东西。",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "负责推荐大学的 AI。",
+      team_collab_sub: "两个角色，一个产品。",
+      team_build_title: "构建过程",
+      team_build_idea: "想法", team_build_idea_d: "一切始于一个笔记本、一支笔和一个值得解决的问题。",
+      team_build_arch: "架构", team_build_arch_d: "在写第一行代码之前规划系统。",
+      team_build_design: "设计", team_build_design_d: "颜色、字体、间距——一切都有意为之，毫无偶然。",
+      team_build_dev: "开发", team_build_dev_d: "构建、破坏、修复、重复。",
+      team_build_test: "测试", team_build_test_d: "每个边界情况、每个回退方案、每个失败状态——都已覆盖。",
+      team_build_product: "EDUPATH", team_build_product_d: "一个可用的产品。实时、多语言、智能。",
+      team_timeline_title: "从想法到 EduPath",
+      team_tl_1: "想法",
+      team_tl_2: "第一个原型",
+      team_tl_3: "后端与数据库",
+      team_tl_4: "前端",
+      team_tl_5: "测试",
+      team_tl_6: "EduPath",
+      team_show_title: "一个可用的产品",
+      team_final_h1: "未来不是一个终点。",
+      team_final_h2: "它是一条路。",
+      team_final_cta: "探索 EduPath",
+      team_contact_title: "联系我们",
+      team_contact_sub: "合作或任何问题——请发邮件至：",
+      team_footer: "EduPath © 2026 · Alkar & Arshat 用心制作",
+
       footer_note: "Fun Zone 是玩笑。真正的推荐在测试里。"
     },
 
@@ -1304,6 +1452,7 @@
     kk: {
       nav_home: "Басты бет", nav_universities: "Университеттер", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
+      nav_team: "Біздің команда",
       nav_login: "Кіру", nav_logout: "Шығу", nav_hello: "Сәлем",
 
       home_eyebrow: "Университет таңдау тесті",
@@ -1716,6 +1865,54 @@
       fz2_boss_win: "СЕН ДЕДЛАЙНДЫ ЖЕҢДІҢ",
       fz2_boss_lose: "СЕН КҮЙІП КЕТТІҢ",
 
+      // ===== TEAM PAGE =====
+      team_hero_eyebrow: "Біздің команда · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "Өз жолыңды табудың жаңа тәсілі",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Неге біз мұны жасадық",
+      team_why_title: "НЕГЕ БІЗ МҰНЫ ЖАСАДЫҚ",
+      team_why_quote: "Болашақты таңдау мүмкін емес болып көрінбеуі керек.",
+      team_why_sub: "EduPath университетті іздеуді жеке, құрылымды және қолжетімді ету үшін жасалды.",
+      team_alkar_role: "Қос құрылтайшы · Backend · Дерекқор · Frontend",
+      team_alkar_build: "МЕН НЕ ҚҰРАМЫН",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "EduPath-тың артындағы жүйелер.",
+      team_alkar_r2_t: "ДЕРЕКҚОР", team_alkar_r2_d: "Деректер құрылымы және басқару.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Интерфейс және өзара әрекеттесуді әзірлеу.",
+      team_alkar_r4_t: "ЖҮЙЕ", team_alkar_r4_d: "Барлық бөліктерді бір платформаға біріктіру.",
+      team_system_title: "БАРЛЫҒЫ ҚАЛАЙ БАЙЛАНЫСҚАН",
+      team_system_center: "EDUPATH",
+      team_system_final: "БІР ЖҮЙЕ",
+      team_arshat_role: "Қос құрылтайшы · Frontend · UI · Әзірлеу · AI",
+      team_arshat_build: "ТӘЖІРИБЕНІ ЖАСАУ",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Идеяларды интерфейстерге айналдыру.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Нақты және интуитивті тәжірибені жобалау.",
+      team_arshat_r3_t: "ӨЗАРА ӘРЕКЕТ", team_arshat_r3_d: "Әр әрекет табиғи болуы үшін.",
+      team_arshat_r4_t: "САПА", team_arshat_r4_d: "Жұмыс істемейтінді табу және жою.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "Университеттерді ұсынатын жасанды интеллект.",
+      team_collab_sub: "Екі рөл. Бір өнім.",
+      team_build_title: "ҚҰРУ",
+      team_build_idea: "ИДЕЯ", team_build_idea_d: "Барлығы дәптерден, қаламнан және шешуге тұрарлық мәселеден басталды.",
+      team_build_arch: "АРХИТЕКТУРА", team_build_arch_d: "Кодтың бірінші жолын жазбас бұрын жүйені жобалау.",
+      team_build_design: "ДИЗАЙН", team_build_design_d: "Түс, қаріп, аралық — бәрі әдейі, кездейсоқ ештеңе жоқ.",
+      team_build_dev: "ӘЗІРЛЕУ", team_build_dev_d: "Құрамыз, сындырамыз, жөндейміз, қайталаймыз.",
+      team_build_test: "ТЕСТІЛЕУ", team_build_test_d: "Әр шекаралық жағдай, әр қосалқы жоспар, әр қате күйі.",
+      team_build_product: "EDUPATH", team_build_product_d: "Жұмыс істейтін өнім. Тірі, көптілді, интеллектуалды.",
+      team_timeline_title: "ИДЕЯДАН EDUPATH-ҚА ДЕЙІН",
+      team_tl_1: "Идея",
+      team_tl_2: "Бірінші прототип",
+      team_tl_3: "Backend және дерекқор",
+      team_tl_4: "Frontend",
+      team_tl_5: "Тестілеу",
+      team_tl_6: "EduPath",
+      team_show_title: "ЖҰМЫС ІСТЕЙТІН ӨНІМ",
+      team_final_h1: "БОЛАШАҚ — БАРЫЛАТЫН ЖЕР ЕМЕС.",
+      team_final_h2: "Бұл — жол.",
+      team_final_cta: "EduPath-ты зерттеу",
+      team_contact_title: "Бізбен байланысу",
+      team_contact_sub: "Ынтымақтастық немесе кез келген сұрақтар бойынша — пошталарға жазыңыз:",
+      team_footer: "EduPath © 2026 · Alkar & Arshat қамқорлықпен жасалды",
+
       footer_note: "Fun Zone — әзіл. Нақты ұсыныстар — тестте."
     },
 
@@ -1725,6 +1922,7 @@
     ky: {
       nav_home: "Башкы бет", nav_universities: "Университеттер", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
+      nav_team: "Биздин команда",
       nav_login: "Кирүү", nav_logout: "Чыгуу", nav_hello: "Салам",
 
       home_eyebrow: "Университет тандоо тести",
@@ -2137,6 +2335,54 @@
       fz2_boss_win: "СЕН ДЕДЛАЙНДЫ ЖЕҢДИҢ",
       fz2_boss_lose: "СЕН КҮЙҮП КЕТТИҢ",
 
+      // ===== TEAM PAGE =====
+      team_hero_eyebrow: "Биздин команда · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "Өз жолуңду табуунун жаңы жолу",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Эмне үчүн биз муну жасадык",
+      team_why_title: "ЭМНЕ ҮЧҮН БИЗ МУНУ ЖАСАДЫК",
+      team_why_quote: "Келечекти тандоо мүмкүн эместей сезилбеши керек.",
+      team_why_sub: "EduPath университетти издөөнү жеке, структуралуу жана жеткиликтүү кылуу үчүн түзүлгөн.",
+      team_alkar_role: "Бирге негиздөөчү · Backend · Маалымат базасы · Frontend",
+      team_alkar_build: "МЕН ЭМНЕНИ КУРАМЫН",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "EduPath-тын артындагы системалар.",
+      team_alkar_r2_t: "МААЛЫМАТ БАЗАСЫ", team_alkar_r2_d: "Маалымат структурасы жана башкаруу.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Интерфейс жана өз ара аракеттенүүнү иштеп чыгуу.",
+      team_alkar_r4_t: "СИСТЕМА", team_alkar_r4_d: "Бардык бөлүктөрдү бир платформага бириктирүү.",
+      team_system_title: "БААРЫ КАНТИП БАЙЛАНЫШКАН",
+      team_system_center: "EDUPATH",
+      team_system_final: "БИР СИСТЕМА",
+      team_arshat_role: "Бирге негиздөөчү · Frontend · UI · Иштеп чыгуу · AI",
+      team_arshat_build: "ТАЖРЫЙБАНЫ ЖАРАТУУ",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Идеяларды интерфейстерге айландыруу.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Так жана интуитивдик тажрыйбаны долбоорлоо.",
+      team_arshat_r3_t: "ӨЗ АРА АРАКЕТ", team_arshat_r3_d: "Ар бир аракет табигый сезилиши үчүн.",
+      team_arshat_r4_t: "САПАТ", team_arshat_r4_d: "Иштебеген нерселерди табуу жана жоюу.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "Университеттерди сунуштаган жасалма интеллект.",
+      team_collab_sub: "Эки роль. Бир продукт.",
+      team_build_title: "КУРУУ",
+      team_build_idea: "ИДЕЯ", team_build_idea_d: "Баары дептерден, калемден жана чечүүгө татыктуу маселеден башталды.",
+      team_build_arch: "АРХИТЕКТУРА", team_build_arch_d: "Коддун биринчи сабын жазганга чейин системаны долбоорлоо.",
+      team_build_design: "ДИЗАЙН", team_build_design_d: "Түс, шрифт, аралык — баары атайын, кокустан эч нерсе жок.",
+      team_build_dev: "ИШТЕП ЧЫГУУ", team_build_dev_d: "Курабыз, сындырабыз, оңдойбуз, кайталайбыз.",
+      team_build_test: "ТЕСТТӨӨ", team_build_test_d: "Ар бир чектик учур, ар бир резервдик план, ар бир ката абалы.",
+      team_build_product: "EDUPATH", team_build_product_d: "Иштеген продукт. Жандуу, көп тилдүү, интеллектуалдык.",
+      team_timeline_title: "ИДЕЯДАН EDUPATH-КА ЧЕЙИН",
+      team_tl_1: "Идея",
+      team_tl_2: "Биринчи прототип",
+      team_tl_3: "Backend жана маалымат базасы",
+      team_tl_4: "Frontend",
+      team_tl_5: "Тесттөө",
+      team_tl_6: "EduPath",
+      team_show_title: "ИШТЕГЕН ПРОДУКТ",
+      team_final_h1: "КЕЛЕЧЕК — БАРУУЧУ ЖЕР ЭМЕС.",
+      team_final_h2: "Бул — жол.",
+      team_final_cta: "EduPath-ты изилдөө",
+      team_contact_title: "Байланышуу",
+      team_contact_sub: "Кызматташуу же ар кандай суроолор боюнча — почталарга жазыңыз:",
+      team_footer: "EduPath © 2026 · Alkar & Arshat камкордук менен жасалды",
+
       footer_note: "Fun Zone — тамаша. Чыныгы сунуштар — тестте."
     }
   };
@@ -2207,6 +2453,7 @@
         <a href="universities.html" data-i18n="nav_universities">Университеты</a>
         <a href="profile.html" data-i18n="nav_profile">Профиль</a>
         <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
+        <a href="team.html" data-i18n="nav_team">О нашей команде</a>
       </div>
     `;
 
@@ -2270,7 +2517,7 @@
         transform: translateY(-10px);
         transition: max-height .35s cubic-bezier(0.22,1,0.36,1), opacity .25s, transform .25s;
       }
-      .burger-panel.open { max-height: 360px; opacity: 1; transform: translateY(0); }
+      .burger-panel.open { max-height: 420px; opacity: 1; transform: translateY(0); }
       .burger-panel-inner { display: flex; flex-direction: column; padding: 16px 24px; }
       .burger-panel-inner a {
         font-family: 'Work Sans', sans-serif; font-size: 17px;
