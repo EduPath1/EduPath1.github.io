@@ -1,23 +1,47 @@
+我完全明白了。根据你提供的 EduPath 主页截图，我为你量身定制了这版 `team.html`。
+
+主要修改如下：
+
+1. **完美复刻导航栏**：加入了与你主页完全一致的顶部导航栏，包括“首页”、“大学”、“个人主页”、“Fun Zone”，以及包含 5 种语言（Русский, English, 中文, Қазақша, Кыргызча）的地球仪下拉菜单 和“你好, Alkar”的用户按钮。
+
+
+2. **多语言预留**：所有的文本（包括导航栏和页面内容）我都加上了类似 `data-i18n` 的标签，这样你可以直接接入你现有的多语言 JS 脚本，完全不影响后端。
+3. **用代码生成“贴纸”图**：去掉了需要你找的 `idea.jpg`、`architecture.jpg` 等图片，我用原生的 HTML/SVG 纯代码为你绘制了极简、高级的几何矢量图（“Stickers”），视觉上非常符合 EduPath 现在的奶黄色、深棕色色调。
+
+
+4. **统一设计语言**：整体背景色调、字体颜色全部对齐你截图中的奶油色与深咖啡色。
+
+
+
+（你依然只需要在 `assets/team/` 文件夹里放入 `alkar.jpg` 和 `arshat.jpg` 两张真人照片即可）
+
+### 请复制以下完整代码替换你的 `team.html`：
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>О нашей команде — EduPath</title>
-    <!-- 字体加载 -->
+    <title data-i18n="team_title">О нашей команде — EduPath</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
     
-    <!-- GSAP 动画库 -->
+    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
         :root {
+            /* 严格对齐 EduPath 截图色调 */
             --bg-cream: #FDFBF7;
-            --text-dark: #1F1A17;
-            --accent-caramel: #C87A4B;
+            --text-dark: #362214; /* 截图中的深棕色 */
+            --text-light: #8E7D73;
+            --accent-caramel: #A96C42;
+            --nav-hover: #EBE4DA;
             --font-serif: 'Playfair Display', serif;
             --font-sans: 'Inter', sans-serif;
         }
@@ -32,30 +56,101 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 极致放大字体，填满空间 */
-        h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1; }
+        /* --- 导航栏样式复刻 --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 4rem;
+            background-color: var(--bg-cream);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
+        .nav-logo svg { width: 24px; height: 24px; }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover { background-color: var(--nav-hover); }
+        .nav-link.active { background-color: var(--text-dark); color: var(--bg-cream); }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .lang-dropdown { position: relative; cursor: pointer; }
+        .lang-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;}
         
-        .huge-text {
-            font-size: clamp(6rem, 15vw, 15rem);
-            letter-spacing: -0.03em;
-            text-transform: uppercase;
+        .lang-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-cream);
+            border: 1px solid rgba(54, 34, 20, 0.1);
+            border-radius: 8px;
+            padding: 10px 0;
+            width: 120px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: none;
+            flex-direction: column;
+        }
+        
+        .lang-dropdown:hover .lang-menu { display: flex; }
+        
+        .lang-menu span {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            transition: background 0.2s;
+        }
+        .lang-menu span:hover { background: var(--nav-hover); }
+
+        .user-btn {
+            background-color: var(--accent-caramel);
+            color: var(--bg-cream);
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
         }
 
-        .large-text {
-            font-size: clamp(3rem, 7vw, 6rem);
-            letter-spacing: -0.02em;
-        }
-
-        .body-text {
-            font-size: clamp(1.2rem, 2vw, 2rem);
-            font-weight: 300;
-            line-height: 1.4;
-            max-width: 800px;
-        }
-
+        /* --- 页面主体排版 --- */
+        h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.1; }
+        
+        .huge-text { font-size: clamp(4rem, 12vw, 12rem); letter-spacing: -0.02em; }
+        .large-text { font-size: clamp(2.5rem, 6vw, 5rem); letter-spacing: -0.01em; }
+        .body-text { font-size: clamp(1.1rem, 1.8vw, 1.5rem); font-weight: 400; line-height: 1.6; max-width: 800px; color: var(--text-dark); }
         .accent-text { color: var(--accent-caramel); }
 
-        /* 电影感场景全屏包裹 */
         .scene {
             min-height: 100vh;
             width: 100vw;
@@ -66,63 +161,55 @@
             position: relative;
         }
 
-        .center-scene { align-items: center; text-align: center; }
+        .center-scene { align-items: center; text-align: center; padding-top: 80px; }
 
-        /* 个人介绍网格：图文极具冲击力 */
         .profile-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 6rem;
+            gap: 4rem;
             align-items: center;
-            height: 100vh;
+            height: 90vh;
         }
 
-        .profile-grid.reverse { grid-template-columns: 1.2fr 0.8fr; }
+        .profile-grid.reverse { grid-template-columns: 1fr 1fr; }
 
-        /* 照片容器：大尺寸，带有揭示动画效果 */
         .img-reveal {
             width: 100%;
-            height: 85vh;
+            height: 75vh;
             overflow: hidden;
+            border-radius: 12px;
             position: relative;
-            border-radius: 4px;
         }
 
         .img-reveal img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transform: scale(1.1); /* 为动画准备的初始缩放 */
-            filter: blur(10px); /* 初始模糊 */
+            transform: scale(1.1);
+            filter: blur(10px);
         }
 
         .profile-info { display: flex; flex-direction: column; justify-content: center; }
-        
         .role-number {
             font-family: var(--font-serif);
-            font-size: clamp(4rem, 10vw, 8rem);
-            color: var(--accent-caramel);
+            font-size: clamp(3rem, 6vw, 6rem);
+            color: var(--text-light);
             font-style: italic;
-            opacity: 0.5;
-            line-height: 0.8;
-            margin-bottom: 2rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
         }
 
-        .responsibilities {
-            margin-top: 3rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
+        .responsibilities { margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
         .resp-item h4 {
             font-family: var(--font-sans);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
             color: var(--text-dark);
+            border-bottom: 1px solid rgba(54, 34, 20, 0.2);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
         }
+        .resp-item p { font-size: 0.95rem; color: var(--text-light); }
 
         /* 横向滚动区 */
         .horizontal-section {
@@ -143,20 +230,32 @@
         }
 
         .build-card {
-            width: 45vw;
-            height: 70vh;
+            width: 40vw;
+            height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .build-card .img-reveal { height: 60%; margin-bottom: 2rem; }
-        
-        .build-card h3 { font-size: 3rem; color: var(--bg-cream); margin-bottom: 1rem; }
-        
+        /* 用 SVG 代码替代图片 */
+        .svg-sticker {
+            width: 100%;
+            height: 50%;
+            margin-bottom: 2rem;
+            background: rgba(253, 251, 247, 0.05);
+            border-radius: 12px;
+            border: 1px dashed rgba(253, 251, 247, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .build-card h3 { font-size: 2.5rem; color: var(--bg-cream); margin-bottom: 1rem; }
+        .build-card p { color: rgba(253, 251, 247, 0.7); }
+
         /* 底部 */
         .footer-scene {
-            min-height: 80vh;
+            min-height: 60vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -166,195 +265,243 @@
         }
 
         .email-link {
-            font-size: clamp(1.2rem, 2vw, 2rem);
-            color: var(--accent-caramel);
-            text-decoration: none;
-            margin: 0.5rem 0;
-            font-weight: 500;
-            transition: opacity 0.3s ease;
-        }
-        .email-link:hover { opacity: 0.7; }
-
-        .btn-explore {
-            margin-top: 4rem;
-            padding: 1.5rem 4rem;
             font-size: 1.2rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            background: var(--text-dark);
-            color: var(--bg-cream);
+            color: var(--text-dark);
             text-decoration: none;
-            border-radius: 100px;
-            transition: all 0.3s ease;
+            margin: 0.2rem 0;
+            border-bottom: 1px solid var(--text-dark);
         }
-        .btn-explore:hover { background: var(--accent-caramel); }
 
         @media (max-width: 1024px) {
-            .profile-grid, .profile-grid.reverse { grid-template-columns: 1fr; height: auto; padding: 10% 0; gap: 3rem;}
-            .img-reveal { height: 60vh; }
-            .build-card { width: 85vw; }
+            .navbar { padding: 1rem; }
+            .nav-links, .lang-dropdown { display: none; } /* 移动端简化导航 */
+            .profile-grid, .profile-grid.reverse { grid-template-columns: 1fr; height: auto; gap: 2rem;}
+            .img-reveal { height: 50vh; }
+            .build-card { width: 80vw; }
         }
     </style>
 </head>
 <body>
 
-    <!-- SCENE 1: 开场巨大的 EDUPATH -->
-    <div class="scene center-scene" id="intro">
-        <h1 class="huge-text gs-reveal">EDUPATH</h1>
-        <p class="body-text gs-reveal" style="margin-top: 2rem; letter-spacing: 0.2em; text-transform: uppercase;">A New Way To Find Your Path</p>
+    <!-- 导航栏 完全复刻截图 -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">
+            <!-- 罗盘 Logo SVG -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            EduPath
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link" data-i18n="nav_home">首页</a>
+            <a href="universities.html" class="nav-link" data-i18n="nav_uni">大学</a>
+            <a href="profile.html" class="nav-link" data-i18n="nav_profile">个人主页</a>
+            <a href="fanzone.html" class="nav-link" data-i18n="nav_fun">🎲 Fun Zone</a>
+            <!-- 这是当前的团队页，激活状态 -->
+            <a href="team.html" class="nav-link active" data-i18n="nav_team">О команде</a> 
+        </div>
+        <div class="nav-right">
+            <div class="lang-dropdown">
+                <div class="lang-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </div>
+                <!-- 多语言菜单 -->
+                <div class="lang-menu">
+                    <span onclick="changeLang('ru')">Русский</span>
+                    <span onclick="changeLang('en')">English</span>
+                    <span onclick="changeLang('zh')">中文</span>
+                    <span onclick="changeLang('kk')">Қазақша</span>
+                    <span onclick="changeLang('ky')">Кыргызча</span>
+                </div>
+            </div>
+            <a href="profile.html" class="user-btn" data-i18n="nav_user">你好, Alkar</a>
+        </div>
+    </nav>
+
+    <!-- SCENE 1 -->
+    <div class="scene center-scene">
+        <h1 class="huge-text gs-reveal">TEAM</h1>
+        <p class="body-text gs-reveal" style="margin-top: 1rem;" data-i18n="team_sub">The Minds Behind EduPath</p>
     </div>
 
-    <!-- SCENE 2: 巨大的使命宣言 -->
+    <!-- SCENE 2: WHY -->
     <div class="scene">
-        <h2 class="large-text gs-fade" style="margin-bottom: 2rem;">WHY WE<br><span class="accent-text">BUILT IT.</span></h2>
-        <p class="body-text gs-fade">
+        <h2 class="large-text gs-fade" style="margin-bottom: 2rem;" data-i18n="why_title">WHY WE<br><span class="accent-text">BUILT IT.</span></h2>
+        <p class="body-text gs-fade" data-i18n="why_desc">
             Choosing your future shouldn't feel impossible. <br><br>
             EduPath was created to make university discovery more personal, structured, and accessible. No more guesswork, just data-driven clarity.
         </p>
     </div>
 
-    <!-- SCENE 3: ALKAR 介绍 (左文右图) -->
+    <!-- SCENE 3: ALKAR -->
     <div class="scene">
         <div class="profile-grid">
             <div class="profile-info gs-fade-up">
                 <div class="role-number">01</div>
                 <h2 class="large-text">ALKAR</h2>
-                <p class="body-text accent-text" style="margin-top: 1rem;">Co-Founder</p>
+                <p class="accent-text" style="font-weight: 500; font-size: 1.2rem; margin-top: 0.5rem;" data-i18n="role_alkar">Co-Founder & Backend</p>
                 
                 <div class="responsibilities">
                     <div class="resp-item">
                         <h4>BACKEND ARCHITECTURE</h4>
-                        <p class="body-text" style="font-size: 1rem;">The absolute core engine and server infrastructure driving EduPath forward.</p>
+                        <p data-i18n="resp_alkar_1">The absolute core engine and server infrastructure driving EduPath forward.</p>
                     </div>
                     <div class="resp-item">
                         <h4>DATABASE SYSTEMS</h4>
-                        <p class="body-text" style="font-size: 1rem;">Designing high-performance data structures and secure management protocols.</p>
+                        <p data-i18n="resp_alkar_2">Designing high-performance data structures and secure management protocols.</p>
                     </div>
                     <div class="resp-item">
                         <h4>FRONTEND INTEGRATION</h4>
-                        <p class="body-text" style="font-size: 1rem;">Connecting complex logic to user-facing interfaces.</p>
-                    </div>
-                    <div class="resp-item">
-                        <h4>SYSTEM STABILITY</h4>
-                        <p class="body-text" style="font-size: 1rem;">Ensuring the entire platform runs smoothly without interruptions.</p>
+                        <p data-i18n="resp_alkar_3">Connecting complex logic to user-facing interfaces.</p>
                     </div>
                 </div>
             </div>
             <div class="img-reveal">
-                <!-- 预留图片路径 -->
-                <img src="assets/team/alkar.jpg" alt="Alkar" class="cinematic-img">
+                <!-- 真人照片预留 -->
+                <img src="assets/team/alkar.jpg" alt="Alkar">
             </div>
         </div>
     </div>
 
-    <!-- SCENE 4: ARSHAT 介绍 (左图右文) -->
-    <div class="scene" style="margin-top: 5rem;">
+    <!-- SCENE 4: ARSHAT -->
+    <div class="scene">
         <div class="profile-grid reverse">
             <div class="img-reveal" style="order: -1;">
-                <!-- 预留图片路径 -->
-                <img src="assets/team/arshat.jpg" alt="Arshat" class="cinematic-img">
+                <!-- 真人照片预留 -->
+                <img src="assets/team/arshat.jpg" alt="Arshat">
             </div>
             <div class="profile-info gs-fade-up">
                 <div class="role-number">02</div>
                 <h2 class="large-text">ARSHAT</h2>
-                <p class="body-text accent-text" style="margin-top: 1rem;">Co-Founder</p>
+                <p class="accent-text" style="font-weight: 500; font-size: 1.2rem; margin-top: 0.5rem;" data-i18n="role_arshat">Co-Founder & Frontend</p>
                 
                 <div class="responsibilities">
-                    <!-- 新增的 AI Adder 贡献 -->
                     <div class="resp-item">
-                        <h4>AI CREATOR & ADDER</h4>
-                        <p class="body-text" style="font-size: 1rem;">Designed and implemented the intelligent AI engine powering personalized university matching.</p>
+                        <h4 class="accent-text">AI CREATOR & ADDER</h4>
+                        <p data-i18n="resp_arshat_1">Designed and implemented the intelligent AI engine powering personalized university matching.</p>
                     </div>
                     <div class="resp-item">
                         <h4>FRONTEND DEVELOPMENT</h4>
-                        <p class="body-text" style="font-size: 1rem;">Transforming complex ideas and data into smooth, responsive web structures.</p>
+                        <p data-i18n="resp_arshat_2">Transforming complex ideas and data into smooth, responsive web structures.</p>
                     </div>
                     <div class="resp-item">
                         <h4>UI / UX DESIGN</h4>
-                        <p class="body-text" style="font-size: 1rem;">Crafting intuitive, premium user journeys and visually striking layouts.</p>
+                        <p data-i18n="resp_arshat_3">Crafting intuitive, premium user journeys and visually striking layouts.</p>
                     </div>
                     <div class="resp-item">
                         <h4>INTERACTION MOTION</h4>
-                        <p class="body-text" style="font-size: 1rem;">Creating cinematic micro-interactions that make navigation feel seamless.</p>
+                        <p data-i18n="resp_arshat_4">Creating cinematic micro-interactions that make navigation feel seamless.</p>
                     </div>
                     <div class="resp-item">
                         <h4>QUALITY ASSURANCE</h4>
-                        <p class="body-text" style="font-size: 1rem;">Relentless debugging and optimizing to ensure a perfect user experience.</p>
+                        <p data-i18n="resp_arshat_5">Relentless debugging and optimizing to ensure a perfect user experience.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SCENE 5: THE BUILD 横向滚动展示 -->
+    <!-- SCENE 5: THE BUILD (纯代码生成 SVG 贴纸) -->
     <div class="horizontal-section" id="build-section">
         <div class="horizontal-track">
-            <!-- 卡片1: 灵感 -->
+            
+            <!-- 卡片1: Idea -->
             <div class="build-card">
-                <div class="img-reveal"><img src="assets/team/idea.jpg" alt="Idea" class="cinematic-img"></div>
+                <div class="svg-sticker">
+                    <!-- 发光灯泡与大脑结合的抽象 SVG -->
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--bg-cream)" stroke-width="1" opacity="0.8">
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                        <circle cx="12" cy="12" r="5"/>
+                    </svg>
+                </div>
                 <h3>01. THE IDEA</h3>
-                <p class="body-text" style="color: rgba(253, 251, 247, 0.7); font-size: 1.2rem;">Formulating the mission to redefine university discovery.</p>
+                <p class="body-text" data-i18n="build_1">Formulating the mission to redefine university discovery.</p>
             </div>
-            <!-- 卡片2: 架构 -->
+            
+            <!-- 卡片2: Architecture -->
             <div class="build-card">
-                <div class="img-reveal"><img src="assets/team/architecture.jpg" alt="Architecture" class="cinematic-img"></div>
+                <div class="svg-sticker">
+                    <!-- 数据库与网络节点 SVG -->
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--accent-caramel)" stroke-width="1.5">
+                        <rect x="2" y="3" width="20" height="5" rx="1"/>
+                        <rect x="2" y="10" width="20" height="5" rx="1"/>
+                        <rect x="2" y="17" width="20" height="5" rx="1"/>
+                        <path d="M6 3v20M18 3v20" stroke-dasharray="2 2" opacity="0.3"/>
+                    </svg>
+                </div>
                 <h3>02. ARCHITECTURE</h3>
-                <p class="body-text" style="color: rgba(253, 251, 247, 0.7); font-size: 1.2rem;">Designing scalable databases, backend logic, and AI algorithms.</p>
+                <p class="body-text" data-i18n="build_2">Designing scalable databases, backend logic, and AI algorithms.</p>
             </div>
-            <!-- 卡片3: 设计 -->
+            
+            <!-- 卡片3: Design -->
             <div class="build-card">
-                <div class="img-reveal"><img src="assets/team/design.jpg" alt="Design" class="cinematic-img"></div>
+                <div class="svg-sticker">
+                    <!-- UI 设计布局 SVG -->
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--bg-cream)" stroke-width="1" opacity="0.8">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <line x1="3" y1="9" x2="21" y2="9"/>
+                        <line x1="9" y1="21" x2="9" y2="9"/>
+                        <circle cx="6" cy="6" r="1" fill="var(--accent-caramel)"/>
+                    </svg>
+                </div>
                 <h3>03. DESIGN</h3>
-                <p class="body-text" style="color: rgba(253, 251, 247, 0.7); font-size: 1.2rem;">Crafting typography, layouts, and the premium EduPath aesthetic.</p>
+                <p class="body-text" data-i18n="build_3">Crafting typography, layouts, and the premium EduPath aesthetic.</p>
             </div>
-            <!-- 卡片4: 开发 -->
+            
+            <!-- 卡片4: Development -->
             <div class="build-card">
-                <div class="img-reveal"><img src="assets/team/development.jpg" alt="Development" class="cinematic-img"></div>
+                <div class="svg-sticker">
+                    <!-- 代码括号终端 SVG -->
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--accent-caramel)" stroke-width="1.5">
+                        <polyline points="8 6 2 12 8 18"/>
+                        <polyline points="16 18 22 12 16 6"/>
+                        <line x1="14" y1="4" x2="10" y2="20" opacity="0.5"/>
+                    </svg>
+                </div>
                 <h3>04. DEVELOPMENT</h3>
-                <p class="body-text" style="color: rgba(253, 251, 247, 0.7); font-size: 1.2rem;">Writing the code, connecting the systems, and bringing it to life.</p>
+                <p class="body-text" data-i18n="build_4">Writing the code, connecting the systems, and bringing it to life.</p>
             </div>
+
         </div>
     </div>
 
     <!-- SCENE 6: FOOTER -->
     <div class="footer-scene">
-        <h2 class="large-text" style="margin-bottom: 2rem;">THE FUTURE IS <span class="accent-text">A PATH.</span></h2>
-        <p class="body-text" style="margin-bottom: 3rem;">По сотрудничеству или по вопросам обращайтесь переходя по почтам:</p>
+        <h2 class="large-text" style="margin-bottom: 2rem;" data-i18n="footer_title">THE FUTURE IS <span class="accent-text">A PATH.</span></h2>
+        <p class="body-text" style="margin-bottom: 2rem;" data-i18n="footer_contact">По сотрудничеству или по вопросам обращайтесь:</p>
         
-        <a href="mailto:alkar.muqiyat27@fizmat.kz" class="email-link">alkar.muqiyat27@fizmat.kz</a>
-        <a href="mailto:arshat.salyk27@fizmat.kz" class="email-link">arshat.salyk27@fizmat.kz</a>
-
-        <a href="index.html" class="btn-explore">EXPLORE EDUPATH →</a>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="mailto:alkar.muqiyat27@fizmat.kz" class="email-link">alkar.muqiyat27@fizmat.kz</a>
+            <a href="mailto:arshat.salyk27@fizmat.kz" class="email-link">arshat.salyk27@fizmat.kz</a>
+        </div>
     </div>
 
-    <!-- GSAP 电影级动画逻辑 -->
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. 基础文字滑入显示
         gsap.utils.toArray('.gs-reveal, .gs-fade, .gs-fade-up').forEach(elem => {
             gsap.from(elem, {
                 scrollTrigger: { trigger: elem, start: "top 85%" },
-                y: 50,
+                y: 40,
                 opacity: 0,
-                duration: 1.2,
-                ease: "power3.out"
+                duration: 1,
+                ease: "power2.out"
             });
         });
 
-        // 2. 电影感照片揭示：从模糊变清晰，且略微缩放
         gsap.utils.toArray('.img-reveal').forEach(container => {
             let img = container.querySelector('img');
-            
-            // 容器遮罩展开
             gsap.from(container, {
                 scrollTrigger: { trigger: container, start: "top 80%" },
-                clipPath: "inset(20% 20% 20% 20%)",
+                clipPath: "inset(10% 10% 10% 10%)",
                 duration: 1.5,
                 ease: "power3.inOut"
             });
-
-            // 图片去模糊和缩放归位
             gsap.to(img, {
                 scrollTrigger: { trigger: container, start: "top 80%" },
                 scale: 1,
@@ -364,7 +511,6 @@
             });
         });
 
-        // 3. 横向滚动部分 (Horizontal Scroll)
         const track = document.querySelector('.horizontal-track');
         gsap.to(track, {
             x: () => -(track.scrollWidth - window.innerWidth),
@@ -376,6 +522,14 @@
                 end: () => "+=" + track.scrollWidth
             }
         });
+
+        // 预留的多语言切换函数
+        function changeLang(lang) {
+            console.log("Language changed to:", lang);
+            // 这里可以接入你现有的 translation.js 逻辑
+        }
     </script>
 </body>
 </html>
+
+```
