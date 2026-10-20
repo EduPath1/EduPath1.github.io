@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* ---------------- 完全继承 index.html 的变量 ---------------- */
   :root{
     --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
     --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
@@ -17,100 +16,135 @@
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   html{ scroll-behavior:smooth; }
-  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x: hidden; }
-  h1,h2,h3{ font-family:'Fraunces', serif; }
+  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x: hidden; }
+  h1,h2,h3,h4{ font-family:'Fraunces', serif; }
   a{ text-decoration:none; color:inherit; }
-  button{ font-family:inherit; cursor:pointer; border:none; background:none; appearance:none; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; appearance:none; outline:none; }
   .wrap{ max-width:1200px; margin:0 auto; padding:0 64px; }
 
-  /* ---------------- 完全复刻的 NAV ---------------- */
-  header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:50; }
+  /* ================= 炫酷动画 KEYFRAMES ================= */
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+    50% { transform: translateY(-15px) rotate(calc(var(--rot, 0deg) + 5deg)); }
+    100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* 滚动触发动画类 */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.3s; }
+
+  /* ---------------- NAV ---------------- */
+  header{ background:var(--paper); border-bottom:1px solid var(--line); position:fixed; top:0; width:100%; z-index:100; transition: transform 0.3s ease; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); letter-spacing:-0.01em; }
-  .logo svg{ width:38px; height:38px; flex-shrink:0; }
+  .logo{ display:flex; align-items:center; gap:12px; font-weight:600; font-size:26px; color:var(--espresso); letter-spacing:-0.01em; }
+  .logo svg{ width:38px; height:38px; flex-shrink:0; transition: transform 0.3s ease; }
+  .logo:hover svg { transform: rotate(15deg); }
   .nav-links{ display:flex; align-items:center; gap:8px; }
-  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .15s ease, color .15s ease; }
+  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .2s ease, color .2s ease; }
   .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
   .nav-links a.active{ background:var(--espresso); color:var(--paper); }
   .nav-right{ display:flex; align-items:center; gap:14px; }
-  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .15s ease; }
-  .btn-login:hover{ background:var(--bark); }
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); background:transparent; border-radius:50%; transition:background .15s ease, color .15s ease; }
+  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:all .2s ease; }
+  .btn-login:hover{ background:var(--bark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(140, 90, 52, 0.3); }
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); background:transparent; border-radius:50%; transition:all .2s ease; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
 
+  /* 修复后的语言下拉菜单 */
   .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
-  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
-  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-menu{ position:absolute; top:calc(100% + 15px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-10px); transition:all .2s cubic-bezier(0.2, 0.8, 0.2, 1); z-index:1000; }
+  .lang-menu.show{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; transition:all .15s ease; cursor: pointer; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); padding-left:16px; }
   .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
-  /* ---------------- 页面特有样式 (Team) ---------------- */
-  .hero-section { position:relative; padding: 100px 0 60px; text-align: center; }
-  .decor-icon{ position:absolute; pointer-events:none; stroke:var(--sand); fill:none; z-index:0; }
+  /* ---------------- HERO SECTION ---------------- */
+  .hero-section { position:relative; padding: 180px 0 100px; text-align: center; }
+  .decor-icon{ position:absolute; pointer-events:none; stroke:var(--sand); fill:none; z-index:0; animation: float 6s ease-in-out infinite; }
   
-  .huge-title { font-size: 64px; line-height: 1.1; font-weight: 600; color: var(--espresso); letter-spacing: -0.02em; margin-bottom: 20px; position: relative; z-index: 2; }
-  .huge-title em { font-style: italic; color: var(--clay); }
-  .subtitle { font-size: 18px; color: var(--text-muted); max-width: 600px; margin: 0 auto 60px; position: relative; z-index: 2;}
+  .huge-title { font-size: 72px; line-height: 1.05; font-weight: 600; color: var(--espresso); letter-spacing: -0.02em; margin-bottom: 24px; position: relative; z-index: 2; }
+  .huge-title em { font-style: italic; color: var(--clay); position: relative; display: inline-block; }
+  .huge-title em::after { content: ""; position: absolute; bottom: 8px; left: 0; width: 100%; height: 12px; background: rgba(199, 146, 86, 0.2); z-index: -1; transform: skewX(-15deg); }
+  .subtitle { font-size: 19px; color: var(--text-muted); max-width: 650px; margin: 0 auto; position: relative; z-index: 2;}
 
-  /* 团队成员卡片 */
-  .team-grid { display: grid; grid-template-columns: 1fr; gap: 100px; padding-bottom: 100px; position: relative; z-index: 2; }
-  .member-card { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 60px; align-items: center; }
-  .member-card.reverse { grid-template-columns: 1.1fr 0.9fr; }
+  /* ---------------- TEAM GRID (信息量大增) ---------------- */
+  .team-grid { padding-bottom: 120px; position: relative; z-index: 2; display: flex; flex-direction: column; gap: 120px; }
+  .member-card { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 80px; align-items: stretch; }
+  .member-card.reverse { grid-template-columns: 1.2fr 0.8fr; }
   
-  .member-img-wrap { position: relative; width: 100%; aspect-ratio: 4/5; border-radius: 20px; overflow: hidden; background: var(--cream-deep); border: 1px solid var(--line); }
-  .member-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .member-img-wrap { position: relative; width: 100%; aspect-ratio: 3/4; border-radius: 24px; overflow: hidden; background: var(--cream-deep); border: 1px solid var(--line); box-shadow: 0 24px 48px -12px rgba(43,27,16,0.15); transition: transform 0.5s ease; }
+  .member-img-wrap:hover { transform: translateY(-10px); }
+  .member-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.05); transition: transform 0.8s ease; }
+  .member-img-wrap:hover img { transform: scale(1.05); }
   
-  .member-info { text-align: left; }
-  .role-num { font-family: 'Fraunces', serif; font-size: 24px; color: var(--caramel); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-  .role-num::after { content: ""; height: 1px; width: 40px; background: var(--caramel); display: inline-block; }
-  .member-name { font-size: 48px; color: var(--espresso); margin-bottom: 8px; line-height: 1; }
-  .member-role { font-size: 18px; color: var(--clay); font-weight: 500; margin-bottom: 32px; }
+  .member-info { display: flex; flex-direction: column; justify-content: center; }
+  .role-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--caramel); margin-bottom: 16px; }
+  .role-badge::before { content: ""; width: 8px; height: 8px; background: var(--caramel); border-radius: 50%; display: inline-block; }
   
-  .resp-list { display: flex; flex-direction: column; gap: 20px; }
-  .resp-item { border-left: 2px solid var(--cream-deep); padding-left: 20px; transition: border-color 0.3s; }
-  .resp-item:hover { border-color: var(--clay); }
-  .resp-item h4 { font-family: 'Work Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--espresso); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .resp-item.ai-highlight h4 { color: var(--clay); font-size: 16px; }
-  .resp-item p { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
-
-  /* 底部深色区域: The Build (复刻 how section) */
-  .build-section { background: var(--espresso); color: var(--paper); padding: 100px 0; position: relative; overflow: hidden; }
-  .build-head { text-align: center; margin-bottom: 60px; }
-  .build-head h2 { font-size: 40px; margin-bottom: 16px; }
-  .build-head p { color: var(--sand); font-size: 16px; }
-
-  .build-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-  .build-card { background: rgba(247,239,225,0.03); border: 1px solid rgba(247,239,225,0.1); border-radius: 16px; padding: 40px; text-align: center; transition: transform 0.3s, background 0.3s; }
-  .build-card:hover { transform: translateY(-5px); background: rgba(247,239,225,0.06); }
+  .member-name { font-size: 56px; color: var(--espresso); margin-bottom: 12px; line-height: 1; letter-spacing: -0.02em; }
+  .member-role { font-size: 20px; color: var(--clay); font-weight: 500; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
   
-  .sticker-wrap { height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-  .sticker-wrap svg { width: 80px; height: 80px; stroke: var(--sand); }
+  .tech-stack { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
+  .tech-tag { padding: 6px 14px; background: var(--paper); border: 1px solid var(--cream-deep); border-radius: 20px; font-size: 13px; font-weight: 500; color: var(--espresso); transition: all 0.3s; }
+  .tech-tag:hover { background: var(--espresso); color: var(--paper); transform: translateY(-2px); }
+
+  .resp-list { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .resp-item h4 { font-family: 'Work Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--espresso); margin-bottom: 8px; }
+  .resp-item p { font-size: 14.5px; color: var(--text-muted); line-height: 1.6; }
   
-  .build-card h3 { font-size: 24px; margin-bottom: 12px; color: var(--paper); }
-  .build-card p { font-size: 15px; color: rgba(247,239,225,0.7); line-height: 1.6; }
+  .ai-highlight { grid-column: span 2; background: rgba(140, 90, 52, 0.05); padding: 20px; border-radius: 12px; border-left: 4px solid var(--clay); }
+  .ai-highlight h4 { color: var(--clay); font-size: 18px; display: flex; align-items: center; gap: 8px; }
+  .ai-highlight h4::after { content: "✨"; font-size: 14px; }
 
-  /* 联系方式 */
-  .contact-section { padding: 80px 0; text-align: center; background: var(--cream); }
-  .contact-section h2 { font-size: 32px; color: var(--espresso); margin-bottom: 24px; }
-  .email-link { display: inline-block; font-size: 18px; color: var(--clay); font-weight: 500; margin: 8px 16px; padding-bottom: 4px; border-bottom: 1px solid var(--cream-deep); transition: all 0.2s; }
-  .email-link:hover { color: var(--espresso); border-bottom-color: var(--espresso); }
+  /* ---------------- THE BUILD SECTION ---------------- */
+  .build-section { background: var(--espresso); color: var(--paper); padding: 120px 0; position: relative; overflow: hidden; border-radius: 40px 40px 0 0; }
+  .build-head { text-align: center; margin-bottom: 80px; }
+  .build-head h2 { font-size: 48px; margin-bottom: 16px; }
+  .build-head p { color: var(--sand); font-size: 18px; max-width: 500px; margin: 0 auto; }
 
-  footer{ background:var(--cream-deep); padding:22px 0; text-align:center; font-size:13px; color:var(--text-muted); }
+  .build-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .build-card { background: rgba(247,239,225,0.03); border: 1px solid rgba(247,239,225,0.08); border-radius: 20px; padding: 40px 30px; text-align: center; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; }
+  .build-card:hover { transform: translateY(-10px); background: rgba(247,239,225,0.08); border-color: rgba(247,239,225,0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+  
+  .sticker-wrap { height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; transition: transform 0.3s; }
+  .build-card:hover .sticker-wrap { transform: scale(1.1); }
+  .sticker-wrap svg { width: 64px; height: 64px; stroke: var(--sand); transition: stroke 0.3s; }
+  .build-card:hover .sticker-wrap svg { stroke: var(--caramel); }
+  
+  .build-card h3 { font-size: 22px; margin-bottom: 12px; color: var(--paper); font-family: 'Work Sans', sans-serif; font-weight: 600; }
+  .build-card p { font-size: 14px; color: rgba(247,239,225,0.6); line-height: 1.6; }
 
-  @media (max-width: 900px){
-    .wrap { padding: 0 26px; }
+  /* ---------------- FOOTER ---------------- */
+  footer{ background:var(--espresso); padding: 40px 0; text-align:center; font-size:14px; color:rgba(247,239,225,0.5); border-top: 1px solid rgba(247,239,225,0.1); }
+
+  @media (max-width: 1024px){
+    .wrap { padding: 0 40px; }
     .member-card, .member-card.reverse { grid-template-columns: 1fr; gap: 40px; }
     .member-card.reverse .member-img-wrap { order: -1; }
-    .huge-title { font-size: 44px; }
+    .huge-title { font-size: 52px; }
+    .build-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  }
+  @media (max-width: 600px){
+    .wrap { padding: 0 24px; }
+    .huge-title { font-size: 40px; }
+    .member-name { font-size: 40px; }
+    .resp-list { grid-template-columns: 1fr; }
+    .ai-highlight { grid-column: span 1; }
     .build-grid { grid-template-columns: 1fr; }
+    .hero-section { padding: 140px 0 80px; }
   }
 </style>
 </head>
 <body>
 
-  <!-- ================= NAV (完全复刻 index.html) ================= -->
-  <header>
+<!-- ================= NAV ================= -->
+<header>
   <nav class="wrap">
     <a href="index.html" class="logo">
       <svg viewBox="0 0 40 40" fill="none">
@@ -125,19 +159,19 @@
       <a href="universities.html" data-i18n="nav_universities">Университеты</a>
       <a href="profile.html" data-i18n="nav_profile">Профиль</a>
       <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
-      <a href="team.html" class="active" data-i18n="nav_team">Команда</a> <!-- 这里加了 Team -->
+      <a href="team.html" class="active" data-i18n="nav_team">Команда</a>
     </div>
     <div class="nav-right">
+      <!-- 重新编写结构的语言切换器 -->
       <div class="lang-dropdown">
-        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
+        <button type="button" class="icon-btn" id="langToggleBtn" aria-label="Сменить язык">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
         </button>
-        <div class="lang-menu" id="langMenu" role="menu">
-          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
-          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
-          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
-          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
-          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
+        <div class="lang-menu" id="langMenuPanel">
+          <button type="button" class="lang-option active" data-lang="ru">Русский</button>
+          <button type="button" class="lang-option" data-lang="en">English</button>
+          <button type="button" class="lang-option" data-lang="zh">中文</button>
+          <button type="button" class="lang-option" data-lang="kk">Қазақша</button>
         </div>
       </div>
       <a href="#" class="btn-login" data-auth-open="register" data-i18n="nav_login">Войти</a>
@@ -145,79 +179,83 @@
   </nav>
 </header>
 
-<!-- ================= 页面头部 ================= -->
+<!-- ================= HERO 动效头部 ================= -->
 <section class="hero-section wrap">
-  <!-- 漂浮装饰物 (继承自 index.html) -->
-  <svg class="decor-icon" style="top:10%; left:5%; width:30px; height:30px; opacity:.5; transform:rotate(-8deg);" viewBox="0 0 24 24" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-  <svg class="decor-icon" style="top:50%; right:10%; width:26px; height:26px; opacity:.4; transform:rotate(6deg);" viewBox="0 0 24 24" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M9 4v16M15 4v16"/></svg>
+  <!-- 漂浮图形设置不同的 --rot 变量以实现不规则旋转 -->
+  <svg class="decor-icon" style="top:25%; left:5%; width:35px; height:35px; opacity:.5; --rot:-15deg;" viewBox="0 0 24 24" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+  <svg class="decor-icon" style="top:60%; right:8%; width:40px; height:40px; opacity:.4; --rot:25deg; animation-delay: 1s;" viewBox="0 0 24 24" stroke-width="1.2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
+  <svg class="decor-icon" style="bottom:10%; left:20%; width:28px; height:28px; opacity:.3; --rot:10deg; animation-delay: 2s;" viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
 
-  <h1 class="huge-title"><span data-i18n="team_title_main">Люди, создающие </span><em>EduPath</em></h1>
-  <p class="subtitle" data-i18n="team_sub">Мы верим, что выбор будущего университета должен быть понятным, структурированным и доступным каждому.</p>
+  <h1 class="huge-title reveal"><span data-i18n="team_title_main">Архитекторы </span><em>EduPath</em></h1>
+  <p class="subtitle reveal delay-1" data-i18n="team_sub">Два студента РФМШ, объединившие код, данные и искусственный интеллект, чтобы сделать выбор университета прозрачным и точным.</p>
 </section>
 
-<!-- ================= 团队成员 ================= -->
+<!-- ================= TEAM GRID ================= -->
 <section class="team-grid wrap">
   
   <!-- ALKAR -->
-  <div class="member-card">
+  <div class="member-card reveal">
     <div class="member-info">
-      <div class="role-num">01</div>
-      <h2 class="member-name">ALKAR</h2>
-      <p class="member-role" data-i18n="role_alkar">Co-Founder & Backend Architecture</p>
+      <div class="role-badge">01 — System Core</div>
+      <h2 class="member-name">Alkar</h2>
+      <p class="member-role" data-i18n="role_alkar">Co-Founder / Backend Architecture</p>
       
+      <div class="tech-stack">
+        <span class="tech-tag">Node.js</span>
+        <span class="tech-tag">PostgreSQL</span>
+        <span class="tech-tag">Server Logic</span>
+        <span class="tech-tag">Security</span>
+      </div>
+
       <div class="resp-list">
         <div class="resp-item">
-          <h4>Backend Engine</h4>
-          <p data-i18n="resp_alkar_1">Абсолютное ядро и серверная инфраструктура, обеспечивающая работу EduPath.</p>
+          <h4>Data Infrastructure</h4>
+          <p data-i18n="resp_alkar_1">Проектирование баз данных, способных обрабатывать тысячи запросов абитуриентов без задержек.</p>
         </div>
         <div class="resp-item">
-          <h4>Data Structures</h4>
-          <p data-i18n="resp_alkar_2">Проектирование высоконагруженных баз данных и безопасных протоколов.</p>
+          <h4>API Development</h4>
+          <p data-i18n="resp_alkar_2">Связывание сложного искусственного интеллекта с пользовательским интерфейсом через надежные API.</p>
         </div>
         <div class="resp-item">
-          <h4>System Stability</h4>
-          <p data-i18n="resp_alkar_3">Обеспечение бесперебойной работы платформы и интеграция сложной логики.</p>
+          <h4>Vision</h4>
+          <p data-i18n="resp_alkar_3">«Технологии должны работать незаметно. Наша цель — дать пользователю ответ за миллисекунды».</p>
         </div>
       </div>
     </div>
     <div class="member-img-wrap">
-      <!-- 你的照片路径 -->
-      <img src="assets/team/alkar.jpg" alt="Alkar">
+      <img src="assets/team/alkar.jpg" alt="Alkar Photo Placeholder">
     </div>
   </div>
 
   <!-- ARSHAT -->
-  <div class="member-card reverse">
+  <div class="member-card reverse reveal">
     <div class="member-img-wrap">
-      <!-- 你的照片路径 -->
-      <img src="assets/team/arshat.jpg" alt="Arshat">
+      <img src="assets/team/arshat.jpg" alt="Arshat Photo Placeholder">
     </div>
     <div class="member-info">
-      <div class="role-num">02</div>
-      <h2 class="member-name">ARSHAT</h2>
-      <p class="member-role" data-i18n="role_arshat">Co-Founder & Frontend & AI</p>
+      <div class="role-badge">02 — Interface & Logic</div>
+      <h2 class="member-name">Arshat</h2>
+      <p class="member-role" data-i18n="role_arshat">Co-Founder / Frontend & AI Lead</p>
       
+      <div class="tech-stack">
+        <span class="tech-tag">JavaScript / React</span>
+        <span class="tech-tag">AI Algorithms</span>
+        <span class="tech-tag">UX/UI Motion</span>
+      </div>
+
       <div class="resp-list">
-        <!-- AI Adder 专属高亮 -->
+        <!-- 重点高亮区 -->
         <div class="resp-item ai-highlight">
-          <h4>AI CREATOR & ADDER</h4>
-          <p data-i18n="resp_arshat_ai">Разработка и внедрение интеллектуального ИИ-движка для точного подбора университетов.</p>
+          <h4>AI Creator & Integration</h4>
+          <p data-i18n="resp_arshat_ai">Разработка интеллектуального движка, который анализирует баллы, предпочтения и психологию студента для идеального мэтча с ВУЗом.</p>
         </div>
         <div class="resp-item">
-          <h4>Frontend Development</h4>
-          <p data-i18n="resp_arshat_1">Превращение идей и данных в плавные и адаптивные веб-интерфейсы.</p>
+          <h4>Frontend Engine</h4>
+          <p data-i18n="resp_arshat_1">Создание плавных интерфейсов и кинематографичных анимаций, чтобы поиск университета не был скучным.</p>
         </div>
         <div class="resp-item">
-          <h4>UI / UX Design</h4>
-          <p data-i18n="resp_arshat_2">Создание премиального визуального стиля и интуитивно понятного пути пользователя.</p>
-        </div>
-        <div class="resp-item">
-          <h4>Interaction Motion</h4>
-          <p data-i18n="resp_arshat_3">Разработка кинематографичных микро-взаимодействий и анимаций.</p>
-        </div>
-        <div class="resp-item">
-          <h4>Quality Assurance</h4>
-          <p data-i18n="resp_arshat_4">Непрерывный дебаггинг и оптимизация для идеального пользовательского опыта.</p>
+          <h4>Vision</h4>
+          <p data-i18n="resp_arshat_2">«Мы не просто фильтруем вузы. Мы создаем цифрового советника, который понимает тебя лучше, чем анкета».</p>
         </div>
       </div>
     </div>
@@ -225,106 +263,105 @@
 
 </section>
 
-<!-- ================= The Build (过程贴纸区) ================= -->
+<!-- ================= THE BUILD ================= -->
 <section class="build-section">
-  <!-- 漂浮物 -->
-  <svg class="decor-icon" style="top:10%; right:8%; width:30px; height:30px; opacity:.3; transform:rotate(8deg);" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
-  
   <div class="wrap">
-    <div class="build-head">
-      <h2 data-i18n="build_title">Процесс создания</h2>
-      <p data-i18n="build_sub">Как мы построили эту платформу шаг за шагом.</p>
+    <div class="build-head reveal">
+      <h2 data-i18n="build_title">Технологии & Процесс</h2>
+      <p data-i18n="build_sub">От наброска в блокноте до полноценной платформы на базе искусственного интеллекта.</p>
     </div>
 
     <div class="build-grid">
-      <!-- 1. Идея -->
-      <div class="build-card">
+      <div class="build-card reveal delay-1">
         <div class="sticker-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
-            <path d="M9 18h6m-3-15v2m-6.4 2.6l1.4 1.4m12 0l-1.4 1.4M3 12h2m14 0h2m-3.6 5.6l-1.4-1.4" stroke-linecap="round"/>
-            <path d="M8 18a4 4 0 01-2-6.5C6 8.5 8 7 12 7s6 1.5 6 4.5a4 4 0 01-2 6.5" stroke-linecap="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.2"><path d="M9 18h6m-3-15v2m-6.4 2.6l1.4 1.4m12 0l-1.4 1.4M3 12h2m14 0h2m-3.6 5.6l-1.4-1.4" stroke-linecap="round"/><path d="M8 18a4 4 0 01-2-6.5C6 8.5 8 7 12 7s6 1.5 6 4.5a4 4 0 01-2 6.5" stroke-linecap="round"/></svg>
         </div>
-        <h3 data-i18n="build_1_title">01. Идея</h3>
-        <p data-i18n="build_1_desc">Формулирование миссии: переосмыслить процесс поиска университетов для абитуриентов.</p>
+        <h3 data-i18n="build_1_title">01. Концепт</h3>
+        <p data-i18n="build_1_desc">Анализ проблем поступления и формирование алгоритма подбора.</p>
       </div>
 
-      <!-- 2. Архитектура -->
-      <div class="build-card">
+      <div class="build-card reveal delay-2">
         <div class="sticker-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="6" rx="1"/>
-            <rect x="3" y="15" width="18" height="6" rx="1"/>
-            <path d="M12 9v6M7 9v6m10-6v6" opacity="0.5"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.2"><rect x="3" y="3" width="18" height="6" rx="1"/><rect x="3" y="15" width="18" height="6" rx="1"/><path d="M12 9v6M7 9v6m10-6v6" opacity="0.5"/></svg>
         </div>
-        <h3 data-i18n="build_2_title">02. Архитектура</h3>
-        <p data-i18n="build_2_desc">Проектирование масштабируемых баз данных, серверной логики и алгоритмов ИИ.</p>
+        <h3 data-i18n="build_2_title">02. Бэкенд</h3>
+        <p data-i18n="build_2_desc">Построение защищенных серверов и структуры хранения данных.</p>
       </div>
 
-      <!-- 3. Дизайн -->
-      <div class="build-card">
+      <div class="build-card reveal delay-3">
         <div class="sticker-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <path d="M3 9h18M9 21V9"/>
-            <circle cx="6" cy="6" r="1.5" fill="var(--sand)" stroke="none"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.2"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
         </div>
-        <h3 data-i18n="build_3_title">03. Дизайн</h3>
-        <p data-i18n="build_3_desc">Разработка типографики, макетов и премиальной эстетики интерфейса EduPath.</p>
+        <h3 data-i18n="build_3_title">03. AI-Модель</h3>
+        <p data-i18n="build_3_desc">Обучение логики подбора ВУЗов на основе сотен параметров.</p>
       </div>
 
-      <!-- 4. Разработка -->
-      <div class="build-card">
+      <div class="build-card reveal delay-1">
         <div class="sticker-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
-            <path d="M8 6l-6 6 6 6M16 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 4l-4 16" opacity="0.6" stroke-linecap="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.2"><path d="M8 6l-6 6 6 6M16 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 4l-4 16" opacity="0.4" stroke-linecap="round"/></svg>
         </div>
-        <h3 data-i18n="build_4_title">04. Разработка</h3>
-        <p data-i18n="build_4_desc">Написание кода, связывание систем воедино и запуск финального продукта.</p>
+        <h3 data-i18n="build_4_title">04. Интерфейс</h3>
+        <p data-i18n="build_4_desc">Сборка эстетичного и быстрого фронтенда для комфорта пользователей.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ================= Контакты & Footer ================= -->
-<section class="contact-section">
-  <h2 data-i18n="team_contact">Свяжитесь с нами</h2>
-  <div>
-    <a href="mailto:alkar.muqiyat27@fizmat.kz" class="email-link">alkar.muqiyat27@fizmat.kz</a>
-    <a href="mailto:arshat.salyk27@fizmat.kz" class="email-link">arshat.salyk27@fizmat.kz</a>
   </div>
 </section>
 
 <footer data-i18n="home_footer">
-  EduPath © 2026. Все права защищены
+  EduPath © 2026. Alkar & Arshat (РФМШ). Все права защищены.
 </footer>
 
-<!-- 引入你原有的 JS，多语言和 Auth 逻辑将直接生效 -->
+<!-- 引入你的原有 JS -->
 <script src="i18n.js"></script>
 <script src="auth.js"></script>
 
-<!-- 控制多语言下拉菜单的基础逻辑 (和 index.html 一致) -->
+<!-- 全新的专属交互脚本：下拉菜单 + 滚动加载动效 -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const langBtn = document.getElementById("langBtn");
-    const langMenu = document.getElementById("langMenu");
     
-    if(langBtn && langMenu) {
-      langBtn.addEventListener("click", (e) => {
+    // 1. 独立防冲突的语言下拉菜单控制
+    const langToggle = document.getElementById("langToggleBtn");
+    const langPanel = document.getElementById("langMenuPanel");
+    
+    if(langToggle && langPanel) {
+      langToggle.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        langMenu.classList.toggle("open");
-        const isOpen = langMenu.classList.contains("open");
-        langBtn.setAttribute("aria-expanded", isOpen);
+        langPanel.classList.toggle("show");
       });
-      document.addEventListener("click", () => {
-        langMenu.classList.remove("open");
-        langBtn.setAttribute("aria-expanded", "false");
+
+      document.addEventListener("click", (e) => {
+        if (!langToggle.contains(e.target) && !langPanel.contains(e.target)) {
+          langPanel.classList.remove("show");
+        }
+      });
+      
+      // 让菜单里的选项点击后关闭面板
+      const langOptions = langPanel.querySelectorAll(".lang-option");
+      langOptions.forEach(opt => {
+        opt.addEventListener("click", () => {
+          langPanel.classList.remove("show");
+          // 这里可以加上手动触发你 i18n.js 的逻辑，比如：
+          // const lang = opt.getAttribute('data-lang');
+          // if(typeof changeLanguage === 'function') changeLanguage(lang);
+        });
       });
     }
+
+    // 2. 炫酷的页面滚动触发动画 (Intersection Observer)
+    const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target); // 动画只触发一次
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      observer.observe(el);
+    });
   });
 </script>
 </body>
