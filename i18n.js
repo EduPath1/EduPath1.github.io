@@ -2184,3 +2184,719 @@
       home_how_title: "Бул кантип иштейт",
       home_how_sub: "Биринчи суроодон ылайыктуу университеттердин тизмесине чейин үч кадам.",
       home_step1_title: "Жеке маалыматтар", home_step1_desc: "Сенин кызыгууларың, хоббииң, өлкө жана окуу форматы 
+      home_step2_title: "Көрсөткүчтөр", home_step2_desc: "Баалар, тест жыйынтыктары (SAT, IELTS ж.б.) жана болжолдуу бюджет.",
+      home_step3_title: "Тест жыйынтыктары", home_step3_desc: "Сага эң ылайыктуу университеттердин тизмеси, түшүндүрмөлөр менен.",
+      home_footer: "EduPath © 2026. Бардык укуктар корголгон",
+      city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
+
+      catalog_title: "Университеттер", catalog_sub: "Өлкө жана университет танда",
+      catalog_filters: "Фильтрлер", catalog_budget_label: "Окуу бюджети (USD/жыл)",
+      catalog_budget_from: "баштап", catalog_budget_to: "чейин",
+      catalog_country_label: "Өлкө", catalog_country_all: "Бардык өлкөлөр",
+      catalog_grant_label: "Каржылык жардам", catalog_grant_only: "Толук грант менен гана",
+      catalog_apply: "Колдонуу", catalog_reset: "Тазалоо",
+      catalog_choose_uni: "Университет танда",
+      catalog_choose_hint: "Сол жактагы өлкөнү басып, анан университетти басып, толук маалыматты көрүңүз.",
+      catalog_search_placeholder: "Университет издөө...", catalog_search_empty: "Кечиресиз, биз бул университетти кошуп жатабыз",
+      catalog_saved_ok: "Университет ийгиликтүү сакталды", catalog_saved_remove: "Университет тандалмалардан алынды",
+      catalog_need_login: "Университеттерди сактоо үчүн аккаунтка кириңиз",
+      catalog_save_btn: "Тандалмаларга сактоо", catalog_saved_btn: "Тандалмаларда",
+
+      profile_greeting: "Салам", profile_logout: "Чыгуу",
+      profile_saved_title: "⭐ Жаккан университеттер",
+      profile_saved_sub: "Каталогдо жылдызча менен белгилегендериңиз",
+      profile_tests_title: "🎯 Тест жыйынтыктары",
+      profile_tests_sub: "ЖИ сенин жоопторуңа ылайык тандаган университеттер",
+      profile_empty_saved: "Сен азырынча бир да университет сактаган жоксуң.",
+      profile_empty_saved_hint: "Каталогго кирип, университеттин жанындагы жылдызчаны басыңыз.",
+      profile_empty_tests: "Сен азырынча тест тапшырган жоксуң.",
+      profile_empty_tests_hint: "Университет тандоо тестинен өтүү →",
+      profile_need_login_title: "Адеги аккаунтка кириңиз",
+      profile_need_login_desc: "Университеттерди сактоо жана тест жыйынтыктарын көрүү үчүн аккаунт түзүңүз же кириңиз.",
+      profile_create_account: "Аккаунт түзүү", profile_loading: "Профиль жүктөлүүдө",
+      profile_last_test: "Акыркы тест", profile_test: "Тест",
+      profile_unis_found: "университет табылды",
+
+      test_title: "Өзүңө ылайыктуу университетти табабыз",
+      test_sub: "Окуу, кыялдагы өлкө, климат жана жашоо образы тууралуу бир нече суроого жооп бер.",
+      test_start: "Баштоо", test_question: "Суроо", test_of: "/",
+      test_ask: "ЖИ сурайт", test_thinking: "ЖИ ойлонуп жатат",
+      test_answer_placeholder: "Жообуңду ушул жерге жаз...", test_send: "Жөнөтүү",
+      test_restart: "Кайра өтүү",
+      test_final_title: "Даяр! Мына сенин университеттериң",
+      test_final_sub: "ЖИ жоопторуңду талдап, 4 категория боюнча варианттарды тандады.",
+      test_saved_banner: "Жыйынтыгың профилде сакталды", test_saved_hint: "Профилде көрүү →",
+      test_not_saved_banner: "Жыйынтыкты сактоо үчүн кириңиз", test_not_saved_hint: "Кирүү",
+      test_cat_academic: "Окуу көрсөткүчтөрү боюнча ылайыктуу",
+      test_cat_lifestyle: "Жашоо образы боюнча ылайыктуу",
+      test_cat_safe: "Тапшыруу мүмкүнчүлүгү жогору",
+      test_cat_reach: "Мүмкүнчүлүк бар, бирок күчөтүү керек",
+      test_empty_category: "Бул категорияда эч нерсе ылайыктуу болгон жок",
+      test_more: "Кененирээк →", test_analyzing: "ЖИ 250 университетти талдап жатат",
+
+      modal_hello: "Кош келиңиз", modal_hello_sub: "Университеттерди сактоо үчүн аккаунт түзүңүз",
+      modal_name: "Аты", modal_name_ph: "Мисалы, Айсана", modal_email: "Email",
+      modal_password: "Сырсөз", modal_password_ph: "Жок дегенде 6 белги",
+      modal_submit_register: "Аккаунт түзүү", modal_submit_login: "Кирүү",
+      modal_switch_register: "Аккаунтуңуз барбы?", modal_switch_login: "Аккаунтуңуз жокпу?",
+      modal_switch_register_btn: "Кирүү", modal_switch_login_btn: "Түзүү",
+      modal_welcome_back: "Кайра кош келиңиз", modal_welcome_back_sub: "Аккаунтуңузга кириңиз",
+      modal_confirm_title: "Почтаңызды ырастаңыз",
+      modal_confirm_sub: "Биз {email} дарегине кат жөнөттүк. Gmail ачып, ырастоо шилтемесин басыңыз.",
+      modal_confirm_resend: "Катты кайра жөнөтүү",
+      modal_confirm_resent: "Кат кайра жөнөтүлдү",
+      modal_confirm_open_mail: "Gmail ачуу",
+      modal_confirm_already: "Мен ырастадым — кирүү",
+      modal_after_confirm_title: "Почта ырасталды ✓",
+      modal_after_confirm_sub: "Эми сырсөзүңүз менен кириңиз",
+      modal_login_success: "Кайра кош келиңиз!",
+      modal_register_success: "Аккаунт түзүлдү. Салам!",
+      modal_logout_success: "Аккаунттан чыктыңыз",
+      modal_fill_all: "Бардык талааларды толтуруңуз",
+      modal_wait: "Күтө туруңуз...",
+      modal_server_waking: "Сервер ойгонуп жатат. 30 секунд күтүп, кайра аракет кылыңыз.",
+      modal_session_expired: "Сессия аяктады. Кайра кириңиз.",
+      test_saving_banner: "Жыйынтык сакталып жатат…",
+      test_save_failed_banner: "Жыйынтыкты сактоо мүмкүн болгон жок",
+      test_save_failed_desc: "Жыйынтык төмөндө көрүнөт, бирок профилде азырынча жок. Кайра аракет кылыңыз.",
+      test_save_retry: "Кайталоо",
+      test_err_rate: "Өтүнүчтөр өтө көп. Бир нече мүнөт күтүп, кайра аракет кылыңыз.",
+      test_err_ai: "ЖИ 3 аракеттен кийин да жооп бере алган жок.",
+      modal_error_generic: "Бир нерсе туура болбоду. Кайра аракет кылыңыз.",
+      modal_error_register: "Каттоо катасы",
+      modal_error_login: "Email же сырсөз туура эмес",
+      modal_close: "Жабуу",
+
+      uni_section_finance: "Каржы", uni_section_deadlines: "Мөөнөттөр",
+      uni_section_requirements: "Талаптар", uni_section_ratings: "Рейтингдер",
+      uni_section_majors: "Адистиктер", uni_section_extra: "Кошумча",
+      uni_field_tuition: "Окуу акысы", uni_field_admission: "Кабыл алуу пайызы",
+      uni_field_aid: "Каржылык жардам", uni_field_grant: "Толук грант",
+      uni_field_early_deadline: "Эрте дедлайн", uni_field_main_deadline: "Негизги дедлайн",
+      uni_field_toefl: "TOEFL / IELTS", uni_field_sat: "SAT",
+      uni_field_essay: "Эссе", uni_field_recs: "Сунуштама каттар",
+      uni_field_app_fee: "Арыздын баасы", uni_field_apply_link: "Арыз шилтемеси",
+      uni_field_rank_country: "Өлкөдөгү рейтинг", uni_field_rank_world: "Дүйнөлүк рейтинг",
+      uni_field_majors: "Багыттар", uni_field_comments: "Комментарийлер",
+      uni_value_yes: "ООБА", uni_value_no: "жок", uni_value_not_specified: "көрсөтүлгөн эмес",
+      uni_full_grant_badge: "✨ Толук грант",
+      uni_open_site: "🌐 Расмий сайт",
+      uni_apply: "📝 Арыз берүү",
+      uni_aid_link: "💰 Каржылык жардам",
+
+      country_australia: "Австралия", country_austria: "Австрия", country_belgium: "Бельгия",
+      country_canada: "Канада", country_china: "Кытай", country_czech: "Чехия",
+      country_denmark: "Дания", country_finland: "Финляндия", country_germany: "Германия",
+      country_hongkong: "Гонконг", country_hungary: "Венгрия", country_italy: "Италия",
+      country_japan: "Жапония", country_latvia: "Латвия", country_netherlands: "Нидерланд",
+      country_poland: "Польша", country_qatar: "Катар", country_singapore: "Сингапур",
+      country_southkorea: "Түштүк Корея", country_spain: "Испания", country_sweden: "Швеция",
+      country_switzerland: "Швейцария", country_turkey: "Түркия", country_uae: "БАЭ",
+      country_uk: "Улуу Британия", country_usa: "АКШ",
+
+      // ===== FUN ZONE v2 =====
+      fz2_badge: "⚠️ BRAINROT БӨЛҮМҮ",
+      fz2_hero_title: "Fun Zone",
+      fz2_hero_sub: "EduPath-тын эң керексиз бөлүгү.",
+      fz2_hero_sub2: "Биз кабыл алуу алгоритмин жакшырта алмакпыз. Биз муну тандадык.",
+      fz2_open: "Ачуу",
+
+      fz2_card_aura: "Академиялык аура",
+      fz2_card_aura_desc: "Толук чыныгы аураңызды жаратыңыз.",
+      fz2_card_future: "Келечегимди рандомдоо",
+      fz2_card_future_desc: "Сайт тагдырыңызды чечсин.",
+      fz2_card_battle: "Университет салгылашуусу",
+      fz2_card_battle_desc: "Эки университет кирет. Бирөө чыгат.",
+      fz2_card_cooked: "Канчалык күйүп жатам?",
+      fz2_card_cooked_desc: "Күйүп жатасыңбы, бил.",
+      fz2_card_npc: "Кандай NPC-сың?",
+      fz2_card_npc_desc: "Университет NPC-ыңды тап.",
+      fz2_card_potion: "Шайкештик суусундугу",
+      fz2_card_potion_desc: "Университет суусундугуңду кайнат.",
+      fz2_card_stock: "GPA биржасы",
+      fz2_card_stock_desc: "GPA-ңды түз эфирде көр.",
+      fz2_card_crash: "Портфелдин кулашы",
+      fz2_card_crash_desc: "Академиялык крахты иштет.",
+      fz2_card_gacha: "Университет гачасы",
+      fz2_card_gacha_desc: "Университеттерди тарт. Эч нерсе сезбей.",
+      fz2_card_wallet: "Капчыкка зыян",
+      fz2_card_wallet_desc: "Капчык канча аларын бил.",
+      fz2_card_sleep: "Уйку vs GPA",
+      fz2_card_sleep_desc: "Түбөлүк компромиссти моделде.",
+      fz2_card_caffeine: "Кофеин калькулятору",
+      fz2_card_caffeine_desc: "Канча кофе — өтө көп?",
+      fz2_card_brain: "Мээ сыйымдуулугу",
+      fz2_card_brain_desc: "Эс тутумуңду текшер. Окшош.",
+      fz2_card_sat: "SAT-болжол",
+      fz2_card_sat_desc: "Болжо. Кандайдыр бир жол менен туура тап.",
+      fz2_card_officer: "Кабыл алуу комиссиясы",
+      fz2_card_officer_desc: "Офицер менен жолугуш. Өкүнбөй.",
+      fz2_card_rejection: "Баш тартуу каты",
+      fz2_card_rejection_desc: "Кат ал. Тилекке каршы.",
+      fz2_card_career: "Кокустан кесип",
+      fz2_card_career_desc: "Чыныгы чакырыгыңды тап.",
+      fz2_card_car: "Университет унаасы",
+      fz2_card_car_desc: "Университетиңдин унаасы бар. Албетте.",
+      fz2_card_weather: "Аба ырайы-мүнөз",
+      fz2_card_weather_desc: "Аба ырайы = мүнөз. Чыныгы.",
+      fz2_card_npc_gen: "NPC фабрикасы",
+      fz2_card_npc_gen_desc: "Кокустан NPC студент жарат.",
+      fz2_card_skill: "Скилл-ишью детектору",
+      fz2_card_skill_desc: "Скилл-ишью табат. Чыныгы.",
+      fz2_card_spell: "Университет сыйкыры",
+      fz2_card_spell_desc: "Күмөн сыйкырларды жаса.",
+      fz2_card_achievements: "Жетишкендиктер",
+      fz2_card_achievements_desc: "Баарын жыйна. Же жок.",
+      fz2_card_nuclear: "Ядролук сброс",
+      fz2_card_nuclear_desc: "Бул баскычты БАСПА.",
+      fz2_card_boss: "Финалдык босс",
+      fz2_card_boss_desc: "Дедлайн менен салгылаш.",
+
+      fz2_unknown: "Белгисиз блок",
+
+      fz2_aura_title: "Академиялык аура генератору",
+      fz2_aura_sub: "Маалыматтарды киргиз. Бош сөз ал.",
+      fz2_aura_btn: "АУРАМДЫ ЖАСА",
+      fz2_aura_result_label: "СЕНИН АКАДЕМИЯЛЫК АУРАҢ",
+
+      fz2_label_gpa: "GPA",
+      fz2_label_sat: "SAT",
+      fz2_label_ielts: "IELTS",
+      fz2_label_study: "Күнүнө окуу сааттары",
+      fz2_label_sleep: "Түнкү уйку сааттары",
+      fz2_label_days: "Дедлайнга чейинки күндөр",
+      fz2_label_prep: "Дайындык (0-100)",
+
+      fz2_future_title: "Келечегимди рандомдоо",
+      fz2_future_sub: "Сайт чечсин.",
+      fz2_future_btn: "🎰 САЙТ ТАГДЫРЫМДЫ ЧЕЧСИН",
+      fz2_future_again: "ТАГДЫРЫМДЫ КАБЫЛ АЛБАЙМЫН",
+
+      fz2_battle_title: "Университет салгылашуусу",
+      fz2_battle_sub: "Эки университет кирет. Бирөө чыгат.",
+      fz2_battle_pick1: "Жоокер 1",
+      fz2_battle_pick2: "Жоокер 2",
+      fz2_battle_go: "САЛГЫЛАШУУ",
+      fz2_battle_random: "Кокустан жуп",
+      fz2_battle_winner: "ЖЕҢҮҮЧҮ",
+      fz2_battle_reason: "Себеби",
+
+      fz2_bcat_aura: "Аура",
+      fz2_bcat_drip: "Drip",
+      fz2_bcat_parent: "Ата-эне жактыруусу",
+      fz2_bcat_suffering: "Академиялык азап",
+      fz2_bcat_sleep: "Уйку",
+      fz2_bcat_mc: "Башкы каарман энергиясы",
+      fz2_bcat_scholarship: "Стипендия энергиясы",
+      fz2_bcat_npc: "NPC деңгээли",
+      fz2_bcat_social: "Социалдык жашоо",
+      fz2_bcat_coffee: "Кофеинге көз карандылык",
+
+      fz2_cooked_title: "Канчалык күйүп жатам?",
+      fz2_cooked_sub: "Чыныгы маалыматтар. Чыныгы эмес өкүм.",
+      fz2_cooked_btn: "КАНЧАЛЫК КҮЙҮП ЖАТАМ",
+      fz2_cooked_result_label: "СЕН КҮЙҮП ЖАТАСЫҢ",
+
+      fz2_npc_title: "Кандай университет NPC-сың?",
+      fz2_npc_sub: "7 суроого жооп бер. Мүнөз ал.",
+      fz2_npc_q1: "Уйку сааттары",
+      fz2_npc_q2: "Окуу жыштыгы (0-100)",
+      fz2_npc_q3: "SAT баллы",
+      fz2_npc_q4: "Рейтинг маанилүүлүгү (0-100)",
+      fz2_npc_q5: "Кампус маанилүүлүгү (0-100)",
+      fz2_npc_q6: "Ата-эне пикири (0-100)",
+      fz2_npc_q7: "Стипендия маанилүүлүгү (0-100)",
+      fz2_npc_btn: "NPC-ымды көрсөт",
+
+      fz2_potion_title: "Университет шайкештик суусундугу",
+      fz2_potion_sub: "Суусундугуңду кайнат.",
+      fz2_potion_btn: "СУУСУНДУК КАЙНАТУУ",
+      fz2_potion_result: "Сенин университет суусундугуң",
+      fz2_potion_sch: "Стипендия",
+      fz2_potion_acad: "Академия",
+      fz2_potion_soc: "Социалдык",
+      fz2_potion_suf: "Азап",
+
+      fz2_stock_title: "GPA биржасы",
+      fz2_stock_sub: "Жоопкерчилик менен соода кыл. Же жок.",
+      fz2_stock_btn: "КИЙИНКИ СООДА КҮНҮ",
+      fz2_stock_init: "Рынокту инициализациялоо...",
+
+      fz2_crash_title: "Академиялык портфелдин кулашы",
+      fz2_crash_sub: "Крахты иштет.",
+      fz2_crash_btn: "ПОРТФЕЛИМДИ КУЛАТУУ",
+      fz2_crash_ready: "Баскычты бас.",
+
+      fz2_gacha_title: "Университет гачасы",
+      fz2_gacha_sub: "Тарт. Өкүн. Кайтала.",
+      fz2_gacha_pull1: "ТАРТУУ ×1",
+      fz2_gacha_pull10: "ТАРТУУ ×10",
+      fz2_rarity_common: "Кадимки",
+      fz2_rarity_rare: "Сейрек",
+      fz2_rarity_epic: "Эпикалык",
+      fz2_rarity_legendary: "Уламыштык",
+      fz2_rarity_mythic: "МИФТИК",
+
+      fz2_wallet_title: "Капчыкка зыян калькулятору",
+      fz2_wallet_sub: "Капчыгың канча алат?",
+      fz2_wallet_tui: "Окуу (USD/жыл)",
+      fz2_wallet_acc: "Турак жай",
+      fz2_wallet_food: "Тамак",
+      fz2_wallet_trans: "Транспорт",
+      fz2_wallet_schol: "Стипендия (USD)",
+      fz2_wallet_btn: "ЗЫЯНДЫ ЭСЕПТӨӨ",
+      fz2_wallet_result: "КАПЧЫГЫҢ АЛДЫ",
+      fz2_wallet_damage: "ЗЫЯН",
+
+      fz2_sleep_title: "Уйку vs GPA симулятору",
+      fz2_sleep_sub: "Ууңду танда.",
+      fz2_sleep_label: "УЙКУ",
+
+      fz2_caffeine_title: "Кофеин калькулятору",
+      fz2_caffeine_sub: "Канча кофе — өтө көп?",
+      fz2_caffeine_label: "Бүгүн канча кофе ичтиң?",
+      fz2_caffeine_btn: "ТЕКШЕРҮҮ",
+
+      fz2_brain_title: "Мээ сыйымдуулугу тести",
+      fz2_brain_sub: "Шайкеш максатты бас.",
+      fz2_brain_target: "Максат",
+      fz2_brain_start: "БАШТОО",
+      fz2_brain_again: "КАЙРА ТЕСТ",
+      fz2_brain_restart: "КАЙРА БАШТОО",
+      fz2_brain_score: "Упай",
+      fz2_brain_capacity: "МЭЭ СЫЙЫМДУУЛУГУ",
+
+      fz2_sat_title: "SAT-болжол симулятору",
+      fz2_sat_sub: "Болжо. Кандайдыр бир жол менен туура тап.",
+      fz2_sat_next: "КИЙИНКИ СУРОО",
+      fz2_sat_correct: "Туура. Кандайдыр бир жол менен.",
+      fz2_sat_wrong: "Туура эмес. Албетте.",
+
+      fz2_officer_title: "Кабыл алуу комиссиясынын симулятору",
+      fz2_officer_sub: "Офицер менен жолугуш.",
+      fz2_officer_extra: "Класстан тышкаркы (0-100)",
+      fz2_officer_btn: "АРЫЗ БЕРҮҮ",
+      fz2_officer_accepted: "КАБЫЛ АЛЫНДЫ",
+      fz2_officer_waitlist: "КҮТҮҮ ТИЗИМИНДЕ",
+      fz2_officer_rejected: "БАШ ТАРТЫЛДЫ",
+
+      fz2_rejection_title: "Баш тартуу катынын генератору",
+      fz2_rejection_sub: "Баш тартуу ал. Кесиптик.",
+      fz2_rejection_btn: "БАШ ТАРТУУМДУ ЖАСА",
+
+      fz2_career_title: "Толук кокустан кесип генератору",
+      fz2_career_sub: "Чыныгы чакырыгыңды тап.",
+      fz2_career_btn: "КИМ БОЛОМ?",
+      fz2_career_result: "СЕНИН КЕЛЕЧЕК КЕСИБИҢ",
+      fz2_career_salary: "Эмгек акы",
+      fz2_career_diff: "Кыйындык",
+      fz2_career_aura: "Аура",
+
+      fz2_car_title: "Университет унаасынын генератору",
+      fz2_car_sub: "Ар бир университеттин унаасы бар.",
+      fz2_car_pick: "Университетти танда",
+      fz2_car_random: "Кокустан",
+      fz2_car_btn: "УНААМДЫ ЖАСА",
+      fz2_car_result: "СЕНИН УНИВЕРСИТЕТ УНААҢ",
+      fz2_car_rel: "Ишенимдүүлүк",
+      fz2_car_aura: "Аура",
+      fz2_car_fuel: "Отун керектөө",
+      fz2_car_comp: "Академиялык шайкештик",
+
+      fz2_weather_title: "Университет аба ырайы-мүнөзү",
+      fz2_weather_sub: "Аба ырайы = мүнөз.",
+      fz2_weather_btn: "АБА ЫРАЙЫН АЙЛАНДЫРУУ",
+
+      fz2_npc_gen_title: "NPC фабрикасы",
+      fz2_npc_gen_sub: "Кокустан NPC студент жарат.",
+      fz2_npc_gen_btn: "NPC ЖАРАТУУ",
+      fz2_npc_gen_name: "Аты",
+      fz2_npc_gen_major: "Адистиги",
+      fz2_npc_gen_sleep: "Уйку",
+      fz2_npc_gen_coffee: "Кофе",
+      fz2_npc_gen_car: "Унаа",
+      fz2_npc_gen_personality: "Мүнөз",
+
+      fz2_skill_title: "Скилл-ишью детектору",
+      fz2_skill_sub: "Скилл-ишью табат. Чыныгы.",
+      fz2_skill_btn: "СКИЛЛ-ИШЬЮ ТАБУУ",
+      fz2_skill_detected: "⚠️ Скилл-ишью табылды.",
+      fz2_skill_none: "Скилл-ишью жок. Тилекке каршы, эми кармоо керек.",
+      fz2_skill_decent: "жалпы жакшы",
+      fz2_skill_solid: "бекем",
+
+      fz2_spell_title: "Университет сыйкыр генератору",
+      fz2_spell_sub: "Күмөн сыйкырларды жаса.",
+      fz2_spell_btn: "СЫЙКЫР ЖАСА",
+      fz2_spell_effect: "ТААСИРИ",
+
+      fz2_ach_title: "Сенин жетишкендиктериң",
+      fz2_ach_unlocked: "ачылды",
+      fz2_ach_popup_title: "🏆 Жетишкендик ачылды",
+      fz2_ach_popup_desc: "",
+      fz2_ach_aura_gen: "Аура генератору",
+      fz2_ach_future: "Тагдырды кабыл алуу",
+      fz2_ach_battle: "Жоокер",
+      fz2_ach_cooked: "Күйүп жатат",
+      fz2_ach_npc: "NPC доогасы",
+      fz2_ach_potion: "Суусундук чебери",
+      fz2_ach_stock: "GPA трейдери",
+      fz2_ach_crash: "Портфел кулашы",
+      fz2_ach_gacha_1: "Гача-жаңы",
+      fz2_ach_gacha_10: "Гача-көз каранды",
+      fz2_ach_gacha_mythic: "Мифтик тартуу",
+      fz2_ach_wallet: "Каржылык кыйроо",
+      fz2_ach_sleep: "Уйку симулятору",
+      fz2_ach_caffeine: "Химиялык реакция",
+      fz2_ach_brain: "Мээ сыйымдуулугу",
+      fz2_ach_sat: "SAT-болжол",
+      fz2_ach_officer: "Кабыл алуу комиссиясы",
+      fz2_ach_rejection: "Баш тартуу каты",
+      fz2_ach_career: "Кесип табылды",
+      fz2_ach_car: "Унаа жаралды",
+      fz2_ach_weather: "Аба ырайы-мүнөз",
+      fz2_ach_npc_gen: "NPC фабрикасы",
+      fz2_ach_skill: "Скилл-ишью детектору",
+      fz2_ach_spell: "Сыйкырчы",
+      fz2_ach_nuclear: "Ядролук аман калган",
+      fz2_ach_boss_win: "Дедлайн өлтүрүүчү",
+      fz2_ach_boss_lose: "Дедлайнда күйгөн",
+      fz2_ach_explorer: "Изилдөөчү",
+
+      fz2_nuclear_title: "Ядролук сброс",
+      fz2_nuclear_sub: "Бул баскычты БАСПА.",
+      fz2_nuclear_btn: "БАСПОО",
+      fz2_nuclear_m1: "Ишенесиңби?",          fz2_nuclear_n1: "ООБА, ИШЕНЕМ",
+      fz2_nuclear_m2: "ЧЫНЫМЕН БИ?",           fz2_nuclear_n2: "ЧЫНЫМЕН",
+      fz2_nuclear_m3: "БАЙКЕ, ТОКТО.",         fz2_nuclear_n3: "ТОКТОТО АЛБАЙМЫН",
+      fz2_nuclear_m4: "Жарайт.",               fz2_nuclear_n5: "...",
+      fz2_nuclear_m5: "💀\n\nСен өмүрүңдүн 7 секундун жоготтуң.",
+
+      fz2_boss_title: "Финалдык босс: Дедлайн",
+      fz2_boss_sub: "Эң чоң душманың менен салгылаш.",
+      fz2_boss_deadline_hp: "ДЕДЛАЙН HP",
+      fz2_boss_player_hp: "Сенин HP",
+      fz2_boss_study: "ОКУУ",
+      fz2_boss_sleep: "УКТОО",
+      fz2_boss_proc: "КИЙИНКИГЕ КАЛТЫРУУ",
+      fz2_boss_panic: "ПАНИКА",
+      fz2_boss_win: "СЕН ДЕДЛАЙНДЫ ЖЕҢДИҢ",
+      fz2_boss_lose: "СЕН КҮЙҮП КЕТТИҢ",
+
+      // ===== TEAM PAGE =====
+      team_hero_eyebrow: "Биздин команда · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "Өз жолуңду табуунун жаңы жолу",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Эмне үчүн биз муну жасадык",
+      team_why_title: "ЭМНЕ ҮЧҮН БИЗ МУНУ ЖАСАДЫК",
+      team_why_quote: "Келечекти тандоо мүмкүн эместей сезилбеши керек.",
+      team_why_sub: "EduPath университетти издөөнү жеке, структуралуу жана жеткиликтүү кылуу үчүн түзүлгөн.",
+      team_alkar_role: "Бирге негиздөөчү · Backend · Маалымат базасы · Frontend",
+      team_alkar_build: "МЕН ЭМНЕНИ КУРАМЫН",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "EduPath-тын артындагы системалар.",
+      team_alkar_r2_t: "МААЛЫМАТ БАЗАСЫ", team_alkar_r2_d: "Маалымат структурасы жана башкаруу.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Интерфейс жана өз ара аракеттенүүнү иштеп чыгуу.",
+      team_alkar_r4_t: "СИСТЕМА", team_alkar_r4_d: "Бардык бөлүктөрдү бир платформага бириктирүү.",
+      team_system_title: "БААРЫ КАНТИП БАЙЛАНЫШКАН",
+      team_system_center: "EDUPATH",
+      team_system_final: "БИР СИСТЕМА",
+      team_arshat_role: "Бирге негиздөөчү · Frontend · UI · Иштеп чыгуу · AI",
+      team_arshat_build: "ТАЖРЫЙБАНЫ ЖАРАТУУ",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Идеяларды интерфейстерге айландыруу.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Так жана интуитивдик тажрыйбаны долбоорлоо.",
+      team_arshat_r3_t: "ӨЗ АРА АРАКЕТ", team_arshat_r3_d: "Ар бир аракет табигый сезилиши үчүн.",
+      team_arshat_r4_t: "САПАТ", team_arshat_r4_d: "Иштебеген нерселерди табуу жана жоюу.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "Университеттерди сунуштаган жасалма интеллект.",
+      team_collab_sub: "Эки роль. Бир продукт.",
+      team_build_title: "КУРУУ",
+      team_build_idea: "ИДЕЯ", team_build_idea_d: "Баары дептерден, калемден жана чечүүгө татыктуу маселеден башталды.",
+      team_build_arch: "АРХИТЕКТУРА", team_build_arch_d: "Коддун биринчи сабын жазганга чейин системаны долбоорлоо.",
+      team_build_design: "ДИЗАЙН", team_build_design_d: "Түс, шрифт, аралык — баары атайын, кокустан эч нерсе жок.",
+      team_build_dev: "ИШТЕП ЧЫГУУ", team_build_dev_d: "Курабыз, сындырабыз, оңдойбуз, кайталайбыз.",
+      team_build_test: "ТЕСТТӨӨ", team_build_test_d: "Ар бир чектик учур, ар бир резервдик план, ар бир ката абалы.",
+      team_build_product: "EDUPATH", team_build_product_d: "Иштеген продукт. Жандуу, көп тилдүү, интеллектуалдык.",
+      team_timeline_title: "ИДЕЯДАН EDUPATH-КА ЧЕЙИН",
+      team_tl_1: "Идея",
+      team_tl_2: "Биринчи прототип",
+      team_tl_3: "Backend жана маалымат базасы",
+      team_tl_4: "Frontend",
+      team_tl_5: "Тесттөө",
+      team_tl_6: "EduPath",
+      team_show_title: "ИШТЕГЕН ПРОДУКТ",
+      team_final_h1: "КЕЛЕЧЕК — БАРУУЧУ ЖЕР ЭМЕС.",
+      team_final_h2: "Бул — жол.",
+      team_final_cta: "EduPath-ты изилдөө",
+      team_contact_title: "Байланышуу",
+      team_contact_sub: "Кызматташуу же ар кандай суроолор боюнча — почталарга жазыңыз:",
+      team_footer: "EduPath © 2026 · Alkar & Arshat камкордук менен жасалды",
+      team_code_c1: "# ар бир талапкерди баалоо",
+      team_code_c2: "// жыйынтык: 250 университет",
+      team_since: "2026-ЖЫЛДАН БЕРИ",
+      team_tw1: "ЕКИ АДАМ.",
+      team_tw2: "БИР КӨЗ КАРАШ.",
+      team_photo_soon: "Сүрөт жакында",
+      team_alkar_eyebrow: "Мен эмне жасайм",
+      team_sys_eyebrow: "Бир система",
+      team_n_profile: "КОЛДОНУУЧУ ПРОФИЛИ",
+      team_n_match: "УНИВЕРСИТЕТ ТАНДОО",
+      team_founder1: "Негиздөөчү 01",
+      team_founder2: "Негиздөөчү 02",
+      team_arshat_eyebrow: "Тажрыйбаны түзүү",
+      team_build_eyebrow: "Түзүлүү процесси",
+      team_svg_notes: "АЛГАЧКЫ ЖАЗУУЛАР",
+      team_svg_mockup: "МАКЕТ 01",
+      team_svg_t1: "Бардык эндпоинттер иштейт",
+      team_svg_t2: "Тил алмаштыруу иштейт",
+      team_svg_t3: "Чектик учур табылды",
+      team_svg_live: "ИШТЕП ЖАТАТ · 2026",
+      team_tl_eyebrow: "Идеядан EduPath-ка чейин",
+      team_show_eyebrow: "Продукт",
+      team_m_find: "Өз университетиңди тап",
+      team_m_guided: "Тест сага ылайыктуу жерди тандап берет.",
+      team_m_start: "Тестти баштоо",
+      team_m_home_cap: "Башкы бет",
+      team_m_home_sub: "Лендинг · Тааныштыруу",
+      team_m_c_us: "🇺🇸 АКШ (12)",
+      team_m_c_uk: "🇬🇧 Улуу Британия (8)",
+      team_m_c_ca: "🇨🇦 Канада (6)",
+      team_m_c_de: "🇩🇪 Германия (9)",
+      team_m_c_au: "🇦🇺 Австралия (7)",
+      team_m_harvard: "Гарвард университети",
+      team_m_cambridge: "📍 Кембридж, АКШ",
+      team_m_tuition: "ОКУУ АКЫСЫ",
+      team_m_tuition_v: "$75 891 / жыл",
+      team_m_admission: "КИРҮҮ ПАЙЫЗЫ",
+      team_m_explorer: "Университеттер каталогу",
+      team_m_explorer_sub: "Кара · Чыпкала · Салыштыр",
+      team_m_hi: "Салам, Айсана",
+      team_m_saved: "САКТАЛГАН",
+      team_m_oxford: "Оксфорд университети",
+      team_m_us_cam: "АКШ · Кембридж",
+      team_m_uk_ox: "Улуу Британия · Оксфорд",
+      team_m_results: "ТЕСТ ЖЫЙЫНТЫКТАРЫ",
+      team_m_last: "Акыркы тест · 4 университет табылды",
+      team_m_profile_sub: "Сакталгандар · Жыйынтыктар",
+      team_m_reco: "Сенин сунуштарың",
+      team_m_acad: "🎓 АКАДЕМИЯЛЫК ЫЛАЙЫКТУУЛУК",
+      team_m_toronto: "Торонто университети",
+      team_m_toronto_d: "Күчтүү изилдөө программасы сенин профилиңе дал келет",
+      team_m_life: "🌍 ТУРМУШ ТАРЗЫНА ЫЛАЙЫК",
+      team_m_eth: "ETH Цюрих",
+      team_m_eth_d: "Климат жана шаар тандооңа туура келет",
+      team_m_high: "🎯 ЖОГОРКУ МҮМКҮНЧҮЛҮК",
+      team_m_warsaw: "Варшава университети",
+      team_m_warsaw_d: "Балдарың мыкты катарында",
+      team_m_reco_cap: "Сунуштар",
+      team_m_reco_sub: "ЖИ иштеринин жыйынтыгы",
+      team_m_fz_sub: "EduPath-тын эң кереги жок бөлүгү",
+      team_m_fz_rules: "Эрежелер иштебеген жер",
+      team_cofounder: "Бирге негиздөөчү",
+
+      footer_note: "Fun Zone — тамаша. Чыныгы сунуштар — тестте."
+    }
+  };
+
+  // ============================================================
+  // ЯДРО
+  // ============================================================
+
+  function getLang() {
+    return localStorage.getItem(LANG_KEY) || "ru";
+  }
+
+  function emitLangChange() {
+    window.dispatchEvent(new Event("edupath-lang-change"));
+  }
+
+  function setLang(lang) {
+    if (!translations[lang]) return;
+    localStorage.setItem(LANG_KEY, lang);
+    applyAll();
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll(".lang-option").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
+
+    emitLangChange();
+  }
+
+  function t(key) {
+    const lang = getLang();
+    const dict = translations[lang] || translations.ru;
+    return dict[key] !== undefined ? dict[key] : (translations.ru[key] || key);
+  }
+
+  function applyAll() {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      el.textContent = t(key);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      const key = el.getAttribute("data-i18n-placeholder");
+      el.setAttribute("placeholder", t(key));
+    });
+    document.querySelectorAll("[data-i18n-title]").forEach(el => {
+      const key = el.getAttribute("data-i18n-title");
+      el.setAttribute("title", t(key));
+    });
+  }
+
+  function buildBurgerMenu() {
+    const nav = document.querySelector("nav.wrap");
+    if (!nav) return;
+    if (nav.querySelector(".burger-btn")) return;
+
+    const burger = document.createElement("button");
+    burger.type = "button";
+    burger.className = "burger-btn";
+    burger.setAttribute("aria-label", "Меню");
+    burger.innerHTML = `<span></span><span></span><span></span>`;
+
+    const panel = document.createElement("div");
+    panel.className = "burger-panel";
+    panel.id = "burgerPanel";
+    panel.innerHTML = `
+      <div class="burger-panel-inner">
+        <a href="index.html" data-i18n="nav_home">Главная</a>
+        <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+        <a href="profile.html" data-i18n="nav_profile">Профиль</a>
+        <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
+        <a href="team.html" data-i18n="nav_team">О нашей команде</a>
+      </div>
+    `;
+
+    nav.appendChild(burger);
+    document.body.appendChild(panel);
+
+    burger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      panel.classList.toggle("open");
+      burger.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!panel.contains(e.target) && !burger.contains(e.target)) {
+        panel.classList.remove("open");
+        burger.classList.remove("open");
+      }
+    });
+
+    panel.querySelectorAll("a").forEach(a => {
+      a.addEventListener("click", () => {
+        panel.classList.remove("open");
+        burger.classList.remove("open");
+      });
+    });
+  }
+
+  function injectStyles() {
+    if (document.getElementById("burger-styles")) return;
+    const style = document.createElement("style");
+    style.id = "burger-styles";
+    style.textContent = `
+      .burger-btn {
+        display: none;
+        width: 38px; height: 38px;
+        border-radius: 8px; padding: 0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        background: transparent;
+        transition: background .2s;
+      }
+      .burger-btn:hover { background: var(--cream-deep, #EFE1C6); }
+      .burger-btn span {
+        display: block; width: 20px; height: 2px;
+        background: #2B1B10; border-radius: 2px;
+        transition: transform .3s, opacity .3s;
+      }
+      .burger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .burger-btn.open span:nth-child(2) { opacity: 0; }
+      .burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      .burger-panel {
+        position: fixed; top: 84px; left: 0; right: 0;
+        background: #FBF6EC;
+        border-bottom: 1px solid rgba(43,27,16,0.14);
+        box-shadow: 0 20px 40px -20px rgba(43,27,16,0.25);
+        z-index: 99;
+        max-height: 0; overflow: hidden; opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height .35s cubic-bezier(0.22,1,0.36,1), opacity .25s, transform .25s;
+      }
+      .burger-panel.open { max-height: 420px; opacity: 1; transform: translateY(0); }
+      .burger-panel-inner { display: flex; flex-direction: column; padding: 16px 24px; }
+      .burger-panel-inner a {
+        font-family: 'Work Sans', sans-serif; font-size: 17px;
+        color: #2B1B10; padding: 14px 0;
+        border-bottom: 1px solid rgba(43,27,16,0.08);
+      }
+      .burger-panel-inner a:last-child { border-bottom: none; }
+      .burger-panel-inner a:hover { color: #8C5A34; }
+
+      @media (max-width: 900px) {
+        .burger-btn { display: flex; }
+        .nav-links { display: none !important; }
+      }
+      @media (min-width: 901px) {
+        .burger-panel { display: none; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function bindLangSwitcher() {
+    const langBtn = document.getElementById("langBtn");
+    const langMenu = document.getElementById("langMenu");
+    if (!langBtn || !langMenu) return;
+
+    langBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = langMenu.classList.toggle("open");
+      langBtn.setAttribute("aria-expanded", isOpen);
+    });
+
+    langMenu.addEventListener("click", (e) => {
+      const option = e.target.closest(".lang-option");
+      if (!option) return;
+      setLang(option.dataset.lang);
+      langMenu.classList.remove("open");
+      langBtn.setAttribute("aria-expanded", "false");
+    });
+
+    document.addEventListener("click", () => {
+      langMenu.classList.remove("open");
+      langBtn.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function init() {
+    injectStyles();
+    buildBurgerMenu();
+    bindLangSwitcher();
+    applyAll();
+    document.documentElement.lang = getLang();
+
+    const current = getLang();
+    document.querySelectorAll(".lang-option").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.lang === current);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  window.I18N = {
+    t: t,
+    getLang: getLang,
+    setLang: setLang,
+    applyAll: applyAll
+  };
+
+})();
