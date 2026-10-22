@@ -444,27 +444,38 @@
   }
 
   async function saveTestResult(finalData) {
+  console.log("🟢 Начало сохранения теста. Данные:", finalData);
+  
   await waitForAuthReady();
 
   if (!isLoggedIn()) {
+    console.log("🔴 Ошибка: Пользователь не вошел в аккаунт!");
     return { ok: false, error: "Не вошёл" };
   }
 
+  const payload = {
+    categories: finalData.categories || {},
+    summary: finalData.summary || ""
+  };
+  
+  console.log("🟡 Отправляем на сервер:", payload);
+
   const res = await apiFetchWithRetry("/api/tests", {
     method: "POST",
-    body: JSON.stringify({
-      categories: finalData.categories || {},
-      summary: finalData.summary || ""
-    })
-  }, 10000); // <--- ВОТ ЭТА ЦИФРА 10000 (10 секунд)
+    body: JSON.stringify(payload)
+  }, 10000);
+
+  console.log("🟠 Ответ от сервера:", res);
 
   if (!res.ok) {
+    console.log("🔴 Сервер вернул ошибку. Код:", res.status, "Детали:", res.data);
     return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить тест") };
   }
 
   _testsCache = null;
+  console.log("✅ Успешно сохранено!");
   return { ok: true };
-}
+  }
 
   // ============================================================
   // TOAST
