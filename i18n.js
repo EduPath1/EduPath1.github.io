@@ -1,11 +1,12 @@
 // ============================================================
-// EduPath — i18n.js (v8, full)
+// EduPath — i18n.js (v8.1, full)
 // RU / EN / ZH / KK / KY
 // + Fun Zone (v2, dashboard)
 // + Auth modal
 // + University detail keys
 // + Country names
 // + Team page (fully translated — v8)
+// + Catalog loading text
 // ============================================================
 
 (function() {
@@ -40,6 +41,7 @@
       city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
 
       catalog_title: "Университеты", catalog_sub: "Выбери страну и университет",
+      catalog_loading: "Загрузка списка...",
       catalog_filters: "Фильтры",
       catalog_budget_label: "Бюджет на обучение (USD/год)",
       catalog_budget_from: "от", catalog_budget_to: "до",
@@ -549,6 +551,7 @@
       city_seoul: "Seoul", city_berlin: "Berlin", city_boston: "Boston", city_shanghai: "Shanghai",
 
       catalog_title: "Universities", catalog_sub: "Pick a country and university",
+      catalog_loading: "Loading list...",
       catalog_filters: "Filters", catalog_budget_label: "Tuition budget (USD/year)",
       catalog_budget_from: "from", catalog_budget_to: "to",
       catalog_country_label: "Country", catalog_country_all: "All countries",
@@ -1047,6 +1050,7 @@
       city_seoul: "首尔", city_berlin: "柏林", city_boston: "波士顿", city_shanghai: "上海",
 
       catalog_title: "大学", catalog_sub: "选择国家和大学",
+      catalog_loading: "正在加载列表...",
       catalog_filters: "筛选", catalog_budget_label: "学费预算（美元/年）",
       catalog_budget_from: "从", catalog_budget_to: "到",
       catalog_country_label: "国家", catalog_country_all: "所有国家",
@@ -1438,9 +1442,9 @@
       // ===== TEAM PAGE (v8) =====
       team_hero_eyebrow: "我们的团队 · EduPath",
       team_hero_title: "EDUPATH",
-      team_hero_sub: "寻找属于你的道路的新方式",   // ✅ 修正：原来误写英文
+      team_hero_sub: "寻找属于你的道路的新方式",
       team_hero_year: "2026",
-      team_why_eyebrow: "为何打造",                 // ✅ 修正：原来与 title 重复
+      team_why_eyebrow: "为何打造",
       team_why_title: "我们为什么创建了它",
       team_why_quote: "选择未来不该如此艰难。",
       team_why_sub: "EduPath 旨在让大学探索变得更个性化、更有条理、更易获得。",
@@ -1532,6 +1536,7 @@
       city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
 
       catalog_title: "Университеттер", catalog_sub: "Ел мен университет таңда",
+      catalog_loading: "Тізім жүктелуде...",
       catalog_filters: "Сүзгілер", catalog_budget_label: "Оқу бюджеті (USD/жыл)",
       catalog_budget_from: "бастап", catalog_budget_to: "дейін",
       catalog_country_label: "Ел", catalog_country_all: "Барлық елдер",
@@ -2022,6 +2027,7 @@
       city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
 
       catalog_title: "Университеттер", catalog_sub: "Өлкө жана университет танда",
+      catalog_loading: "Тизме жүктөлүүдө...",
       catalog_filters: "Фильтрлер", catalog_budget_label: "Окуу бюджети (USD/жыл)",
       catalog_budget_from: "баштап", catalog_budget_to: "чейин",
       catalog_country_label: "Өлкө", catalog_country_all: "Бардык өлкөлөр",
