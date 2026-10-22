@@ -610,7 +610,8 @@ async function saveResult(){
   
   let ok = false;
   let retries = 0;
-  const maxRetries = 3; // 3 попытки
+  const maxRetries = 3;
+  state.saveErrorText = null; // Сбрасываем ошибку перед новой попыткой
 
   while (!ok && retries < maxRetries) {
     try {
@@ -618,12 +619,17 @@ async function saveResult(){
       ok = (r && typeof r === "object") ? r.ok !== false : r !== false;
       
       if (!ok) {
-        // Если сервер спит, ждем 10 секунд и пробуем снова
+        if (r && r.error) {
+            state.saveErrorText = r.error; // <--- ЗАПИСЫВАЕМ ТЕКСТ ОШИБКИ ОТ СЕРВЕРА
+        } else {
+            state.saveErrorText = "Сервер не ответил. Ждем...";
+        }
         console.log("Сервер спит, попытка " + (retries + 1) + " из " + maxRetries);
         await new Promise(resolve => setTimeout(resolve, 10000));
       }
     } catch(e) {
       console.warn("Не удалось сохранить результат:", e);
+      state.saveErrorText = e.message || "Ошибка соединения";
       await new Promise(resolve => setTimeout(resolve, 10000));
     }
     retries++;
