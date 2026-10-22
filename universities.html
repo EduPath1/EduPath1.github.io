@@ -28,12 +28,32 @@
   @keyframes starPop{ 0% { transform:scale(0.6) rotate(0deg); } 40% { transform:scale(1.4) rotate(180deg); } 70% { transform:scale(0.95) rotate(320deg); } 100% { transform:scale(1) rotate(360deg); } }
   @keyframes pulse { 0%,80%,100%{ opacity:0.3; transform:scale(0.8);} 40%{ opacity:1; transform:scale(1.1);} }
 
-  /* 加载动画 - 和 profile 一样 */
-  .loading { text-align:center; padding:80px 20px; color:var(--text-muted); font-size:15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  /* Общий контейнер для загрузки на весь экран */
+  .global-loading {
+    position: fixed;
+    top: 84px; left: 0; right: 0; bottom: 0;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease);
+  }
+  body.loaded .global-loading {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Текст загрузки как в профиле */
+  .loading { text-align:center; color:var(--text-muted); font-size:15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .loading-dots{ display:inline-flex; gap:6px; vertical-align:middle; }
   .loading-dot{ width:8px; height:8px; border-radius:50%; background:var(--clay); animation:pulse 1.4s ease-in-out infinite; }
   .loading-dot:nth-child(2){ animation-delay: 0.2s; }
   .loading-dot:nth-child(3){ animation-delay: 0.4s; }
+
+  /* Скрываем контент до загрузки */
+  .layout { opacity: 0; transition: opacity 0.4s var(--ease); }
+  body.loaded .layout { opacity: 1; }
 
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1400px; margin:0 auto; padding:0 32px; position:relative; }
@@ -72,7 +92,7 @@
   /* Layout */
   .layout{ display:grid; grid-template-columns:420px 1fr; gap:0; max-width:1400px; margin:0 auto; height:calc(100vh - 84px); }
   
-  .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; height:100%; transition: opacity 0.3s var(--ease); }
+  .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; height:100%; }
   .sidebar h2{ font-size:24px; margin-bottom:6px; }
   .sidebar .subtitle{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
 
@@ -141,8 +161,8 @@
   .country.open .uni-item:nth-child(n+6){ animation-delay:0.24s; }
 
   /* Detail panel */
-  .detail{ padding:40px 48px; overflow-y:auto; height:100%; display: flex; flex-direction: column; }
-  .detail-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); text-align:center; transition: opacity .3s; }
+  .detail{ padding:40px 48px; overflow-y:auto; height:100%; }
+  .detail-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh; color:var(--text-muted); text-align:center; transition: opacity .3s; }
   .detail-empty svg{ width:80px; height:80px; margin-bottom:20px; opacity:0.4; animation:softFloat 4s ease-in-out infinite; }
   .detail-empty h2{ font-size:24px; color:var(--text-main); margin-bottom:10px; }
   .detail-empty p{ font-size:15px; max-width:400px; }
@@ -181,12 +201,13 @@
 
   @media (max-width:1000px){
     body { overflow: auto !important; }
+    .global-loading { top: 72px; }
     .layout{ display:block; height:auto; overflow:visible; }
     .sidebar{ height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); }
-    .detail{ padding:32px 24px; height:auto; overflow:visible; min-height: 60vh; }
+    .detail{ padding:32px 24px; height:auto; overflow:visible; }
     .uni-title{ font-size:30px; }
     .info-grid{ grid-template-columns:1fr; }
-    .detail-empty { height: 50vh; flex: none; }
+    .detail-empty { height: 50vh; }
   }
   @media (max-width:900px){
     .nav-links{ display:none !important; }
@@ -200,6 +221,18 @@
 </style>
 </head>
 <body>
+
+<!-- Глобальная загрузка по центру всего экрана -->
+<div class="global-loading" id="globalLoading">
+  <div class="loading">
+    <span data-i18n="catalog_loading">Загрузка списка</span>
+    <span class="loading-dots">
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+    </span>
+  </div>
+</div>
 
 <svg style="position:absolute; width:0; height:0;" aria-hidden="true">
   <defs>
@@ -251,8 +284,7 @@
 </header>
 
 <div class="layout">
-  <!-- Сайдбар, изначально пустой (или скрыт), пока не загрузятся данные -->
-  <aside class="sidebar" id="sidebar" style="opacity: 0; pointer-events: none;">
+  <aside class="sidebar">
     <h2 data-i18n="catalog_title">Universities</h2>
     <p class="subtitle" data-i18n="catalog_sub">Pick a country and university</p>
     <div class="filters-wrap">
@@ -299,19 +331,8 @@
     <div id="countriesList"></div>
   </aside>
 
-  <!-- Правая панель, где мы показываем загрузку -->
   <main class="detail" id="detail">
-    <!-- Блок загрузки (как в profile) -->
-    <div class="loading" id="loadingState">
-      <span data-i18n="catalog_loading">Загрузка списка</span>
-      <span class="loading-dots">
-        <span class="loading-dot"></span>
-        <span class="loading-dot"></span>
-        <span class="loading-dot"></span>
-      </span>
-    </div>
-
-    <div class="detail-empty" id="detailEmpty" style="display:none;">
+    <div class="detail-empty" id="detailEmpty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M12 4L3 8l9 4 9-4-9-4z"/>
         <path d="M6 10v6c0 1.5 2.7 3 6 3s6-1.5 6-3v-6"/>
@@ -417,6 +438,9 @@ async function loadAll(){
 
   buildCountryFilter();
   renderSidebar();
+
+  // Включаем отображение контента и убираем глобальный лоадер
+  document.body.classList.add("loaded");
 }
 
 function isFullGrant(uni){
@@ -510,13 +534,6 @@ function renderSidebar(){
     div.appendChild(list);
     container.appendChild(div);
   });
-
-  // Скрываем лоадер, показываем пустой стейт, а сайдбару даем opacity 1
-  document.getElementById("loadingState").style.display = "none";
-  document.getElementById("detailEmpty").style.display = "flex";
-  const sidebar = document.getElementById("sidebar");
-  sidebar.style.opacity = "1";
-  sidebar.style.pointerEvents = "auto";
 }
 
 // Click on star
