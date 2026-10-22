@@ -963,28 +963,8 @@
 (function(){
   "use strict";
 
-  // Language switcher (shared with i18n.js)
-  const langBtn = document.getElementById("langBtn");
-  const langMenu = document.getElementById("langMenu");
-  if(langBtn && langMenu){
-    langBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      langMenu.classList.toggle("open");
-    });
-    langMenu.addEventListener("click", (e) => {
-      const opt = e.target.closest(".lang-option");
-      if(!opt) return;
-      window.I18N && window.I18N.setLang(opt.dataset.lang);
-      langMenu.classList.remove("open");
-      document.querySelectorAll(".lang-option").forEach(b => b.classList.toggle("active", b.dataset.lang === opt.dataset.lang));
-    });
-    document.addEventListener("click", () => langMenu.classList.remove("open"));
-  }
-  // sync active lang on load
-  if(window.I18N){
-    const cur = window.I18N.getLang();
-    document.querySelectorAll(".lang-option").forEach(b => b.classList.toggle("active", b.dataset.lang === cur));
-  }
+  // --- 删除了与 i18n.js 冲突的语言切换逻辑 ---
+  // i18n.js 内部已经做好了所有的语言下拉菜单绑定，这里千万不要再写一遍，否则会互相干扰（导致菜单打不开）
 
   // Universal reveal-on-scroll
   const io = new IntersectionObserver((entries) => {
@@ -1027,11 +1007,6 @@
     }, { threshold: 0.3 });
     io3.observe(document.getElementById("system"));
   }
-
-  // i18n switch event
-  window.addEventListener("edupath-lang-change", () => {
-    // re-observe? Actually text is set via data-i18n automatically by i18n.js
-  });
 
 })();
 </script>
