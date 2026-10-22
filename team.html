@@ -961,3 +961,56 @@
 <script src="i18n.js"></script>
 <script>
 (function(){
+  "use strict";
+
+  // --- 删除了与 i18n.js 冲突的语言切换逻辑 ---
+  // i18n.js 内部已经做好了所有的语言下拉菜单绑定，这里千万不要再写一遍，否则会互相干扰（导致菜单打不开）
+
+  // Universal reveal-on-scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add("in");
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll(".reveal, .resp-item, .tl-item, .show-item").forEach(el => io.observe(el));
+
+  // Two-people → one-vision transition
+  const tw1 = document.getElementById("tw1");
+  const tw2 = document.getElementById("tw2");
+  if(tw1 && tw2){
+    const io2 = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting && e.intersectionRatio > 0.55){
+          tw1.classList.add("is-out");
+          tw2.classList.remove("is-out");
+        }
+      });
+    }, { threshold: [0.55, 0.7] });
+    const stage = tw1.parentElement;
+    io2.observe(stage);
+  }
+
+  // System SVG lines
+  const sysLines = document.querySelectorAll(".sys-line");
+  if(sysLines.length){
+    const io3 = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting){
+          sysLines.forEach((l, i) => setTimeout(() => l.classList.add("in"), i * 250));
+          document.querySelectorAll(".sys-node").forEach((n, i) => setTimeout(() => n.classList.add("in"), i * 200));
+          io3.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    io3.observe(document.getElementById("system"));
+  }
+
+})();
+</script>
+<script src="auth.js"></script>
+  
+</body>
+</html>
