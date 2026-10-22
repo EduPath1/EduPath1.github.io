@@ -604,15 +604,31 @@ function renderSaveBanner(){
 
 async function saveResult(){
   if(!(window.EduAuth && window.EduAuth.isLoggedIn()) || !state.finalData) return;
+  
   state.saveStatus = "saving";
   renderSaveBanner();
+  
   let ok = false;
-  try {
-    const r = await window.EduAuth.saveTestResult(state.finalData);
-    ok = (r && typeof r === "object") ? r.ok !== false : r !== false;
-  } catch(e){
-    console.warn("Не удалось сохранить результат:", e);
+  let retries = 0;
+  const maxRetries = 3; // 3 попытки
+
+  while (!ok && retries < maxRetries) {
+    try {
+      const r = await window.EduAuth.saveTestResult(state.finalData);
+      ok = (r && typeof r === "object") ? r.ok !== false : r !== false;
+      
+      if (!ok) {
+        // Если сервер спит, ждем 10 секунд и пробуем снова
+        console.log("Сервер спит, попытка " + (retries + 1) + " из " + maxRetries);
+        await new Promise(resolve => setTimeout(resolve, 10000));
+      }
+    } catch(e) {
+      console.warn("Не удалось сохранить результат:", e);
+      await new Promise(resolve => setTimeout(resolve, 10000));
+    }
+    retries++;
   }
+
   state.saveStatus = ok ? "saved" : "failed";
   renderSaveBanner();
 }
