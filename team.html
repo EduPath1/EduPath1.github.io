@@ -29,7 +29,7 @@
   a{ color:inherit; text-decoration:none; }
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
-  /* ======= HEADER ======= */
+  /* ============ HEADER ============ */
   header{
     position:fixed; top:0; left:0; right:0; z-index:1000;
     background:rgba(251,246,236,0.92);
@@ -41,8 +41,8 @@
     display:flex; align-items:center; justify-content:space-between;
     height:76px; max-width:1400px; margin:0 auto; padding:0 32px;
   }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:24px; color:var(--espresso); flex-shrink: 0; }
-  .logo svg{ width:34px; height:34px; flex-shrink: 0; }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:24px; color:var(--espresso); }
+  .logo svg{ width:34px; height:34px; }
   .nav-links{ display:flex; align-items:center; gap:6px; }
   .nav-links a{
     font-size:14px; color:var(--text-muted);
@@ -51,18 +51,8 @@
   }
   .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
   .nav-links a.active{ background:var(--espresso); color:var(--paper); }
-  
   .nav-right{ display:flex; align-items:center; gap:12px; }
-  /* 修改了 btn-login，让它能放得下长名字，且文字不会乱掉 */
-  .btn-login{ 
-    background:var(--clay); color:var(--paper); 
-    padding:10px 20px; border-radius:20px; 
-    font-size:14px; font-weight:500; 
-    white-space: nowrap; 
-    max-width: 160px; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-  }
+  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 20px; border-radius:20px; font-size:14px; font-weight:500; }
   .lang-dropdown{ position:relative; }
   .icon-btn{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
@@ -79,7 +69,7 @@
   .lang-option{ display:block; width:100%; text-align:left; padding:9px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
   .lang-option:hover, .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
-  /* ======= GLOBAL SCENE ======= */
+  /* ============ GLOBAL SCENE ============ */
   .scene{
     position:relative;
     min-height:100vh;
@@ -90,6 +80,7 @@
     overflow:hidden;
   }
   .scene.dark{ background:var(--espresso); color:var(--paper); }
+
   .container{ max-width:1300px; margin:0 auto; width:100%; position:relative; z-index:2; }
 
   .eyebrow{
@@ -101,13 +92,15 @@
 
   .title-massive{ font-size:clamp(64px, 14vw, 200px); font-weight:900; line-height:.88; letter-spacing:-0.05em; text-transform:uppercase; }
   .title-large{ font-size:clamp(44px, 8vw, 110px); font-weight:700; line-height:1; letter-spacing:-0.03em; }
+  .title-medium{ font-size:clamp(28px, 4vw, 56px); font-weight:600; line-height:1.1; }
+  .title-small{ font-size:clamp(20px, 2.4vw, 32px); font-weight:600; line-height:1.2; }
   .subtitle{ font-size:clamp(16px, 1.6vw, 20px); color:var(--text-muted); line-height:1.6; max-width:640px; }
   .scene.dark .subtitle{ color:var(--sand); }
 
   .reveal{ opacity:0; transform:translateY(30px); filter:blur(8px); transition:opacity .9s var(--ease), transform .9s var(--ease), filter .9s var(--ease); }
   .reveal.in{ opacity:1; transform:translateY(0); filter:blur(0); }
 
-  /* ======= HERO ======= */
+  /* ============ SCENE 1: HERO ============ */
   #hero{ text-align:center; justify-content:center; padding-top:120px; }
   #hero .hero-deco{ position:absolute; pointer-events:none; opacity:.35; }
   #hero .hero-deco.circle1{ width:380px; height:380px; border:1px solid var(--sand); border-radius:50%; top:12%; left:6%; animation:float 14s ease-in-out infinite; }
@@ -116,7 +109,19 @@
   #hero h1{ margin-bottom:32px; }
   #hero .hero-year{ font-family:'Fraunces', serif; font-size:14px; letter-spacing:.4em; color:var(--clay); margin-top:40px; }
 
-  /* ======= PERSON ======= */
+  /* ============ SCENE 2: WHY ============ */
+  #why .why-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:80px; align-items:center; }
+  #why .why-art{ aspect-ratio:4/5; border-radius:4px; overflow:hidden; position:relative; background:var(--cream-deep); }
+  @media (max-width:900px){ #why .why-grid{ grid-template-columns:1fr; gap:40px; } }
+  .why-quote{ font-family:'Fraunces', serif; font-size:clamp(30px, 3.4vw, 52px); font-weight:500; line-height:1.15; color:var(--espresso); margin:24px 0 28px; }
+
+  /* ============ SCENE 3: TRANSITION ============ */
+  #transition{ text-align:center; align-items:center; justify-content:center; min-height:80vh; }
+  .trans-stage{ position:relative; width:100%; height:280px; display:flex; align-items:center; justify-content:center; }
+  .trans-word{ position:absolute; transition:opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease); }
+  .trans-word.is-out{ opacity:0; transform:translateY(-40px) scale(.94); filter:blur(10px); }
+
+  /* ============ SCENE 4/7: PERSON ============ */
   .person{ display:grid; grid-template-columns:1fr 1fr; gap:0; align-items:stretch; min-height:80vh; }
   .person.reverse{ direction:rtl; }
   .person.reverse .person-info{ direction:ltr; }
@@ -133,16 +138,46 @@
     color:var(--text-muted); font-size:13px; letter-spacing:.15em; text-transform:uppercase;
     border:1px solid var(--line);
   }
-  .person-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .person-photo img{ width:100%; height:100%; object-fit:cover; display:none; }
+  .person-photo img:not([src=""]){ display:block; }
   .person-photo .placeholder{ display:flex; flex-direction:column; align-items:center; gap:12px; opacity:.5; }
   .person-photo .placeholder svg{ width:44px; height:44px; stroke:var(--text-muted); fill:none; stroke-width:1.4; }
+  @media (max-width:900px){
+    .person, .person.reverse{ grid-template-columns:1fr; direction:ltr; }
+    .person-info, .person.reverse .person-info{ padding:24px 0; }
+    .person-photo{ aspect-ratio:4/3; }
+  }
 
-  /* ======= SYSTEM ARCHITECTURE ======= */
+  /* ============ SCENE 5/8: LIST ============ */
+  .resp-list{ display:flex; flex-direction:column; gap:0; margin-top:48px; }
+  .resp-item{
+    display:grid; grid-template-columns:80px 1fr 2fr; gap:32px;
+    align-items:baseline;
+    padding:28px 0;
+    border-top:1px solid var(--line);
+    transition:padding-left .5s var(--ease), background .5s;
+    opacity:0; transform:translateY(20px); filter:blur(6px);
+  }
+  .resp-item.in{ opacity:1; transform:translateY(0); filter:blur(0); }
+  .resp-item:hover{ padding-left:12px; }
+  .resp-num{ font-family:'Fraunces', serif; font-size:14px; color:var(--clay); font-weight:700; letter-spacing:.15em; }
+  .resp-title{ font-family:'Fraunces', serif; font-size:clamp(22px, 2.4vw, 34px); font-weight:600; color:var(--espresso); }
+  .resp-desc{ font-size:15px; color:var(--text-muted); line-height:1.6; }
+  .scene.dark .resp-title{ color:var(--paper); }
+  .scene.dark .resp-desc{ color:var(--sand); }
+  .scene.dark .resp-item{ border-color:rgba(247,239,225,.15); }
+  .scene.dark .resp-num{ color:var(--caramel); }
+  @media (max-width:700px){
+    .resp-item{ grid-template-columns:1fr; gap:6px; }
+  }
+
+  /* ============ SCENE 6: SYSTEM ============ */
   #system .sys-wrap{ position:relative; width:100%; max-width:900px; margin:60px auto 0; aspect-ratio:1; }
   .sys-node{
     position:absolute; padding:14px 22px;
     border:1.5px solid var(--caramel); border-radius:40px;
-    background:rgba(43,27,16,.6); color:var(--caramel);
+    background:rgba(43,27,16,.6);
+    color:var(--caramel);
     font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
     opacity:0; transform:scale(.9);
     transition:opacity .8s var(--ease), transform .8s var(--ease);
@@ -150,103 +185,142 @@
   }
   .sys-node.in{ opacity:1; transform:scale(1); }
   .sys-node.center{
-    top:50%; left:50%; transform:translate(-50%,-50%) scale(.9);
-    padding:22px 44px; background:var(--caramel); color:var(--espresso);
-    border:none; font-family:'Fraunces', serif; font-size:22px; letter-spacing:.05em; z-index:4;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%) scale(.9);
+    padding:22px 44px;
+    background:var(--caramel); color:var(--espresso);
+    border:none;
+    font-family:'Fraunces', serif; font-size:22px; letter-spacing:.05em;
+    z-index:4;
   }
   .sys-node.center.in{ transform:translate(-50%,-50%) scale(1); }
-  
-  /* 电脑端绝对定位 */
-  .sys-node.n1{ top:10%; left:18%; }      /* DATABASE */
-  .sys-node.n2{ top:20%; right:14%; }     /* BACKEND */
-  .sys-node.n3{ bottom:20%; left:14%; }   /* FRONTEND */
-  .sys-node.n4{ bottom:10%; right:20%; }  /* USER PROFILE */
-  .sys-node.n5{ top:50%; right:0%; transform:translateY(-50%) scale(.9); } /* MATCHING */
+  .sys-node.n1{ top:10%; left:18%; }
+  .sys-node.n2{ top:20%; right:14%; }
+  .sys-node.n3{ bottom:20%; left:14%; }
+  .sys-node.n4{ bottom:10%; right:20%; }
+  .sys-node.n5{ top:50%; right:0%; transform:translateY(-50%) scale(.9); }
   .sys-node.n5.in{ transform:translateY(-50%) scale(1); }
-  .sys-node.n6{ top: 2%; right: 30%; }    /* AI ASSISTANT (新加的) */
-
   .sys-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:2; }
   .sys-line{ fill:none; stroke:var(--caramel); stroke-width:1.5; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1s var(--ease); }
   .sys-line.in{ stroke-dashoffset:0; }
   .sys-label{ text-align:center; margin-top:60px; font-family:'Fraunces', serif; font-size:clamp(28px, 4vw, 60px); font-weight:700; letter-spacing:-0.02em; }
+  @media (max-width:700px){
+    .sys-node{ font-size:11px; padding:10px 14px; }
+    .sys-node.center{ font-size:16px; padding:14px 24px; }
+  }
 
-  /* ======= FINAL & CONTACT ======= */
+  /* ============ SCENE 9: COLLAB ============ */
+  #collab{ text-align:center; }
+  .collab-stage{ display:grid; grid-template-columns:1fr auto 1fr; gap:40px; align-items:center; max-width:900px; margin:0 auto; }
+  .collab-side h3{ font-family:'Fraunces', serif; font-size:clamp(36px, 6vw, 80px); font-weight:900; line-height:.95; letter-spacing:-0.03em; text-transform:uppercase; }
+  .collab-side p{ font-size:13px; color:var(--clay); letter-spacing:.2em; text-transform:uppercase; margin-top:12px; }
+  .collab-cross{ font-family:'Fraunces', serif; font-size:clamp(48px, 8vw, 100px); color:var(--clay); font-weight:300; line-height:1; }
+  .collab-join{ margin-top:80px; }
+  .collab-join h2{ font-family:'Fraunces', serif; font-size:clamp(60px, 10vw, 140px); font-weight:900; line-height:.9; letter-spacing:-0.04em; text-transform:uppercase; }
+  .collab-join p{ font-size:clamp(16px, 2vw, 22px); color:var(--text-muted); margin-top:24px; font-style:italic; }
+
+  /* ============ SCENE 10: BUILD ============ */
+  #build{ padding:120px 0 0; }
+  #build .build-head{ padding:0 6vw; text-align:center; margin-bottom:60px; }
+  .h-scroll{ display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; }
+  .h-scroll::-webkit-scrollbar{ display:none; }
+  .h-slide{
+    flex:0 0 100vw; scroll-snap-align:start;
+    display:flex; align-items:center; justify-content:center;
+    padding:40px 6vw; min-height:70vh;
+  }
+  .h-slide-inner{ max-width:1100px; width:100%; display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center; }
+  .h-slide-num{ font-family:'Fraunces', serif; font-size:14px; color:var(--clay); letter-spacing:.25em; margin-bottom:16px; }
+  .h-slide-title{ font-size:clamp(48px, 8vw, 110px); font-weight:900; line-height:.9; letter-spacing:-0.04em; text-transform:uppercase; margin-bottom:24px; }
+  .h-slide-desc{ font-size:clamp(15px, 1.6vw, 18px); color:var(--text-muted); line-height:1.6; max-width:460px; }
+  .h-slide-art{ aspect-ratio:4/3; border-radius:4px; overflow:hidden; border:1px solid var(--line); }
+  .h-slide-art svg{ width:100%; height:100%; display:block; }
+  @media (max-width:900px){
+    .h-slide-inner{ grid-template-columns:1fr; gap:32px; }
+    .h-slide{ min-height:auto; padding:60px 6vw; }
+  }
+
+  /* ============ SCENE 11: TIMELINE ============ */
+  #timeline{ padding:120px 6vw 80px; }
+  .tl-wrap{ max-width:780px; margin:80px auto 0; position:relative; }
+  .tl-wrap::before{
+    content:""; position:absolute;
+    left:0; top:0; bottom:0; width:1px;
+    background:linear-gradient(to bottom, transparent, var(--line) 8%, var(--line) 92%, transparent);
+  }
+  .tl-item{ position:relative; padding:32px 0 32px 60px; opacity:0; transform:translateY(20px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+  .tl-item.in{ opacity:1; transform:translateY(0); }
+  .tl-item::before{
+    content:""; position:absolute; left:-6px; top:44px;
+    width:13px; height:13px; border-radius:50%;
+    background:var(--paper); border:2px solid var(--clay);
+    transition:background .4s, box-shadow .4s;
+  }
+  .tl-item.in::before{ background:var(--clay); box-shadow:0 0 0 6px rgba(199,146,86,.18); }
+  .tl-date{ font-family:'Fraunces', serif; font-size:14px; color:var(--clay); letter-spacing:.2em; margin-bottom:8px; font-weight:700; }
+  .tl-title{ font-size:clamp(22px, 2.6vw, 34px); font-weight:600; color:var(--espresso); line-height:1.2; }
+
+  /* ============ SCENE 12: SHOWCASE ============ */
+  #showcase{ padding:120px 6vw 80px; }
+  .show-grid{ display:grid; grid-template-columns:1fr; gap:60px; max-width:1100px; margin:80px auto 0; }
+  .show-item{ opacity:0; transform:scale(.96); transition:opacity 1s var(--ease), transform 1s var(--ease); }
+  .show-item.in{ opacity:1; transform:scale(1); }
+  .show-mockup{
+    aspect-ratio:16/10; border-radius:8px; overflow:hidden;
+    border:1px solid var(--line);
+    background:var(--paper);
+    box-shadow:0 30px 60px -40px rgba(43,27,16,.35);
+  }
+  .show-mockup svg{ width:100%; height:100%; display:block; }
+  .show-caption{ text-align:center; margin-top:20px; font-family:'Fraunces', serif; font-size:clamp(22px, 2.4vw, 32px); color:var(--espresso); }
+  .show-caption small{ display:block; font-family:'Work Sans', sans-serif; font-size:13px; color:var(--text-muted); letter-spacing:.15em; text-transform:uppercase; margin-top:6px; font-weight:500; }
+
+  /* ============ SCENE 13: FINAL ============ */
   #final{ text-align:center; justify-content:center; min-height:90vh; }
   #final .final-huge{ font-size:clamp(36px, 6vw, 96px); font-weight:900; line-height:.95; letter-spacing:-0.03em; text-transform:uppercase; }
+  #final .final-huge em{ font-style:italic; color:var(--clay); font-weight:400; }
   #final .final-sub{ margin-top:40px; font-family:'Fraunces', serif; font-size:clamp(28px, 4vw, 64px); font-weight:600; }
+  #final .final-meta{ margin-top:32px; font-size:13px; letter-spacing:.3em; text-transform:uppercase; color:var(--text-muted); }
+  .btn-explore{
+    display:inline-flex; align-items:center; gap:14px;
+    background:var(--espresso); color:var(--paper);
+    padding:18px 36px; border-radius:8px;
+    font-size:15px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    margin-top:48px;
+    transition:transform .25s var(--ease), background .25s var(--ease);
+  }
+  .btn-explore:hover{ background:var(--bark); transform:translateY(-3px); }
+  .btn-explore svg{ width:16px; height:16px; }
+
+  /* ============ CONTACT FOOTER ============ */
   #contact{ background:var(--espresso); color:var(--paper); padding:100px 6vw 80px; }
   #contact .contact-title{ font-family:'Fraunces', serif; font-size:clamp(28px, 3vw, 44px); font-weight:600; margin-bottom:16px; }
   #contact .contact-sub{ font-size:15px; color:var(--sand); margin-bottom:48px; max-width:520px; line-height:1.6; }
   .contact-list{ display:grid; grid-template-columns:1fr 1fr; gap:24px; max-width:900px; }
-  .contact-card{ padding:28px 32px; border:1px solid rgba(247,239,225,.18); border-radius:12px; transition:border-color .3s, background .3s; }
+  .contact-card{
+    padding:28px 32px;
+    border:1px solid rgba(247,239,225,.18);
+    border-radius:12px;
+    transition:border-color .3s, background .3s;
+  }
   .contact-card:hover{ border-color:var(--caramel); background:rgba(199,146,86,.08); }
   .contact-name{ font-family:'Fraunces', serif; font-size:22px; font-weight:600; margin-bottom:6px; }
   .contact-role{ font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--caramel); margin-bottom:14px; }
   .contact-mail{ font-size:15px; color:var(--sand); word-break:break-all; }
   .contact-mail:hover{ color:var(--caramel); }
+  @media (max-width:700px){ .contact-list{ grid-template-columns:1fr; } }
+
   footer.copyright{ background:var(--bark); color:var(--sand); text-align:center; padding:20px 6vw; font-size:12px; letter-spacing:.15em; }
 
-  /* ======= 手机端排版彻底修复 ======= */
-  @media (max-width: 1100px){
+  /* ============ MOBILE NAV ============ */
+  @media (max-width:1100px){
     .nav-links{ display:none; }
-  }
-  @media (max-width: 900px){
-    /* 修复照片和文字错位 */
-    .person, .person.reverse{ 
-      grid-template-columns:1fr; 
-      direction:ltr; 
-      min-height:auto; 
-      margin-bottom: 60px;
-    }
-    .person-info, .person.reverse .person-info{ 
-      padding:24px 0; 
-      text-align: center; 
-    }
-    .person-name{ 
-      font-size:clamp(54px, 15vw, 100px); 
-    }
-    .person-photo{ 
-      aspect-ratio:4/3; 
-      width: 100%; 
-      max-width: 500px; 
-      margin: 0 auto; 
-    }
-    .person-photo img{ 
-      object-position: center 20%; /* 确保照片人脸居中，不切掉头部 */
-    }
-
-    /* 修复黑色系统图的重叠，改成垂直排列 */
-    #system .sys-wrap{ 
-      aspect-ratio: auto; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      gap: 16px; 
-      margin-top: 40px; 
-    }
-    .sys-svg { display: none; } /* 手机端隐藏乱掉的交叉线 */
-    .sys-node { 
-      position: relative; 
-      top: auto !important; 
-      left: auto !important; 
-      right: auto !important; 
-      bottom: auto !important; 
-      transform: none !important;
-      white-space: normal;
-      text-align: center;
-    }
-    .sys-node.center {
-      order: -1; /* 让 EDUPATH 排在最上面 */
-      margin-bottom: 10px;
-    }
-    .sys-label { margin-top: 40px; }
-
-    .contact-list{ grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- ==================== HEADER ==================== -->
 <header>
   <nav class="wrap">
     <a href="index.html" class="logo">
@@ -266,8 +340,8 @@
     </div>
     <div class="nav-right">
       <div class="lang-dropdown">
-        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        <button type="button" class="icon-btn" id="langBtn" aria-label="Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="18" height="18"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
         </button>
         <div class="lang-menu" id="langMenu" role="menu">
           <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
@@ -282,6 +356,7 @@
   </nav>
 </header>
 
+<!-- ==================== SCENE 1: HERO ==================== -->
 <section class="scene" id="hero">
   <div class="hero-deco circle1"></div>
   <div class="hero-deco circle2"></div>
@@ -293,6 +368,47 @@
   </div>
 </section>
 
+<!-- ==================== SCENE 2: WHY ==================== -->
+<section class="scene" id="why">
+  <div class="container">
+    <div class="why-grid">
+      <div>
+        <div class="eyebrow reveal" data-i18n="team_why_eyebrow">Почему мы это сделали</div>
+        <h2 class="title-large reveal" data-i18n="team_why_title">WHY WE BUILT IT</h2>
+        <p class="why-quote reveal" data-i18n="team_why_quote">Choosing your future shouldn't feel impossible.</p>
+        <p class="subtitle reveal" data-i18n="team_why_sub">EduPath was created to make university discovery more personal, structured and accessible.</p>
+      </div>
+      <div class="why-art reveal">
+        <!-- SVG illustration: photo placeholder -->
+        <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
+          <defs>
+            <linearGradient id="wg1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#EFE1C6"/>
+              <stop offset="1" stop-color="#D9BD93"/>
+            </linearGradient>
+          </defs>
+          <rect width="400" height="500" fill="url(#wg1)"/>
+          <circle cx="200" cy="180" r="90" fill="none" stroke="#8C5A34" stroke-width="1.4" stroke-dasharray="3 6"/>
+          <circle cx="200" cy="180" r="60" fill="none" stroke="#5A3B26" stroke-width="1.6"/>
+          <text x="200" y="188" text-anchor="middle" font-family="Fraunces, serif" font-size="32" fill="#2B1B10" font-weight="700">EduPath</text>
+          <text x="200" y="380" text-anchor="middle" font-family="Work Sans, sans-serif" font-size="13" fill="#5A3B26" letter-spacing="6">SINCE 2026</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 3: TRANSITION ==================== -->
+<section class="scene" id="transition">
+  <div class="container">
+    <div class="trans-stage">
+      <h2 class="title-massive trans-word" id="tw1" style="position:relative;" data-i18n="team_trans_two">TWO PEOPLE.</h2>
+      <h2 class="title-massive trans-word is-out" id="tw2" style="position:absolute;color:var(--clay);" data-i18n="team_trans_one">ONE VISION.</h2>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 4: ALKAR ==================== -->
 <section class="scene" id="alkar">
   <div class="container">
     <div class="person">
@@ -312,6 +428,37 @@
   </div>
 </section>
 
+<!-- ==================== SCENE 5: ALKAR RESP ==================== -->
+<section class="scene" id="alkar-resp">
+  <div class="container">
+    <div class="eyebrow reveal" data-i18n="team_alkar_eyebrow">What I build</div>
+    <h2 class="title-large reveal" data-i18n="team_alkar_build">WHAT I BUILD</h2>
+    <div class="resp-list">
+      <div class="resp-item">
+        <div class="resp-num">01</div>
+        <div class="resp-title" data-i18n="team_alkar_r1_t">BACKEND</div>
+        <div class="resp-desc" data-i18n="team_alkar_r1_d">The systems behind EduPath.</div>
+      </div>
+      <div class="resp-item">
+        <div class="resp-num">02</div>
+        <div class="resp-title" data-i18n="team_alkar_r2_t">DATABASE</div>
+        <div class="resp-desc" data-i18n="team_alkar_r2_d">Data structure & management.</div>
+      </div>
+      <div class="resp-item">
+        <div class="resp-num">03</div>
+        <div class="resp-title" data-i18n="team_alkar_r3_t">FRONTEND</div>
+        <div class="resp-desc" data-i18n="team_alkar_r3_d">Interface & interaction development.</div>
+      </div>
+      <div class="resp-item">
+        <div class="resp-num">04</div>
+        <div class="resp-title" data-i18n="team_alkar_r4_t">SYSTEM</div>
+        <div class="resp-desc" data-i18n="team_alkar_r4_d">Connecting the pieces into one platform.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 6: SYSTEM ==================== -->
 <section class="scene dark" id="system">
   <div class="container">
     <div class="eyebrow reveal" style="color:var(--caramel);" data-i18n="team_system_eyebrow">One system</div>
@@ -329,13 +476,13 @@
       <div class="sys-node n2">BACKEND</div>
       <div class="sys-node n3">FRONTEND</div>
       <div class="sys-node n4">USER PROFILE</div>
-      <div class="sys-node n5">MATCHING</div>
-      <div class="sys-node n6">AI ASSISTANT</div>
+      <div class="sys-node n5">UNIVERSITY MATCHING</div>
     </div>
     <h3 class="sys-label reveal" data-i18n="team_system_final">ONE SYSTEM</h3>
   </div>
 </section>
 
+<!-- ==================== SCENE 7: ARSHAT ==================== -->
 <section class="scene" id="arshat">
   <div class="container">
     <div class="person reverse">
@@ -355,16 +502,440 @@
   </div>
 </section>
 
+<!-- ==================== SCENE 8: ARSHAT RESP ==================== -->
+<section class="scene" id="arshat-resp">
+  <div class="container">
+    <div class="eyebrow reveal" data-i18n="team_arshat_eyebrow">Crafting the experience</div>
+    <h2 class="title-large reveal" data-i18n="team_arshat_build">CRAFTING THE EXPERIENCE</h2>
+    <div class="resp-list">
+      <div class="resp-item">
+        <div class="resp-num">01</div>
+        <div class="resp-title" data-i18n="team_arshat_r1_t">FRONTEND</div>
+        <div class="resp-desc" data-i18n="team_arshat_r1_d">Turning ideas into interfaces.</div>
+      </div>
+      <div class="resp-item">
+        <div class="resp-num">02</div>
+        <div class="resp-title" data-i18n="team_arshat_r2_t">UI</div>
+        <div class="resp-desc" data-i18n="team_arshat_r2_d">Designing a clear and intuitive experience.</div>
+      </div>
+      <div class="resp-item">
+        <div class="resp-num">03</div>
+        <div class="resp-title" data-i18n="team_arshat_r3_t">INTERACTION</div>
+        <div class="resp-desc" data-i18n="team_arshat_r3_d">Making every interaction feel natural.</div>
+      </div>
+      <div class="resp-item">
+        <div class="resp-num">04</div>
+        <div class="resp-title" data-i18n="team_arshat_r4_t">QUALITY</div>
+        <div class="resp-desc" data-i18n="team_arshat_r4_d">Finding and eliminating what doesn't work.</div>
+      </div>
+      <div class="resp-item">
+        <div class="resp-num">05</div>
+        <div class="resp-title" data-i18n="team_arshat_r5_t">AI</div>
+        <div class="resp-desc" data-i18n="team_arshat_r5_d">The AI that recommends universities.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 9: COLLAB ==================== -->
+<section class="scene" id="collab">
+  <div class="container">
+    <div class="collab-stage">
+      <div class="collab-side">
+        <h3 class="reveal">ALKAR</h3>
+        <p class="reveal" data-i18n="team_founder1">Founder 01</p>
+      </div>
+      <div class="collab-cross reveal">×</div>
+      <div class="collab-side">
+        <h3 class="reveal">ARSHAT</h3>
+        <p class="reveal" data-i18n="team_founder2">Founder 02</p>
+      </div>
+    </div>
+    <div class="collab-join">
+      <h2 class="reveal">EDUPATH</h2>
+      <p class="reveal" data-i18n="team_collab_sub">Two roles. One product.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 10: BUILD ==================== -->
+<section class="scene" id="build">
+  <div class="build-head">
+    <div class="eyebrow reveal" data-i18n="team_build_eyebrow">The build</div>
+    <h2 class="title-large reveal" data-i18n="team_build_title">THE BUILD</h2>
+  </div>
+  <div class="h-scroll">
+    <!-- 1. IDEA -->
+    <div class="h-slide">
+      <div class="h-slide-inner">
+        <div>
+          <div class="h-slide-num">01 / 06</div>
+          <h3 class="h-slide-title" data-i18n="team_build_idea">IDEA</h3>
+          <p class="h-slide-desc" data-i18n="team_build_idea_d">Where it all began — a notebook, a pen, and a problem worth solving.</p>
+        </div>
+        <div class="h-slide-art">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#FBF6EC"/>
+            <g stroke="#8C5A34" stroke-width="1.4" fill="none">
+              <rect x="60" y="80" width="280" height="160" rx="4"/>
+              <line x1="60" y1="110" x2="340" y2="110"/>
+              <line x1="90" y1="140" x2="280" y2="140"/>
+              <line x1="90" y1="165" x2="240" y2="165"/>
+              <line x1="90" y1="190" x2="300" y2="190"/>
+              <line x1="90" y1="215" x2="220" y2="215"/>
+              <circle cx="75" cy="95" r="4" fill="#C79256" stroke="none"/>
+              <circle cx="90" cy="95" r="4" fill="#D9BD93" stroke="none"/>
+              <circle cx="105" cy="95" r="4" fill="#D9BD93" stroke="none"/>
+            </g>
+            <text x="200" y="270" text-anchor="middle" font-family="Fraunces, serif" font-size="11" fill="#7A6552" letter-spacing="6">FIRST NOTES</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- 2. ARCHITECTURE -->
+    <div class="h-slide">
+      <div class="h-slide-inner">
+        <div>
+          <div class="h-slide-num">02 / 06</div>
+          <h3 class="h-slide-title" data-i18n="team_build_arch">ARCHITECTURE</h3>
+          <p class="h-slide-desc" data-i18n="team_build_arch_d">Mapping the system before writing a single line of code.</p>
+        </div>
+        <div class="h-slide-art">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#2B1B10"/>
+            <g stroke="#C79256" stroke-width="1.6" fill="none">
+              <rect x="60" y="60" width="120" height="60" rx="6"/>
+              <rect x="220" y="60" width="120" height="60" rx="6"/>
+              <rect x="140" y="180" width="120" height="60" rx="6"/>
+              <line x1="120" y1="120" x2="120" y2="150"/>
+              <line x1="120" y1="150" x2="200" y2="150"/>
+              <line x1="200" y1="150" x2="200" y2="180"/>
+              <line x1="280" y1="120" x2="280" y2="150"/>
+              <line x1="280" y1="150" x2="200" y2="150"/>
+            </g>
+            <text x="120" y="95" text-anchor="middle" font-family="Work Sans" font-size="11" fill="#C79256" letter-spacing="3">UI</text>
+            <text x="280" y="95" text-anchor="middle" font-family="Work Sans" font-size="11" fill="#C79256" letter-spacing="3">API</text>
+            <text x="200" y="215" text-anchor="middle" font-family="Work Sans" font-size="11" fill="#C79256" letter-spacing="3">DB</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- 3. DESIGN -->
+    <div class="h-slide">
+      <div class="h-slide-inner">
+        <div>
+          <div class="h-slide-num">03 / 06</div>
+          <h3 class="h-slide-title" data-i18n="team_build_design">DESIGN</h3>
+          <p class="h-slide-desc" data-i18n="team_build_design_d">Colour, type, spacing — everything deliberate, nothing accidental.</p>
+        </div>
+        <div class="h-slide-art">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#FBF6EC"/>
+            <g stroke="#8C5A34" stroke-width="1.4" fill="none">
+              <rect x="40" y="40" width="320" height="220" rx="6"/>
+              <rect x="60" y="60" width="140" height="80" rx="3"/>
+              <rect x="220" y="60" width="120" height="180" rx="3"/>
+              <line x1="60" y1="160" x2="200" y2="160"/>
+              <line x1="60" y1="180" x2="180" y2="180"/>
+              <line x1="60" y1="200" x2="200" y2="200"/>
+            </g>
+            <rect x="60" y="60" width="140" height="80" rx="3" fill="#EFE1C6" stroke="none"/>
+            <text x="200" y="285" text-anchor="middle" font-family="Fraunces, serif" font-size="11" fill="#7A6552" letter-spacing="6">MOCKUP 01</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- 4. DEVELOPMENT -->
+    <div class="h-slide">
+      <div class="h-slide-inner">
+        <div>
+          <div class="h-slide-num">04 / 06</div>
+          <h3 class="h-slide-title" data-i18n="team_build_dev">DEVELOPMENT</h3>
+          <p class="h-slide-desc" data-i18n="team_build_dev_d">Building, breaking, fixing, repeating.</p>
+        </div>
+        <div class="h-slide-art">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#2B1B10"/>
+            <g font-family="Courier New, monospace" font-size="11" fill="#C79256">
+              <text x="40" y="60">import</text><text x="100" y="60" fill="#D9BD93">eduPath</text>
+              <text x="40" y="85">from</text><text x="80" y="85" fill="#D9BD93">"@edupath/core"</text>
+              <text x="40" y="120" fill="#8C5A34">def</text><text x="75" y="120" fill="#D9BD93">match_university</text><text x="210" y="120">(profile):</text>
+              <text x="60" y="145" fill="#7A6552"># score every candidate</text>
+              <text x="60" y="170">candidates = db.query(profile)</text>
+              <text x="60" y="195">return rank(candidates)</text>
+              <text x="40" y="230" fill="#7A6552">// results: 250 universities</text>
+            </g>
+            <circle cx="20" cy="55" r="3" fill="#E63946" fill-opacity=".4"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- 5. TESTING -->
+    <div class="h-slide">
+      <div class="h-slide-inner">
+        <div>
+          <div class="h-slide-num">05 / 06</div>
+          <h3 class="h-slide-title" data-i18n="team_build_test">TESTING</h3>
+          <p class="h-slide-desc" data-i18n="team_build_test_d">Every edge case, every fallback, every fail state — covered.</p>
+        </div>
+        <div class="h-slide-art">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#FBF6EC"/>
+            <g stroke="#8C5A34" stroke-width="1.4" fill="none">
+              <rect x="40" y="60" width="320" height="40" rx="4"/>
+              <rect x="40" y="120" width="320" height="40" rx="4"/>
+              <rect x="40" y="180" width="320" height="40" rx="4"/>
+            </g>
+            <circle cx="65" cy="80" r="9" fill="#5A3B26"/>
+            <path d="M60 80 L64 84 L71 76" stroke="#F7EFE1" stroke-width="2" fill="none"/>
+            <circle cx="65" cy="140" r="9" fill="#5A3B26"/>
+            <path d="M60 140 L64 144 L71 136" stroke="#F7EFE1" stroke-width="2" fill="none"/>
+            <circle cx="65" cy="200" r="9" fill="#C79256"/>
+            <line x1="60" y1="195" x2="70" y2="205" stroke="#F7EFE1" stroke-width="2"/>
+            <line x1="70" y1="195" x2="60" y2="205" stroke="#F7EFE1" stroke-width="2"/>
+            <text x="90" y="85" font-family="Work Sans" font-size="13" fill="#2B1B10">All endpoints pass</text>
+            <text x="90" y="145" font-family="Work Sans" font-size="13" fill="#2B1B10">Language switching pass</text>
+            <text x="90" y="205" font-family="Work Sans" font-size="13" fill="#8C5A34">Edge case found</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- 6. EDUPATH -->
+    <div class="h-slide">
+      <div class="h-slide-inner">
+        <div>
+          <div class="h-slide-num">06 / 06</div>
+          <h3 class="h-slide-title" data-i18n="team_build_product">EDUPATH</h3>
+          <p class="h-slide-desc" data-i18n="team_build_product_d">A working product. Live, multilingual, intelligent.</p>
+        </div>
+        <div class="h-slide-art">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#F7EFE1"/>
+            <circle cx="200" cy="140" r="70" fill="none" stroke="#8C5A34" stroke-width="1.6"/>
+            <circle cx="200" cy="140" r="50" fill="none" stroke="#5A3B26" stroke-width="1.2" stroke-dasharray="2 4"/>
+            <text x="200" y="148" text-anchor="middle" font-family="Fraunces, serif" font-size="22" fill="#2B1B10" font-weight="700">EduPath</text>
+            <text x="200" y="260" text-anchor="middle" font-family="Work Sans" font-size="11" fill="#7A6552" letter-spacing="6">LIVE · 2026</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 11: TIMELINE ==================== -->
+<section class="scene" id="timeline">
+  <div class="container">
+    <div class="eyebrow reveal" data-i18n="team_timeline_eyebrow">From idea to EduPath</div>
+    <h2 class="title-large reveal" data-i18n="team_timeline_title">FROM IDEA TO EDUPATH</h2>
+    <div class="tl-wrap">
+      <div class="tl-item">
+        <div class="tl-date">2026 · 01</div>
+        <div class="tl-title" data-i18n="team_tl_1">The idea</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2026 · 02</div>
+        <div class="tl-title" data-i18n="team_tl_2">First prototype</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2026 · 03</div>
+        <div class="tl-title" data-i18n="team_tl_3">Backend & Database</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2026 · 04</div>
+        <div class="tl-title" data-i18n="team_tl_4">Frontend</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2026 · 05</div>
+        <div class="tl-title" data-i18n="team_tl_5">Testing</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2026 · 06</div>
+        <div class="tl-title" data-i18n="team_tl_6">EduPath</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 12: SHOWCASE ==================== -->
+<section class="scene" id="showcase">
+  <div class="container" style="text-align:center;">
+    <div class="eyebrow reveal" style="justify-content:center; display:inline-flex;" data-i18n="team_product_eyebrow">The product</div>
+    <h2 class="title-large reveal" data-i18n="team_show_title">A WORKING PRODUCT</h2>
+  </div>
+  <div class="show-grid">
+
+    <!-- Mockup 1: Homepage -->
+    <div class="show-item">
+      <div class="show-mockup">
+        <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+          <rect width="800" height="500" fill="#F7EFE1"/>
+          <rect x="0" y="0" width="800" height="60" fill="#FBF6EC"/>
+          <line x1="0" y1="60" x2="800" y2="60" stroke="#EFE1C6"/>
+          <circle cx="40" cy="30" r="12" fill="none" stroke="#5A3B26" stroke-width="2"/>
+          <text x="70" y="36" font-family="Fraunces, serif" font-size="18" fill="#2B1B10" font-weight="700">EduPath</text>
+          <text x="500" y="36" font-family="Work Sans" font-size="12" fill="#7A6552">Home</text>
+          <text x="560" y="36" font-family="Work Sans" font-size="12" fill="#7A6552">Universities</text>
+          <text x="650" y="36" font-family="Work Sans" font-size="12" fill="#7A6552">Profile</text>
+          <text x="200" y="200" font-family="Fraunces, serif" font-size="42" fill="#2B1B10" font-weight="700">Find your university</text>
+          <text x="200" y="240" font-family="Work Sans" font-size="14" fill="#7A6552">A guided test to match you with the right place.</text>
+          <rect x="200" y="280" width="180" height="44" rx="6" fill="#2B1B10"/>
+          <text x="290" y="307" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#F7EFE1">Start test</text>
+          <circle cx="640" cy="260" r="90" fill="none" stroke="#C79256" stroke-width="1.4"/>
+          <circle cx="640" cy="260" r="60" fill="none" stroke="#8C5A34" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="show-caption">
+        <span data-i18n="team_show_home">Homepage</span>
+        <small data-i18n="team_show_home_sub">Landing · Introduction</small>
+      </div>
+    </div>
+
+    <!-- Mockup 2: University Explorer -->
+    <div class="show-item">
+      <div class="show-mockup">
+        <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+          <rect width="800" height="500" fill="#F7EFE1"/>
+          <rect x="0" y="0" width="800" height="60" fill="#FBF6EC"/>
+          <line x1="0" y1="60" x2="800" y2="60" stroke="#EFE1C6"/>
+          <rect x="0" y="60" width="260" height="440" fill="#FBF6EC"/>
+          <line x1="260" y1="60" x2="260" y2="500" stroke="#EFE1C6"/>
+          <text x="24" y="100" font-family="Fraunces, serif" font-size="20" fill="#2B1B10" font-weight="700">Universities</text>
+          <text x="24" y="140" font-family="Work Sans" font-size="12" fill="#7A6552">🇺🇸 United States (12)</text>
+          <text x="24" y="170" font-family="Work Sans" font-size="12" fill="#7A6552">🇬🇧 United Kingdom (8)</text>
+          <text x="24" y="200" font-family="Work Sans" font-size="12" fill="#7A6552">🇨🇦 Canada (6)</text>
+          <text x="24" y="230" font-family="Work Sans" font-size="12" fill="#7A6552">🇩🇪 Germany (9)</text>
+          <text x="24" y="260" font-family="Work Sans" font-size="12" fill="#7A6552">🇦🇺 Australia (7)</text>
+          <text x="300" y="120" font-family="Fraunces, serif" font-size="32" fill="#2B1B10" font-weight="700">Harvard University</text>
+          <text x="300" y="148" font-family="Work Sans" font-size="13" fill="#7A6552">📍 Cambridge, USA</text>
+          <rect x="300" y="180" width="460" height="60" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="316" y="204" font-family="Work Sans" font-size="11" fill="#7A6552">TUITION</text>
+          <text x="316" y="224" font-family="Fraunces, serif" font-size="16" fill="#2B1B10">$75,891 / year</text>
+          <rect x="300" y="260" width="460" height="60" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="316" y="284" font-family="Work Sans" font-size="11" fill="#7A6552">ADMISSION RATE</text>
+          <text x="316" y="304" font-family="Fraunces, serif" font-size="16" fill="#2B1B10">5%</text>
+        </svg>
+      </div>
+      <div class="show-caption">
+        <span data-i18n="team_show_explorer">University Explorer</span>
+        <small data-i18n="team_show_explorer_sub">Browse · Filter · Compare</small>
+      </div>
+    </div>
+
+    <!-- Mockup 3: Profile -->
+    <div class="show-item">
+      <div class="show-mockup">
+        <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+          <rect width="800" height="500" fill="#F7EFE1"/>
+          <rect x="0" y="0" width="800" height="60" fill="#FBF6EC"/>
+          <line x1="0" y1="60" x2="800" y2="60" stroke="#EFE1C6"/>
+          <text x="60" y="140" font-family="Fraunces, serif" font-size="36" fill="#2B1B10" font-weight="700">Hi, Aisana</text>
+          <text x="60" y="170" font-family="Work Sans" font-size="13" fill="#7A6552">aisana@mail.com</text>
+          <text x="60" y="220" font-family="Work Sans" font-size="12" fill="#7A6552" letter-spacing="3">SAVED</text>
+          <rect x="60" y="240" width="320" height="70" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="76" y="266" font-family="Fraunces, serif" font-size="14" fill="#2B1B10">Harvard University</text>
+          <text x="76" y="288" font-family="Work Sans" font-size="11" fill="#7A6552">USA · Cambridge</text>
+          <rect x="420" y="240" width="320" height="70" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="436" y="266" font-family="Fraunces, serif" font-size="14" fill="#2B1B10">Oxford University</text>
+          <text x="436" y="288" font-family="Work Sans" font-size="11" fill="#7A6552">UK · Oxford</text>
+          <text x="60" y="360" font-family="Work Sans" font-size="12" fill="#7A6552" letter-spacing="3">TEST RESULTS</text>
+          <rect x="60" y="380" width="680" height="80" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="76" y="410" font-family="Work Sans" font-size="13" fill="#2B1B10">Last test · 4 universities found</text>
+        </svg>
+      </div>
+      <div class="show-caption">
+        <span data-i18n="team_show_profile">Profile</span>
+        <small data-i18n="team_show_profile_sub">Saved · Results</small>
+      </div>
+    </div>
+
+    <!-- Mockup 4: Recommendation -->
+    <div class="show-item">
+      <div class="show-mockup">
+        <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+          <rect width="800" height="500" fill="#F7EFE1"/>
+          <text x="60" y="80" font-family="Fraunces, serif" font-size="26" fill="#2B1B10" font-weight="700">Your recommendations</text>
+          <text x="60" y="120" font-family="Work Sans" font-size="12" fill="#7A6552" letter-spacing="3">🎓 ACADEMIC FIT</text>
+          <rect x="60" y="140" width="680" height="60" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="76" y="166" font-family="Fraunces, serif" font-size="14" fill="#2B1B10">University of Toronto</text>
+          <text x="76" y="188" font-family="Work Sans" font-size="11" fill="#7A6552">Strong research program matches your profile</text>
+          <text x="60" y="230" font-family="Work Sans" font-size="12" fill="#7A6552" letter-spacing="3">🌍 LIFESTYLE FIT</text>
+          <rect x="60" y="250" width="680" height="60" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="76" y="276" font-family="Fraunces, serif" font-size="14" fill="#2B1B10">ETH Zurich</text>
+          <text x="76" y="298" font-family="Work Sans" font-size="11" fill="#7A6552">Fits your climate and city preferences</text>
+          <text x="60" y="340" font-family="Work Sans" font-size="12" fill="#7A6552" letter-spacing="3">🎯 HIGH CHANCE</text>
+          <rect x="60" y="360" width="680" height="60" rx="6" fill="#FBF6EC" stroke="#EFE1C6"/>
+          <text x="76" y="386" font-family="Fraunces, serif" font-size="14" fill="#2B1B10">University of Warsaw</text>
+          <text x="76" y="408" font-family="Work Sans" font-size="11" fill="#7A6552">Your scores place you in the top percentile</text>
+        </svg>
+      </div>
+      <div class="show-caption">
+        <span data-i18n="team_show_reco">Recommendation</span>
+        <small data-i18n="team_show_reco_sub">The output of the AI</small>
+      </div>
+    </div>
+
+    <!-- Mockup 5: Fun Zone -->
+    <div class="show-item">
+      <div class="show-mockup">
+        <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+          <rect width="800" height="500" fill="#F7EFE1"/>
+          <text x="400" y="120" text-anchor="middle" font-family="Fraunces, serif" font-size="56" fill="#2B1B10" font-weight="900">FUN ZONE</text>
+          <text x="400" y="160" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#7A6552">The most unnecessary part of EduPath</text>
+          <g>
+            <rect x="80" y="220" width="180" height="100" rx="8" fill="#FBF6EC" stroke="#EFE1C6"/>
+            <text x="170" y="260" text-anchor="middle" font-size="24">🗿</text>
+            <text x="170" y="290" text-anchor="middle" font-family="Fraunces, serif" font-size="13" fill="#2B1B10">Academic Aura</text>
+          </g>
+          <g>
+            <rect x="280" y="220" width="180" height="100" rx="8" fill="#FBF6EC" stroke="#EFE1C6"/>
+            <text x="370" y="260" text-anchor="middle" font-size="24">🎰</text>
+            <text x="370" y="290" text-anchor="middle" font-family="Fraunces, serif" font-size="13" fill="#2B1B10">Random Future</text>
+          </g>
+          <g>
+            <rect x="480" y="220" width="180" height="100" rx="8" fill="#FBF6EC" stroke="#EFE1C6"/>
+            <text x="570" y="260" text-anchor="middle" font-size="24">⚔️</text>
+            <text x="570" y="290" text-anchor="middle" font-family="Fraunces, serif" font-size="13" fill="#2B1B10">University Battle</text>
+          </g>
+          <g>
+            <rect x="80" y="340" width="180" height="100" rx="8" fill="#FBF6EC" stroke="#EFE1C6"/>
+            <text x="170" y="380" text-anchor="middle" font-size="24">💀</text>
+            <text x="170" y="410" text-anchor="middle" font-family="Fraunces, serif" font-size="13" fill="#2B1B10">How Cooked</text>
+          </g>
+          <g>
+            <rect x="280" y="340" width="180" height="100" rx="8" fill="#FBF6EC" stroke="#EFE1C6"/>
+            <text x="370" y="380" text-anchor="middle" font-size="24">🎲</text>
+            <text x="370" y="410" text-anchor="middle" font-family="Fraunces, serif" font-size="13" fill="#2B1B10">Gacha</text>
+          </g>
+          <g>
+            <rect x="480" y="340" width="180" height="100" rx="8" fill="#FBF6EC" stroke="#EFE1C6"/>
+            <text x="570" y="380" text-anchor="middle" font-size="24">🪄</text>
+            <text x="570" y="410" text-anchor="middle" font-family="Fraunces, serif" font-size="13" fill="#2B1B10">Spells</text>
+          </g>
+        </svg>
+      </div>
+      <div class="show-caption">
+        <span data-i18n="team_show_fz">Fun Zone</span>
+        <small data-i18n="team_show_fz_sub">Where the rules don't apply</small>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== SCENE 13: FINAL ==================== -->
 <section class="scene" id="final">
   <div class="container">
     <h2 class="final-huge reveal" data-i18n="team_final_h1">THE FUTURE ISN'T A DESTINATION.</h2>
     <h2 class="final-sub reveal" data-i18n="team_final_h2">It's a path.</h2>
-    <a href="index.html" class="btn-explore reveal" style="margin-top:40px; display:inline-flex; background:var(--espresso); color:var(--paper); padding:18px 36px; border-radius:8px; font-weight:600; text-decoration:none;">
+    <div class="final-meta reveal">EDUPATH · ALKAR × ARSHAT · 2026</div>
+    <a href="index.html" class="btn-explore reveal">
       <span data-i18n="team_final_cta">Explore EduPath</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
   </div>
 </section>
 
+<!-- ==================== CONTACT ==================== -->
 <section id="contact">
   <div class="container">
     <h2 class="contact-title" data-i18n="team_contact_title">Связаться с нами</h2>
@@ -386,58 +957,7 @@
 
 <footer class="copyright" data-i18n="team_footer">EduPath © 2026 · Made with care by Alkar & Arshat</footer>
 
+<!-- ==================== SCRIPT ==================== -->
 <script src="i18n.js"></script>
 <script>
 (function(){
-  "use strict";
-
-  // Language switcher
-  const langBtn = document.getElementById("langBtn");
-  const langMenu = document.getElementById("langMenu");
-  if(langBtn && langMenu){
-    langBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      langMenu.classList.toggle("open");
-    });
-    langMenu.addEventListener("click", (e) => {
-      const opt = e.target.closest(".lang-option");
-      if(!opt) return;
-      window.I18N && window.I18N.setLang(opt.dataset.lang);
-      langMenu.classList.remove("open");
-      document.querySelectorAll(".lang-option").forEach(b => b.classList.toggle("active", b.dataset.lang === opt.dataset.lang));
-    });
-    document.addEventListener("click", () => langMenu.classList.remove("open"));
-  }
-  if(window.I18N){
-    const cur = window.I18N.getLang();
-    document.querySelectorAll(".lang-option").forEach(b => b.classList.toggle("active", b.dataset.lang === cur));
-  }
-
-  // Reveal
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting) entry.target.classList.add("in");
-    });
-  }, { threshold: 0.15 });
-  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-
-  // System SVG lines
-  const sysLines = document.querySelectorAll(".sys-line");
-  if(sysLines.length){
-    const io3 = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if(e.isIntersecting){
-          sysLines.forEach((l, i) => setTimeout(() => l.classList.add("in"), i * 250));
-          document.querySelectorAll(".sys-node").forEach((n, i) => setTimeout(() => n.classList.add("in"), i * 200));
-          io3.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    const sysEl = document.getElementById("system");
-    if(sysEl) io3.observe(sysEl);
-  }
-})();
-</script>
-<script src="auth.js"></script>
-</body>
-</html>
