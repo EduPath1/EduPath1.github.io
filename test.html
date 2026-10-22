@@ -575,18 +575,18 @@ function renderSaveBanner(){
       </div>
     `;
   } else if(status === "failed"){
-    banner.innerHTML = `
-      <div class="save-banner">
-        <div class="save-banner-icon">⚠️</div>
-        <div class="save-banner-text">
-          <div class="save-banner-title">${t("test_save_failed_banner", "Не удалось сохранить результат")}</div>
-          <div class="save-banner-desc">${t("test_save_failed_desc", "Результат ниже виден, но в профиле его пока нет. Попробуй ещё раз.")}</div>
-        </div>
-        <div class="save-banner-actions">
-          <button type="button" class="save-banner-btn retry" onclick="retrySave()">${t("test_save_retry", "Повторить")}</button>
-        </div>
+  banner.innerHTML = `
+    <div class="save-banner">
+      <div class="save-banner-icon">⚠️</div>
+      <div class="save-banner-text">
+        <div class="save-banner-title">${t("test_save_failed_banner", "Не удалось сохранить результат")}</div>
+        <div class="save-banner-desc" style="word-break: break-all; user-select: text;">${state.saveErrorText || t("test_save_failed_desc", "Попробуй ещё раз.")}</div>
       </div>
-    `;
+      <div class="save-banner-actions">
+        <button type="button" class="save-banner-btn retry" onclick="retrySave()">${t("test_save_retry", "Повторить")}</button>
+      </div>
+    </div>
+  `;
   } else {
     banner.innerHTML = `
       <div class="save-banner">
