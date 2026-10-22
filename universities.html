@@ -39,7 +39,6 @@
   }
   @keyframes spin { 100% { transform: rotate(360deg); } }
   
-  /* 页面初始状态：隐藏 */
   .layout, header { opacity: 0; transition: opacity 0.5s var(--ease); }
   body.loaded .layout, body.loaded header { opacity: 1; }
 
@@ -141,7 +140,6 @@
   .country.open .country-arrow{ transform:rotate(180deg); }
   .country-count{ font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px; }
   
-  /* 关键：手风琴展开/收起速度改为 0.4s 中速 */
   .country-list{ display:block; max-height:0; overflow:hidden; opacity:0; transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .3s var(--ease); }
   .country.open .country-list{ max-height:6000px; opacity:1; padding:0 0 12px 0; }
 
@@ -208,6 +206,8 @@
   .btn-main.ghost:hover{ background:var(--sand); transform:translateY(-2px); }
 
   @media (max-width:1000px){
+    /* 修复手机端无法滚动：取消高度限制，恢复 body 滚动 */
+    body { overflow: auto !important; }
     .layout{ display:block; height:auto; overflow:visible; }
     .sidebar{ height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); }
     .detail{ padding:32px 24px; height:auto; overflow:visible; }
@@ -428,14 +428,22 @@ async function loadAll(){
     return String(a["Университет"]).localeCompare(String(b["Университет"]));
   });
 
-  if (window.EduAuth && window.EduAuth.isLoggedIn()) {
-    try { await window.EduAuth.getSaved(); } catch(e) {}
+  // 修复点：无论登没登录，都尝试去拉取保存列表。
+  // auth.js 里的 getSaved() 如果未登录通常会返回 []，这样不会阻塞渲染。
+  // 此外，加了 100ms 的微延迟，确保 auth.js 内部状态先初始化完毕。
+  if (window.EduAuth) {
+    try { 
+      await new Promise(r => setTimeout(r, 100));
+      await window.EduAuth.getSaved(); 
+    } catch(e) { 
+      console.log("Could not fetch saved:", e); 
+    }
   }
 
   buildCountryFilter();
   renderSidebar();
 
-  // 关键：数据加载完毕后，移除 loading 遮罩，显示主内容
+  // 加载完成后，平滑显示内容
   document.body.classList.add("loaded");
 }
 
