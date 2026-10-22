@@ -1,10 +1,5 @@
 // ============================================================
-// EduPath — auth.js (v2: автообновление сессии)
-// Supabase + Render backend
-// + Полный i18n (5 языков)
-// + Confirm email экран
-// + Auto-login по redirect от Supabase
-// + Автообновление сессии по refresh_token (v2)
+// EduPath — auth.js (v3: 彻底修复全新进入时数据加载丢失)
 // ============================================================
 
 (function() {
@@ -20,7 +15,6 @@
   // ------------------------------------------------------------
   function t(key, fallback) {
     const v = window.I18N && window.I18N.t(key);
-    // I18N.t возвращает сам ключ, если перевода нет: тогда берём запасной текст
     return (v && v !== key) ? v : (fallback || key);
   }
 
@@ -40,7 +34,6 @@
     return localStorage.getItem(REFRESH_KEY);
   }
 
-  // Сохраняет обе части сессии: токен доступа (живёт около часа) и refresh-токен
   function setSession(session) {
     if (!session) return;
     if (session.access_token) localStorage.setItem(TOKEN_KEY, session.access_token);
@@ -53,7 +46,6 @@
     localStorage.removeItem(USER_KEY);
   }
 
-  // Время истечения токена (мс) из самого токена; null, если прочитать не удалось
   function tokenExpiry(token) {
     try {
       const part = String(token).split(".")[1];
@@ -100,7 +92,6 @@
   let _refreshPromise = null;
   let _expiredToastAt = 0;
 
-  // Сессия закончилась и продлить её нельзя: честно выходим, а не делаем вид, что вошли
   function expireSession() {
     const hadSession = !!getToken() || !!getCurrentUser();
     clearToken();
@@ -118,9 +109,6 @@
     }
   }
 
-  // Меняет refresh-токен на новую пару токенов. Одновременные вызовы делят один запрос,
-  // потому что refresh-токен одноразовый.
-  // true: сессия продлена; false: не вышло (если сервер просто спит, вход сохраняется).
   function refreshSession() {
     if (_refreshPromise) return _refreshPromise;
 
@@ -149,13 +137,11 @@
           return true;
         }
 
-        // 400/401: refresh-токен недействителен, продлить нельзя
         if (res.status === 400 || res.status === 401 || res.status === 403) {
           expireSession();
           return false;
         }
 
-        // Сервер спит или нет сети: подождём и попробуем ещё раз, но не разлогиниваем
         if (attempt === 0) await new Promise(r => setTimeout(r, 2000));
       }
       return false;
@@ -164,7 +150,6 @@
     return _refreshPromise;
   }
 
-  // Перед запросом: если токен уже истёк или вот-вот истечёт, обновляем его заранее
   async function ensureFreshSession() {
     const token = getToken();
     if (!token) return false;
@@ -174,7 +159,6 @@
 
     if (getRefreshToken()) return refreshSession();
 
-    // Старая сессия без refresh-токена: если токен уже истёк, продлить нечем
     if (exp - Date.now() <= 0) {
       expireSession();
       return false;
@@ -201,7 +185,6 @@
       let data = null;
       try { data = await res.json(); } catch (e) {}
 
-      // Токен отклонён: один раз продлеваем сессию и повторяем запрос
       if (res.status === 401 && token && !isAuthPath && !_retried) {
         if (getRefreshToken() && await refreshSession()) {
           return apiFetch(path, options, true);
@@ -209,7 +192,6 @@
         if (!getRefreshToken()) expireSession();
       }
 
-      // sessionExpired: сервер отклонил токен, а продлить его не удалось
       return { ok: res.ok, status: res.status, data, sessionExpired: res.status === 401 && !!token && !isAuthPath };
     } catch (networkError) {
       return { ok: false, status: 0, data: null, networkError: true };
@@ -271,11 +253,9 @@
         email: (user && user.email) || email,
         id: user && user.id
       });
-
       return { ok: true, user: user, needsConfirmation: false };
     }
 
-    // Confirm email включён — Supabase не дал session
     return {
       ok: true,
       user: user,
@@ -330,6 +310,28 @@
     clearToken();
     _savedCache = null;
     _testsCache = null;
+    if (_readyResolve) _readyResolve();
+  }
+
+  // ============================================================
+  // READY PROMISE (修复：保证页面拉数据前，Token 校验已完成)
+  // ============================================================
+
+  let _readyPromise;
+  let _readyResolve;
+  
+  function initReadyPromise() {
+    if (!_readyPromise) {
+      _readyPromise = new Promise(resolve => {
+        _readyResolve = resolve;
+      });
+    }
+  }
+  initReadyPromise();
+
+  async function waitForAuthReady() {
+    if (!isLoggedIn()) return;
+    await _readyPromise;
   }
 
   // ============================================================
@@ -339,6 +341,9 @@
   let _savedCache = null;
 
   async function getSaved() {
+    // 关键：等待状态校验完毕，再去发请求
+    await waitForAuthReady();
+
     if (!isLoggedIn()) {
       _savedCache = [];
       return [];
@@ -419,6 +424,9 @@
   let _testsCache = null;
 
   async function getTests() {
+    // 关键：等待状态校验完毕，再去发请求
+    await waitForAuthReady();
+
     if (!isLoggedIn()) {
       _testsCache = [];
       return [];
@@ -439,6 +447,8 @@
   }
 
   async function saveTestResult(finalData) {
+    await waitForAuthReady();
+
     if (!isLoggedIn()) {
       return { ok: false, error: "Не вошёл" };
     }
@@ -512,7 +522,7 @@
   // ============================================================
 
   let modalEl = null;
-  let modalMode = "register"; // register | login | confirm
+  let modalMode = "register";
   let pendingEmail = "";
 
   function buildModal() {
@@ -688,7 +698,6 @@
     return overlay;
   }
 
-  // -------- Open modal --------
   function openModal(mode) {
     mode = mode || "register";
     modalMode = mode;
@@ -709,7 +718,6 @@
 
     errEl.textContent = "";
 
-    // Сначала подставим все data-i18n
     if (window.I18N) window.I18N.applyAll();
 
     if (mode === "confirm") {
@@ -763,10 +771,6 @@
   function closeModal() {
     if (modalEl) modalEl.classList.remove("open");
   }
-
-  // ============================================================
-  // CLICK HANDLERS
-  // ============================================================
 
   document.addEventListener("click", (e) => {
     const openBtn = e.target.closest("[data-auth-open]");
@@ -835,10 +839,6 @@
     }
   });
 
-  // ============================================================
-  // FORM SUBMIT
-  // ============================================================
-
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "edupathAuthForm") return;
     e.preventDefault();
@@ -872,14 +872,12 @@
       return;
     }
 
-    // Нужно подтвердить email — остаёмся в модалке
     if (result.needsConfirmation) {
       pendingEmail = result.email || email;
       openModal("confirm");
       return;
     }
 
-    // Успешный вход
     closeModal();
     showToast(
       modalMode === "register"
@@ -889,15 +887,12 @@
     );
 
     updateHeaderUI();
+    if (_readyResolve) _readyResolve(); // 登录成功，放行所有等待数据的请求
 
     if (window.location.pathname.includes("profile")) {
       window.location.reload();
     }
   });
-
-  // ============================================================
-  // HANDLE SUPABASE REDIRECT AFTER CONFIRM
-  // ============================================================
 
   function handleAuthRedirect() {
     const hash = window.location.hash || "";
@@ -913,12 +908,12 @@
         history.replaceState(null, "", window.location.pathname + window.location.search);
         updateHeaderUI();
 
-        // Пытаемся подтянуть имя пользователя
         apiFetch("/api/me", { method: "GET" }).then(res => {
           if (res.ok && res.data && res.data.user) {
             setCachedUser(res.data.user);
             updateHeaderUI();
           }
+          if (_readyResolve) _readyResolve();
         });
 
         showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
@@ -937,10 +932,6 @@
 
     return false;
   }
-
-  // ============================================================
-  // HEADER
-  // ============================================================
 
   function updateHeaderUI() {
     const user = getCurrentUser();
@@ -961,35 +952,30 @@
     }
   }
 
-  // ============================================================
-  // INIT
-  // ============================================================
-
   document.addEventListener("DOMContentLoaded", () => {
     handleAuthRedirect();
     updateHeaderUI();
 
     if (isLoggedIn()) {
-      // Сначала проверяем/продлеваем сессию: так «Привет, имя» не остаётся при мёртвой сессии
+      // 页面加载时，立刻开始检查 Token 是否快过期并静默续期
       ensureFreshSession().then(() => {
-        if (!isLoggedIn()) return;
-        getSaved().catch(e => console.warn("preload saved failed:", e));
-        getTests().catch(e => console.warn("preload tests failed:", e));
+        if (_readyResolve) _readyResolve(); // 校验完毕，唤醒所有等待数据的页面代码
+      }).catch(e => {
+        console.warn("Auth ready failed:", e);
+        if (_readyResolve) _readyResolve();
       });
+    } else {
+      // 如果未登录，立刻放行
+      if (_readyResolve) _readyResolve();
     }
   });
 
-  // Перерисовка при смене языка
   window.addEventListener("edupath-lang-change", () => {
     updateHeaderUI();
     if (modalEl && modalEl.classList.contains("open")) {
       openModal(modalMode);
     }
   });
-
-  // ============================================================
-  // EXPORT
-  // ============================================================
 
   window.EduAuth = {
     getToken,
