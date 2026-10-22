@@ -206,7 +206,6 @@
   .btn-main.ghost:hover{ background:var(--sand); transform:translateY(-2px); }
 
   @media (max-width:1000px){
-    /* 修复手机端无法滚动：取消高度限制，恢复 body 滚动 */
     body { overflow: auto !important; }
     .layout{ display:block; height:auto; overflow:visible; }
     .sidebar{ height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); }
@@ -428,22 +427,17 @@ async function loadAll(){
     return String(a["Университет"]).localeCompare(String(b["Университет"]));
   });
 
-  // 修复点：无论登没登录，都尝试去拉取保存列表。
-  // auth.js 里的 getSaved() 如果未登录通常会返回 []，这样不会阻塞渲染。
-  // 此外，加了 100ms 的微延迟，确保 auth.js 内部状态先初始化完毕。
   if (window.EduAuth) {
     try { 
-      await new Promise(r => setTimeout(r, 100));
       await window.EduAuth.getSaved(); 
     } catch(e) { 
-      console.log("Could not fetch saved:", e); 
+      console.log("Error fetching saved:", e); 
     }
   }
 
   buildCountryFilter();
   renderSidebar();
 
-  // 加载完成后，平滑显示内容
   document.body.classList.add("loaded");
 }
 
@@ -587,7 +581,7 @@ function selectUni(uni, wrapper){
   const content = document.getElementById("detailContent");
   const empty = document.getElementById("detailEmpty");
 
-  // 手机端适配：如果屏幕宽度小于 1000px，点击大学后自动平滑滚动到详情区
+  // 手机端适配：点击大学后自动平滑滚动到详情区
   if (window.innerWidth <= 1000) {
     const detailPanel = document.getElementById("detail");
     if (detailPanel) {
