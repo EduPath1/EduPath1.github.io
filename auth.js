@@ -444,27 +444,27 @@
   }
 
   async function saveTestResult(finalData) {
-    await waitForAuthReady();
+  await waitForAuthReady();
 
-    if (!isLoggedIn()) {
-      return { ok: false, error: "Не вошёл" };
-    }
-
-    const res = await apiFetchWithRetry("/api/tests", {
-      method: "POST",
-      body: JSON.stringify({
-        categories: finalData.categories || {},
-        summary: finalData.summary || ""
-      })
-    });
-
-    if (!res.ok) {
-      return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить тест") };
-    }
-
-    _testsCache = null;
-    return { ok: true };
+  if (!isLoggedIn()) {
+    return { ok: false, error: "Не вошёл" };
   }
+
+  const res = await apiFetchWithRetry("/api/tests", {
+    method: "POST",
+    body: JSON.stringify({
+      categories: finalData.categories || {},
+      summary: finalData.summary || ""
+    })
+  }, 10000); // <--- ВОТ ЭТА ЦИФРА 10000 (10 секунд)
+
+  if (!res.ok) {
+    return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить тест") };
+  }
+
+  _testsCache = null;
+  return { ok: true };
+}
 
   // ============================================================
   // TOAST
