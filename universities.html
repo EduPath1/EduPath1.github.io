@@ -37,7 +37,9 @@
     70% { transform:scale(0.95) rotate(320deg); }
     100% { transform:scale(1) rotate(360deg); }
   }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
+  
+  /* Точки загрузки, как в profile.html */
+  @keyframes pulse{ 0%,80%,100%{ opacity:0.3; transform:scale(0.8);} 40%{ opacity:1; transform:scale(1.1);} }
   
   .layout, header { opacity: 0; transition: opacity 0.5s var(--ease); }
   body.loaded .layout, body.loaded header { opacity: 1; }
@@ -49,17 +51,16 @@
     transition: opacity 0.6s var(--ease), visibility 0.6s var(--ease);
   }
   body.loaded .loading-overlay { opacity: 0; visibility: hidden; }
-  .loading-spinner {
-    width: 48px; height: 48px; border: 3px solid var(--sand);
-    border-top-color: var(--clay); border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-  }
+  
+  /* Заменили круг на текст и пульсирующие точки */
   .loading-text {
-    font-family: 'Fraunces', serif; font-size: 18px; color: var(--espresso);
-    letter-spacing: 0.05em; animation: pulse 2s infinite;
+    font-family: 'Work Sans', sans-serif; font-size: 15px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px;
   }
-  @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+  .loading-dots{ display:inline-flex; gap:6px; vertical-align:middle; }
+  .loading-dot{ width:8px; height:8px; border-radius:50%; background:var(--clay); animation:pulse 1.4s ease-in-out infinite; }
+  .loading-dot:nth-child(2){ animation-delay: 0.2s; }
+  .loading-dot:nth-child(3){ animation-delay: 0.4s; }
 
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1400px; margin:0 auto; padding:0 32px; position:relative; }
@@ -227,10 +228,16 @@
 </head>
 <body>
 
-<!-- 加载覆盖层 -->
+<!-- Загрузочный оверлей в стиле profile.html -->
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text" data-i18n="catalog_loading">Загрузка списка...</div>
+  <div class="loading-text">
+    <span data-i18n="catalog_loading">Загрузка списка</span>
+    <span class="loading-dots">
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+      <span class="loading-dot"></span>
+    </span>
+  </div>
 </div>
 
 <svg style="position:absolute; width:0; height:0;" aria-hidden="true">
@@ -581,7 +588,7 @@ function selectUni(uni, wrapper){
   const content = document.getElementById("detailContent");
   const empty = document.getElementById("detailEmpty");
 
-  // 手机端适配：点击大学后自动平滑滚动到详情区
+  // Автоскролл на телефоне
   if (window.innerWidth <= 1000) {
     const detailPanel = document.getElementById("detail");
     if (detailPanel) {
