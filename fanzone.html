@@ -1,26 +1,3 @@
-破案了！原因非常简单：**CSS 缺少了 `:hover` 的样式**。
-
-在 `team.html`（以及首页等其他页面）的 CSS 里，有一句：
-```css
-.icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
-```
-但是在 `fanzone.html` 里，`.icon-btn` 只有基础样式，**漏写了 `:hover` 的背景变深效果**。
-
-另外，为了保证和 `team.html` 完全一致（连菜单的 CSS 样式也一样），我把 `fanzone.html` 里语言菜单相关的 CSS 稍微对齐了一下（比如给 `.lang-option` 加上了鼠标悬停背景色）。
-
-你只需要在 `fanzone.html` 的 `<style>` 标签里找到 `.icon-btn`，替换成下面这几行即可（我已经为你改好并合并到完整代码里了）：
-
-```css
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition: background .2s, color .2s; }
-  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
-```
-*(注意：我加了 `transition` 让背景变深时有平滑动画，视觉体验会更好)*
-
----
-
-下面是**修改好的完整 `fanzone.html`**（直接全部复制替换原文件即可，确保完全没有问题）：
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -1737,4 +1714,3 @@ window.addEventListener("edupath-lang-change", () => {
 <script src="auth.js"></script>
 </body>
 </html>
-```
