@@ -16,7 +16,7 @@
     --ease:cubic-bezier(0.22, 1, 0.36, 1);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
-  body{ font-family:'Work Sans',sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  body{ font-family:'Work Sans',sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; overflow:hidden; }
   h1,h2,h3{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
   a{ text-decoration:none; color:inherit; }
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
@@ -27,11 +27,41 @@
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  /* 移除了 sidebar 的 anim-item，改成直接显示 */
+  @keyframes softFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+  @keyframes starPop{
+    0% { transform:scale(0.6) rotate(0deg); }
+    40% { transform:scale(1.4) rotate(180deg); }
+    70% { transform:scale(0.95) rotate(320deg); }
+    100% { transform:scale(1) rotate(360deg); }
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
   
+  /* 页面初始状态：隐藏 */
+  .layout, header { opacity: 0; transition: opacity 0.5s var(--ease); }
+  body.loaded .layout, body.loaded header { opacity: 1; }
+
+  /* ======= 加载覆盖层 ======= */
+  .loading-overlay {
+    position: fixed; inset: 0; background: var(--cream); z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 0.6s var(--ease), visibility 0.6s var(--ease);
+  }
+  body.loaded .loading-overlay { opacity: 0; visibility: hidden; }
+  .loading-spinner {
+    width: 48px; height: 48px; border: 3px solid var(--sand);
+    border-top-color: var(--clay); border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  .loading-text {
+    font-family: 'Fraunces', serif; font-size: 18px; color: var(--espresso);
+    letter-spacing: 0.05em; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1400px; margin:0 auto; padding:0 32px; position:relative; }
   .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces',serif; font-weight:600; font-size:26px; color:var(--espresso); transition:transform .3s var(--ease); }
@@ -67,9 +97,9 @@
   .search-empty{ padding:14px; font-size:14px; color:var(--text-muted); text-align:center; }
 
   /* Layout */
-  .layout{ display:grid; grid-template-columns:420px 1fr; gap:0; max-width:1400px; margin:0 auto; min-height:calc(100vh - 84px); align-items: start; }
-  .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; max-height:calc(100vh - 84px); position:sticky; top:84px; }
+  .layout{ display:grid; grid-template-columns:420px 1fr; gap:0; max-width:1400px; margin:0 auto; height:calc(100vh - 84px); }
   
+  .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; height:100%; }
   .sidebar h2{ font-size:24px; margin-bottom:6px; }
   .sidebar .subtitle{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
 
@@ -110,7 +140,9 @@
   .country-arrow{ font-size:12px; color:var(--text-muted); transition:transform .4s var(--ease); }
   .country.open .country-arrow{ transform:rotate(180deg); }
   .country-count{ font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px; }
-  .country-list{ display:block; max-height:0; overflow:hidden; opacity:0; transition:max-height .6s var(--ease), opacity .4s var(--ease), padding .4s var(--ease); }
+  
+  /* 关键：手风琴展开/收起速度改为 0.4s 中速 */
+  .country-list{ display:block; max-height:0; overflow:hidden; opacity:0; transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .3s var(--ease); }
   .country.open .country-list{ max-height:6000px; opacity:1; padding:0 0 12px 0; }
 
   .uni-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:12px 14px; margin-bottom:6px; border-radius:10px; background:var(--cream); border:1px solid transparent; cursor:pointer; opacity:0; transform:translateY(6px); animation:fadeInUp .45s var(--ease) forwards; transition:background .25s var(--ease), transform .25s var(--ease), border-color .25s var(--ease); }
@@ -128,12 +160,6 @@
   .uni-item.selected .star-btn{ color:var(--sand); }
   .star-btn svg{ width:20px; height:20px; transition:transform .5s var(--ease), fill .3s var(--ease), stroke .3s var(--ease); }
   .star-btn.active svg{ fill:url(#starGradient); stroke:url(#starGradient); animation:starPop .6s var(--ease); }
-  @keyframes starPop{
-    0% { transform:scale(0.6) rotate(0deg); }
-    40% { transform:scale(1.4) rotate(180deg); }
-    70% { transform:scale(0.95) rotate(320deg); }
-    100% { transform:scale(1) rotate(360deg); }
-  }
 
   .country.open .uni-item:nth-child(1){ animation-delay:0.04s; }
   .country.open .uni-item:nth-child(2){ animation-delay:0.08s; }
@@ -143,16 +169,14 @@
   .country.open .uni-item:nth-child(n+6){ animation-delay:0.24s; }
 
   /* Detail panel */
-  .detail{ padding:40px 48px; overflow-y:auto; }
-  .detail-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:70vh; color:var(--text-muted); text-align:center; transition: opacity .3s; }
+  .detail{ padding:40px 48px; overflow-y:auto; height:100%; }
+  .detail-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh; color:var(--text-muted); text-align:center; transition: opacity .3s; }
   .detail-empty svg{ width:80px; height:80px; margin-bottom:20px; opacity:0.4; animation:softFloat 4s ease-in-out infinite; }
-  @keyframes softFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
   .detail-empty h2{ font-size:24px; color:var(--text-main); margin-bottom:10px; }
   .detail-empty p{ font-size:15px; max-width:400px; }
   
   .detail-content{ display:none; opacity:0; }
-  .detail-content.active{ display:block; animation:fadeInPanel .5s var(--ease) forwards; }
-  @keyframes fadeInPanel{ from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:translateY(0);} }
+  .detail-content.active{ display:block; animation:fadeUp .5s var(--ease) forwards; }
 
   .uni-title{ font-size:38px; line-height:1.15; margin-bottom:10px; color:var(--espresso); }
   .uni-location{ font-size:16px; color:var(--text-muted); margin-bottom:8px; }
@@ -184,11 +208,12 @@
   .btn-main.ghost:hover{ background:var(--sand); transform:translateY(-2px); }
 
   @media (max-width:1000px){
-    .layout{ grid-template-columns:1fr; }
-    .sidebar{ position:static; max-height:none; border-right:none; border-bottom:1px solid var(--line); }
-    .detail{ padding:32px 24px; }
+    .layout{ display:block; height:auto; overflow:visible; }
+    .sidebar{ height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); }
+    .detail{ padding:32px 24px; height:auto; overflow:visible; }
     .uni-title{ font-size:30px; }
     .info-grid{ grid-template-columns:1fr; }
+    .detail-empty { height: 50vh; }
   }
   @media (max-width:900px){
     .nav-links{ display:none !important; }
@@ -202,6 +227,12 @@
 </style>
 </head>
 <body>
+
+<!-- 加载覆盖层 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Загрузка списка...</div>
+</div>
 
 <svg style="position:absolute; width:0; height:0;" aria-hidden="true">
   <defs>
@@ -253,7 +284,6 @@
 </header>
 
 <div class="layout">
-  <!-- 去掉了 anim-item 避免加载时半透明或错位 -->
   <aside class="sidebar">
     <h2 data-i18n="catalog_title">Universities</h2>
     <p class="subtitle" data-i18n="catalog_sub">Pick a country and university</p>
@@ -404,6 +434,9 @@ async function loadAll(){
 
   buildCountryFilter();
   renderSidebar();
+
+  // 关键：数据加载完毕后，移除 loading 遮罩，显示主内容
+  document.body.classList.add("loaded");
 }
 
 function isFullGrant(uni){
