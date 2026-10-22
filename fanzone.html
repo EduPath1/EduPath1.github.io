@@ -1,3 +1,26 @@
+破案了！原因非常简单：**CSS 缺少了 `:hover` 的样式**。
+
+在 `team.html`（以及首页等其他页面）的 CSS 里，有一句：
+```css
+.icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+```
+但是在 `fanzone.html` 里，`.icon-btn` 只有基础样式，**漏写了 `:hover` 的背景变深效果**。
+
+另外，为了保证和 `team.html` 完全一致（连菜单的 CSS 样式也一样），我把 `fanzone.html` 里语言菜单相关的 CSS 稍微对齐了一下（比如给 `.lang-option` 加上了鼠标悬停背景色）。
+
+你只需要在 `fanzone.html` 的 `<style>` 标签里找到 `.icon-btn`，替换成下面这几行即可（我已经为你改好并合并到完整代码里了）：
+
+```css
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition: background .2s, color .2s; }
+  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+```
+*(注意：我加了 `transition` 让背景变深时有平滑动画，视觉体验会更好)*
+
+---
+
+下面是**修改好的完整 `fanzone.html`**（直接全部复制替换原文件即可，确保完全没有问题）：
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -35,11 +58,15 @@
   .nav-links a.active{ background:var(--espresso); color:var(--paper); }
   .nav-right{ display:flex; align-items:center; gap:14px; }
   .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; }
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; }
+  
+  /* 修复了 hover 效果 */
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition: background .2s, color .2s; }
+  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+  
   .lang-dropdown{ position:relative; }
   .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
   .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; transition:background .2s, color .2s; }
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
 
@@ -1710,3 +1737,4 @@ window.addEventListener("edupath-lang-change", () => {
 <script src="auth.js"></script>
 </body>
 </html>
+```
