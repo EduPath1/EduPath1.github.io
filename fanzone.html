@@ -25,18 +25,38 @@
   a{ text-decoration:none; color:inherit; }
   button{ font-family:inherit; cursor:pointer; border:none; background:none; }
 
+  /* ======= ANIMATIONS ======= */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50% { transform: translateY(-16px) rotate(6deg); }
+  }
+  .anim-item { animation: fadeUp .6s var(--ease) both; }
+  .anim-delay-1 { animation-delay: .05s; }
+  .anim-delay-2 { animation-delay: .1s; }
+  .anim-delay-3 { animation-delay: .15s; }
+
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1300px; margin:0 auto; padding:0 32px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
-  .logo svg{ width:38px; height:38px; flex-shrink:0; }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); transition:transform .3s var(--ease); }
+  .logo:hover{ transform: scale(1.02); }
+  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
+  .logo:hover svg{ transform: rotate(90deg); }
   .nav-links{ display:flex; align-items:center; gap:8px; }
   .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .25s var(--ease), color .25s var(--ease); }
   .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
   .nav-links a.active{ background:var(--espresso); color:var(--paper); }
   .nav-right{ display:flex; align-items:center; gap:14px; }
-  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; }
+  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .25s var(--ease), transform .25s var(--ease); }
+  .btn-login:hover{ background:var(--bark); transform: translateY(-1px); }
   
-  /* 修复了 hover 效果 */
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition: background .2s, color .2s; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
   
@@ -58,11 +78,10 @@
   }
   .fz-hero::before, .fz-hero::after{
     content:"🧠"; position:absolute; font-size:64px; opacity:0.18; pointer-events:none;
-    animation: floaty 6s ease-in-out infinite;
+    animation: floatY 6s ease-in-out infinite;
   }
   .fz-hero::before{ top:14%; left:6%; }
   .fz-hero::after{ bottom:8%; right:8%; animation-delay:1.5s; content:"💀"; }
-  @keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(-6deg);} 50%{ transform:translateY(-16px) rotate(6deg);} }
 
   .fz-badge{
     display:inline-block; font-family:'Work Sans', sans-serif;
@@ -104,11 +123,15 @@
     transform:translateY(-6px); border-color:var(--caramel);
     box-shadow: 0 20px 40px -24px rgba(43,27,16,0.35);
   }
-  .fz-card-icon{ font-size:36px; margin-bottom:12px; display:block; filter: drop-shadow(0 4px 6px rgba(43,27,16,0.15)); }
+  .fz-card-icon{ font-size:36px; margin-bottom:12px; display:block; filter: drop-shadow(0 4px 6px rgba(43,27,16,0.15)); transition: transform .3s var(--ease); }
+  .fz-card:hover .fz-card-icon { transform: scale(1.15) rotate(5deg); }
+  
   .fz-card-title{ font-family:'Fraunces', serif; font-weight:700; font-size:18px; color:var(--espresso); margin-bottom:6px; line-height:1.25; }
   .fz-card-desc{ font-size:13px; color:var(--text-muted); line-height:1.4; margin-bottom:auto; }
-  .fz-card-open{ margin-top:14px; font-size:12px; font-weight:700; letter-spacing:0.1em; color:var(--clay); text-transform:uppercase; display:flex; align-items:center; gap:6px; }
+  .fz-card-open{ margin-top:14px; font-size:12px; font-weight:700; letter-spacing:0.1em; color:var(--clay); text-transform:uppercase; display:flex; align-items:center; gap:6px; transition: color .3s; }
+  .fz-card-open span { transition: transform .3s var(--ease); display: inline-block; }
   .fz-card:hover .fz-card-open{ color:var(--neon); }
+  .fz-card:hover .fz-card-open span { transform: translateX(4px); }
 
   .fz-modal-overlay{
     position: fixed; inset: 0;
@@ -126,8 +149,8 @@
     max-height: calc(100vh - 40px); overflow-y: auto;
     padding: 36px 32px 32px; position: relative;
     box-shadow: 0 40px 80px -32px rgba(43,27,16,0.5);
-    transform: translateY(20px) scale(0.98);
-    transition: transform .35s var(--ease);
+    transform: translateY(20px) scale(0.95);
+    transition: transform .4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Springy pop */
   }
   .fz-modal-overlay.open .fz-modal{ transform: translateY(0) scale(1); }
   .fz-modal-close{
@@ -136,9 +159,10 @@
     background: transparent; color: var(--text-muted);
     font-size: 24px; line-height:1;
     display:flex; align-items:center; justify-content:center;
-    transition: background .2s;
+    transition: background .2s, transform .2s;
   }
-  .fz-modal-close:hover{ background: var(--cream-deep); color: var(--espresso); }
+  .fz-modal-close:hover{ background: var(--cream-deep); color: var(--espresso); transform: rotate(90deg); }
+  
   .fz-modal-head{ display:flex; align-items:center; gap:14px; margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--line); }
   .fz-modal-head-icon{ font-size:32px; flex-shrink:0; }
   .fz-modal-head-text{ flex:1; }
@@ -269,6 +293,7 @@
     background: linear-gradient(135deg, var(--cream-deep), var(--paper));
     box-shadow: 0 12px 24px -16px rgba(199,146,86,0.5);
   }
+  .fz-ach:hover { transform: translateY(-2px); }
   .fz-ach-icon{ font-size: 28px; margin-bottom:6px; }
   .fz-ach-name{ font-size: 12px; font-weight:700; color: var(--espresso); line-height:1.2; }
   .fz-ach-desc{ font-size: 11px; color: var(--text-muted); margin-top:4px; line-height:1.3; }
@@ -383,10 +408,10 @@
 </header>
 
 <section class="fz-hero">
-  <div class="fz-badge" data-i18n="fz2_badge">⚠️ BRAINROT DEPARTMENT</div>
-  <h1 class="fz-title">🧠 <span data-i18n="fz2_hero_title">Fun Zone</span></h1>
-  <p class="fz-sub" data-i18n="fz2_hero_sub">The most unnecessary part of EduPath.</p>
-  <p class="fz-sub-small" data-i18n="fz2_hero_sub2">We could have improved the admission algorithm. We chose this instead.</p>
+  <div class="fz-badge anim-item anim-delay-1" data-i18n="fz2_badge">⚠️ BRAINROT DEPARTMENT</div>
+  <h1 class="fz-title anim-item anim-delay-2">🧠 <span data-i18n="fz2_hero_title">Fun Zone</span></h1>
+  <p class="fz-sub anim-item anim-delay-3" data-i18n="fz2_hero_sub">The most unnecessary part of EduPath.</p>
+  <p class="fz-sub-small anim-item anim-delay-3" data-i18n="fz2_hero_sub2">We could have improved the admission algorithm. We chose this instead.</p>
 </section>
 
 <main>
@@ -523,14 +548,16 @@ const CARDS = [
 
 function renderDashboard(){
   const grid = $("#dashGrid");
-  grid.innerHTML = CARDS.map(c => `
-    <div class="fz-card" data-open="${c.id}">
+  // 通过设置 animation-delay 让卡片像发牌一样错峰出现
+  grid.innerHTML = CARDS.map((c, i) => `
+    <div class="fz-card anim-item" style="animation-delay: ${Math.min(i * 0.03, 0.6)}s;" data-open="${c.id}">
       <span class="fz-card-icon">${c.icon}</span>
       <div class="fz-card-title">${t(c.titleKey, c.titleKey)}</div>
       <div class="fz-card-desc">${t(c.descKey, c.descKey)}</div>
-      <div class="fz-card-open">${t("fz2_open", "Open")} →</div>
+      <div class="fz-card-open">${t("fz2_open", "Open")} <span>→</span></div>
     </div>
   `).join("");
+  
   grid.querySelectorAll("[data-open]").forEach(el => {
     el.addEventListener("click", () => openBlock(el.dataset.open));
   });
@@ -1701,8 +1728,17 @@ if(document.readyState !== "loading") initFZ();
 
 // Перерисовка при смене языка
 window.addEventListener("edupath-lang-change", () => {
-  renderDashboard();
-  // Если открыта модалка — просто закрываем (не будем перерисовывать в открытом виде)
+  // 渐变过渡
+  const grid = document.getElementById("dashGrid");
+  if (grid) {
+    grid.style.opacity = "0";
+    setTimeout(() => {
+      renderDashboard();
+      grid.style.opacity = "1";
+    }, 150);
+  }
+  
+  // 如果打开着弹窗就关掉
   const overlay = document.getElementById("fzModal");
   if(overlay && overlay.classList.contains("open")) {
     closeModal();
