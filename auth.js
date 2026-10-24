@@ -80,13 +80,36 @@
   // NETWORK
   // ============================================================
 
+  // Сервер на Render (бесплатный тариф) засыпает после ~15 минут простоя.
+  // Признаки: нет ответа (0), 502, 503, 504. Обычная ошибка 500 — это НЕ сон.
   function isServerSleeping(status) {
-    return status === 0 || status === 502 || status === 503 || status === 504 || status >= 500;
+    return status === 0 || status === 502 || status === 503 || status === 504;
+  }
+
+  // Будим сервер сразу при открытии любой страницы, не дожидаясь действий пользователя.
+  let _wakePromise = null;
+  function wakeServer() {
+    if (_wakePromise) return _wakePromise;
+    _wakePromise = (async () => {
+      for (let i = 0; i < 6; i++) {
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 20000);
+          const r = await fetch(API_URL + "/", { signal: ctrl.signal });
+          clearTimeout(timer);
+          if (r.ok) return true;
+        } catch (e) {}
+        await new Promise(r => setTimeout(r, 3000));
+      }
+      return false;
+    })();
+    return _wakePromise;
   }
 
   const NO_REFRESH_PATHS = ["/api/login", "/api/register", "/api/refresh", "/api/resend-confirmation"];
 
   let _refreshPromise = null;
+  let _refreshTransientFail = false; // обновление не удалось из-за сети/сна сервера, а не из-за плохого токена
   let _expiredToastAt = 0;
 
   function expireSession() {
@@ -113,7 +136,8 @@
       const refreshToken = getRefreshToken();
       if (!refreshToken) return false;
 
-      for (let attempt = 0; attempt < 2; attempt++) {
+      _refreshTransientFail = false;
+      for (let attempt = 0; attempt < 4; attempt++) {
         let res = null;
         try {
           const r = await fetch(API_URL + "/api/refresh", {
@@ -134,13 +158,15 @@
           return true;
         }
 
-        if (res.status === 400 || res.status === 401 || res.status === 403) {
+        if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404) {
           expireSession();
           return false;
         }
 
-        if (attempt === 0) await new Promise(r => setTimeout(r, 2000));
+        // сервер спит или нет сети — подождём и попробуем снова
+        await new Promise(r => setTimeout(r, 4000));
       }
+      _refreshTransientFail = true;
       return false;
     })().finally(() => { _refreshPromise = null; });
 
@@ -176,36 +202,49 @@
     const token = getToken();
     if (token && !isAuthPath) headers["Authorization"] = "Bearer " + token;
 
+    // Таймаут: «спящий» Render может молчать до минуты — не висим вечно
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 30000);
+
     try {
-      const res = await fetch(API_URL + path, Object.assign({}, options, { headers }));
+      const res = await fetch(API_URL + path, Object.assign({}, options, { headers, signal: ctrl.signal }));
+      clearTimeout(timer);
 
       let data = null;
       try { data = await res.json(); } catch (e) {}
 
-      if (res.status === 401 && token && !isAuthPath && !_retried) {
-        if (getRefreshToken() && await refreshSession()) {
+      if (res.status === 401 && token && !isAuthPath) {
+        if (!_retried && getRefreshToken() && await refreshSession()) {
           return apiFetch(path, options, true);
         }
-        if (!getRefreshToken()) expireSession();
+        // Токен не принят и обновить его не вышло -> сессия мертва.
+        // Тогда сразу показываем «Войти», а не вечное «Привет, имя» с пустым профилем.
+        // (Если причина лишь в спящем сервере — сессию не трогаем.)
+        if (!_refreshTransientFail) expireSession();
       }
 
       return { ok: res.ok, status: res.status, data, sessionExpired: res.status === 401 && !!token && !isAuthPath };
     } catch (networkError) {
+      clearTimeout(timer);
       return { ok: false, status: 0, data: null, networkError: true };
     }
   }
 
-  async function apiFetchWithRetry(path, options, retryDelayMs) {
-    retryDelayMs = retryDelayMs || 2000;
+  // Повторяет запрос, пока сервер просыпается (холодный старт Render = 30–60 секунд).
+  // Пауза растёт: 2, 4, 6, 8, 10 сек.
+  async function apiFetchWithRetry(path, options, baseDelayMs, maxAttempts) {
+    baseDelayMs = baseDelayMs || 2000;
+    maxAttempts = maxAttempts || 6;
 
-    let res = await apiFetch(path, options);
-
-    if (!res.ok && isServerSleeping(res.status)) {
-      console.warn("Server seems asleep, retrying in", retryDelayMs, "ms");
-      await new Promise(r => setTimeout(r, retryDelayMs));
+    let res = null;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       res = await apiFetch(path, options);
+      if (res.ok || !isServerSleeping(res.status)) return res;
+      if (attempt < maxAttempts) {
+        console.warn("Server seems asleep, retry", attempt, "of", maxAttempts - 1);
+        await new Promise(r => setTimeout(r, baseDelayMs * attempt));
+      }
     }
-
     return res;
   }
 
@@ -338,7 +377,9 @@
 
   let _savedCache = null;
 
-  async function getSaved() {
+  // opts.strict = true: при ошибке НЕ возвращать тихо пустой список, а бросить исключение
+  // (профиль использует это, чтобы показать «не удалось загрузить» вместо пустоты).
+  async function getSaved(opts) {
     // 关键：先等待 auth.js 初始化完毕，再发请求！
     await waitForAuthReady();
 
@@ -347,8 +388,15 @@
       return [];
     }
 
-    const res = await apiFetch("/api/saved", { method: "GET" });
-    if (!res.ok) return _savedCache || [];
+    const res = await apiFetchWithRetry("/api/saved", { method: "GET" });
+    if (!res.ok) {
+      if (opts && opts.strict) {
+        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
+        err.res = res;
+        throw err;
+      }
+      return _savedCache || [];
+    }
 
     const list = (res.data && res.data.saved) || [];
 
@@ -421,7 +469,7 @@
 
   let _testsCache = null;
 
-  async function getTests() {
+  async function getTests(opts) {
     await waitForAuthReady();
 
     if (!isLoggedIn()) {
@@ -429,8 +477,15 @@
       return [];
     }
 
-    const res = await apiFetch("/api/tests", { method: "GET" });
-    if (!res.ok) return _testsCache || [];
+    const res = await apiFetchWithRetry("/api/tests", { method: "GET" });
+    if (!res.ok) {
+      if (opts && opts.strict) {
+        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
+        err.res = res;
+        throw err;
+      }
+      return _testsCache || [];
+    }
 
     const list = (res.data && res.data.tests) || [];
 
@@ -456,7 +511,7 @@
       categories: finalData.categories || {},
       summary: finalData.summary || ""
     })
-  }, 10000);
+  });
 
   if (!res.ok) {
     // Если сервер прислал ошибку, покажем её текст. Если нет — покажем код (400, 500 и т.д.)
@@ -954,6 +1009,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     handleAuthRedirect();
     updateHeaderUI();
+    wakeServer(); // будим сервер в фоне, пока пользователь читает страницу
 
     if (isLoggedIn()) {
       // При загрузке страницы начинаем фоновую проверку токена
