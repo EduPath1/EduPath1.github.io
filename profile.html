@@ -360,8 +360,27 @@ async function renderProfile() {
 
   let saved = [];
   let tests = [];
-  try { saved = await window.EduAuth.getSaved(); } catch(e) { saved = []; }
-  try { tests = await window.EduAuth.getTests(); } catch(e) { tests = []; }
+  try {
+    [saved, tests] = await Promise.all([
+      window.EduAuth.getSaved({ strict: true }),
+      window.EduAuth.getTests({ strict: true })
+    ]);
+  } catch (e) {
+    // Сессия умерла — показываем экран входа, а не пустой профиль
+    if (!window.EduAuth.isLoggedIn()) {
+      document.getElementById("mainContent").innerHTML = renderNotLoggedIn();
+      return;
+    }
+    // Иначе (например, сервер ещё просыпается) — честная ошибка и кнопка повтора
+    document.getElementById("mainContent").innerHTML = `
+      <div style="max-width:520px;margin:80px auto;text-align:center;padding:0 20px;">
+        <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+        <p style="margin-bottom:20px;">${escapeHtml((e && e.message) || t("modal_server_waking", "Сервер просыпается. Подожди 30 секунд и попробуй снова."))}</p>
+        <button type="button" class="btn-logout" onclick="renderProfile()">${t("test_save_retry", "Повторить")}</button>
+      </div>
+    `;
+    return;
+  }
 
   document.getElementById("mainContent").innerHTML = `
     <div class="profile-head anim-item anim-delay-1">
