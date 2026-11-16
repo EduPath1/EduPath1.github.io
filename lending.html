@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPath — Найди свой университет</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Подключаем дорогие шрифты: Playfair Display для заголовков и Inter для текста -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #faf6ef; /* Светло-бежевый фон */
+            --text-dark: #2e231b; /* Темно-коричневый */
+            --text-muted: #6a5a4e;
+            --accent-brown: #7a4e2d; /* Коричневый для кнопок */
+            --dark-bg: #2a211b; /* Темный фон для блоков */
+            --line-color: #dcd1c4; /* Цвет линий */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: 1.15;
+        }
+
+        /* Шапка сайта */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 5%;
+            border-bottom: 1px solid var(--line-color);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: none; /* Скрываем на мобильных, если нужно */
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent-brown); }
+
+        .btn-profile {
+            background-color: var(--accent-brown);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .btn-profile:hover { background-color: #5c3720; }
+
+        /* Главный экран (Hero) */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 100px 5% 80px;
+            position: relative;
+        }
+
+        /* Декоративные круги на фоне */
+        .circle-bg {
+            position: absolute;
+            border: 1px solid var(--line-color);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        .circle-1 { width: 400px; height: 400px; top: 0; left: -100px; opacity: 0.6; }
+        .circle-2 { width: 300px; height: 300px; bottom: -50px; right: -50px; opacity: 0.6; }
+
+        .hero .subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .hero .subtitle::before, .hero .subtitle::after {
+            content: ""; width: 40px; height: 1px; background: var(--text-muted);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            max-width: 900px;
+            margin-bottom: 25px;
+        }
+        .hero h1 em {
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 50px;
+        }
+
+        .btn-main {
+            background-color: var(--text-dark);
+            color: var(--bg-cream);
+            padding: 18px 40px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .btn-main:hover {
+            background-color: var(--accent-brown);
+            transform: translateY(-2px);
+        }
+
+        /* Блок "Как это работает" (Темный) */
+        .how-it-works {
+            background-color: var(--dark-bg);
+            color: var(--bg-cream);
+            padding: 100px 5%;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .section-header h2 { font-size: 3rem; }
+        .section-header p {
+            max-width: 400px;
+            color: #a89c90;
+            font-size: 1rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .step {
+            border-top: 1px solid #4a3f36;
+            padding-top: 30px;
+        }
+        .step-num {
+            font-family: 'Inter', sans-serif;
+            color: #a89c90;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step-num::before { content: ""; width: 20px; height: 1px; background: #a89c90; }
+        .step h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .step p {
+            color: #a89c90;
+            font-size: 0.95rem;
+        }
+
+        /* Блок "Зачем мы это создали" */
+        .why-section {
+            display: flex;
+            padding: 100px 5%;
+            gap: 60px;
+            align-items: center;
+        }
+        .why-text {
+            flex: 1;
+        }
+        .why-text .subtitle {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .why-text h2 {
+            font-size: 4.5rem;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            line-height: 1;
+        }
+        .why-text h3 {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+        .why-text p {
+            color: var(--text-muted);
+            max-width: 500px;
+        }
+        
+        .why-image {
+            flex: 1;
+            background: linear-gradient(135deg, #e6dacd 0%, #d4c3b3 100%);
+            height: 500px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .why-image .circle-logo {
+            width: 250px;
+            height: 250px;
+            border: 2px dashed #7a4e2d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        /* Подвал */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--line-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Адаптивность для планшетов и телефонов */
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 2.8rem; }
+            .section-header h2 { font-size: 2.2rem; }
+            .why-section { flex-direction: column; }
+            .why-text h2 { font-size: 3rem; }
+            .why-image { width: 100%; height: 400px; }
+            header { padding: 20px; }
+            .nav-links { display: none; } /* Скрываем ссылки на телефоне для чистоты */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка -->
+    <header>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+            EduPath
+        </div>
+        <nav class="nav-links">
+            <a href="#">Главная</a>
+            <a href="#">Университеты</a>
+            <a href="#">Профиль</a>
+            <a href="#">Fun Zone</a>
+            <a href="#">О нашей команде</a>
+        </nav>
+        <a href="profile.html" class="btn-profile">Войти</a>
+    </header>
+
+    <!-- Главный экран -->
+    <section class="hero">
+        <div class="circle-bg circle-1"></div>
+        <div class="circle-bg circle-2"></div>
+        
+        <div class="subtitle">Тест на подбор университета</div>
+        
+        <h1>Пройди тест — и найди <em>свой</em> университет</h1>
+        
+        <p>Подбор направлений и вузов по твоим предпочтениям, результатам тестов и бюджету. Отвечай на вопросы — дальше система сама решит, что уточнить.</p>
+        
+        <a href="test.html" class="btn-main">
+            Начать заполнение профиля
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+    </section>
+
+    <!-- Блок Как это работает -->
+    <section class="how-it-works">
+        <div class="section-header">
+            <h2 class="serif">Как это работает</h2>
+            <p>Три шага от первого вопроса до списка подходящих университетов.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step">
+                <div class="step-num">01</div>
+                <h3 class="serif">Личные данные</h3>
+                <p>Твои интересы, увлечения и предпочтения по стране, климату и формату обучения.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">02</div>
+                <h3 class="serif">Показатели</h3>
+                <p>Оценки, результаты экзаменов (SAT, IELTS и др.) и ориентировочный бюджет.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">03</div>
+                <h3 class="serif">Результаты теста</h3>
+                <p>Список университетов, которые подходят тебе больше всего, с пояснениями и советами.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок Зачем мы это создали -->
+    <section class="why-section">
+        <div class="why-text">
+            <div class="subtitle">— Почему мы это сделали</div>
+            <h2>Зачем мы это создали</h2>
+            <h3>Выбор будущего не должен казаться невозможным.</h3>
+            <p>EduPath создан, чтобы поиск университета стал более личным, структурированным и доступным для каждого абитуриента.</p>
+        </div>
+        <div class="why-image">
+            <div class="circle-logo">EduPath</div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        EduPath © 2026. Все права защищены.
+    </footer>
+
+</body>
+</html>
