@@ -1,5 +1,5 @@
 // ============================================================
-// EduPath — auth.js (v3.0: 修复全新进入时数据加载丢失)
+// EduPath — auth.js (v3.1: Удален LinkedIn, Discord на всю ширину)
 // ============================================================
 
 (function() {
@@ -9,7 +9,7 @@
   const TOKEN_KEY = "edupath_token";
   const USER_KEY = "edupath_user";
   const REFRESH_KEY = "edupath_refresh";
-  // Публичный адрес проекта Supabase (нужен для входа через Discord, LinkedIn)
+  // Публичный адрес проекта Supabase (нужен для входа через Discord)
   const SUPABASE_URL = "https://upqvqqotslqubqdhvjkc.supabase.co";
   const FLASH_KEY = "edupath_flash";
 
@@ -119,12 +119,10 @@
   // ============================================================
 
   // Сервер на Render (бесплатный тариф) засыпает после ~15 минут простоя.
-  // Признаки: нет ответа (0), 502, 503, 504. Обычная ошибка 500 — это НЕ сон.
   function isServerSleeping(status) {
     return status === 0 || status === 502 || status === 503 || status === 504;
   }
 
-  // Будим сервер сразу при открытии любой страницы, не дожидаясь действий пользователя.
   let _wakePromise = null;
   function wakeServer() {
     if (_wakePromise) return _wakePromise;
@@ -147,7 +145,7 @@
   const NO_REFRESH_PATHS = ["/api/login", "/api/register", "/api/refresh", "/api/resend-confirmation"];
 
   let _refreshPromise = null;
-  let _refreshTransientFail = false; // обновление не удалось из-за сети/сна сервера, а не из-за плохого токена
+  let _refreshTransientFail = false;
   let _expiredToastAt = 0;
 
   function expireSession() {
@@ -161,7 +159,6 @@
     if (Date.now() - _expiredToastAt > 5000) {
       _expiredToastAt = Date.now();
       showToast(t("modal_session_expired", "Сессия истекла. Войди снова."), "error");
-      // Внутри сайта кнопки «Войти» больше нет — возвращаем на лендинг
       if (!isLandingPage()) {
         setTimeout(goToLanding, 1500);
       }
@@ -202,7 +199,6 @@
           return false;
         }
 
-        // сервер спит или нет сети — подождём и попробуем снова
         await new Promise(r => setTimeout(r, 4000));
       }
       _refreshTransientFail = true;
@@ -241,7 +237,6 @@
     const token = getToken();
     if (token && !isAuthPath) headers["Authorization"] = "Bearer " + token;
 
-    // Таймаут: «спящий» Render может молчать до минуты — не висим вечно
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 30000);
 
@@ -256,9 +251,6 @@
         if (!_retried && getRefreshToken() && await refreshSession()) {
           return apiFetch(path, options, true);
         }
-        // Токен не принят и обновить его не вышло -> сессия мертва.
-        // Тогда сразу показываем «Войти», а не вечное «Привет, имя» с пустым профилем.
-        // (Если причина лишь в спящем сервере — сессию не трогаем.)
         if (!_refreshTransientFail) expireSession();
       }
 
@@ -269,8 +261,6 @@
     }
   }
 
-  // Повторяет запрос, пока сервер просыпается (холодный старт Render = 30–60 секунд).
-  // Пауза растёт: 2, 4, 6, 8, 10 сек.
   async function apiFetchWithRetry(path, options, baseDelayMs, maxAttempts) {
     baseDelayMs = baseDelayMs || 2000;
     maxAttempts = maxAttempts || 6;
@@ -388,8 +378,6 @@
     if (_readyResolve) _readyResolve();
   }
 
-  // Вход через Discord, LinkedIn (через Supabase). После входа Supabase вернёт
-  // человека на лендинг с токенами в адресе, а handleAuthRedirect() пустит его в сайт.
   function signInWithProvider(provider) {
     const back = window.location.origin + window.location.pathname.replace(/[^\/]*$/, "");
     let url = SUPABASE_URL + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
@@ -398,7 +386,7 @@
   }
 
   // ============================================================
-  // READY PROMISE (关键修复！)
+  // READY PROMISE
   // ============================================================
 
   let _readyPromise;
@@ -415,7 +403,6 @@
 
   async function waitForAuthReady() {
     if (!isLoggedIn()) return;
-    // 关键：如果处于登录状态，这里会一直等待，直到 auth.js 获取到最新 token
     await _readyPromise;
   }
 
@@ -425,10 +412,7 @@
 
   let _savedCache = null;
 
-  // opts.strict = true: при ошибке НЕ возвращать тихо пустой список, а бросить исключение
-  // (профиль использует это, чтобы показать «не удалось загрузить» вместо пустоты).
   async function getSaved(opts) {
-    // 关键：先等待 auth.js 初始化完毕，再发请求！
     await waitForAuthReady();
 
     if (!isLoggedIn()) {
@@ -562,7 +546,6 @@
   });
 
   if (!res.ok) {
-    // Если сервер прислал ошибку, покажем её текст. Если нет — покажем код (400, 500 и т.д.)
     const serverMsg = (res.data && res.data.error) ? res.data.error : ("Код ошибки: " + res.status);
     return { ok: false, error: serverMsg };
   }
@@ -634,6 +617,7 @@
     overlay.className = "edupath-modal-overlay";
     overlay.id = "edupathAuthModal";
 
+    // ИЗМЕНЕНО ЗДЕСЬ: Удалена кнопка LinkedIn
     overlay.innerHTML = `
       <div class="edupath-modal">
         <button class="edupath-modal-close" type="button" aria-label="Close">×</button>
@@ -645,11 +629,7 @@
           <div class="edupath-social-grid">
             <button type="button" class="edupath-btn-social" data-oauth="discord">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="#5865F2" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
-              <span>Discord</span>
-            </button>
-            <button type="button" class="edupath-btn-social" data-oauth="linkedin_oidc">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              <span>LinkedIn</span>
+              <span>Войти через Discord</span>
             </button>
           </div>
           <div class="edupath-divider"><span id="edupathOrLabel">или</span></div>
@@ -694,6 +674,7 @@
     if (!document.getElementById("edupath-modal-style")) {
       const style = document.createElement("style");
       style.id = "edupath-modal-style";
+      // ИЗМЕНЕНО ЗДЕСЬ: .edupath-social-grid теперь 1fr вместо 1fr 1fr
       style.textContent = `
         .edupath-modal-overlay {
           position: fixed; inset: 0;
@@ -722,7 +703,7 @@
         }
         .edupath-btn-social:hover { background: #F7EFE1; border-color: #8C5A34 !important; transform: translateY(-1px); }
         .edupath-social-grid {
-          display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+          display: grid; grid-template-columns: 1fr; gap: 10px;
         }
         .edupath-btn-social svg { flex-shrink: 0; }
         .edupath-divider {
@@ -984,7 +965,6 @@
     if (e.target.closest("[data-auth-logout]")) {
       e.preventDefault();
       logout();
-      // Запоминаем, чтобы лендинг показал «Вы вышли из аккаунта», и уходим на лендинг
       try { sessionStorage.setItem(FLASH_KEY, "logout"); } catch (err) {}
       goToLanding();
       return;
@@ -1039,9 +1019,8 @@
     );
 
     updateHeaderUI();
-    if (_readyResolve) _readyResolve(); // Разблокируем ожидание данных
+    if (_readyResolve) _readyResolve();
 
-    // Вошёл или зарегистрировался на лендинге — сразу пускаем внутрь сайта
     if (isLandingPage()) {
       setTimeout(goToApp, 700);
       return;
@@ -1056,7 +1035,6 @@
     const hash = window.location.hash || "";
     const search = window.location.search || "";
 
-    // Ошибка от Discord, LinkedIn / письма (человек отменил вход, ссылка устарела и т.п.)
     const errSource = hash.includes("error") ? hash.replace(/^#/, "") : (search.includes("error") ? search.replace(/^\?/, "") : "");
     if (errSource) {
       const ep = new URLSearchParams(errSource);
@@ -1077,7 +1055,6 @@
         setSession({ access_token: access, refresh_token: refresh });
         history.replaceState(null, "", window.location.pathname + window.location.search);
 
-        // Имя и почту берём прямо из токена — так работает для всех входов через соцсети
         const fromToken = userFromToken(access);
         if (fromToken) setCachedUser(fromToken);
         updateHeaderUI();
@@ -1096,7 +1073,6 @@
           showToast(t("modal_login_success", "С возвращением!"), "success");
         }
 
-        // Пришёл на лендинг уже вошедшим (соцсеть или письмо) — пускаем внутрь
         if (isLandingPage()) {
           setTimeout(goToApp, 900);
         }
@@ -1124,7 +1100,6 @@
     if (user) {
       loginBtn.textContent =
         t("nav_hello", "Привет") + ", " + (user.name || "друг").split(" ")[0];
-      // С лендинга кнопка ведёт внутрь сайта
       loginBtn.href = isLandingPage() ? "app.html" : "profile.html";
       loginBtn.setAttribute("data-auth-user", "1");
       loginBtn.removeAttribute("data-auth-open");
@@ -1140,25 +1115,22 @@
     handleAuthRedirect();
     updateHeaderUI();
 
-    // После «Выйти» лендинг сообщает, что выход прошёл
     try {
       if (sessionStorage.getItem(FLASH_KEY) === "logout") {
         sessionStorage.removeItem(FLASH_KEY);
         showToast(t("modal_logout_success", "Вы вышли из аккаунта"), "info");
       }
     } catch (err) {}
-    wakeServer(); // будим сервер в фоне, пока пользователь читает страницу
+    wakeServer();
 
     if (isLoggedIn()) {
-      // При загрузке страницы начинаем фоновую проверку токена
       ensureFreshSession().then(() => {
-        if (_readyResolve) _readyResolve(); // Проверка завершена — снимаем блокировку
+        if (_readyResolve) _readyResolve();
       }).catch(e => {
         console.warn("Auth ready failed:", e);
         if (_readyResolve) _readyResolve();
       });
     } else {
-      // Если не залогинен, сразу разрешаем загрузку
       if (_readyResolve) _readyResolve();
     }
   });
