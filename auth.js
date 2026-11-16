@@ -9,6 +9,23 @@
   const TOKEN_KEY = "edupath_token";
   const USER_KEY = "edupath_user";
   const REFRESH_KEY = "edupath_refresh";
+  // Публичный адрес проекта Supabase (нужен для входа через Google / Apple)
+  const SUPABASE_URL = "https://upqvqqotslqubqdhvjkc.supabase.co";
+  const FLASH_KEY = "edupath_flash";
+
+  // Лендинг = главная страница (index.html или корень сайта)
+  function isLandingPage() {
+    const p = window.location.pathname;
+    return p === "" || p === "/" || /\/index\.html$/.test(p) || /\/$/.test(p);
+  }
+
+  function goToLanding() {
+    window.location.replace("index.html");
+  }
+
+  function goToApp() {
+    window.location.href = "app.html";
+  }
 
   function t(key, fallback) {
     const v = window.I18N && window.I18N.t(key);
@@ -55,8 +72,29 @@
     }
   }
 
+  // Данные пользователя из самого токена (для Google/Apple имя приходит оттуда)
+  function userFromToken(token) {
+    try {
+      const part = String(token).split(".")[1];
+      const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
+      const json = decodeURIComponent(escape(atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4))));
+      const p = JSON.parse(json);
+      const meta = p.user_metadata || {};
+      const email = p.email || meta.email || "";
+      const name = meta.name || meta.full_name || (email ? email.split("@")[0] : "");
+      return { id: p.sub, email: email, name: name };
+    } catch (e) {
+      return null;
+    }
+  }
+
   function setCachedUser(user) {
-    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+    if (!user) return;
+    if (!user.name) {
+      const fb = userFromToken(getToken());
+      if (fb && fb.name) user = Object.assign({}, user, { name: fb.name });
+    }
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
   function getCachedUser() {
@@ -123,8 +161,9 @@
     if (Date.now() - _expiredToastAt > 5000) {
       _expiredToastAt = Date.now();
       showToast(t("modal_session_expired", "Сессия истекла. Войди снова."), "error");
-      if (window.location.pathname.includes("profile")) {
-        setTimeout(() => openModal("login"), 400);
+      // Внутри сайта кнопки «Войти» больше нет — возвращаем на лендинг
+      if (!isLandingPage()) {
+        setTimeout(goToLanding, 1500);
       }
     }
   }
@@ -347,6 +386,16 @@
     _savedCache = null;
     _testsCache = null;
     if (_readyResolve) _readyResolve();
+  }
+
+  // Вход через Google / Apple (через Supabase). После входа Supabase вернёт
+  // человека на лендинг с токенами в адресе, а handleAuthRedirect() пустит его в сайт.
+  function signInWithProvider(provider) {
+    const back = window.location.origin + window.location.pathname.replace(/[^\/]*$/, "");
+    let url = SUPABASE_URL + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
+              "&redirect_to=" + encodeURIComponent(back);
+    if (provider === "google") url += "&prompt=select_account";
+    window.location.href = url;
   }
 
   // ============================================================
@@ -593,6 +642,18 @@
         <h2 class="edupath-modal-title"></h2>
         <p class="edupath-modal-sub" id="edupathModalSub"></p>
 
+        <div id="edupathSocialBlock">
+          <button type="button" class="edupath-btn-social" data-oauth="google">
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            <span id="edupathGoogleLabel">Продолжить с Google</span>
+          </button>
+          <button type="button" class="edupath-btn-social" data-oauth="apple">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+            <span id="edupathAppleLabel">Продолжить с Apple</span>
+          </button>
+          <div class="edupath-divider"><span id="edupathOrLabel">или</span></div>
+        </div>
+
         <form id="edupathAuthForm" autocomplete="off">
           <div class="edupath-field" id="edupathNameField">
             <label data-i18n="modal_name">Имя</label>
@@ -643,6 +704,29 @@
           padding: 20px;
         }
         .edupath-modal-overlay.open { opacity: 1; visibility: visible; }
+
+        .edupath-modal, .edupath-modal input, .edupath-modal button {
+          font-family: 'Work Sans', 'Inter', sans-serif;
+        }
+        .edupath-modal button { border: 0; cursor: pointer; }
+        .edupath-modal { max-height: 94vh; overflow-y: auto; }
+
+        .edupath-btn-social {
+          width: 100%; padding: 13px 16px; margin-bottom: 10px;
+          display: flex; align-items: center; justify-content: center; gap: 10px;
+          background: #FBF6EC; color: #2B1B10;
+          border: 1.5px solid rgba(43,27,16,0.18) !important;
+          border-radius: 10px; font-size: 15px; font-weight: 600;
+          transition: background .2s, border-color .2s, transform .2s;
+        }
+        .edupath-btn-social:hover { background: #F7EFE1; border-color: #8C5A34 !important; transform: translateY(-1px); }
+        .edupath-divider {
+          display: flex; align-items: center; gap: 12px;
+          margin: 18px 0 20px; color: #7A6552; font-size: 13px;
+        }
+        .edupath-divider::before, .edupath-divider::after {
+          content: ""; flex: 1; height: 1px; background: rgba(43,27,16,0.14);
+        }
 
         .edupath-modal {
           background: #FBF6EC; border-radius: 20px;
@@ -774,6 +858,12 @@
 
     if (window.I18N) window.I18N.applyAll();
 
+    const socialBlock = document.getElementById("edupathSocialBlock");
+    document.getElementById("edupathGoogleLabel").textContent = t("modal_google", "Продолжить с Google");
+    document.getElementById("edupathAppleLabel").textContent  = t("modal_apple", "Продолжить с Apple");
+    document.getElementById("edupathOrLabel").textContent     = t("modal_or", "или");
+    socialBlock.style.display = (mode === "confirm") ? "none" : "block";
+
     if (mode === "confirm") {
       form.style.display = "none";
       confirmBox.style.display = "block";
@@ -827,6 +917,14 @@
   }
 
   document.addEventListener("click", (e) => {
+    const oauthBtn = e.target.closest("[data-oauth]");
+    if (oauthBtn) {
+      e.preventDefault();
+      oauthBtn.disabled = true;
+      signInWithProvider(oauthBtn.dataset.oauth);
+      return;
+    }
+
     const openBtn = e.target.closest("[data-auth-open]");
     if (openBtn) {
       e.preventDefault();
@@ -883,12 +981,9 @@
     if (e.target.closest("[data-auth-logout]")) {
       e.preventDefault();
       logout();
-      showToast(t("modal_logout_success", "Вы вышли из аккаунта"), "info");
-      updateHeaderUI();
-
-      if (window.location.pathname.includes("profile")) {
-        window.location.href = "index.html";
-      }
+      // Запоминаем, чтобы лендинг показал «Вы вышли из аккаунта», и уходим на лендинг
+      try { sessionStorage.setItem(FLASH_KEY, "logout"); } catch (err) {}
+      goToLanding();
       return;
     }
   });
@@ -943,6 +1038,12 @@
     updateHeaderUI();
     if (_readyResolve) _readyResolve(); // Разблокируем ожидание данных
 
+    // Вошёл или зарегистрировался на лендинге — сразу пускаем внутрь сайта
+    if (isLandingPage()) {
+      setTimeout(goToApp, 700);
+      return;
+    }
+
     if (window.location.pathname.includes("profile")) {
       window.location.reload();
     }
@@ -952,6 +1053,18 @@
     const hash = window.location.hash || "";
     const search = window.location.search || "";
 
+    // Ошибка от Google / Apple / письма (человек отменил вход, ссылка устарела и т.п.)
+    const errSource = hash.includes("error") ? hash.replace(/^#/, "") : (search.includes("error") ? search.replace(/^\?/, "") : "");
+    if (errSource) {
+      const ep = new URLSearchParams(errSource);
+      const desc = ep.get("error_description");
+      if (ep.get("error") || desc) {
+        history.replaceState(null, "", window.location.pathname);
+        showToast((desc || t("modal_error_generic", "Что-то пошло не так")).replace(/\+/g, " "), "error");
+        return true;
+      }
+    }
+
     if (hash.includes("access_token=")) {
       const params = new URLSearchParams(hash.replace(/^#/, ""));
       const access = params.get("access_token");
@@ -960,6 +1073,10 @@
       if (access) {
         setSession({ access_token: access, refresh_token: refresh });
         history.replaceState(null, "", window.location.pathname + window.location.search);
+
+        // Имя и почту берём прямо из токена — так работает и для Google, и для Apple
+        const fromToken = userFromToken(access);
+        if (fromToken) setCachedUser(fromToken);
         updateHeaderUI();
 
         apiFetch("/api/me", { method: "GET" }).then(res => {
@@ -970,7 +1087,16 @@
           if (_readyResolve) _readyResolve();
         });
 
-        showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
+        if (params.get("type") === "signup") {
+          showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
+        } else {
+          showToast(t("modal_login_success", "С возвращением!"), "success");
+        }
+
+        // Пришёл на лендинг уже вошедшим (Google, Apple или письмо) — пускаем внутрь
+        if (isLandingPage()) {
+          setTimeout(goToApp, 900);
+        }
         return true;
       }
     }
@@ -995,20 +1121,29 @@
     if (user) {
       loginBtn.textContent =
         t("nav_hello", "Привет") + ", " + (user.name || "друг").split(" ")[0];
-      loginBtn.href = "profile.html";
+      // С лендинга кнопка ведёт внутрь сайта
+      loginBtn.href = isLandingPage() ? "app.html" : "profile.html";
       loginBtn.setAttribute("data-auth-user", "1");
       loginBtn.removeAttribute("data-auth-open");
     } else {
       loginBtn.textContent = t("nav_login", "Войти");
       loginBtn.href = "#";
       loginBtn.removeAttribute("data-auth-user");
-      loginBtn.setAttribute("data-auth-open", "register");
+      loginBtn.setAttribute("data-auth-open", "login");
     }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     handleAuthRedirect();
     updateHeaderUI();
+
+    // После «Выйти» лендинг сообщает, что выход прошёл
+    try {
+      if (sessionStorage.getItem(FLASH_KEY) === "logout") {
+        sessionStorage.removeItem(FLASH_KEY);
+        showToast(t("modal_logout_success", "Вы вышли из аккаунта"), "info");
+      }
+    } catch (err) {}
     wakeServer(); // будим сервер в фоне, пока пользователь читает страницу
 
     if (isLoggedIn()) {
@@ -1048,7 +1183,8 @@
     showToast,
     openModal,
     updateHeaderUI,
-    refreshSession
+    refreshSession,
+    signInWithProvider
   };
 
 })();
