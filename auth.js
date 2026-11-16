@@ -9,7 +9,7 @@
   const TOKEN_KEY = "edupath_token";
   const USER_KEY = "edupath_user";
   const REFRESH_KEY = "edupath_refresh";
-  // Публичный адрес проекта Supabase (нужен для входа через Google / Apple)
+  // Публичный адрес проекта Supabase (нужен для входа через Discord, LinkedIn)
   const SUPABASE_URL = "https://upqvqqotslqubqdhvjkc.supabase.co";
   const FLASH_KEY = "edupath_flash";
 
@@ -72,7 +72,7 @@
     }
   }
 
-  // Данные пользователя из самого токена (для Google/Apple имя приходит оттуда)
+  // Данные пользователя из самого токена (для Google, Discord и др. имя приходит оттуда)
   function userFromToken(token) {
     try {
       const part = String(token).split(".")[1];
@@ -388,13 +388,12 @@
     if (_readyResolve) _readyResolve();
   }
 
-  // Вход через Google / Apple (через Supabase). После входа Supabase вернёт
+  // Вход через Discord, LinkedIn (через Supabase). После входа Supabase вернёт
   // человека на лендинг с токенами в адресе, а handleAuthRedirect() пустит его в сайт.
   function signInWithProvider(provider) {
     const back = window.location.origin + window.location.pathname.replace(/[^\/]*$/, "");
     let url = SUPABASE_URL + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
               "&redirect_to=" + encodeURIComponent(back);
-    if (provider === "google") url += "&prompt=select_account";
     window.location.href = url;
   }
 
@@ -643,14 +642,16 @@
         <p class="edupath-modal-sub" id="edupathModalSub"></p>
 
         <div id="edupathSocialBlock">
-          <button type="button" class="edupath-btn-social" data-oauth="google">
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-            <span id="edupathGoogleLabel">Продолжить с Google</span>
-          </button>
-          <button type="button" class="edupath-btn-social" data-oauth="apple">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
-            <span id="edupathAppleLabel">Продолжить с Apple</span>
-          </button>
+          <div class="edupath-social-grid">
+            <button type="button" class="edupath-btn-social" data-oauth="discord">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#5865F2" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+              <span>Discord</span>
+            </button>
+            <button type="button" class="edupath-btn-social" data-oauth="linkedin_oidc">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              <span>LinkedIn</span>
+            </button>
+          </div>
           <div class="edupath-divider"><span id="edupathOrLabel">или</span></div>
         </div>
 
@@ -712,14 +713,18 @@
         .edupath-modal { max-height: 94vh; overflow-y: auto; }
 
         .edupath-btn-social {
-          width: 100%; padding: 13px 16px; margin-bottom: 10px;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
+          width: 100%; padding: 12px 10px;
+          display: flex; align-items: center; justify-content: center; gap: 9px;
           background: #FBF6EC; color: #2B1B10;
           border: 1.5px solid rgba(43,27,16,0.18) !important;
           border-radius: 10px; font-size: 15px; font-weight: 600;
           transition: background .2s, border-color .2s, transform .2s;
         }
         .edupath-btn-social:hover { background: #F7EFE1; border-color: #8C5A34 !important; transform: translateY(-1px); }
+        .edupath-social-grid {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        }
+        .edupath-btn-social svg { flex-shrink: 0; }
         .edupath-divider {
           display: flex; align-items: center; gap: 12px;
           margin: 18px 0 20px; color: #7A6552; font-size: 13px;
@@ -859,8 +864,6 @@
     if (window.I18N) window.I18N.applyAll();
 
     const socialBlock = document.getElementById("edupathSocialBlock");
-    document.getElementById("edupathGoogleLabel").textContent = t("modal_google", "Продолжить с Google");
-    document.getElementById("edupathAppleLabel").textContent  = t("modal_apple", "Продолжить с Apple");
     document.getElementById("edupathOrLabel").textContent     = t("modal_or", "или");
     socialBlock.style.display = (mode === "confirm") ? "none" : "block";
 
@@ -1053,7 +1056,7 @@
     const hash = window.location.hash || "";
     const search = window.location.search || "";
 
-    // Ошибка от Google / Apple / письма (человек отменил вход, ссылка устарела и т.п.)
+    // Ошибка от Discord, LinkedIn / письма (человек отменил вход, ссылка устарела и т.п.)
     const errSource = hash.includes("error") ? hash.replace(/^#/, "") : (search.includes("error") ? search.replace(/^\?/, "") : "");
     if (errSource) {
       const ep = new URLSearchParams(errSource);
@@ -1074,7 +1077,7 @@
         setSession({ access_token: access, refresh_token: refresh });
         history.replaceState(null, "", window.location.pathname + window.location.search);
 
-        // Имя и почту берём прямо из токена — так работает и для Google, и для Apple
+        // Имя и почту берём прямо из токена — так работает для всех входов через соцсети
         const fromToken = userFromToken(access);
         if (fromToken) setCachedUser(fromToken);
         updateHeaderUI();
@@ -1093,7 +1096,7 @@
           showToast(t("modal_login_success", "С возвращением!"), "success");
         }
 
-        // Пришёл на лендинг уже вошедшим (Google, Apple или письмо) — пускаем внутрь
+        // Пришёл на лендинг уже вошедшим (соцсеть или письмо) — пускаем внутрь
         if (isLandingPage()) {
           setTimeout(goToApp, 900);
         }
