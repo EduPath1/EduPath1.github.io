@@ -95,6 +95,7 @@
 
       modal_hello: "Добро пожаловать",
       modal_hello_sub: "Создай аккаунт, чтобы сохранять университеты",
+      modal_google: "Продолжить с Google", modal_apple: "Продолжить с Apple", modal_or: "или",
       modal_name: "Имя", modal_name_ph: "Например, Айсана",
       modal_email: "Email", modal_password: "Пароль",
       modal_password_ph: "Минимум 6 символов",
@@ -596,6 +597,7 @@
       test_more: "More →", test_analyzing: "AI is analyzing 250 universities",
 
       modal_hello: "Welcome", modal_hello_sub: "Create an account to save universities",
+      modal_google: "Continue with Google", modal_apple: "Continue with Apple", modal_or: "or",
       modal_name: "Name", modal_name_ph: "e.g. Aisana", modal_email: "Email",
       modal_password: "Password", modal_password_ph: "At least 6 characters",
       modal_submit_register: "Create account", modal_submit_login: "Log in",
@@ -1091,6 +1093,7 @@
       test_more: "更多 →", test_analyzing: "AI 正在分析 250 所大学",
 
       modal_hello: "欢迎", modal_hello_sub: "创建账号以保存大学",
+      modal_google: "使用 Google 继续", modal_apple: "使用 Apple 继续", modal_or: "或",
       modal_name: "姓名", modal_name_ph: "例如：Aisana", modal_email: "邮箱",
       modal_password: "密码", modal_password_ph: "至少 6 个字符",
       modal_submit_register: "创建账号", modal_submit_login: "登录",
@@ -1582,6 +1585,7 @@
       test_more: "Толығырақ →", test_analyzing: "ЖИ 250 университетті талдап жатыр",
 
       modal_hello: "Қош келдің", modal_hello_sub: "Университеттерді сақтау үшін аккаунт жаса",
+      modal_google: "Google арқылы жалғастыру", modal_apple: "Apple арқылы жалғастыру", modal_or: "немесе",
       modal_name: "Аты", modal_name_ph: "Мысалы, Айсана", modal_email: "Email",
       modal_password: "Құпия сөз", modal_password_ph: "Кемінде 6 таңба",
       modal_submit_register: "Аккаунт жасау", modal_submit_login: "Кіру",
@@ -2073,6 +2077,7 @@
       test_more: "Кененирээк →", test_analyzing: "ЖИ 250 университетти талдап жатат",
 
       modal_hello: "Кош келиңиз", modal_hello_sub: "Университеттерди сактоо үчүн аккаунт түзүңүз",
+      modal_google: "Google менен улантуу", modal_apple: "Apple менен улантуу", modal_or: "же",
       modal_name: "Аты", modal_name_ph: "Мисалы, Айсана", modal_email: "Email",
       modal_password: "Сырсөз", modal_password_ph: "Жок дегенде 6 белги",
       modal_submit_register: "Аккаунт түзүү", modal_submit_login: "Кирүү",
