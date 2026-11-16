@@ -291,8 +291,8 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
             EduPath
         </div>
-        <!-- Кнопка Войти ведет на страницу авторизации -->
-        <a href="profile.html" class="btn-login">Войти</a>
+        <!-- Кнопка Войти открывает окно входа / регистрации прямо здесь (auth.js) -->
+        <a href="#" class="btn-login" data-auth-open="login">Войти</a>
     </header>
 
     <!-- Главный экран -->
@@ -300,11 +300,6 @@
         <div class="hero-text">
             <h1>Твой путь в университет начинается <em>здесь</em></h1>
             <p>Пройди умный тест, узнай свои реальные шансы и получи персональный список вузов, которые подходят именно тебе по бюджету, оценкам и интересам.</p>
-            <!-- Кнопка Пройти тест ведет на основной сайт (app.html) -->
-            <a href="app.html" class="btn-main">
-                Пройти тест
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </a>
         </div>
         <div class="hero-visual">
             <div class="visual-circle-big"></div>
@@ -377,5 +372,6 @@
         <p style="margin-top: 15px;">© 2026 Все права защищены.</p>
     </footer>
 
+    <script src="auth.js"></script>
 </body>
 </html>

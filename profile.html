@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EduPath — Профиль</title>
@@ -171,7 +172,6 @@
           <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
         </div>
       </div>
-      <a href="#" class="btn-login" data-auth-open="register" data-i18n="nav_login">Войти</a>
     </div>
   </nav>
 </header>
