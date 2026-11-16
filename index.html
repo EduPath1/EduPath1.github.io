@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduPath — Найди свой университет</title>
+    <title>EduPath — Твой путь в университет</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Подключаем дорогие шрифты: Playfair Display для заголовков и Inter для текста -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-cream: #faf6ef; /* Светло-бежевый фон */
-            --text-dark: #2e231b; /* Темно-коричневый */
+            --bg-cream: #faf6ef;
+            --text-dark: #2e231b;
             --text-muted: #6a5a4e;
-            --accent-brown: #7a4e2d; /* Коричневый для кнопок */
-            --dark-bg: #2a211b; /* Темный фон для блоков */
-            --line-color: #dcd1c4; /* Цвет линий */
+            --accent-brown: #7a4e2d;
+            --accent-light: #f0e6d8;
+            --dark-bg: #2a211b;
+            --line-color: #dcd1c4;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,3 +34,348 @@
             line-height: 1.15;
         }
 
+        /* --- Шапка (Только Лого и Войти) --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 6%;
+            border-bottom: 1px solid var(--line-color);
+            position: sticky;
+            top: 0;
+            background-color: rgba(250, 246, 239, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .btn-login {
+            background-color: var(--accent-brown);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover { 
+            background-color: #5c3720; 
+            transform: translateY(-1px);
+        }
+
+        /* --- Главный экран (Hero) --- */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            padding: 100px 6% 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 4.5rem;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+        }
+        .hero-text h1 em {
+            font-style: italic;
+            color: var(--accent-brown);
+            font-weight: 400;
+        }
+
+        .hero-text p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 90%;
+        }
+
+        .btn-main {
+            background-color: var(--text-dark);
+            color: var(--bg-cream);
+            padding: 18px 45px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(46, 35, 27, 0.15);
+        }
+        .btn-main:hover {
+            background-color: var(--accent-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(122, 78, 45, 0.2);
+        }
+
+        /* Визуальная часть справа */
+        .hero-visual {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .visual-circle-big {
+            width: 400px;
+            height: 400px;
+            border: 1px solid var(--line-color);
+            border-radius: 50%;
+            position: absolute;
+        }
+        .visual-circle-small {
+            width: 250px;
+            height: 250px;
+            border: 1px dashed var(--accent-brown);
+            border-radius: 50%;
+            position: absolute;
+            animation: spin 30s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .visual-compass {
+            width: 120px;
+            height: 120px;
+            background-color: var(--bg-cream);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 2;
+            color: var(--accent-brown);
+        }
+
+        /* --- Блок Проблема и Решение --- */
+        .problem-solution {
+            background-color: white;
+            padding: 100px 6%;
+        }
+        .ps-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .ps-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .ps-header h2 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+        .ps-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .ps-card {
+            padding: 50px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-problem {
+            background-color: #fdfaf6;
+            border: 1px solid #f0e6d8;
+        }
+        .card-solution {
+            background-color: var(--dark-bg);
+            color: white;
+        }
+        .ps-card h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .card-solution h3 { color: var(--bg-cream); }
+        
+        .ps-card p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        .card-problem p { color: var(--text-muted); }
+        .card-solution p { color: #d4c3b3; }
+
+        .ps-card .icon {
+            margin-bottom: 25px;
+            color: var(--accent-brown);
+        }
+        .card-solution .icon { color: #d4c3b3; }
+
+        /* --- Как это работает (Шаги) --- */
+        .steps-section {
+            padding: 100px 6%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .steps-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+            border-bottom: 1px solid var(--line-color);
+            padding-bottom: 20px;
+        }
+        .steps-header h2 { font-size: 3rem; }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .step h3 span {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-brown);
+            background: var(--accent-light);
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+        .step p { color: var(--text-muted); font-size: 1rem; }
+
+        /* --- Подвал --- */
+        footer {
+            background-color: var(--dark-bg);
+            color: #a89c90;
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Адаптив */
+        @media (max-width: 968px) {
+            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 60px; }
+            .hero-text h1 { font-size: 3.5rem; }
+            .hero-text p { margin: 0 auto 40px; }
+            .hero-visual { display: none; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .steps-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка (Только Логотип и Войти) -->
+    <header>
+        <div class="logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+            EduPath
+        </div>
+        <!-- Кнопка Войти ведет на страницу авторизации -->
+        <a href="profile.html" class="btn-login">Войти</a>
+    </header>
+
+    <!-- Главный экран -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Твой путь в университет начинается <em>здесь</em></h1>
+            <p>Пройди умный тест, узнай свои реальные шансы и получи персональный список вузов, которые подходят именно тебе по бюджету, оценкам и интересам.</p>
+            <!-- Кнопка Пройти тест ведет на основной сайт (app.html) -->
+            <a href="app.html" class="btn-main">
+                Пройти тест
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+        </div>
+        <div class="hero-visual">
+            <div class="visual-circle-big"></div>
+            <div class="visual-circle-small"></div>
+            <div class="visual-compass">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок Проблема / Решение -->
+    <section class="problem-solution">
+        <div class="ps-container">
+            <div class="ps-header">
+                <h2>Почему выбор вуза — это сложно?</h2>
+                <p>Тысячи вариантов, скрытые требования и непонятные критерии выбора.</p>
+            </div>
+            
+            <div class="cards-grid">
+                <!-- Карточка проблемы -->
+                <div class="ps-card card-problem">
+                    <div class="icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <h3 class="serif">Проблема</h3>
+                    <p>Абитуриенты часто не знают, какие университеты реально подходят под их профиль. Слишком много факторов: язык, бюджет, климат, экзамены. В итоге выбор делается наугад или по чужим советам, а не по объективным данным.</p>
+                </div>
+
+                <!-- Карточка решения -->
+                <div class="ps-card card-solution">
+                    <div class="icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <h3 class="serif">Решение EduPath</h3>
+                    <p>Мы сужаем выбор до релевантных вариантов. Наш ИИ анализирует твои интересы, оценки (SAT/IELTS) и бюджет, чтобы выдать не просто «Топ-10», а персональный список вузов с четкими пояснениями, куда ты точно поступишь, а куда можешь попробовать.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как это работает -->
+    <section class="steps-section">
+        <div class="steps-header">
+            <h2 class="serif">Как это работает</h2>
+            <p style="color: var(--text-muted);">От вопросов до готового списка — 5 минут</p>
+        </div>
+        
+        <div class="steps-grid">
+            <div class="step">
+                <h3 class="serif"><span>01</span> Отвечай на вопросы</h3>
+                <p>Расскажи ИИ о своих интересах, предпочтениях по стране, климату и формату обучения. Укажи свои оценки и бюджет.</p>
+            </div>
+            <div class="step">
+                <h3 class="serif"><span>02</span> Умный анализ</h3>
+                <p>Наш алгоритм сопоставит твои данные с базой тысяч университетов по всему миру, отсекая неподходящие варианты.</p>
+            </div>
+            <div class="step">
+                <h3 class="serif"><span>03</span> Получи результат</h3>
+                <p>Ты получаешь структурированный список: куда точно поступишь, куда можешь попробовать и куда стоит стремиться.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="logo" style="justify-content: center; margin-bottom: 20px; color: var(--bg-cream);">
+            EduPath
+        </div>
+        <p>EduPath — сервис для подбора университетов.</p>
+        <p style="margin-top: 15px;">© 2026 Все права защищены.</p>
+    </footer>
+
+</body>
+</html>￼Enter file contents here
