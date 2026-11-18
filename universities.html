@@ -1,268 +1,145 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduPath — Universities</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
-    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
-    --caramel:#C79256; --sand:#D9BD93;
-    --text-main:#2B1B10; --text-muted:#7A6552;
-    --line:rgba(43,27,16,0.14);
-    --ease:cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  body{ font-family:'Work Sans',sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; }
-  
-  /* На десктопе скрываем скролл, т.к. есть свои скроллбары в колонках */
-  @media (min-width: 1001px) {
-    body { overflow: hidden; }
-  }
-
-  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
-  a{ text-decoration:none; color:inherit; }
-  button{ font-family:inherit; cursor:pointer; border:none; background:none; }
-
-  /* ======= ANIMATIONS ======= */
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes softFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
-  @keyframes starPop{ 0% { transform:scale(0.6) rotate(0deg); } 40% { transform:scale(1.4) rotate(180deg); } 70% { transform:scale(0.95) rotate(320deg); } 100% { transform:scale(1) rotate(360deg); } }
-  @keyframes pulse { 0%,80%,100%{ opacity:0.3; transform:scale(0.8);} 40%{ opacity:1; transform:scale(1.1);} }
-
-  /* Глобальная загрузка (только под шапкой) */
-  .global-loading {
-    position: fixed;
-    top: 84px; left: 0; right: 0; bottom: 0;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 900; /* Ниже шапки, чтобы бургер был доступен */
-    transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease);
-  }
-  body.loaded .global-loading {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  .loading { text-align:center; color:var(--text-muted); font-size:15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .loading-dots{ display:inline-flex; gap:6px; vertical-align:middle; }
-  .loading-dot{ width:8px; height:8px; border-radius:50%; background:var(--clay); animation:pulse 1.4s ease-in-out infinite; }
-  .loading-dot:nth-child(2){ animation-delay: 0.2s; }
-  .loading-dot:nth-child(3){ animation-delay: 0.4s; }
-
-  .layout { opacity: 0; transition: opacity 0.4s var(--ease); }
-  body.loaded .layout { opacity: 1; }
-
-  /* Шапка */
-  header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:1000; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1400px; margin:0 auto; padding:0 32px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces',serif; font-weight:600; font-size:26px; color:var(--espresso); transition:transform .3s var(--ease); }
-  .logo:hover{ transform: scale(1.02); }
-  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
-  .logo:hover svg{ transform: rotate(90deg); }
-  
-  .nav-links{ display:flex; align-items:center; gap:8px; }
-  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .25s var(--ease), color .25s var(--ease); }
-  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
-  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
-  .nav-right{ display:flex; align-items:center; gap:14px; position:relative; }
-  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .25s var(--ease), transform .25s var(--ease); }
-  .btn-login:hover{ background:var(--bark); transform: translateY(-1px); }
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .2s var(--ease), color .2s var(--ease); }
-  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
-
-  .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
-  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; transition:background .15s; }
-  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
-  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
-
-  /* Search drop */
-  .search-input{ display:block; position:absolute; top:48px; right:0; width:340px; padding:14px 18px; background:var(--paper); border:1px solid var(--line); border-radius:12px; font-size:15px; font-family:inherit; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); z-index:200; opacity:0; visibility:hidden; transform:translateY(-8px) scale(0.98); transition:opacity .25s var(--ease), transform .25s cubic-bezier(0.34, 1.56, 0.64, 1), visibility .25s; }
-  .search-input.open{ opacity:1; visibility:visible; transform:translateY(0) scale(1); }
-  .search-results{ display:block; position:absolute; top:104px; right:0; width:340px; max-height:340px; overflow-y:auto; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); z-index:199; opacity:0; visibility:hidden; transform:translateY(-8px); transition:opacity .25s var(--ease), transform .25s var(--ease), visibility .25s; }
-  .search-results.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .search-result{ display:block; width:100%; text-align:left; padding:10px 14px; border-radius:8px; font-size:14px; cursor:pointer; transition:background .2s var(--ease), padding-left .2s var(--ease); }
-  .search-result:hover{ background:var(--cream-deep); padding-left: 18px; }
-  .search-result small{ color:var(--text-muted); display:block; font-size:12px; }
-  .search-empty{ padding:14px; font-size:14px; color:var(--text-muted); text-align:center; }
-
-  /* Layout */
-  .layout{ display:grid; grid-template-columns:420px 1fr; gap:0; max-width:1400px; margin:0 auto; height:calc(100vh - 84px); }
-  
-  .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; height:100%; }
-  .sidebar h2{ font-size:24px; margin-bottom:6px; }
-  .sidebar .subtitle{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
-
-  .filters-wrap{ position:relative; margin-bottom:18px; }
-  .filters-btn{ display:flex; align-items:center; justify-content:space-between; width:100%; padding:12px 16px; background:var(--cream); border:1px solid transparent; border-radius:10px; font-size:14px; font-weight:500; color:var(--espresso); transition:background .25s var(--ease), border-color .25s var(--ease); }
-  .filters-btn:hover{ background:var(--cream-deep); }
-  .filters-btn.active{ border-color:var(--clay); background:var(--paper); }
-  .filters-btn-left{ display:flex; align-items:center; gap:8px; }
-  .filters-btn-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; background:var(--clay); color:var(--paper); border-radius:10px; font-size:11px; font-weight:600; }
-  .filters-btn-arrow{ font-size:11px; color:var(--text-muted); transition:transform .3s var(--ease); }
-  .filters-btn.active .filters-btn-arrow{ transform:rotate(180deg); }
-
-  .filters-panel{ max-height:0; overflow:hidden; opacity:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; margin-top:8px; transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease), margin-top .3s var(--ease); }
-  .filters-panel.open{ max-height:600px; opacity:1; padding:18px; }
-  .filter-group{ margin-bottom:16px; }
-  .filter-group:last-of-type{ margin-bottom:0; }
-  .filter-group label{ display:block; font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; font-weight:600; }
-  .filter-row{ display:flex; gap:8px; align-items:center; }
-  .filter-row input{ flex:1; min-width:0; padding:10px 12px; font-family:inherit; font-size:14px; background:var(--cream); color:var(--text-main); border:1.5px solid var(--line); border-radius:8px; }
-  .filter-row input:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
-  .filter-row span{ color:var(--text-muted); font-size:13px; }
-  .filter-select{ width:100%; padding:10px 12px; font-family:inherit; font-size:14px; background:var(--cream); color:var(--text-main); border:1.5px solid var(--line); border-radius:8px; cursor:pointer; }
-  .filter-select:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
-  .filter-check{ display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--cream); border-radius:8px; font-size:14px; cursor:pointer; transition:background .2s var(--ease); }
-  .filter-check:hover{ background:var(--cream-deep); }
-  .filter-check input{ accent-color:var(--clay); width:16px; height:16px; cursor:pointer; }
-  .filter-actions{ display:flex; gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
-  .filter-btn-apply{ flex:1; padding:11px 16px; background:var(--espresso); color:var(--paper); border-radius:8px; font-size:14px; font-weight:600; transition:background .2s var(--ease); }
-  .filter-btn-apply:hover{ background:var(--bark); }
-  .filter-btn-reset{ padding:11px 16px; background:var(--cream-deep); color:var(--espresso); border-radius:8px; font-size:14px; font-weight:500; transition:background .2s var(--ease); }
-  .filter-btn-reset:hover{ background:var(--sand); }
-
-  /* Country lists */
-  .country{ border-bottom:1px solid var(--line); overflow:hidden; }
-  .country:last-child{ border-bottom:none; }
-  .country-header{ display:flex; align-items:center; justify-content:space-between; width:100%; text-align:left; padding:16px 4px; font-size:16px; font-weight:600; color:var(--espresso); transition:color .25s var(--ease), padding-left .25s var(--ease); }
-  .country-header:hover{ color:var(--clay); padding-left:10px; }
-  .country-arrow{ font-size:12px; color:var(--text-muted); transition:transform .4s var(--ease); }
-  .country.open .country-arrow{ transform:rotate(180deg); }
-  .country-count{ font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px; }
-  
-  .country-list{ display:block; max-height:0; overflow:hidden; opacity:0; transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .3s var(--ease); }
-  .country.open .country-list{ max-height:6000px; opacity:1; padding:0 0 12px 0; }
-
-  .uni-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:12px 14px; margin-bottom:6px; border-radius:10px; background:var(--cream); border:1px solid transparent; cursor:pointer; opacity:0; transform:translateY(6px); animation:fadeInUp .45s var(--ease) forwards; transition:background .25s var(--ease), transform .25s var(--ease), border-color .25s var(--ease); }
-  .country.open .uni-item{ animation-play-state:running; }
-  .uni-item:hover{ background:var(--cream-deep); transform:translateX(4px); }
-  .uni-item.selected{ background:var(--espresso); color:var(--paper); border-color:var(--espresso); }
-  .uni-item.selected:hover{ transform: translateX(0); }
-  .uni-item.selected .uni-meta{ color:var(--sand); }
-  .uni-item-main{ flex:1; min-width:0; }
-  .uni-name{ font-weight:600; font-size:14px; margin-bottom:4px; display:block; }
-  .uni-meta{ font-size:12px; color:var(--text-muted); display:flex; gap:10px; flex-wrap:wrap; transition:color .25s var(--ease); }
-
-  .star-btn{ flex-shrink:0; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; color:var(--text-muted); transition:color .2s var(--ease), background .2s var(--ease); position:relative; }
-  .star-btn:hover{ background:rgba(43,27,16,0.06); color:var(--clay); transform: scale(1.1); }
-  .uni-item.selected .star-btn{ color:var(--sand); }
-  .star-btn svg{ width:20px; height:20px; transition:transform .5s var(--ease), fill .3s var(--ease), stroke .3s var(--ease); }
-  .star-btn.active svg{ fill:url(#starGradient); stroke:url(#starGradient); animation:starPop .6s var(--ease); }
-
-  .country.open .uni-item:nth-child(1){ animation-delay:0.04s; }
-  .country.open .uni-item:nth-child(2){ animation-delay:0.08s; }
-  .country.open .uni-item:nth-child(3){ animation-delay:0.12s; }
-  .country.open .uni-item:nth-child(4){ animation-delay:0.16s; }
-  .country.open .uni-item:nth-child(5){ animation-delay:0.20s; }
-  .country.open .uni-item:nth-child(n+6){ animation-delay:0.24s; }
-
-  /* Detail panel */
-  .detail{ padding:40px 48px; overflow-y:auto; height:100%; }
-  .detail-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh; color:var(--text-muted); text-align:center; transition: opacity .3s; }
-  .detail-empty svg{ width:80px; height:80px; margin-bottom:20px; opacity:0.4; animation:softFloat 4s ease-in-out infinite; }
-  .detail-empty h2{ font-size:24px; color:var(--text-main); margin-bottom:10px; }
-  .detail-empty p{ font-size:15px; max-width:400px; }
-  
-  .detail-content{ display:none; opacity:0; }
-  .detail-content.active{ display:block; animation:fadeUp .5s var(--ease) forwards; }
-
-  .uni-title{ font-size:38px; line-height:1.15; margin-bottom:10px; color:var(--espresso); }
-  .uni-location{ font-size:16px; color:var(--text-muted); margin-bottom:8px; }
-  .grant-badge{ display:inline-flex; align-items:center; gap:6px; background:var(--caramel); color:var(--espresso); padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; margin-bottom:24px; }
-
-  .info-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; margin-bottom:20px; }
-  .info-card{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:20px; transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease); opacity:0; transform:translateY(8px); animation:fadeInUp .5s var(--ease) forwards; }
-  .info-card:hover{ transform:translateY(-3px); box-shadow:0 12px 24px -14px rgba(43,27,16,0.25); border-color:var(--sand); }
-  
-  .info-grid .info-card:nth-child(1){ animation-delay:0.05s; }
-  .info-grid .info-card:nth-child(2){ animation-delay:0.10s; }
-  .info-grid .info-card:nth-child(3){ animation-delay:0.15s; }
-  .info-grid .info-card:nth-child(4){ animation-delay:0.20s; }
-  .info-grid .info-card:nth-child(5){ animation-delay:0.25s; }
-  .info-grid .info-card:nth-child(6){ animation-delay:0.30s; }
-
-  .info-label{ font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; font-weight:600; }
-  .info-value{ font-size:15px; color:var(--text-main); line-height:1.5; }
-  .info-value.empty{ color:var(--text-muted); font-style:italic; }
-  .section-title{ font-size:22px; margin-bottom:16px; margin-top:32px; color:var(--espresso); }
-
-  .action-buttons{ display:flex; flex-wrap:wrap; gap:12px; margin-top:32px; padding-top:32px; border-top:1px solid var(--line); }
-  .btn-main{ display:inline-flex; align-items:center; gap:10px; padding:15px 26px; border-radius:10px; font-size:14px; font-weight:600; transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease); }
-  .btn-main.primary{ background:var(--espresso); color:var(--paper); }
-  .btn-main.primary:hover{ background:var(--bark); transform:translateY(-2px); box-shadow:0 10px 20px -10px rgba(43,27,16,0.5); }
-  .btn-main.secondary{ background:var(--clay); color:var(--paper); }
-  .btn-main.secondary:hover{ background:var(--bark); transform:translateY(-2px); box-shadow:0 10px 20px -10px rgba(140,90,52,0.5); }
-  .btn-main.ghost{ background:var(--cream-deep); color:var(--espresso); }
-  .btn-main.ghost:hover{ background:var(--sand); transform:translateY(-2px); }
-
-  /* ======= MOBILE FIXES ======= */
-  @media (max-width:1000px){
-    /* Отключаем жесткую высоту, чтобы бургер и оверлей работали корректно */
-    .global-loading { top: 72px; }
-    .layout{ display:block; height:auto; overflow:visible; }
-    .sidebar{ height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); }
-    .detail{ padding:32px 24px; height:auto; overflow:visible; }
-    .uni-title{ font-size:30px; }
-    .info-grid{ grid-template-columns:1fr; }
-    .detail-empty { height: 50vh; }
-  }
-  @media (max-width:900px){
-    .nav-links{ display:none !important; }
-  }
-  @media (max-width:600px){
-    nav.wrap{ height:72px; padding:0 18px; }
-    .logo{ font-size:21px; gap:9px; }
-    .logo svg{ width:30px; height:30px; }
-    .search-input, .search-results{ width:calc(100vw - 36px); right:-10px; }
-    
-    /* Принудительно делаем так, чтобы бургер-меню было поверх всего */
-    .burger-btn { z-index: 1001; position: relative; }
-    .burger-panel { z-index: 1002 !important; }
-  }
-</style>
+  <script>
+    try {
+      if (!localStorage.getItem("edupath_token")) location.replace("index.html");
+    } catch (e) {}
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F7EFE1">
+  <title>EduPath — Умный каталог университетов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
+      --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
+      --caramel:#C79256; --sand:#D9BD93; --muted:#7A6552;
+      --line:rgba(43,27,16,.14); --shadow:0 16px 42px rgba(43,27,16,.09);
+      --ease:cubic-bezier(.22,1,.36,1);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--cream);color:var(--espresso);font-family:'Work Sans',sans-serif;line-height:1.5}
+    h1,h2,h3,h4{font-family:'Fraunces',serif;line-height:1.12;font-weight:600;letter-spacing:-.02em}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit;text-decoration:none}
+    .site-header{position:sticky;top:0;z-index:50;background:rgba(251,246,236,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .nav-wrap{height:78px;max-width:1440px;padding:0 28px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .logo{display:flex;align-items:center;gap:10px;font:600 25px 'Fraunces',serif;white-space:nowrap}
+    .logo-mark{width:36px;height:36px;border:2px solid var(--bark);border-radius:50%;display:grid;place-items:center;color:var(--caramel);font-size:20px}
+    .nav-links{display:flex;align-items:center;gap:5px}
+    .nav-links a{padding:10px 13px;border-radius:9px;color:var(--muted);font-size:14px}
+    .nav-links a:hover{background:var(--cream-deep);color:var(--espresso)}
+    .nav-links a.active{background:var(--espresso);color:var(--paper)}
+    .nav-right{display:flex;align-items:center;gap:9px;position:relative}
+    #langBtn{width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);display:grid;place-items:center}
+    #langBtn:hover{background:var(--cream-deep);color:var(--espresso)}
+    .lang-menu{position:absolute;right:0;top:calc(100% + 10px);display:flex;flex-direction:column;gap:3px;min-width:145px;padding:7px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s;z-index:70}
+    .lang-menu.open{opacity:1;visibility:visible;transform:translateY(0)}
+    .lang-option{border:0;background:transparent;color:var(--muted);padding:7px;border-radius:7px;font-size:12px}
+    .lang-option.active,.lang-option:hover{background:var(--cream-deep);color:var(--espresso)}
+    .page{max-width:1440px;margin:0 auto;padding:34px 28px 80px}
+    .hero{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;align-items:end;margin-bottom:26px}
+    .eyebrow{color:var(--clay);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;margin-bottom:12px}
+    .hero h1{font-size:clamp(34px,4.5vw,58px);margin:0 0 12px;max-width:800px}
+    .hero p{margin:0;color:var(--muted);max-width:720px;font-size:16px}
+    .trust-note{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;font-size:12px;color:var(--muted)}
+    .trust-note strong{display:block;color:var(--espresso);font-size:14px;margin-bottom:5px}
+    .search-panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:30px}
+    .search-modes{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+    .mode-btn{border:1px solid var(--line);background:transparent;color:var(--muted);padding:9px 14px;border-radius:999px;font-size:13px}
+    .mode-btn.active{background:var(--espresso);border-color:var(--espresso);color:var(--paper)}
+    .search-row{display:grid;grid-template-columns:1fr auto;gap:10px}
+    .search-input{width:100%;min-width:0;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:#fffdf8;color:var(--espresso);outline:none;font-size:15px}
+    .search-input:focus{border-color:var(--clay);box-shadow:0 0 0 3px rgba(140,90,52,.12)}
+    .search-btn,.primary-btn{border:0;background:var(--clay);color:white;padding:0 23px;border-radius:12px;font-weight:600;transition:.2s}
+    .search-btn:hover,.primary-btn:hover{background:var(--bark);transform:translateY(-1px)}
+    .search-hint{font-size:12px;color:var(--muted);margin:10px 2px 0}
+    .status-line{min-height:22px;margin:8px 2px 0;font-size:13px;color:var(--clay)}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:28px 0 14px}
+    .section-head h2{font-size:27px;margin:0 0 4px}
+    .section-head p{margin:0;color:var(--muted);font-size:13px}
+    .scroll-label{font-size:12px;color:var(--muted);white-space:nowrap}
+    .cards-track{display:flex;gap:14px;overflow-x:auto;padding:3px 2px 18px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--sand) transparent}
+    .uni-card{flex:0 0 280px;min-height:206px;background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:17px;text-align:left;scroll-snap-align:start;transition:transform .22s var(--ease),box-shadow .22s,border-color .22s;display:flex;flex-direction:column;gap:12px;color:var(--espresso)}
+    .uni-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--caramel)}
+    .uni-card.selected{border:2px solid var(--clay);padding:16px}
+    .card-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .country-pill{font-size:11px;color:var(--muted);background:var(--cream);padding:5px 8px;border-radius:999px}
+    .deadline-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#a9a09a;flex:none}
+    .deadline-dot.red{background:#c94c43}.deadline-dot.yellow{background:#d6a22d}.deadline-dot.green{background:#4c9667}
+    .uni-card h3{font-size:20px;margin:0;line-height:1.16}
+    .card-location{font-size:12px;color:var(--muted)}
+    .card-stats{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .stat{background:var(--cream);border-radius:10px;padding:9px}
+    .stat small{display:block;font-size:10px;color:var(--muted);margin-bottom:3px}
+    .stat strong{font-size:12px;font-weight:600}
+    .card-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
+    .detail-shell{margin-top:25px;min-height:220px}
+    .empty-state{background:rgba(251,246,236,.55);border:1px dashed var(--sand);border-radius:20px;padding:38px;text-align:center;color:var(--muted)}
+    .empty-state h2{font-size:27px;color:var(--espresso);margin:0 0 8px}
+    .detail-card{background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+    .detail-head{padding:26px 28px 22px;border-bottom:1px solid var(--line)}
+    .detail-head h2{font-size:clamp(28px,3vw,42px);margin:0 0 9px}
+    .detail-location{color:var(--muted);font-size:14px}
+    .detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+    .meta-chip{font-size:11px;padding:6px 10px;border-radius:999px;background:var(--cream);color:var(--bark)}
+    .detail-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:22px;padding:24px 28px}
+    .detail-section{margin-bottom:22px}
+    .detail-section h3{font-size:21px;margin:0 0 12px}
+    .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .info-box{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:12px}
+    .info-box small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
+    .info-box strong{font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+    .info-box .unknown{color:#9b8a78;font-weight:500}
+    .plain-list{margin:0;padding-left:18px;color:var(--bark);font-size:14px}
+    .plain-list li{margin:0 0 7px}
+    .highlights{display:grid;gap:8px}
+    .highlight{background:var(--cream);border-radius:10px;padding:11px 13px;font-size:13px}
+    .map-frame{width:100%;height:245px;border:0;border-radius:14px;background:var(--cream)}
+    .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .photo-grid img{width:100%;height:112px;object-fit:cover;border-radius:10px;background:var(--cream)}
+    .sources{display:grid;gap:9px}
+    .source-link{font-size:12px;color:var(--clay);text-decoration:underline;overflow-wrap:anywhere}
+    .source-note{font-size:11px;color:var(--muted);margin-top:8px}
+    .detail-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+    .action-btn{border:1px solid var(--line);background:var(--cream);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--espresso)}
+    .action-btn:hover{border-color:var(--clay)}
+    .loading-panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:30px;text-align:center;color:var(--muted)}
+    .error-text{color:#a53f35}
+    .disclaimer{border-top:1px solid var(--line);padding:14px 28px 20px;color:var(--muted);font-size:11px}
+    .footer-note{margin-top:35px;color:var(--muted);font-size:11px;text-align:center}
+    @media(max-width:900px){
+      .nav-wrap{height:auto;min-height:70px;padding:12px 18px;flex-wrap:wrap}
+      .nav-links{order:3;width:100%;overflow-x:auto}
+      .nav-links a{white-space:nowrap;font-size:12px;padding:8px}
+      .hero{grid-template-columns:1fr}
+      .trust-note{max-width:460px}
+      .page{padding:25px 18px 60px}
+      .detail-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      .search-panel{padding:14px}
+      .search-row{grid-template-columns:1fr}
+      .search-btn{padding:14px}
+      .uni-card{flex-basis:250px}
+      .detail-head,.detail-grid{padding:20px 16px}
+      .info-grid{grid-template-columns:1fr}
+      .disclaimer{padding:13px 16px}
+      .section-head{align-items:start;flex-direction:column}
+      .scroll-label{display:none}
+    }
+  </style>
 </head>
 <body>
-
-<div class="global-loading" id="globalLoading">
-  <div class="loading">
-    <span data-i18n="catalog_loading">Загрузка списка</span>
-    <span class="loading-dots">
-      <span class="loading-dot"></span>
-      <span class="loading-dot"></span>
-      <span class="loading-dot"></span>
-    </span>
-  </div>
-</div>
-
-<svg style="position:absolute; width:0; height:0;" aria-hidden="true">
-  <defs>
-    <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFD700" />
-      <stop offset="100%" stop-color="#E63946" />
-    </linearGradient>
-  </defs>
-</svg>
-
-<header>
-  <nav class="wrap">
-    <a href="index.html" class="logo">
-      <svg viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
-        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
-        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
-      </svg>
-      EduPath
-    </a>
+<header class="site-header">
+  <nav class="wrap nav-wrap">
+    <a href="index.html" class="logo"><span class="logo-mark">✦</span>EduPath</a>
     <div class="nav-links">
       <a href="index.html" data-i18n="nav_home">Главная</a>
       <a href="universities.html" class="active" data-i18n="nav_universities">Университеты</a>
@@ -271,1541 +148,397 @@
       <a href="team.html" data-i18n="nav_team">О нашей команде</a>
     </div>
     <div class="nav-right">
-      <div class="lang-dropdown">
-        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
-        </button>
-        <div class="lang-menu" id="langMenu" role="menu">
-          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
-          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
-          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
-          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
-          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
-        </div>
+      <button type="button" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">文</button>
+      <div class="lang-menu" id="langMenu" role="menu">
+        <button class="lang-option active" type="button" data-lang="ru">RU</button>
+        <button class="lang-option" type="button" data-lang="en">EN</button>
+        <button class="lang-option" type="button" data-lang="zh">中文</button>
+        <button class="lang-option" type="button" data-lang="kk">ҚАЗ</button>
+        <button class="lang-option" type="button" data-lang="ky">КЫР</button>
       </div>
-      <button type="button" class="icon-btn" id="searchBtn" aria-label="Поиск">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      </button>
-      <input type="text" class="search-input" id="searchInput" data-i18n-placeholder="catalog_search_placeholder" placeholder="Find a university...">
-      <div class="search-results" id="searchResults"></div>
     </div>
   </nav>
 </header>
 
-<div class="layout">
-  <aside class="sidebar">
-    <h2 data-i18n="catalog_title">Universities</h2>
-    <p class="subtitle" data-i18n="catalog_sub">Pick a country and university</p>
-    <div class="filters-wrap">
-      <button type="button" class="filters-btn" id="filtersToggle">
-        <span class="filters-btn-left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
-          <span data-i18n="catalog_filters">Filters</span>
-          <span class="filters-btn-badge" id="filtersBadge" style="display:none;">0</span>
-        </span>
-        <span class="filters-btn-arrow">▾</span>
-      </button>
+<main class="page">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">EduPath · University discovery</div>
+      <h1>Найди университет, который подходит именно тебе</h1>
+      <p>Ищи вуз по названию или опиши свои условия: направление, бюджет, страну, стипендию и другие предпочтения.</p>
+    </div>
+    <aside class="trust-note">
+      <strong>Проверяемые сведения</strong>
+      Дедлайны и условия могут различаться по программе, уровню обучения, гражданству и году поступления. Мы показываем источники и не подставляем неподтверждённые значения.
+    </aside>
+  </section>
 
-      <div class="filters-panel" id="filtersPanel">
-        <div class="filter-group">
-          <label data-i18n="catalog_budget_label">Tuition budget (USD/year)</label>
-          <div class="filter-row">
-            <input type="number" id="filterBudgetMin" data-i18n-placeholder="catalog_budget_from" placeholder="from" min="0">
-            <span>—</span>
-            <input type="number" id="filterBudgetMax" data-i18n-placeholder="catalog_budget_to" placeholder="to" min="0">
-          </div>
-        </div>
+  <section class="search-panel" aria-label="Поиск университетов">
+    <div class="search-modes">
+      <button type="button" class="mode-btn active" data-mode="name">По названию</button>
+      <button type="button" class="mode-btn" data-mode="criteria">По моим условиям</button>
+    </div>
+    <div class="search-row">
+      <input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="Например: University of Oxford или Computer Science в Европе с грантом">
+      <button id="searchBtn" class="search-btn" type="button">Найти университеты</button>
+    </div>
+    <p id="searchHint" class="search-hint">Введи название университета, города или страны. Список ниже отфильтруется по мере ввода.</p>
+    <div id="statusLine" class="status-line" role="status" aria-live="polite"></div>
+  </section>
 
-        <div class="filter-group">
-          <label data-i18n="catalog_country_label">Country</label>
-          <select class="filter-select" id="filterCountry">
-            <option value="" data-i18n="catalog_country_all">All countries</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label data-i18n="catalog_grant_label">Financial aid</label>
-          <label class="filter-check">
-            <input type="checkbox" id="filterFullGrant">
-            <span data-i18n="catalog_grant_only">Only with full scholarship</span>
-          </label>
-        </div>
-
-        <div class="filter-actions">
-          <button type="button" class="filter-btn-reset" id="filterReset" data-i18n="catalog_reset">Reset</button>
-          <button type="button" class="filter-btn-apply" id="filterApply" data-i18n="catalog_apply">Apply</button>
-        </div>
+  <section>
+    <div class="section-head">
+      <div>
+        <h2 id="cardsHeading">Университеты для изучения</h2>
+        <p id="cardsSubheading">Первые 50 записей из каталога EduPath. Актуальные условия проверяются отдельно при открытии досье.</p>
       </div>
+      <div class="scroll-label">Прокручивай карточки по горизонтали →</div>
     </div>
-    <div id="countriesList"></div>
-  </aside>
+    <div id="cardsTrack" class="cards-track" aria-label="Список университетов"></div>
+  </section>
 
-  <main class="detail" id="detail">
-    <div class="detail-empty" id="detailEmpty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-        <path d="M12 4L3 8l9 4 9-4-9-4z"/>
-        <path d="M6 10v6c0 1.5 2.7 3 6 3s6-1.5 6-3v-6"/>
-      </svg>
-      <h2 data-i18n="catalog_choose_uni">Pick a university</h2>
-      <p data-i18n="catalog_choose_hint">Click on a country on the left, then a university to see details.</p>
+  <section class="detail-shell" id="detailShell">
+    <div class="empty-state" id="emptyState">
+      <h2>Выбери университет</h2>
+      <p>Нажми на карточку, чтобы открыть подробное досье: требования, расходы, стипендии, направления, карту и источники.</p>
     </div>
-    <div class="detail-content" id="detailContent"></div>
-  </main>
-</div>
+    <div id="detailContent"></div>
+  </section>
+  <p class="footer-note">EduPath © 2026 · Информация для предварительного ознакомления. Всегда сверяй требования с официальной страницей выбранной программы.</p>
+</main>
 
+<script src="i18n.js"></script>
+<script src="auth.js"></script>
 <script>
-// ============================================================
-// EduPath — каталог университетов
-// ============================================================
+(() => {
+  "use strict";
 
-const COUNTRY_FILES = [
-  { file: "Australia.json",      name: "Australia",       key: "country_australia" },
-  { file: "Austria.json",        name: "Austria",         key: "country_austria" },
-  { file: "Belgium.json",        name: "Belgium",         key: "country_belgium" },
-  { file: "Canada.json",         name: "Canada",          key: "country_canada" },
-  { file: "China.json",          name: "China",           key: "country_china" },
-  { file: "Czech Republic.json", name: "Czech Republic",  key: "country_czech" },
-  { file: "Denmark.json",        name: "Denmark",         key: "country_denmark" },
-  { file: "Finland.json",        name: "Finland",         key: "country_finland" },
-  { file: "Germany.json",        name: "Germany",         key: "country_germany" },
-  { file: "Hong Kong.json",      name: "Hong Kong",       key: "country_hongkong" },
-  { file: "Hungary.json",        name: "Hungary",         key: "country_hungary" },
-  { file: "Italy.json",          name: "Italy",           key: "country_italy" },
-  { file: "Japan.json",          name: "Japan",           key: "country_japan" },
-  { file: "Latvia.json",         name: "Latvia",          key: "country_latvia" },
-  { file: "Netherlands.json",    name: "Netherlands",     key: "country_netherlands" },
-  { file: "Poland.json",         name: "Poland",          key: "country_poland" },
-  { file: "Qatar.json",          name: "Qatar",           key: "country_qatar" },
-  { file: "Singapore.json",      name: "Singapore",       key: "country_singapore" },
-  { file: "South Korea.json",    name: "South Korea",     key: "country_southkorea" },
-  { file: "Spain.json",          name: "Spain",           key: "country_spain" },
-  { file: "Sweden.json",         name: "Sweden",          key: "country_sweden" },
-  { file: "Switzerland.json",    name: "Switzerland",     key: "country_switzerland" },
-  { file: "Turkey.json",         name: "Turkey",          key: "country_turkey" },
-  { file: "UAE.json",            name: "UAE",             key: "country_uae" },
-  { file: "UK.json",             name: "United Kingdom",  key: "country_uk" },
-  { file: "USA.json",            name: "USA",             key: "country_usa" }
-];
+  // После публикации Worker проверь этот адрес. Имя Worker и поддомен
+  // соответствуют подготовленной конфигурации в README_RU.md.
+  const SEARCH_API = "https://edupath-university-search.muqiyatalkar.workers.dev";
 
-const FLAGS = {
-  "Australia":"🇦🇺","Austria":"🇦🇹","Belgium":"🇧🇪","Canada":"🇨🇦","China":"🇨🇳",
-  "Czech Republic":"🇨🇿","Denmark":"🇩🇰","Finland":"🇫🇮","Germany":"🇩🇪","Hong Kong":"🇭🇰",
-  "Hungary":"🇭🇺","Italy":"🇮🇹","Japan":"🇯🇵","Latvia":"🇱🇻","Netherlands":"🇳🇱",
-  "Poland":"🇵🇱","Qatar":"🇶🇦","Singapore":"🇸🇬","South Korea":"🇰🇷","Spain":"🇪🇸",
-  "Sweden":"🇸🇪","Switzerland":"🇨🇭","Turkey":"🇹🇷","UAE":"🇦🇪","United Kingdom":"🇬🇧","USA":"🇺🇸"
-};
+  const COUNTRY_FILES = [
+    ["Australia.json","Australia"],["Austria.json","Austria"],["Belgium.json","Belgium"],
+    ["Canada.json","Canada"],["China.json","China"],["Czech Republic.json","Czech Republic"],
+    ["Denmark.json","Denmark"],["Finland.json","Finland"],["Germany.json","Germany"],
+    ["Hong Kong.json","Hong Kong"],["Hungary.json","Hungary"],["Italy.json","Italy"],
+    ["Japan.json","Japan"],["Latvia.json","Latvia"],["Netherlands.json","Netherlands"],
+    ["Poland.json","Poland"],["Qatar.json","Qatar"],["Singapore.json","Singapore"],
+    ["South Korea.json","South Korea"],["Spain.json","Spain"],["Sweden.json","Sweden"],
+    ["Switzerland.json","Switzerland"],["Turkey.json","Turkey"],["UAE.json","UAE"],
+    ["UK.json","United Kingdom"],["USA.json","USA"]
+  ];
+  const FLAGS = {
+    Australia:"🇦🇺",Austria:"🇦🇹",Belgium:"🇧🇪",Canada:"🇨🇦",China:"🇨🇳",
+    "Czech Republic":"🇨🇿",Denmark:"🇩🇰",Finland:"🇫🇮",Germany:"🇩🇪",
+    "Hong Kong":"🇭🇰",Hungary:"🇭🇺",Italy:"🇮🇹",Japan:"🇯🇵",Latvia:"🇱🇻",
+    Netherlands:"🇳🇱",Poland:"🇵🇱",Qatar:"🇶🇦",Singapore:"🇸🇬",
+    "South Korea":"🇰🇷",Spain:"🇪🇸",Sweden:"🇸🇪",Switzerland:"🇨🇭",
+    Turkey:"🇹🇷",UAE:"🇦🇪","United Kingdom":"🇬🇧",USA:"🇺🇸"
+  };
 
-let ALL_DATA = [];
-let _currentUni = null;
+  const $ = (id) => document.getElementById(id);
+  let allUniversities = [];
+  let visibleUniversities = [];
+  let selectedMode = "name";
+  let selectedUniversity = null;
+  let requestController = null;
 
-function escapeAttr(s){
-  return String(s == null ? "" : s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[ch]));
+  }
+  function safeUrl(value) {
+    try { const u = new URL(value); return ["https:","http:"].includes(u.protocol) ? u.href : ""; }
+    catch { return ""; }
+  }
+  function setStatus(message, error=false) {
+    $("statusLine").textContent = message || "";
+    $("statusLine").classList.toggle("error-text", !!error);
+  }
+  function getName(u){ return u["Университет"] || u.name || "University"; }
+  function getCity(u){ return u["Город"] || u.city || ""; }
+  function getCountry(u){ return u._country || u["Страна"] || u.country || ""; }
 
-function t(key, fallback){
-  return (window.I18N && window.I18N.t(key)) || fallback || key;
-}
+  async function loadCatalog() {
+    const batches = await Promise.allSettled(COUNTRY_FILES.map(async ([file,country]) => {
+      const response = await fetch(file, {cache:"no-cache"});
+      if (!response.ok) throw new Error(file);
+      const rows = await response.json();
+      return rows.map(row => ({...row,_country:country,_flag:FLAGS[country] || "🌍"}));
+    }));
+    const seen = new Set();
+    allUniversities = [];
+    for (const result of batches) {
+      if (result.status !== "fulfilled") continue;
+      for (const item of result.value) {
+        const name = getName(item).trim();
+        const key = name.toLowerCase();
+        if (!name || seen.has(key)) continue;
+        seen.add(key);
+        allUniversities.push(item);
+      }
+    }
+    allUniversities.sort((a,b) => getName(a).localeCompare(getName(b)));
+    if (window.EduAuth?.getSaved) {
+      try { await window.EduAuth.getSaved(); } catch (e) { console.warn("Saved list unavailable",e); }
+    }
+    visibleUniversities = allUniversities.slice(0,50);
+    renderCards(visibleUniversities);
+    setStatus(allUniversities.length
+      ? `Загружено ${allUniversities.length} записей из каталога. Условия поступления ещё нужно подтвердить по актуальным источникам.`
+      : "Не удалось загрузить старый каталог. Можно продолжить поиск через умный поиск.", !allUniversities.length);
+  }
 
-async function loadAll(){
-  const results = await Promise.allSettled(
-    COUNTRY_FILES.map(async (c) => {
-      const res = await fetch(c.file);
-      if(!res.ok) throw new Error(c.file);
-      const data = await res.json();
-      return { country: c.name, key: c.key, items: data };
-    })
-  );
+  function deadlineClass(deadline) {
+    if (!deadline || !deadline.date || !/^\d{4}-\d{2}-\d{2}$/.test(deadline.date)) return "";
+    const date = new Date(deadline.date + "T23:59:59Z");
+    if (Number.isNaN(date.getTime()) || date < new Date()) return "";
+    const days = Math.ceil((date - new Date()) / 86400000);
+    if (days <= 30) return "red";
+    if (days <= 90) return "yellow";
+    return "green";
+  }
+  function renderCards(items) {
+    const track = $("cardsTrack");
+    track.innerHTML = "";
+    if (!items.length) {
+      track.innerHTML = '<div class="empty-state">Ничего не найдено. Попробуй изменить запрос.</div>';
+      return;
+    }
+    for (const uni of items) {
+      const name = getName(uni);
+      const city = getCity(uni);
+      const country = getCountry(uni);
+      const acceptance = uni.acceptanceRate || "Не подтверждён";
+      const deadline = uni.deadline?.value || "Не подтверждён";
+      const dot = deadlineClass(uni.deadline);
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "uni-card" + (selectedUniversity && getName(selectedUniversity).toLowerCase() === name.toLowerCase() ? " selected" : "");
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="country-pill">${escapeHtml(uni._flag || "🌍")} ${escapeHtml(country || "Страна уточняется")}</span>
+          <span class="deadline-dot ${dot}" title="Цвет отражает только подтверждённую дату"></span>
+        </div>
+        <h3>${escapeHtml(name)}</h3>
+        <div class="card-location">📍 ${escapeHtml(city || "Город уточняется")}</div>
+        <div class="card-stats">
+          <div class="stat"><small>Процент приёма</small><strong>${escapeHtml(acceptance)}</strong></div>
+          <div class="stat"><small>Дедлайн</small><strong>${escapeHtml(deadline)}</strong></div>
+        </div>
+        <div class="card-foot"><span>${escapeHtml(uni.applicationType || "Тип подачи уточняется")}</span><span>Открыть досье ↗</span></div>`;
+      card.addEventListener("click", () => openUniversity(uni));
+      track.appendChild(card);
+    }
+  }
 
-  results.forEach(r => {
-    if(r.status === "fulfilled"){
-      const { country, key, items } = r.value;
-      items.forEach(uni => {
-        if(uni && uni["Университет"] && String(uni["Университет"]).trim() !== ""){
-          uni._country = country;
-          uni._country_key = key;
-          uni._flag = FLAGS[country] || "🌍";
-          ALL_DATA.push(uni);
+  function fieldBox(label,value) {
+    const text = value === null || value === undefined || value === "" ? "Не удалось подтвердить" : String(value);
+    return `<div class="info-box"><small>${escapeHtml(label)}</small><strong class="${text === "Не удалось подтвердить" ? "unknown" : ""}">${escapeHtml(text)}</strong></div>`;
+  }
+  function listHtml(items) {
+    if (!Array.isArray(items) || !items.length) return '<p class="source-note">Пока нет подтверждённых сведений.</p>';
+    return `<ul class="plain-list">${items.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>`;
+  }
+
+  async function openUniversity(uni) {
+    selectedUniversity = uni;
+    renderCards(visibleUniversities);
+    $("emptyState").style.display = "none";
+    $("detailContent").innerHTML = '<div class="loading-panel">Проверяем сведения и источники…</div>';
+    $("detailShell").scrollIntoView({behavior:"smooth",block:"start"});
+    if (requestController) requestController.abort();
+    requestController = new AbortController();
+
+    try {
+      const response = await fetch(SEARCH_API + "/details", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        signal:requestController.signal,
+        body:JSON.stringify({
+          name:getName(uni), city:getCity(uni), country:getCountry(uni),
+          officialWebsite:uni["Сайт Университета"] || ""
+        })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || `Ошибка поиска (${response.status})`);
+      renderDetails(payload.university || {}, uni);
+    } catch (error) {
+      if (error.name === "AbortError") return;
+      $("detailContent").innerHTML = `<div class="loading-panel error-text">${escapeHtml(error.message)}<p class="source-note">Проверь, что Worker опубликован и адрес SEARCH_API указан верно.</p></div>`;
+    }
+  }
+
+  function renderDetails(data, fallback) {
+    const name = data.name || getName(fallback);
+    const city = data.city || getCity(fallback);
+    const country = data.country || getCountry(fallback);
+    const query = encodeURIComponent([name,city,country].filter(Boolean).join(" "));
+    const mapUrl = `https://www.google.com/maps?q=${query}&output=embed`;
+    const sources = Array.isArray(data.sources) ? data.sources : [];
+    const photos = Array.isArray(data.photos) ? data.photos.filter(safeUrl).slice(0,4) : [];
+    const sourceMarkup = sources.length ? sources.map((s,i) => {
+      const url = safeUrl(s.url);
+      return url ? `<a class="source-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">[${i+1}] ${escapeHtml(s.title || url)}</a>` : "";
+    }).join("") : '<span class="source-note">Источники не вернулись из поискового сервиса.</span>';
+    const fields = data.admissionRequirements || [];
+    const strengths = data.strongFields || [];
+    const highlights = data.highlights || [];
+    const deadline = data.deadline || {};
+    const deadlineStatus = deadline.value || "Не подтверждён";
+    const acceptance = data.acceptanceRate?.value || data.acceptanceRate || null;
+
+    $("detailContent").innerHTML = `
+      <article class="detail-card">
+        <header class="detail-head">
+          <div class="eyebrow">University dossier · ${escapeHtml(data.lastChecked || "Дата проверки неизвестна")}</div>
+          <h2>${escapeHtml(name)}</h2>
+          <div class="detail-location">📍 ${escapeHtml([city,country].filter(Boolean).join(", ") || "Местоположение уточняется")}</div>
+          <div class="detail-meta">
+            <span class="meta-chip">Приём: ${escapeHtml(acceptance || "нет подтверждённых данных")}</span>
+            <span class="meta-chip">Дедлайн: ${escapeHtml(deadlineStatus)}</span>
+            <span class="meta-chip">Подача: ${escapeHtml(data.applicationType || "уточняется")}</span>
+          </div>
+          <div class="detail-actions">
+            <button class="action-btn" id="saveUniBtn" type="button">☆ Сохранить в избранное</button>
+            ${safeUrl(data.officialWebsite) ? `<a class="action-btn" href="${escapeHtml(safeUrl(data.officialWebsite))}" target="_blank" rel="noopener">Официальный сайт ↗</a>` : ""}
+          </div>
+        </header>
+        <div class="detail-grid">
+          <div>
+            <section class="detail-section">
+              <h3>Поступление и требования</h3>
+              <div class="info-grid">
+                ${fieldBox("Процент приёма",acceptance)}
+                ${fieldBox("Тип подачи",data.applicationType)}
+                ${fieldBox("Основной дедлайн",deadlineStatus)}
+                ${fieldBox("Дата дедлайна (если год подтверждён)",deadline.date)}
+              </div>
+              <div style="margin-top:12px">${listHtml(fields)}</div>
+            </section>
+            <section class="detail-section">
+              <h3>Стоимость и финансовая помощь</h3>
+              <div class="info-grid">
+                ${fieldBox("Обучение",data.tuition)}
+                ${fieldBox("Средняя стоимость жизни",data.costOfLiving)}
+                ${fieldBox("Стипендии и financial aid",data.financialAid)}
+              </div>
+            </section>
+            <section class="detail-section">
+              <h3>Сильные направления</h3>
+              ${listHtml(strengths)}
+            </section>
+            <section class="detail-section">
+              <h3>Чем известен университет</h3>
+              <div class="highlights">${highlights.length ? highlights.map(x=>`<div class="highlight">${escapeHtml(x)}</div>`).join("") : '<p class="source-note">Пока нет подтверждённых фактов.</p>'}</div>
+            </section>
+          </div>
+          <aside>
+            <section class="detail-section">
+              <h3>Расположение</h3>
+              <iframe class="map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${mapUrl}" title="Карта университета"></iframe>
+            </section>
+            <section class="detail-section">
+              <h3>Фото кампуса</h3>
+              ${photos.length ? `<div class="photo-grid">${photos.map((url,i)=>`<img src="${escapeHtml(url)}" alt="Фото университета ${i+1}" loading="lazy" referrerpolicy="no-referrer">`).join("")}</div>` : '<p class="source-note">Поиск не вернул проверяемые изображения кампуса. Открой официальный сайт университета.</p>'}
+            </section>
+            <section class="detail-section">
+              <h3>Источники</h3>
+              <div class="sources">${sourceMarkup}</div>
+              <p class="source-note">Дата проверки: ${escapeHtml(data.lastChecked || "не указана")}. Сверяй важные требования на официальной странице программы.</p>
+            </section>
+          </aside>
+        </div>
+        <div class="disclaimer">${escapeHtml(data.disclaimer || "Сведения собраны автоматически из открытых источников. Условия зависят от программы, уровня обучения, гражданства и года поступления. Неподтверждённые сведения не следует считать официальными.")}</div>
+      </article>`;
+
+    const saveButton = $("saveUniBtn");
+    if (saveButton) {
+      const saved = !!window.EduAuth?.isSaved?.(name);
+      saveButton.textContent = saved ? "★ В избранном" : "☆ Сохранить в избранное";
+      saveButton.addEventListener("click", async () => {
+        if (!window.EduAuth?.isLoggedIn?.()) {
+          window.EduAuth?.showToast?.("Войди в аккаунт, чтобы сохранять университеты","info");
+          window.EduAuth?.openModal?.("register");
+          return;
+        }
+        const result = await window.EduAuth.toggleSave({name,country,city});
+        if (result?.ok) {
+          saveButton.textContent = result.added ? "★ В избранном" : "☆ Сохранить в избранное";
+          window.EduAuth.showToast(result.added ? "Университет сохранён" : "Университет удалён из избранного", "success");
+        } else {
+          window.EduAuth?.showToast?.(result?.error || "Не удалось сохранить","error");
         }
       });
     }
-  });
-
-  ALL_DATA.sort((a,b) => {
-    const ai = COUNTRY_FILES.findIndex(c => c.name === a._country);
-    const bi = COUNTRY_FILES.findIndex(c => c.name === b._country);
-    if(ai !== bi) return ai - bi;
-    return String(a["Университет"]).localeCompare(String(b["Университет"]));
-  });
-
-  if (window.EduAuth) {
-    try { 
-      await window.EduAuth.getSaved(); 
-    } catch(e) { 
-      console.log("Error fetching saved:", e); 
-    }
   }
 
-  buildCountryFilter();
-  renderSidebar();
-
-  document.body.classList.add("loaded");
-}
-
-function isFullGrant(uni){
-  const v = String(uni["Дают полный грант (обучение, проживание, перелет, питание) международным студентам?"] || "").trim().toLowerCase();
-  return v === "да" || v === "истина" || v === "true";
-}
-
-function buildCountryFilter(){
-  const sel = document.getElementById("filterCountry");
-  if(!sel) return;
-
-  const current = sel.value;
-  sel.innerHTML = "";
-
-  const allOpt = document.createElement("option");
-  allOpt.value = "";
-  allOpt.setAttribute("data-i18n", "catalog_country_all");
-  allOpt.textContent = t("catalog_country_all", "All countries");
-  sel.appendChild(allOpt);
-
-  COUNTRY_FILES.forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c.name;
-    opt.setAttribute("data-i18n", c.key);
-    opt.textContent = t(c.key, c.name);
-    sel.appendChild(opt);
-  });
-
-  sel.value = current || "";
-}
-
-function renderSidebar(){
-  const container = document.getElementById("countriesList");
-  container.innerHTML = "";
-  const filtered = applyFilters(ALL_DATA);
-
-  COUNTRY_FILES.forEach(c => {
-    let items = filtered.filter(u => u._country === c.name);
-    if(items.length === 0) return;
-
-    const div = document.createElement("div");
-    div.className = "country";
-
-    const header = document.createElement("button");
-    header.type = "button";
-    header.className = "country-header";
-    header.innerHTML = `<span>${FLAGS[c.name] || "🌍"} ${t(c.key, c.name)}<span class="country-count">${items.length}</span></span><span class="country-arrow">▾</span>`;
-    header.addEventListener("click", () => div.classList.toggle("open"));
-
-    const list = document.createElement("div");
-    list.className = "country-list";
-
-    items.forEach(uni => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "uni-item";
-      wrapper.dataset.name = uni["Университет"];
-      if(_currentUni && _currentUni["Университет"] === uni["Университет"]){
-        wrapper.classList.add("selected");
-      }
-
-      const city = uni["Город"] || "—";
-      const rate = uni["Процент Поступления"] || "—";
-      const deadline = uni["Дедлайн Основной Подачи"] || uni["Дедлайн Ранней Подачи"] || "—";
-      const isSaved = window.EduAuth ? window.EduAuth.isSaved(uni["Университет"]) : false;
-
-      wrapper.innerHTML = `
-        <div class="uni-item-main">
-          <span class="uni-name">${uni["Университет"]}</span>
-          <span class="uni-meta">
-            <span>📍 ${city}</span>
-            <span>🎯 ${rate}</span>
-            <span>📅 ${deadline}</span>
-          </span>
-        </div>
-        <button type="button" class="star-btn ${isSaved ? "active" : ""}" data-star="${escapeAttr(uni["Университет"])}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </button>
-      `;
-
-      wrapper.addEventListener("click", (e) => {
-        if(e.target.closest(".star-btn")) return;
-        selectUni(uni, wrapper);
+  async function smartSearch() {
+    const query = $("searchInput").value.trim();
+    if (query.length < 3) { setStatus("Введи не менее трёх символов.",true); return; }
+    setStatus("Ищем университеты и сопоставляем критерии…");
+    $("searchBtn").disabled = true;
+    try {
+      const response = await fetch(SEARCH_API + "/search", {
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({query,limit:12})
       });
-
-      list.appendChild(wrapper);
-    });
-
-    div.appendChild(header);
-    div.appendChild(list);
-    container.appendChild(div);
-  });
-}
-
-// Click on star
-document.addEventListener("click", async (e) => {
-  const starBtn = e.target.closest(".star-btn");
-  if(!starBtn) return;
-
-  e.stopPropagation();
-
-  const name = starBtn.dataset.star;
-  const uni = ALL_DATA.find(u => u["Университет"] === name);
-  if(!uni) return;
-
-  if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-    window.EduAuth.showToast(t("catalog_need_login", "Log in to save universities"), "info");
-    window.EduAuth.openModal("register");
-    return;
-  }
-
-  const result = await window.EduAuth.toggleSave({
-    name: uni["Университет"],
-    country: uni._country,
-    city: uni["Город"]
-  });
-
-  if(!result || !result.ok){
-    window.EduAuth.showToast((result && result.error) || "Error", "error");
-    return;
-  }
-
-  if(result.added){
-    starBtn.classList.add("active");
-    window.EduAuth.showToast(t("catalog_saved_ok", "University saved successfully"), "success");
-  } else if(result.removed){
-    starBtn.classList.remove("active");
-    window.EduAuth.showToast(t("catalog_saved_remove", "University removed from favorites"), "info");
-  }
-});
-
-// Select uni
-function selectUni(uni, wrapper){
-  _currentUni = uni;
-
-  document.querySelectorAll(".uni-item.selected").forEach(el => el.classList.remove("selected"));
-  if(wrapper) wrapper.classList.add("selected");
-
-  const content = document.getElementById("detailContent");
-  const empty = document.getElementById("detailEmpty");
-
-  if (window.innerWidth <= 1000) {
-    const detailPanel = document.getElementById("detail");
-    if (detailPanel) {
-      detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || `Ошибка поиска (${response.status})`);
+      const candidates = (payload.candidates || []).map(x=>({
+        name:x.name,city:x.city,country:x.country,acceptanceRate:null,
+        deadline:null,applicationType:null,_flag:"🌐",_searchCandidate:true
+      }));
+      visibleUniversities = candidates;
+      $("cardsHeading").textContent = "Результаты умного поиска";
+      $("cardsSubheading").textContent = "Открой карточку, чтобы получить досье с источниками.";
+      renderCards(candidates);
+      setStatus(`Найдено вариантов: ${candidates.length}. Источники: ${payload.sourcesCount || 0}.`);
+    } catch (error) {
+      setStatus(error.message,true);
+    } finally {
+      $("searchBtn").disabled = false;
     }
   }
 
-  if(content.classList.contains("active")){
-    content.style.transition = "opacity .2s ease";
-    content.style.opacity = "0";
-    setTimeout(() => {
-      content.classList.remove("active");
-      renderDetail(uni);
-    }, 180);
-  } else {
-    empty.style.opacity = "0";
-    setTimeout(() => {
-      empty.style.display = "none";
-      renderDetail(uni);
-    }, 200);
+  function setMode(mode) {
+    selectedMode = mode;
+    document.querySelectorAll(".mode-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.mode===mode));
+    $("searchHint").textContent = mode === "name"
+      ? "Введи название университета, города или страны. Список ниже отфильтруется по мере ввода."
+      : "Опиши желаемое направление, страны, бюджет, язык обучения, стипендию и другие критерии.";
+    $("searchInput").placeholder = mode === "name"
+      ? "Например: University of Oxford"
+      : "Например: Computer Science в Европе, бюджет до 12 000 USD, нужна стипендия";
+    $("searchBtn").textContent = mode === "name" ? "Найти университет" : "Подобрать варианты";
+    $("cardsHeading").textContent = mode === "name" ? "Университеты для изучения" : "Результаты поиска";
   }
-}
 
-function renderDetail(uni){
-  const content = document.getElementById("detailContent");
-  content.classList.add("active");
+  document.querySelectorAll(".mode-btn").forEach(btn=>btn.addEventListener("click",()=>setMode(btn.dataset.mode)));
+  $("searchBtn").addEventListener("click",()=>selectedMode==="name" ? filterByName() : smartSearch());
+  $("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter") $("searchBtn").click();});
+  $("searchInput").addEventListener("input",()=>{if(selectedMode==="name") filterByName();});
 
-  const g = (k) => {
-    const v = uni[k];
-    if(v === undefined || v === null || String(v).trim() === "" || String(v).trim().toLowerCase() === "n/a") return null;
-    return v;
-  };
-
-  const row = (label, value) => {
-    const val = value ? String(value) : t("uni_value_not_specified", "not specified");
-    const cls = value ? "" : " empty";
-    return `<div class="info-card"><div class="info-label">${label}</div><div class="info-value${cls}">${val}</div></div>`;
-  };
-
-  const title = g("Университет") || "—";
-  const countryKey = uni._country_key || "";
-  const country = countryKey ? t(countryKey, uni._country) : (g("Страна") || uni._country || "");
-  const city = g("Город");
-  const grantBadge = isFullGrant(uni)
-    ? `<div class="grant-badge">${t("uni_full_grant_badge", "✨ Full scholarship")}</div>`
-    : "";
-
-  const saved = window.EduAuth ? window.EduAuth.isSaved(title) : false;
-
-  content.innerHTML = `
-    <h1 class="uni-title">${title}</h1>
-    <div class="uni-location">📍 ${country}${city ? " · " + city : ""}</div>
-    ${grantBadge}
-
-    <h3 class="section-title">${t("uni_section_finance", "Finance")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_tuition", "Tuition"), g("Стоимость обучения (USD/год)"))}
-      ${row(t("uni_field_admission", "Admission rate"), g("Процент Поступления"))}
-      ${row(t("uni_field_aid", "Financial aid"), g("Максимальная Финансовая помощь (USD)"))}
-      ${row(t("uni_field_grant", "Full scholarship"), isFullGrant(uni) ? t("uni_value_yes", "YES") : t("uni_value_no", "no"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_deadlines", "Deadlines")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_early_deadline", "Early deadline"), g("Дедлайн Ранней Подачи"))}
-      ${row(t("uni_field_main_deadline", "Regular deadline"), g("Дедлайн Основной Подачи"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_requirements", "Requirements")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_toefl", "TOEFL / IELTS"), g("TOEFL/IELTS"))}
-      ${row(t("uni_field_sat", "SAT"), g("SAT"))}
-      ${row(t("uni_field_essay", "Essay"), g("Эссе"))}
-      ${row(t("uni_field_recs", "Recommendation letters"), g("Рекомендательные Письма"))}
-      ${row(t("uni_field_app_fee", "Application fee"), g("Стоимость Заявки"))}
-      ${row(t("uni_field_apply_link", "Application link"), g("Ссылка на заполнение заявки"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_ratings", "Rankings")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_rank_country", "Country rank"), g("Рейтинг по Стране"))}
-      ${row(t("uni_field_rank_world", "World rank"), g("Рейтинг в Мире"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_majors", "Majors")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_majors", "Majors"), g("Профессии"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_extra", "Additional")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_comments", "Comments"), g("Дополнительные Комментарии"))}
-    </div>
-
-    <div class="action-buttons">
-      <button class="btn-main ${saved ? "secondary" : "primary"}" id="detailStarBtn">
-        ⭐ ${saved ? t("catalog_saved_btn", "Saved") : t("catalog_save_btn", "Save to favorites")}
-      </button>
-      ${uni["Сайт Университета"] ? `<a href="${uni["Сайт Университета"]}" target="_blank" rel="noopener" class="btn-main primary">${t("uni_open_site", "🌐 Official website")}</a>` : ""}
-      ${uni["Ссылка на заполнение заявки"] && String(uni["Ссылка на заполнение заявки"]).startsWith("http") ? `<a href="${uni["Ссылка на заполнение заявки"]}" target="_blank" rel="noopener" class="btn-main secondary">${t("uni_apply", "📝 Apply")}</a>` : ""}
-      ${uni["Сайт Финансовой Помощи"] && String(uni["Сайт Финансовой Помощи"]).startsWith("http") ? `<a href="${uni["Сайт Финансовой Помощи"]}" target="_blank" rel="noopener" class="btn-main ghost">${t("uni_aid_link", "💰 Financial aid")}</a>` : ""}
-    </div>
-  `;
-
-  const detailBtn = document.getElementById("detailStarBtn");
-  if(detailBtn){
-    detailBtn.addEventListener("click", async () => {
-      if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-        window.EduAuth.showToast(t("catalog_need_login", "Log in to save universities"), "info");
-        window.EduAuth.openModal("register");
-        return;
-      }
-      const result = await window.EduAuth.toggleSave({
-        name: title,
-        country: uni._country,
-        city: city
-      });
-      if(!result || !result.ok){
-        window.EduAuth.showToast((result && result.error) || "Error", "error");
-        return;
-      }
-      renderDetail(uni);
-      renderSidebar();
-      if(result.added){
-        window.EduAuth.showToast(t("catalog_saved_ok", "University saved successfully"), "success");
-      } else if(result.removed){
-        window.EduAuth.showToast(t("catalog_saved_remove", "University removed from favorites"), "info");
-      }
-    });
+  function filterByName() {
+    const q = $("searchInput").value.trim().toLowerCase();
+    visibleUniversities = !q ? allUniversities.slice(0,50) : allUniversities.filter(u =>
+      [getName(u),getCity(u),getCountry(u)].join(" ").toLowerCase().includes(q)
+    ).slice(0,50);
+    $("cardsHeading").textContent = q ? "Совпадения в каталоге" : "Университеты для изучения";
+    $("cardsSubheading").textContent = "Карточки открывают единое подробное досье.";
+    renderCards(visibleUniversities);
+    if (q) setStatus(`Совпадений в текущем каталоге: ${visibleUniversities.length}.`);
+    else setStatus("");
   }
-}
 
-const filters = {
-  budgetMin: null,
-  budgetMax: null,
-  country: "",
-  fullGrant: false
-};
-
-function parsePrice(str){
-  if(!str) return null;
-  const s = String(str).trim().toLowerCase();
-  if(s.includes("бесплат") || s.includes("free")) return 0;
-  const matches = s.match(/\d[\d\s,\.]*/g);
-  if(!matches || matches.length === 0) return null;
-  const numbers = matches.map(m => {
-    const clean = m.replace(/[\s,\.]/g, "");
-    return parseInt(clean, 10);
-  }).filter(n => !isNaN(n) && n > 0);
-  if(numbers.length === 0) return null;
-  if(numbers.length >= 2) return Math.round((numbers[0] + numbers[1]) / 2);
-  return numbers[0];
-}
-
-function applyFilters(items){
-  return items.filter(uni => {
-    if(filters.country && uni._country !== filters.country) return false;
-    if(filters.fullGrant && !isFullGrant(uni)) return false;
-    if(filters.budgetMin !== null || filters.budgetMax !== null){
-      const price = parsePrice(uni["Стоимость обучения (USD/год)"]);
-      if(price === null) return false;
-      if(filters.budgetMin !== null && price < filters.budgetMin) return false;
-      if(filters.budgetMax !== null && price > filters.budgetMax) return false;
-    }
-    return true;
+  window.addEventListener("edupath-lang-change",()=>{
+    document.querySelectorAll(".lang-option").forEach(b=>b.classList.toggle("active",b.dataset.lang===(window.I18N?.getLang?.()||"ru")));
   });
-}
 
-function updateFiltersBadge(){
-  let count = 0;
-  if(filters.budgetMin !== null) count++;
-  if(filters.budgetMax !== null) count++;
-  if(filters.country) count++;
-  if(filters.fullGrant) count++;
-
-  const badge = document.getElementById("filtersBadge");
-  const btn = document.getElementById("filtersToggle");
-
-  if(count > 0){
-    badge.style.display = "inline-flex";
-    badge.textContent = count;
-    btn.classList.add("active");
-  } else {
-    badge.style.display = "none";
-    btn.classList.remove("active");
-  }
-}
-
-document.getElementById("filtersToggle").addEventListener("click", () => {
-  document.getElementById("filtersPanel").classList.toggle("open");
-});
-
-document.getElementById("filterApply").addEventListener("click", () => {
-  const minVal = document.getElementById("filterBudgetMin").value;
-  const maxVal = document.getElementById("filterBudgetMax").value;
-
-  filters.budgetMin = minVal !== "" ? parseInt(minVal, 10) : null;
-  filters.budgetMax = maxVal !== "" ? parseInt(maxVal, 10) : null;
-  filters.country = document.getElementById("filterCountry").value;
-  filters.fullGrant = document.getElementById("filterFullGrant").checked;
-
-  updateFiltersBadge();
-  renderSidebar();
-  document.getElementById("filtersPanel").classList.remove("open");
-});
-
-document.getElementById("filterReset").addEventListener("click", () => {
-  document.getElementById("filterBudgetMin").value = "";
-  document.getElementById("filterBudgetMax").value = "";
-  document.getElementById("filterCountry").value = "";
-  document.getElementById("filterFullGrant").checked = false;
-
-  filters.budgetMin = null;
-  filters.budgetMax = null;
-  filters.country = "";
-  filters.fullGrant = false;
-
-  updateFiltersBadge();
-  renderSidebar();
-});
-
-// Search
-const searchBtn = document.getElementById("searchBtn");
-const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
-
-searchBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  searchInput.classList.toggle("open");
-  if(searchInput.classList.contains("open")) searchInput.focus();
-  else searchResults.classList.remove("open");
-});
-
-searchInput.addEventListener("input", () => {
-  const q = searchInput.value.trim().toLowerCase();
-  if(q.length < 2){ searchResults.classList.remove("open"); return; }
-  const found = ALL_DATA.filter(u => {
-    const name = String(u["Университет"] || "").toLowerCase();
-    const city = String(u["Город"] || "").toLowerCase();
-    const country = String(u._country || "").toLowerCase();
-    return name.includes(q) || city.includes(q) || country.includes(q);
-  }).slice(0, 12);
-  if(found.length === 0){
-    searchResults.innerHTML = `<div class="search-empty">${t("catalog_search_empty", "Sorry, we're still working on adding this university")}</div>`;
-  } else {
-    searchResults.innerHTML = found.map(u => `
-      <button class="search-result" data-name="${escapeAttr(u["Университет"])}">
-        ${u["Университет"]}
-        <small>${u._flag} ${t(u._country_key, u._country)} · ${u["Город"] || ""}</small>
-      </button>
-    `).join("");
-  }
-  searchResults.classList.add("open");
-});
-
-searchResults.addEventListener("click", (e) => {
-  const btn = e.target.closest(".search-result");
-  if(!btn) return;
-  const name = btn.dataset.name;
-  const uni = ALL_DATA.find(u => u["Университет"] === name);
-  if(uni){
-    const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === name);
-    if(itemEl){
-      itemEl.closest(".country").classList.add("open");
-      selectUni(uni, itemEl);
-      setTimeout(() => itemEl.scrollIntoView({ behavior:"smooth", block:"center" }), 250);
-    } else {
-      selectUni(uni, null);
-    }
-  }
-  searchInput.value = "";
-  searchResults.classList.remove("open");
-  searchInput.classList.remove("open");
-});
-
-document.addEventListener("click", () => {
-  searchResults.classList.remove("open");
-  searchInput.classList.remove("open");
-});
-searchInput.addEventListener("click", (e) => e.stopPropagation());
-searchResults.addEventListener("click", (e) => e.stopPropagation());
-
-// Language switch
-window.addEventListener("edupath-lang-change", () => {
-  buildCountryFilter();
-  renderSidebar();
-  if(_currentUni){
-    renderDetail(_currentUni);
-  }
-  if(window.I18N && window.I18N.applyAll){
-    window.I18N.applyAll();
-  }
-});
-
-// Start
-loadAll().then(() => {
-  const params = new URLSearchParams(window.location.search);
-  const uniName = params.get("uni");
-  if(!uniName) return;
-
-  const uni = ALL_DATA.find(u => u["Университет"] === uniName);
-  if(!uni) return;
-
-  const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === uniName);
-  if(itemEl){
-    itemEl.closest(".country").classList.add("open");
-    selectUni(uni, itemEl);
-    setTimeout(() => itemEl.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
-  } else {
-    selectUni(uni, null);
-  }
-});
+  loadCatalog().catch(error=>setStatus("Ошибка загрузки каталога: "+error.message,true));
+})();
 </script>
-<script src="i18n.js"></script>
-<script src="auth.js"></script>
-</body>
-</html><!DOCTYPE html>
-<html lang="ru">
-<head>
-<script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduPath — Universities</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
-    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
-    --caramel:#C79256; --sand:#D9BD93;
-    --text-main:#2B1B10; --text-muted:#7A6552;
-    --line:rgba(43,27,16,0.14);
-    --ease:cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  body{ font-family:'Work Sans',sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; overflow:hidden; }
-  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
-  a{ text-decoration:none; color:inherit; }
-  button{ font-family:inherit; cursor:pointer; border:none; background:none; }
-
-  /* ======= ANIMATIONS ======= */
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes softFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
-  @keyframes starPop{ 0% { transform:scale(0.6) rotate(0deg); } 40% { transform:scale(1.4) rotate(180deg); } 70% { transform:scale(0.95) rotate(320deg); } 100% { transform:scale(1) rotate(360deg); } }
-  @keyframes pulse { 0%,80%,100%{ opacity:0.3; transform:scale(0.8);} 40%{ opacity:1; transform:scale(1.1);} }
-
-  /* Общий контейнер для загрузки на весь экран */
-  .global-loading {
-    position: fixed;
-    top: 84px; left: 0; right: 0; bottom: 0;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 900;
-    transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease);
-  }
-  body.loaded .global-loading {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  /* Текст загрузки как в профиле */
-  .loading { text-align:center; color:var(--text-muted); font-size:15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .loading-dots{ display:inline-flex; gap:6px; vertical-align:middle; }
-  .loading-dot{ width:8px; height:8px; border-radius:50%; background:var(--clay); animation:pulse 1.4s ease-in-out infinite; }
-  .loading-dot:nth-child(2){ animation-delay: 0.2s; }
-  .loading-dot:nth-child(3){ animation-delay: 0.4s; }
-
-  /* Скрываем контент до загрузки */
-  .layout { opacity: 0; transition: opacity 0.4s var(--ease); }
-  body.loaded .layout { opacity: 1; }
-
-  header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1400px; margin:0 auto; padding:0 32px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces',serif; font-weight:600; font-size:26px; color:var(--espresso); transition:transform .3s var(--ease); }
-  .logo:hover{ transform: scale(1.02); }
-  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
-  .logo:hover svg{ transform: rotate(90deg); }
-  
-  .nav-links{ display:flex; align-items:center; gap:8px; }
-  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .25s var(--ease), color .25s var(--ease); }
-  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
-  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
-  .nav-right{ display:flex; align-items:center; gap:14px; position:relative; }
-  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .25s var(--ease), transform .25s var(--ease); }
-  .btn-login:hover{ background:var(--bark); transform: translateY(-1px); }
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .2s var(--ease), color .2s var(--ease); }
-  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
-
-  .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
-  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; transition:background .15s; }
-  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
-  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
-
-  /* Search drop */
-  .search-input{ display:block; position:absolute; top:48px; right:0; width:340px; padding:14px 18px; background:var(--paper); border:1px solid var(--line); border-radius:12px; font-size:15px; font-family:inherit; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); z-index:200; opacity:0; visibility:hidden; transform:translateY(-8px) scale(0.98); transition:opacity .25s var(--ease), transform .25s cubic-bezier(0.34, 1.56, 0.64, 1), visibility .25s; }
-  .search-input.open{ opacity:1; visibility:visible; transform:translateY(0) scale(1); }
-  .search-results{ display:block; position:absolute; top:104px; right:0; width:340px; max-height:340px; overflow-y:auto; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); z-index:199; opacity:0; visibility:hidden; transform:translateY(-8px); transition:opacity .25s var(--ease), transform .25s var(--ease), visibility .25s; }
-  .search-results.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .search-result{ display:block; width:100%; text-align:left; padding:10px 14px; border-radius:8px; font-size:14px; cursor:pointer; transition:background .2s var(--ease), padding-left .2s var(--ease); }
-  .search-result:hover{ background:var(--cream-deep); padding-left: 18px; }
-  .search-result small{ color:var(--text-muted); display:block; font-size:12px; }
-  .search-empty{ padding:14px; font-size:14px; color:var(--text-muted); text-align:center; }
-
-  /* Layout */
-  .layout{ display:grid; grid-template-columns:420px 1fr; gap:0; max-width:1400px; margin:0 auto; height:calc(100vh - 84px); }
-  
-  .sidebar{ background:var(--paper); border-right:1px solid var(--line); padding:32px 24px; overflow-y:auto; height:100%; }
-  .sidebar h2{ font-size:24px; margin-bottom:6px; }
-  .sidebar .subtitle{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
-
-  .filters-wrap{ position:relative; margin-bottom:18px; }
-  .filters-btn{ display:flex; align-items:center; justify-content:space-between; width:100%; padding:12px 16px; background:var(--cream); border:1px solid transparent; border-radius:10px; font-size:14px; font-weight:500; color:var(--espresso); transition:background .25s var(--ease), border-color .25s var(--ease); }
-  .filters-btn:hover{ background:var(--cream-deep); }
-  .filters-btn.active{ border-color:var(--clay); background:var(--paper); }
-  .filters-btn-left{ display:flex; align-items:center; gap:8px; }
-  .filters-btn-badge{ display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; background:var(--clay); color:var(--paper); border-radius:10px; font-size:11px; font-weight:600; }
-  .filters-btn-arrow{ font-size:11px; color:var(--text-muted); transition:transform .3s var(--ease); }
-  .filters-btn.active .filters-btn-arrow{ transform:rotate(180deg); }
-
-  .filters-panel{ max-height:0; overflow:hidden; opacity:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; margin-top:8px; transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .4s var(--ease), margin-top .3s var(--ease); }
-  .filters-panel.open{ max-height:600px; opacity:1; padding:18px; }
-  .filter-group{ margin-bottom:16px; }
-  .filter-group:last-of-type{ margin-bottom:0; }
-  .filter-group label{ display:block; font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; font-weight:600; }
-  .filter-row{ display:flex; gap:8px; align-items:center; }
-  .filter-row input{ flex:1; min-width:0; padding:10px 12px; font-family:inherit; font-size:14px; background:var(--cream); color:var(--text-main); border:1.5px solid var(--line); border-radius:8px; }
-  .filter-row input:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
-  .filter-row span{ color:var(--text-muted); font-size:13px; }
-  .filter-select{ width:100%; padding:10px 12px; font-family:inherit; font-size:14px; background:var(--cream); color:var(--text-main); border:1.5px solid var(--line); border-radius:8px; cursor:pointer; }
-  .filter-select:focus{ outline:none; border-color:var(--clay); background:var(--paper); }
-  .filter-check{ display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--cream); border-radius:8px; font-size:14px; cursor:pointer; transition:background .2s var(--ease); }
-  .filter-check:hover{ background:var(--cream-deep); }
-  .filter-check input{ accent-color:var(--clay); width:16px; height:16px; cursor:pointer; }
-  .filter-actions{ display:flex; gap:10px; margin-top:16px; padding-top:16px; border-top:1px solid var(--line); }
-  .filter-btn-apply{ flex:1; padding:11px 16px; background:var(--espresso); color:var(--paper); border-radius:8px; font-size:14px; font-weight:600; transition:background .2s var(--ease); }
-  .filter-btn-apply:hover{ background:var(--bark); }
-  .filter-btn-reset{ padding:11px 16px; background:var(--cream-deep); color:var(--espresso); border-radius:8px; font-size:14px; font-weight:500; transition:background .2s var(--ease); }
-  .filter-btn-reset:hover{ background:var(--sand); }
-
-  /* Country lists */
-  .country{ border-bottom:1px solid var(--line); overflow:hidden; }
-  .country:last-child{ border-bottom:none; }
-  .country-header{ display:flex; align-items:center; justify-content:space-between; width:100%; text-align:left; padding:16px 4px; font-size:16px; font-weight:600; color:var(--espresso); transition:color .25s var(--ease), padding-left .25s var(--ease); }
-  .country-header:hover{ color:var(--clay); padding-left:10px; }
-  .country-arrow{ font-size:12px; color:var(--text-muted); transition:transform .4s var(--ease); }
-  .country.open .country-arrow{ transform:rotate(180deg); }
-  .country-count{ font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px; }
-  
-  .country-list{ display:block; max-height:0; overflow:hidden; opacity:0; transition:max-height .4s var(--ease), opacity .3s var(--ease), padding .3s var(--ease); }
-  .country.open .country-list{ max-height:6000px; opacity:1; padding:0 0 12px 0; }
-
-  .uni-item{ display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:12px 14px; margin-bottom:6px; border-radius:10px; background:var(--cream); border:1px solid transparent; cursor:pointer; opacity:0; transform:translateY(6px); animation:fadeInUp .45s var(--ease) forwards; transition:background .25s var(--ease), transform .25s var(--ease), border-color .25s var(--ease); }
-  .country.open .uni-item{ animation-play-state:running; }
-  .uni-item:hover{ background:var(--cream-deep); transform:translateX(4px); }
-  .uni-item.selected{ background:var(--espresso); color:var(--paper); border-color:var(--espresso); }
-  .uni-item.selected:hover{ transform: translateX(0); }
-  .uni-item.selected .uni-meta{ color:var(--sand); }
-  .uni-item-main{ flex:1; min-width:0; }
-  .uni-name{ font-weight:600; font-size:14px; margin-bottom:4px; display:block; }
-  .uni-meta{ font-size:12px; color:var(--text-muted); display:flex; gap:10px; flex-wrap:wrap; transition:color .25s var(--ease); }
-
-  .star-btn{ flex-shrink:0; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; color:var(--text-muted); transition:color .2s var(--ease), background .2s var(--ease); position:relative; }
-  .star-btn:hover{ background:rgba(43,27,16,0.06); color:var(--clay); transform: scale(1.1); }
-  .uni-item.selected .star-btn{ color:var(--sand); }
-  .star-btn svg{ width:20px; height:20px; transition:transform .5s var(--ease), fill .3s var(--ease), stroke .3s var(--ease); }
-  .star-btn.active svg{ fill:url(#starGradient); stroke:url(#starGradient); animation:starPop .6s var(--ease); }
-
-  .country.open .uni-item:nth-child(1){ animation-delay:0.04s; }
-  .country.open .uni-item:nth-child(2){ animation-delay:0.08s; }
-  .country.open .uni-item:nth-child(3){ animation-delay:0.12s; }
-  .country.open .uni-item:nth-child(4){ animation-delay:0.16s; }
-  .country.open .uni-item:nth-child(5){ animation-delay:0.20s; }
-  .country.open .uni-item:nth-child(n+6){ animation-delay:0.24s; }
-
-  /* Detail panel */
-  .detail{ padding:40px 48px; overflow-y:auto; height:100%; }
-  .detail-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh; color:var(--text-muted); text-align:center; transition: opacity .3s; }
-  .detail-empty svg{ width:80px; height:80px; margin-bottom:20px; opacity:0.4; animation:softFloat 4s ease-in-out infinite; }
-  .detail-empty h2{ font-size:24px; color:var(--text-main); margin-bottom:10px; }
-  .detail-empty p{ font-size:15px; max-width:400px; }
-  
-  .detail-content{ display:none; opacity:0; }
-  .detail-content.active{ display:block; animation:fadeUp .5s var(--ease) forwards; }
-
-  .uni-title{ font-size:38px; line-height:1.15; margin-bottom:10px; color:var(--espresso); }
-  .uni-location{ font-size:16px; color:var(--text-muted); margin-bottom:8px; }
-  .grant-badge{ display:inline-flex; align-items:center; gap:6px; background:var(--caramel); color:var(--espresso); padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; margin-bottom:24px; }
-
-  .info-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; margin-bottom:20px; }
-  .info-card{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:20px; transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease); opacity:0; transform:translateY(8px); animation:fadeInUp .5s var(--ease) forwards; }
-  .info-card:hover{ transform:translateY(-3px); box-shadow:0 12px 24px -14px rgba(43,27,16,0.25); border-color:var(--sand); }
-  
-  .info-grid .info-card:nth-child(1){ animation-delay:0.05s; }
-  .info-grid .info-card:nth-child(2){ animation-delay:0.10s; }
-  .info-grid .info-card:nth-child(3){ animation-delay:0.15s; }
-  .info-grid .info-card:nth-child(4){ animation-delay:0.20s; }
-  .info-grid .info-card:nth-child(5){ animation-delay:0.25s; }
-  .info-grid .info-card:nth-child(6){ animation-delay:0.30s; }
-
-  .info-label{ font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; font-weight:600; }
-  .info-value{ font-size:15px; color:var(--text-main); line-height:1.5; }
-  .info-value.empty{ color:var(--text-muted); font-style:italic; }
-  .section-title{ font-size:22px; margin-bottom:16px; margin-top:32px; color:var(--espresso); }
-
-  .action-buttons{ display:flex; flex-wrap:wrap; gap:12px; margin-top:32px; padding-top:32px; border-top:1px solid var(--line); }
-  .btn-main{ display:inline-flex; align-items:center; gap:10px; padding:15px 26px; border-radius:10px; font-size:14px; font-weight:600; transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease); }
-  .btn-main.primary{ background:var(--espresso); color:var(--paper); }
-  .btn-main.primary:hover{ background:var(--bark); transform:translateY(-2px); box-shadow:0 10px 20px -10px rgba(43,27,16,0.5); }
-  .btn-main.secondary{ background:var(--clay); color:var(--paper); }
-  .btn-main.secondary:hover{ background:var(--bark); transform:translateY(-2px); box-shadow:0 10px 20px -10px rgba(140,90,52,0.5); }
-  .btn-main.ghost{ background:var(--cream-deep); color:var(--espresso); }
-  .btn-main.ghost:hover{ background:var(--sand); transform:translateY(-2px); }
-
-  @media (max-width:1000px){
-    body { overflow: auto !important; }
-    .global-loading { top: 72px; }
-    .layout{ display:block; height:auto; overflow:visible; }
-    .sidebar{ height:auto; overflow:visible; border-right:none; border-bottom:1px solid var(--line); }
-    .detail{ padding:32px 24px; height:auto; overflow:visible; }
-    .uni-title{ font-size:30px; }
-    .info-grid{ grid-template-columns:1fr; }
-    .detail-empty { height: 50vh; }
-  }
-  @media (max-width:900px){
-    .nav-links{ display:none !important; }
-  }
-  @media (max-width:600px){
-    nav.wrap{ height:72px; padding:0 18px; }
-    .logo{ font-size:21px; gap:9px; }
-    .logo svg{ width:30px; height:30px; }
-    .search-input, .search-results{ width:calc(100vw - 36px); right:-10px; }
-  }
-</style>
-</head>
-<body>
-
-<!-- Глобальная загрузка по центру всего экрана -->
-<div class="global-loading" id="globalLoading">
-  <div class="loading">
-    <span data-i18n="catalog_loading">Загрузка списка</span>
-    <span class="loading-dots">
-      <span class="loading-dot"></span>
-      <span class="loading-dot"></span>
-      <span class="loading-dot"></span>
-    </span>
-  </div>
-</div>
-
-<svg style="position:absolute; width:0; height:0;" aria-hidden="true">
-  <defs>
-    <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFD700" />
-      <stop offset="100%" stop-color="#E63946" />
-    </linearGradient>
-  </defs>
-</svg>
-
-<header>
-  <nav class="wrap">
-    <a href="index.html" class="logo">
-      <svg viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
-        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
-        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
-      </svg>
-      EduPath
-    </a>
-    <div class="nav-links">
-      <a href="index.html" data-i18n="nav_home">Главная</a>
-      <a href="universities.html" class="active" data-i18n="nav_universities">Университеты</a>
-      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
-      <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
-      <a href="team.html" data-i18n="nav_team">О нашей команде</a>
-    </div>
-    <div class="nav-right">
-      <div class="lang-dropdown">
-        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
-        </button>
-        <div class="lang-menu" id="langMenu" role="menu">
-          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
-          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
-          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
-          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
-          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
-        </div>
-      </div>
-      <button type="button" class="icon-btn" id="searchBtn" aria-label="Поиск">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      </button>
-      <input type="text" class="search-input" id="searchInput" data-i18n-placeholder="catalog_search_placeholder" placeholder="Find a university...">
-      <div class="search-results" id="searchResults"></div>
-    </div>
-  </nav>
-</header>
-
-<div class="layout">
-  <aside class="sidebar">
-    <h2 data-i18n="catalog_title">Universities</h2>
-    <p class="subtitle" data-i18n="catalog_sub">Pick a country and university</p>
-    <div class="filters-wrap">
-      <button type="button" class="filters-btn" id="filtersToggle">
-        <span class="filters-btn-left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
-          <span data-i18n="catalog_filters">Filters</span>
-          <span class="filters-btn-badge" id="filtersBadge" style="display:none;">0</span>
-        </span>
-        <span class="filters-btn-arrow">▾</span>
-      </button>
-
-      <div class="filters-panel" id="filtersPanel">
-        <div class="filter-group">
-          <label data-i18n="catalog_budget_label">Tuition budget (USD/year)</label>
-          <div class="filter-row">
-            <input type="number" id="filterBudgetMin" data-i18n-placeholder="catalog_budget_from" placeholder="from" min="0">
-            <span>—</span>
-            <input type="number" id="filterBudgetMax" data-i18n-placeholder="catalog_budget_to" placeholder="to" min="0">
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label data-i18n="catalog_country_label">Country</label>
-          <select class="filter-select" id="filterCountry">
-            <option value="" data-i18n="catalog_country_all">All countries</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label data-i18n="catalog_grant_label">Financial aid</label>
-          <label class="filter-check">
-            <input type="checkbox" id="filterFullGrant">
-            <span data-i18n="catalog_grant_only">Only with full scholarship</span>
-          </label>
-        </div>
-
-        <div class="filter-actions">
-          <button type="button" class="filter-btn-reset" id="filterReset" data-i18n="catalog_reset">Reset</button>
-          <button type="button" class="filter-btn-apply" id="filterApply" data-i18n="catalog_apply">Apply</button>
-        </div>
-      </div>
-    </div>
-    <div id="countriesList"></div>
-  </aside>
-
-  <main class="detail" id="detail">
-    <div class="detail-empty" id="detailEmpty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-        <path d="M12 4L3 8l9 4 9-4-9-4z"/>
-        <path d="M6 10v6c0 1.5 2.7 3 6 3s6-1.5 6-3v-6"/>
-      </svg>
-      <h2 data-i18n="catalog_choose_uni">Pick a university</h2>
-      <p data-i18n="catalog_choose_hint">Click on a country on the left, then a university to see details.</p>
-    </div>
-    <div class="detail-content" id="detailContent"></div>
-  </main>
-</div>
-
-<script>
-// ============================================================
-// EduPath — каталог университетов
-// ============================================================
-
-const COUNTRY_FILES = [
-  { file: "Australia.json",      name: "Australia",       key: "country_australia" },
-  { file: "Austria.json",        name: "Austria",         key: "country_austria" },
-  { file: "Belgium.json",        name: "Belgium",         key: "country_belgium" },
-  { file: "Canada.json",         name: "Canada",          key: "country_canada" },
-  { file: "China.json",          name: "China",           key: "country_china" },
-  { file: "Czech Republic.json", name: "Czech Republic",  key: "country_czech" },
-  { file: "Denmark.json",        name: "Denmark",         key: "country_denmark" },
-  { file: "Finland.json",        name: "Finland",         key: "country_finland" },
-  { file: "Germany.json",        name: "Germany",         key: "country_germany" },
-  { file: "Hong Kong.json",      name: "Hong Kong",       key: "country_hongkong" },
-  { file: "Hungary.json",        name: "Hungary",         key: "country_hungary" },
-  { file: "Italy.json",          name: "Italy",           key: "country_italy" },
-  { file: "Japan.json",          name: "Japan",           key: "country_japan" },
-  { file: "Latvia.json",         name: "Latvia",          key: "country_latvia" },
-  { file: "Netherlands.json",    name: "Netherlands",     key: "country_netherlands" },
-  { file: "Poland.json",         name: "Poland",          key: "country_poland" },
-  { file: "Qatar.json",          name: "Qatar",           key: "country_qatar" },
-  { file: "Singapore.json",      name: "Singapore",       key: "country_singapore" },
-  { file: "South Korea.json",    name: "South Korea",     key: "country_southkorea" },
-  { file: "Spain.json",          name: "Spain",           key: "country_spain" },
-  { file: "Sweden.json",         name: "Sweden",          key: "country_sweden" },
-  { file: "Switzerland.json",    name: "Switzerland",     key: "country_switzerland" },
-  { file: "Turkey.json",         name: "Turkey",          key: "country_turkey" },
-  { file: "UAE.json",            name: "UAE",             key: "country_uae" },
-  { file: "UK.json",             name: "United Kingdom",  key: "country_uk" },
-  { file: "USA.json",            name: "USA",             key: "country_usa" }
-];
-
-const FLAGS = {
-  "Australia":"🇦🇺","Austria":"🇦🇹","Belgium":"🇧🇪","Canada":"🇨🇦","China":"🇨🇳",
-  "Czech Republic":"🇨🇿","Denmark":"🇩🇰","Finland":"🇫🇮","Germany":"🇩🇪","Hong Kong":"🇭🇰",
-  "Hungary":"🇭🇺","Italy":"🇮🇹","Japan":"🇯🇵","Latvia":"🇱🇻","Netherlands":"🇳🇱",
-  "Poland":"🇵🇱","Qatar":"🇶🇦","Singapore":"🇸🇬","South Korea":"🇰🇷","Spain":"🇪🇸",
-  "Sweden":"🇸🇪","Switzerland":"🇨🇭","Turkey":"🇹🇷","UAE":"🇦🇪","United Kingdom":"🇬🇧","USA":"🇺🇸"
-};
-
-let ALL_DATA = [];
-let _currentUni = null;
-
-function escapeAttr(s){
-  return String(s == null ? "" : s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
-
-function t(key, fallback){
-  return (window.I18N && window.I18N.t(key)) || fallback || key;
-}
-
-async function loadAll(){
-  const results = await Promise.allSettled(
-    COUNTRY_FILES.map(async (c) => {
-      const res = await fetch(c.file);
-      if(!res.ok) throw new Error(c.file);
-      const data = await res.json();
-      return { country: c.name, key: c.key, items: data };
-    })
-  );
-
-  results.forEach(r => {
-    if(r.status === "fulfilled"){
-      const { country, key, items } = r.value;
-      items.forEach(uni => {
-        if(uni && uni["Университет"] && String(uni["Университет"]).trim() !== ""){
-          uni._country = country;
-          uni._country_key = key;
-          uni._flag = FLAGS[country] || "🌍";
-          ALL_DATA.push(uni);
-        }
-      });
-    }
-  });
-
-  ALL_DATA.sort((a,b) => {
-    const ai = COUNTRY_FILES.findIndex(c => c.name === a._country);
-    const bi = COUNTRY_FILES.findIndex(c => c.name === b._country);
-    if(ai !== bi) return ai - bi;
-    return String(a["Университет"]).localeCompare(String(b["Университет"]));
-  });
-
-  if (window.EduAuth) {
-    try { 
-      await window.EduAuth.getSaved(); 
-    } catch(e) { 
-      console.log("Error fetching saved:", e); 
-    }
-  }
-
-  buildCountryFilter();
-  renderSidebar();
-
-  // Включаем отображение контента и убираем глобальный лоадер
-  document.body.classList.add("loaded");
-}
-
-function isFullGrant(uni){
-  const v = String(uni["Дают полный грант (обучение, проживание, перелет, питание) международным студентам?"] || "").trim().toLowerCase();
-  return v === "да" || v === "истина" || v === "true";
-}
-
-function buildCountryFilter(){
-  const sel = document.getElementById("filterCountry");
-  if(!sel) return;
-
-  const current = sel.value;
-  sel.innerHTML = "";
-
-  const allOpt = document.createElement("option");
-  allOpt.value = "";
-  allOpt.setAttribute("data-i18n", "catalog_country_all");
-  allOpt.textContent = t("catalog_country_all", "All countries");
-  sel.appendChild(allOpt);
-
-  COUNTRY_FILES.forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c.name;
-    opt.setAttribute("data-i18n", c.key);
-    opt.textContent = t(c.key, c.name);
-    sel.appendChild(opt);
-  });
-
-  sel.value = current || "";
-}
-
-function renderSidebar(){
-  const container = document.getElementById("countriesList");
-  container.innerHTML = "";
-  const filtered = applyFilters(ALL_DATA);
-
-  COUNTRY_FILES.forEach(c => {
-    let items = filtered.filter(u => u._country === c.name);
-    if(items.length === 0) return;
-
-    const div = document.createElement("div");
-    div.className = "country";
-
-    const header = document.createElement("button");
-    header.type = "button";
-    header.className = "country-header";
-    header.innerHTML = `<span>${FLAGS[c.name] || "🌍"} ${t(c.key, c.name)}<span class="country-count">${items.length}</span></span><span class="country-arrow">▾</span>`;
-    header.addEventListener("click", () => div.classList.toggle("open"));
-
-    const list = document.createElement("div");
-    list.className = "country-list";
-
-    items.forEach(uni => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "uni-item";
-      wrapper.dataset.name = uni["Университет"];
-      if(_currentUni && _currentUni["Университет"] === uni["Университет"]){
-        wrapper.classList.add("selected");
-      }
-
-      const city = uni["Город"] || "—";
-      const rate = uni["Процент Поступления"] || "—";
-      const deadline = uni["Дедлайн Основной Подачи"] || uni["Дедлайн Ранней Подачи"] || "—";
-      const isSaved = window.EduAuth ? window.EduAuth.isSaved(uni["Университет"]) : false;
-
-      wrapper.innerHTML = `
-        <div class="uni-item-main">
-          <span class="uni-name">${uni["Университет"]}</span>
-          <span class="uni-meta">
-            <span>📍 ${city}</span>
-            <span>🎯 ${rate}</span>
-            <span>📅 ${deadline}</span>
-          </span>
-        </div>
-        <button type="button" class="star-btn ${isSaved ? "active" : ""}" data-star="${escapeAttr(uni["Университет"])}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </button>
-      `;
-
-      wrapper.addEventListener("click", (e) => {
-        if(e.target.closest(".star-btn")) return;
-        selectUni(uni, wrapper);
-      });
-
-      list.appendChild(wrapper);
-    });
-
-    div.appendChild(header);
-    div.appendChild(list);
-    container.appendChild(div);
-  });
-}
-
-// Click on star
-document.addEventListener("click", async (e) => {
-  const starBtn = e.target.closest(".star-btn");
-  if(!starBtn) return;
-
-  e.stopPropagation();
-
-  const name = starBtn.dataset.star;
-  const uni = ALL_DATA.find(u => u["Университет"] === name);
-  if(!uni) return;
-
-  if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-    window.EduAuth.showToast(t("catalog_need_login", "Log in to save universities"), "info");
-    window.EduAuth.openModal("register");
-    return;
-  }
-
-  const result = await window.EduAuth.toggleSave({
-    name: uni["Университет"],
-    country: uni._country,
-    city: uni["Город"]
-  });
-
-  if(!result || !result.ok){
-    window.EduAuth.showToast((result && result.error) || "Error", "error");
-    return;
-  }
-
-  if(result.added){
-    starBtn.classList.add("active");
-    window.EduAuth.showToast(t("catalog_saved_ok", "University saved successfully"), "success");
-  } else if(result.removed){
-    starBtn.classList.remove("active");
-    window.EduAuth.showToast(t("catalog_saved_remove", "University removed from favorites"), "info");
-  }
-});
-
-// Select uni
-function selectUni(uni, wrapper){
-  _currentUni = uni;
-
-  document.querySelectorAll(".uni-item.selected").forEach(el => el.classList.remove("selected"));
-  if(wrapper) wrapper.classList.add("selected");
-
-  const content = document.getElementById("detailContent");
-  const empty = document.getElementById("detailEmpty");
-
-  if (window.innerWidth <= 1000) {
-    const detailPanel = document.getElementById("detail");
-    if (detailPanel) {
-      detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-
-  if(content.classList.contains("active")){
-    content.style.transition = "opacity .2s ease";
-    content.style.opacity = "0";
-    setTimeout(() => {
-      content.classList.remove("active");
-      renderDetail(uni);
-    }, 180);
-  } else {
-    empty.style.opacity = "0";
-    setTimeout(() => {
-      empty.style.display = "none";
-      renderDetail(uni);
-    }, 200);
-  }
-}
-
-function renderDetail(uni){
-  const content = document.getElementById("detailContent");
-  content.classList.add("active");
-
-  const g = (k) => {
-    const v = uni[k];
-    if(v === undefined || v === null || String(v).trim() === "" || String(v).trim().toLowerCase() === "n/a") return null;
-    return v;
-  };
-
-  const row = (label, value) => {
-    const val = value ? String(value) : t("uni_value_not_specified", "not specified");
-    const cls = value ? "" : " empty";
-    return `<div class="info-card"><div class="info-label">${label}</div><div class="info-value${cls}">${val}</div></div>`;
-  };
-
-  const title = g("Университет") || "—";
-  const countryKey = uni._country_key || "";
-  const country = countryKey ? t(countryKey, uni._country) : (g("Страна") || uni._country || "");
-  const city = g("Город");
-  const grantBadge = isFullGrant(uni)
-    ? `<div class="grant-badge">${t("uni_full_grant_badge", "✨ Full scholarship")}</div>`
-    : "";
-
-  const saved = window.EduAuth ? window.EduAuth.isSaved(title) : false;
-
-  content.innerHTML = `
-    <h1 class="uni-title">${title}</h1>
-    <div class="uni-location">📍 ${country}${city ? " · " + city : ""}</div>
-    ${grantBadge}
-
-    <h3 class="section-title">${t("uni_section_finance", "Finance")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_tuition", "Tuition"), g("Стоимость обучения (USD/год)"))}
-      ${row(t("uni_field_admission", "Admission rate"), g("Процент Поступления"))}
-      ${row(t("uni_field_aid", "Financial aid"), g("Максимальная Финансовая помощь (USD)"))}
-      ${row(t("uni_field_grant", "Full scholarship"), isFullGrant(uni) ? t("uni_value_yes", "YES") : t("uni_value_no", "no"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_deadlines", "Deadlines")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_early_deadline", "Early deadline"), g("Дедлайн Ранней Подачи"))}
-      ${row(t("uni_field_main_deadline", "Regular deadline"), g("Дедлайн Основной Подачи"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_requirements", "Requirements")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_toefl", "TOEFL / IELTS"), g("TOEFL/IELTS"))}
-      ${row(t("uni_field_sat", "SAT"), g("SAT"))}
-      ${row(t("uni_field_essay", "Essay"), g("Эссе"))}
-      ${row(t("uni_field_recs", "Recommendation letters"), g("Рекомендательные Письма"))}
-      ${row(t("uni_field_app_fee", "Application fee"), g("Стоимость Заявки"))}
-      ${row(t("uni_field_apply_link", "Application link"), g("Ссылка на заполнение заявки"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_ratings", "Rankings")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_rank_country", "Country rank"), g("Рейтинг по Стране"))}
-      ${row(t("uni_field_rank_world", "World rank"), g("Рейтинг в Мире"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_majors", "Majors")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_majors", "Majors"), g("Профессии"))}
-    </div>
-
-    <h3 class="section-title">${t("uni_section_extra", "Additional")}</h3>
-    <div class="info-grid">
-      ${row(t("uni_field_comments", "Comments"), g("Дополнительные Комментарии"))}
-    </div>
-
-    <div class="action-buttons">
-      <button class="btn-main ${saved ? "secondary" : "primary"}" id="detailStarBtn">
-        ⭐ ${saved ? t("catalog_saved_btn", "Saved") : t("catalog_save_btn", "Save to favorites")}
-      </button>
-      ${uni["Сайт Университета"] ? `<a href="${uni["Сайт Университета"]}" target="_blank" rel="noopener" class="btn-main primary">${t("uni_open_site", "🌐 Official website")}</a>` : ""}
-      ${uni["Ссылка на заполнение заявки"] && String(uni["Ссылка на заполнение заявки"]).startsWith("http") ? `<a href="${uni["Ссылка на заполнение заявки"]}" target="_blank" rel="noopener" class="btn-main secondary">${t("uni_apply", "📝 Apply")}</a>` : ""}
-      ${uni["Сайт Финансовой Помощи"] && String(uni["Сайт Финансовой Помощи"]).startsWith("http") ? `<a href="${uni["Сайт Финансовой Помощи"]}" target="_blank" rel="noopener" class="btn-main ghost">${t("uni_aid_link", "💰 Financial aid")}</a>` : ""}
-    </div>
-  `;
-
-  const detailBtn = document.getElementById("detailStarBtn");
-  if(detailBtn){
-    detailBtn.addEventListener("click", async () => {
-      if(!window.EduAuth || !window.EduAuth.isLoggedIn()){
-        window.EduAuth.showToast(t("catalog_need_login", "Log in to save universities"), "info");
-        window.EduAuth.openModal("register");
-        return;
-      }
-      const result = await window.EduAuth.toggleSave({
-        name: title,
-        country: uni._country,
-        city: city
-      });
-      if(!result || !result.ok){
-        window.EduAuth.showToast((result && result.error) || "Error", "error");
-        return;
-      }
-      renderDetail(uni);
-      renderSidebar();
-      if(result.added){
-        window.EduAuth.showToast(t("catalog_saved_ok", "University saved successfully"), "success");
-      } else if(result.removed){
-        window.EduAuth.showToast(t("catalog_saved_remove", "University removed from favorites"), "info");
-      }
-    });
-  }
-}
-
-const filters = {
-  budgetMin: null,
-  budgetMax: null,
-  country: "",
-  fullGrant: false
-};
-
-function parsePrice(str){
-  if(!str) return null;
-  const s = String(str).trim().toLowerCase();
-  if(s.includes("бесплат") || s.includes("free")) return 0;
-  const matches = s.match(/\d[\d\s,\.]*/g);
-  if(!matches || matches.length === 0) return null;
-  const numbers = matches.map(m => {
-    const clean = m.replace(/[\s,\.]/g, "");
-    return parseInt(clean, 10);
-  }).filter(n => !isNaN(n) && n > 0);
-  if(numbers.length === 0) return null;
-  if(numbers.length >= 2) return Math.round((numbers[0] + numbers[1]) / 2);
-  return numbers[0];
-}
-
-function applyFilters(items){
-  return items.filter(uni => {
-    if(filters.country && uni._country !== filters.country) return false;
-    if(filters.fullGrant && !isFullGrant(uni)) return false;
-    if(filters.budgetMin !== null || filters.budgetMax !== null){
-      const price = parsePrice(uni["Стоимость обучения (USD/год)"]);
-      if(price === null) return false;
-      if(filters.budgetMin !== null && price < filters.budgetMin) return false;
-      if(filters.budgetMax !== null && price > filters.budgetMax) return false;
-    }
-    return true;
-  });
-}
-
-function updateFiltersBadge(){
-  let count = 0;
-  if(filters.budgetMin !== null) count++;
-  if(filters.budgetMax !== null) count++;
-  if(filters.country) count++;
-  if(filters.fullGrant) count++;
-
-  const badge = document.getElementById("filtersBadge");
-  const btn = document.getElementById("filtersToggle");
-
-  if(count > 0){
-    badge.style.display = "inline-flex";
-    badge.textContent = count;
-    btn.classList.add("active");
-  } else {
-    badge.style.display = "none";
-    btn.classList.remove("active");
-  }
-}
-
-document.getElementById("filtersToggle").addEventListener("click", () => {
-  document.getElementById("filtersPanel").classList.toggle("open");
-});
-
-document.getElementById("filterApply").addEventListener("click", () => {
-  const minVal = document.getElementById("filterBudgetMin").value;
-  const maxVal = document.getElementById("filterBudgetMax").value;
-
-  filters.budgetMin = minVal !== "" ? parseInt(minVal, 10) : null;
-  filters.budgetMax = maxVal !== "" ? parseInt(maxVal, 10) : null;
-  filters.country = document.getElementById("filterCountry").value;
-  filters.fullGrant = document.getElementById("filterFullGrant").checked;
-
-  updateFiltersBadge();
-  renderSidebar();
-  document.getElementById("filtersPanel").classList.remove("open");
-});
-
-document.getElementById("filterReset").addEventListener("click", () => {
-  document.getElementById("filterBudgetMin").value = "";
-  document.getElementById("filterBudgetMax").value = "";
-  document.getElementById("filterCountry").value = "";
-  document.getElementById("filterFullGrant").checked = false;
-
-  filters.budgetMin = null;
-  filters.budgetMax = null;
-  filters.country = "";
-  filters.fullGrant = false;
-
-  updateFiltersBadge();
-  renderSidebar();
-});
-
-// Search
-const searchBtn = document.getElementById("searchBtn");
-const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
-
-searchBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  searchInput.classList.toggle("open");
-  if(searchInput.classList.contains("open")) searchInput.focus();
-  else searchResults.classList.remove("open");
-});
-
-searchInput.addEventListener("input", () => {
-  const q = searchInput.value.trim().toLowerCase();
-  if(q.length < 2){ searchResults.classList.remove("open"); return; }
-  const found = ALL_DATA.filter(u => {
-    const name = String(u["Университет"] || "").toLowerCase();
-    const city = String(u["Город"] || "").toLowerCase();
-    const country = String(u._country || "").toLowerCase();
-    return name.includes(q) || city.includes(q) || country.includes(q);
-  }).slice(0, 12);
-  if(found.length === 0){
-    searchResults.innerHTML = `<div class="search-empty">${t("catalog_search_empty", "Sorry, we're still working on adding this university")}</div>`;
-  } else {
-    searchResults.innerHTML = found.map(u => `
-      <button class="search-result" data-name="${escapeAttr(u["Университет"])}">
-        ${u["Университет"]}
-        <small>${u._flag} ${t(u._country_key, u._country)} · ${u["Город"] || ""}</small>
-      </button>
-    `).join("");
-  }
-  searchResults.classList.add("open");
-});
-
-searchResults.addEventListener("click", (e) => {
-  const btn = e.target.closest(".search-result");
-  if(!btn) return;
-  const name = btn.dataset.name;
-  const uni = ALL_DATA.find(u => u["Университет"] === name);
-  if(uni){
-    const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === name);
-    if(itemEl){
-      itemEl.closest(".country").classList.add("open");
-      selectUni(uni, itemEl);
-      setTimeout(() => itemEl.scrollIntoView({ behavior:"smooth", block:"center" }), 250);
-    } else {
-      selectUni(uni, null);
-    }
-  }
-  searchInput.value = "";
-  searchResults.classList.remove("open");
-  searchInput.classList.remove("open");
-});
-
-document.addEventListener("click", () => {
-  searchResults.classList.remove("open");
-  searchInput.classList.remove("open");
-});
-searchInput.addEventListener("click", (e) => e.stopPropagation());
-searchResults.addEventListener("click", (e) => e.stopPropagation());
-
-// Language switch
-window.addEventListener("edupath-lang-change", () => {
-  buildCountryFilter();
-  renderSidebar();
-  if(_currentUni){
-    renderDetail(_currentUni);
-  }
-  if(window.I18N && window.I18N.applyAll){
-    window.I18N.applyAll();
-  }
-});
-
-// Start
-loadAll().then(() => {
-  const params = new URLSearchParams(window.location.search);
-  const uniName = params.get("uni");
-  if(!uniName) return;
-
-  const uni = ALL_DATA.find(u => u["Университет"] === uniName);
-  if(!uni) return;
-
-  const itemEl = [...document.querySelectorAll(".uni-item")].find(el => el.dataset.name === uniName);
-  if(itemEl){
-    itemEl.closest(".country").classList.add("open");
-    selectUni(uni, itemEl);
-    setTimeout(() => itemEl.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
-  } else {
-    selectUni(uni, null);
-  }
-});
-</script>
-<script src="i18n.js"></script>
-<script src="auth.js"></script>
 </body>
 </html>
