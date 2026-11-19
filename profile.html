@@ -269,7 +269,7 @@ function renderSavedUniversities(saved) {
   return `
     <div class="saved-grid">
       ${saved.map((u, i) => `
-        <div class="saved-card anim-item" style="animation-delay: ${0.05 * i}s;" data-uni-name="${escapeAttr(u.name)}">
+        <div class="saved-card anim-item" style="animation-delay: ${0.05 * i}s;" data-uni-name="${escapeAttr(u.name)}" data-uni-country="${escapeAttr(u.country || "")}" data-uni-city="${escapeAttr(u.city || "")}" title="Открыть полное досье">
           <div class="saved-info">
             <div class="saved-name">${escapeHtml(u.name)}</div>
             <div class="saved-location">${escapeHtml(u.country || "")}${u.city ? " · " + escapeHtml(u.city) : ""}</div>
@@ -426,7 +426,13 @@ document.addEventListener("click", async (e) => {
   const savedCard = e.target.closest(".saved-card");
   if (savedCard) {
     const name = savedCard.dataset.uniName;
-    if (name) window.location.href = "universities.html?uni=" + encodeURIComponent(name);
+    if (name) {
+      // сразу открываем полное досье этого вуза (данные берутся из кэша, без нового поиска)
+      const q = new URLSearchParams({ uni: name });
+      if (savedCard.dataset.uniCountry) q.set("country", savedCard.dataset.uniCountry);
+      if (savedCard.dataset.uniCity) q.set("city", savedCard.dataset.uniCity);
+      window.location.href = "universities.html?" + q.toString() + "#detailShell";
+    }
     return;
   }
 
