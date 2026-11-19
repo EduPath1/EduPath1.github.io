@@ -2,9 +2,7 @@
 <html lang="ru">
 <head>
   <script>
-    try {
-      if (!localStorage.getItem("edupath_token")) location.replace("index.html");
-    } catch (e) {}
+    try { if (!localStorage.getItem("edupath_token")) location.replace("index.html"); } catch (e) {}
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,201 +12,55 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
-      --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
-      --caramel:#C79256; --sand:#D9BD93; --muted:#7A6552;
-      --line:rgba(43,27,16,.14); --shadow:0 16px 42px rgba(43,27,16,.09);
-      --ease:cubic-bezier(.22,1,.36,1);
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:var(--cream);color:var(--espresso);font-family:'Work Sans',sans-serif;line-height:1.5}
-    h1,h2,h3,h4{font-family:'Fraunces',serif;line-height:1.12;font-weight:600;letter-spacing:-.02em}
-    button,input,textarea{font:inherit}
-    button{cursor:pointer}
-    a{color:inherit;text-decoration:none}
-    .site-header{position:sticky;top:0;z-index:50;background:rgba(251,246,236,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-    .nav-wrap{height:78px;max-width:1440px;padding:0 28px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .logo{display:flex;align-items:center;gap:10px;font:600 25px 'Fraunces',serif;white-space:nowrap}
-    .logo-mark{width:36px;height:36px;border:2px solid var(--bark);border-radius:50%;display:grid;place-items:center;color:var(--caramel);font-size:20px}
-    .nav-links{display:flex;align-items:center;gap:5px}
-    .nav-links a{padding:10px 13px;border-radius:9px;color:var(--muted);font-size:14px}
-    .nav-links a:hover{background:var(--cream-deep);color:var(--espresso)}
-    .nav-links a.active{background:var(--espresso);color:var(--paper)}
-    .nav-right{display:flex;align-items:center;gap:9px;position:relative}
-    #langBtn{width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);display:grid;place-items:center}
-    #langBtn:hover{background:var(--cream-deep);color:var(--espresso)}
-    .lang-menu{position:absolute;right:0;top:calc(100% + 10px);display:flex;flex-direction:column;gap:3px;min-width:145px;padding:7px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s;z-index:70}
-    .lang-menu.open{opacity:1;visibility:visible;transform:translateY(0)}
-    .lang-option{border:0;background:transparent;color:var(--muted);padding:7px;border-radius:7px;font-size:12px}
-    .lang-option.active,.lang-option:hover{background:var(--cream-deep);color:var(--espresso)}
-    .page{max-width:1440px;margin:0 auto;padding:34px 28px 80px}
-    .hero{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;align-items:end;margin-bottom:26px}
-    .eyebrow{color:var(--clay);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;margin-bottom:12px}
-    .hero h1{font-size:clamp(34px,4.5vw,58px);margin:0 0 12px;max-width:800px}
-    .hero p{margin:0;color:var(--muted);max-width:720px;font-size:16px}
-    .trust-note{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;font-size:12px;color:var(--muted)}
-    .trust-note strong{display:block;color:var(--espresso);font-size:14px;margin-bottom:5px}
-    .search-panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:30px}
-    .search-modes{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
-    .mode-btn{border:1px solid var(--line);background:transparent;color:var(--muted);padding:9px 14px;border-radius:999px;font-size:13px}
-    .mode-btn.active{background:var(--espresso);border-color:var(--espresso);color:var(--paper)}
-    .search-row{display:grid;grid-template-columns:1fr auto;gap:10px}
-    .search-input{width:100%;min-width:0;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:#fffdf8;color:var(--espresso);outline:none;font-size:15px}
-    .search-input:focus{border-color:var(--clay);box-shadow:0 0 0 3px rgba(140,90,52,.12)}
-    .search-btn,.primary-btn{border:0;background:var(--clay);color:white;padding:0 23px;border-radius:12px;font-weight:600;transition:.2s}
-    .search-btn:hover,.primary-btn:hover{background:var(--bark);transform:translateY(-1px)}
-    .search-hint{font-size:12px;color:var(--muted);margin:10px 2px 0}
-    .status-line{min-height:22px;margin:8px 2px 0;font-size:13px;color:var(--clay)}
-    .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:28px 0 14px}
-    .section-head h2{font-size:27px;margin:0 0 4px}
-    .section-head p{margin:0;color:var(--muted);font-size:13px}
-    .scroll-label{font-size:12px;color:var(--muted);white-space:nowrap}
-    .cards-track{display:flex;gap:14px;overflow-x:auto;padding:3px 2px 18px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--sand) transparent}
-    .uni-card{flex:0 0 280px;min-height:206px;background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:17px;text-align:left;scroll-snap-align:start;transition:transform .22s var(--ease),box-shadow .22s,border-color .22s;display:flex;flex-direction:column;gap:12px;color:var(--espresso)}
-    .uni-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--caramel)}
-    .uni-card.selected{border:2px solid var(--clay);padding:16px}
-    .card-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-    .country-pill{font-size:11px;color:var(--muted);background:var(--cream);padding:5px 8px;border-radius:999px}
-    .deadline-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#a9a09a;flex:none}
-    .deadline-dot.red{background:#c94c43}.deadline-dot.yellow{background:#d6a22d}.deadline-dot.green{background:#4c9667}
-    .uni-card h3{font-size:20px;margin:0;line-height:1.16}
-    .card-location{font-size:12px;color:var(--muted)}
-    .card-stats{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .stat{background:var(--cream);border-radius:10px;padding:9px}
-    .stat small{display:block;font-size:10px;color:var(--muted);margin-bottom:3px}
-    .stat strong{font-size:12px;font-weight:600}
-    .card-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
-    .detail-shell{margin-top:25px;min-height:220px}
-    .empty-state{background:rgba(251,246,236,.55);border:1px dashed var(--sand);border-radius:20px;padding:38px;text-align:center;color:var(--muted)}
-    .empty-state h2{font-size:27px;color:var(--espresso);margin:0 0 8px}
-    .detail-card{background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-    .detail-head{padding:26px 28px 22px;border-bottom:1px solid var(--line)}
-    .detail-head h2{font-size:clamp(28px,3vw,42px);margin:0 0 9px}
-    .detail-location{color:var(--muted);font-size:14px}
-    .detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
-    .meta-chip{font-size:11px;padding:6px 10px;border-radius:999px;background:var(--cream);color:var(--bark)}
-    .detail-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:22px;padding:24px 28px}
-    .detail-section{margin-bottom:22px}
-    .detail-section h3{font-size:21px;margin:0 0 12px}
-    .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .info-box{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:12px}
-    .info-box small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
-    .info-box strong{font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
-    .info-box .unknown{color:#9b8a78;font-weight:500}
-    .plain-list{margin:0;padding-left:18px;color:var(--bark);font-size:14px}
-    .plain-list li{margin:0 0 7px}
-    .highlights{display:grid;gap:8px}
-    .highlight{background:var(--cream);border-radius:10px;padding:11px 13px;font-size:13px}
-    .map-frame{width:100%;height:245px;border:0;border-radius:14px;background:var(--cream)}
-    .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
-    .photo-grid img{width:100%;height:112px;object-fit:cover;border-radius:10px;background:var(--cream)}
-    .sources{display:grid;gap:9px}
-    .source-link{font-size:12px;color:var(--clay);text-decoration:underline;overflow-wrap:anywhere}
-    .source-note{font-size:11px;color:var(--muted);margin-top:8px}
-    .detail-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
-    .action-btn{border:1px solid var(--line);background:var(--cream);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--espresso)}
-    .action-btn:hover{border-color:var(--clay)}
-    .loading-panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:30px;text-align:center;color:var(--muted)}
-    .error-text{color:#a53f35}
-    .disclaimer{border-top:1px solid var(--line);padding:14px 28px 20px;color:var(--muted);font-size:11px}
-    .footer-note{margin-top:35px;color:var(--muted);font-size:11px;text-align:center}
-    @media(max-width:900px){
-      .nav-wrap{height:auto;min-height:70px;padding:12px 18px;flex-wrap:wrap}
-      .nav-links{order:3;width:100%;overflow-x:auto}
-      .nav-links a{white-space:nowrap;font-size:12px;padding:8px}
-      .hero{grid-template-columns:1fr}
-      .trust-note{max-width:460px}
-      .page{padding:25px 18px 60px}
-      .detail-grid{grid-template-columns:1fr}
-    }
-    @media(max-width:560px){
-      .search-panel{padding:14px}
-      .search-row{grid-template-columns:1fr}
-      .search-btn{padding:14px}
-      .uni-card{flex-basis:250px}
-      .detail-head,.detail-grid{padding:20px 16px}
-      .info-grid{grid-template-columns:1fr}
-      .disclaimer{padding:13px 16px}
-      .section-head{align-items:start;flex-direction:column}
-      .scroll-label{display:none}
-    }
+    :root{--cream:#F7EFE1;--cream-deep:#EFE1C6;--paper:#FBF6EC;--espresso:#2B1B10;--bark:#5A3B26;--clay:#8C5A34;--caramel:#C79256;--sand:#D9BD93;--muted:#7A6552;--line:rgba(43,27,16,.14);--shadow:0 16px 42px rgba(43,27,16,.09)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--espresso);font-family:'Work Sans',sans-serif;line-height:1.5}h1,h2,h3,h4{font-family:'Fraunces',serif;line-height:1.12;font-weight:600;letter-spacing:-.02em}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+    .site-header{position:sticky;top:0;z-index:50;background:rgba(251,246,236,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.nav-wrap{min-height:76px;max-width:1440px;padding:10px 28px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}.logo{display:flex;align-items:center;gap:10px;font:600 25px 'Fraunces',serif;white-space:nowrap}.logo-mark{width:36px;height:36px;border:2px solid var(--bark);border-radius:50%;display:grid;place-items:center;color:var(--caramel);font-size:20px}.nav-links{display:flex;align-items:center;gap:5px}.nav-links a{padding:9px 12px;border-radius:9px;color:var(--muted);font-size:13px}.nav-links a:hover{background:var(--cream-deep);color:var(--espresso)}.nav-links a.active{background:var(--espresso);color:var(--paper)}
+    .page{max-width:1440px;margin:0 auto;padding:34px 28px 80px}.hero{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:24px;align-items:end;margin-bottom:26px}.eyebrow{color:var(--clay);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;margin-bottom:11px}.hero h1{font-size:clamp(34px,4.5vw,58px);margin:0 0 12px;max-width:800px}.hero p{margin:0;color:var(--muted);max-width:740px}.trust-note{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;font-size:12px;color:var(--muted)}.trust-note strong{display:block;color:var(--espresso);font-size:14px;margin-bottom:5px}
+    .search-panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:28px}.search-modes{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}.mode-btn,.secondary-btn{border:1px solid var(--line);background:transparent;color:var(--muted);padding:9px 14px;border-radius:999px;font-size:13px}.mode-btn.active{background:var(--espresso);border-color:var(--espresso);color:var(--paper)}.search-row{display:grid;grid-template-columns:1fr auto;gap:10px}.search-input,.filter-control{width:100%;min-width:0;padding:13px 14px;border:1px solid var(--line);border-radius:11px;background:#fffdf8;color:var(--espresso);outline:none}.search-input:focus,.filter-control:focus{border-color:var(--clay);box-shadow:0 0 0 3px rgba(140,90,52,.12)}.primary-btn{border:0;background:var(--clay);color:white;padding:12px 21px;border-radius:11px;font-weight:600}.primary-btn:hover{background:var(--bark)}.primary-btn:disabled{opacity:.55;cursor:wait}.search-hint,.muted{font-size:12px;color:var(--muted)}.search-hint{margin:10px 2px 0}.status-line{min-height:20px;margin:8px 2px 0;font-size:12px;color:var(--clay)}.error-text{color:#a53f35}
+    .filter-panel{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.filter-panel.open{display:block}.filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.filter-field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin:0 0 6px}.filter-field small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.filter-actions{display:flex;gap:9px;align-items:center;margin-top:15px;flex-wrap:wrap}.check-row{display:flex;gap:10px;flex-wrap:wrap}.check-row label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--bark)}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:27px 0 13px}.section-head h2{font-size:27px;margin:0 0 4px}.section-head p{margin:0;color:var(--muted);font-size:12px}.cards-track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.uni-card{min-height:208px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:left;transition:transform .2s,box-shadow .2s,border-color .2s;display:flex;flex-direction:column;gap:10px;color:var(--espresso);width:100%}.uni-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--caramel)}.uni-card.selected{border:2px solid var(--clay);padding:15px}.card-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.country-pill{font-size:10px;color:var(--muted);background:var(--cream);padding:5px 8px;border-radius:999px}.deadline-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#a9a09a;flex:none}.deadline-dot.red{background:#c94c43}.deadline-dot.yellow{background:#d6a22d}.deadline-dot.green{background:#4c9667}.uni-card h3{font-size:19px;margin:0;line-height:1.16}.card-location{font-size:11px;color:var(--muted)}.card-reason{font-size:11px;color:var(--bark);line-height:1.4}.card-foot{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:auto}.empty-state,.loading-panel{background:rgba(251,246,236,.7);border:1px dashed var(--sand);border-radius:18px;padding:30px;text-align:center;color:var(--muted);grid-column:1/-1}.detail-shell{margin-top:28px;min-height:200px}.detail-card{background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}.detail-head{padding:25px 28px 21px;border-bottom:1px solid var(--line)}.detail-head h2{font-size:clamp(28px,3vw,42px);margin:0 0 8px}.detail-location{font-size:13px;color:var(--muted)}.detail-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.meta-chip{font-size:10px;padding:6px 9px;border-radius:999px;background:var(--cream);color:var(--bark)}.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.action-btn{border:1px solid var(--line);background:var(--cream);padding:9px 12px;border-radius:9px;font-size:11px;color:var(--espresso)}.action-btn:hover{border-color:var(--clay)}.detail-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:22px;padding:23px 28px}.detail-section{margin-bottom:22px}.detail-section h3{font-size:20px;margin:0 0 11px}.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.info-box{background:#fffdf8;border:1px solid var(--line);border-radius:11px;padding:11px}.info-box small{display:block;color:var(--muted);font-size:10px;margin-bottom:4px}.info-box strong{font-size:12px;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere}.unknown{color:#9b8a78!important;font-weight:500!important}.plain-list{margin:0;padding-left:18px;color:var(--bark);font-size:12px}.plain-list li{margin:0 0 7px}.sub-list{margin-top:9px;display:grid;gap:8px}.sub-card{background:#fffdf8;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:11px}.sub-card strong{display:block;font-size:12px;margin-bottom:3px}.source-link{font-size:11px;color:var(--clay);text-decoration:underline;overflow-wrap:anywhere}.sources{display:grid;gap:8px}.map-frame{width:100%;height:235px;border:0;border-radius:13px;background:var(--cream)}.photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.photo-grid img{width:100%;height:115px;object-fit:cover;border-radius:9px;background:var(--cream)}.disclaimer{border-top:1px solid var(--line);padding:13px 28px 18px;color:var(--muted);font-size:10px}.footer-note{margin-top:30px;color:var(--muted);font-size:10px;text-align:center}
+    @media(max-width:1000px){.cards-track{grid-template-columns:repeat(3,minmax(0,1fr))}.detail-grid{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.trust-note{max-width:500px}}
+    @media(max-width:700px){.nav-wrap{padding:10px 16px;flex-wrap:wrap}.nav-links{order:3;width:100%;overflow-x:auto}.nav-links a{white-space:nowrap;font-size:11px;padding:8px}.page{padding:23px 15px 55px}.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cards-track{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-head,.detail-grid{padding:18px 15px}.disclaimer{padding:12px 15px}.search-panel{padding:14px}}
+    @media(max-width:460px){.search-row{grid-template-columns:1fr}.filter-grid,.cards-track,.info-grid{grid-template-columns:1fr}.primary-btn{width:100%}.filter-actions{display:grid;grid-template-columns:1fr}.uni-card{min-height:185px}}
   </style>
 </head>
 <body>
-<header class="site-header">
-  <nav class="wrap nav-wrap">
-    <a href="index.html" class="logo"><span class="logo-mark">✦</span>EduPath</a>
-    <div class="nav-links">
-      <a href="index.html" data-i18n="nav_home">Главная</a>
-      <a href="universities.html" class="active" data-i18n="nav_universities">Университеты</a>
-      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
-      <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
-      <a href="team.html" data-i18n="nav_team">О нашей команде</a>
-    </div>
-    <div class="nav-right">
-      <button type="button" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">文</button>
-      <div class="lang-menu" id="langMenu" role="menu">
-        <button class="lang-option active" type="button" data-lang="ru">RU</button>
-        <button class="lang-option" type="button" data-lang="en">EN</button>
-        <button class="lang-option" type="button" data-lang="zh">中文</button>
-        <button class="lang-option" type="button" data-lang="kk">ҚАЗ</button>
-        <button class="lang-option" type="button" data-lang="ky">КЫР</button>
-      </div>
-    </div>
-  </nav>
-</header>
-
+<header class="site-header"><nav class="nav-wrap">
+  <a href="index.html" class="logo"><span class="logo-mark">✦</span>EduPath</a>
+  <div class="nav-links">
+    <a href="index.html" data-i18n="nav_home">Главная</a><a href="universities.html" class="active" data-i18n="nav_universities">Университеты</a>
+    <a href="profile.html" data-i18n="nav_profile">Профиль</a><a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a><a href="team.html" data-i18n="nav_team">О нашей команде</a>
+  </div>
+</nav></header>
 <main class="page">
-  <section class="hero">
-    <div>
-      <div class="eyebrow">EduPath · University discovery</div>
-      <h1>Найди университет, который подходит именно тебе</h1>
-      <p>Ищи вуз по названию или опиши свои условия: направление, бюджет, страну, стипендию и другие предпочтения.</p>
-    </div>
-    <aside class="trust-note">
-      <strong>Проверяемые сведения</strong>
-      Дедлайны и условия могут различаться по программе, уровню обучения, гражданству и году поступления. Мы показываем источники и не подставляем неподтверждённые значения.
-    </aside>
-  </section>
-
+  <section class="hero"><div><div class="eyebrow">EduPath · University discovery</div><h1>Найди университет, который подходит именно тебе</h1><p>Живой поиск университетов, гибкие альтернативы и подробные досье с источниками. Каталог обновляется автоматически — без ручных JSON-списков.</p></div><aside class="trust-note"><strong>Актуальность и проверка</strong>Данные собираются из веб-источников при поиске. Условия зависят от программы, уровня обучения, гражданства и года набора. Неподтверждённые значения отмечаются отдельно.</aside></section>
   <section class="search-panel" aria-label="Поиск университетов">
-    <div class="search-modes">
-      <button type="button" class="mode-btn active" data-mode="name">По названию</button>
-      <button type="button" class="mode-btn" data-mode="criteria">По моим условиям</button>
+    <div class="search-modes"><button type="button" class="mode-btn active" data-mode="name">По названию</button><button type="button" class="mode-btn" data-mode="criteria">По моим условиям</button></div>
+    <div class="search-row"><input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="Например: University of Toronto"><button id="searchBtn" class="primary-btn" type="button">Найти похожие</button></div>
+    <p id="searchHint" class="search-hint">Введи название университета. EduPath изучит его профиль и подберёт до 19 гибких альтернатив.</p>
+    <div id="filterPanel" class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-field"><label for="filterField">Направление</label><input id="filterField" class="filter-control" placeholder="Computer Science"></div>
+        <div class="filter-field"><label for="filterCountries">Страны</label><input id="filterCountries" class="filter-control" placeholder="Канада, Германия, Япония"><small>Перечисли через запятую</small></div>
+        <div class="filter-field"><label for="filterDegree">Уровень обучения</label><select id="filterDegree" class="filter-control"><option value="">Любой</option><option>Bachelor</option><option>Master</option><option>PhD</option><option>Foundation</option></select></div>
+        <div class="filter-field"><label for="filterBudget">Максимальный бюджет за год</label><input id="filterBudget" class="filter-control" type="number" min="0" placeholder="15000"></div>
+        <div class="filter-field"><label for="filterCurrency">Валюта бюджета</label><select id="filterCurrency" class="filter-control"><option>USD</option><option>EUR</option><option>GBP</option><option>KZT</option><option>CNY</option></select></div>
+        <div class="filter-field"><label for="filterIntake">Год / сезон поступления</label><input id="filterIntake" class="filter-control" placeholder="Fall 2027"></div>
+        <div class="filter-field"><label for="filterLanguage">Язык обучения</label><input id="filterLanguage" class="filter-control" placeholder="Английский"></div>
+        <div class="filter-field"><label for="filterFunding">Финансирование</label><select id="filterFunding" class="filter-control"><option value="">Любое</option><option value="full">Полная стипендия</option><option value="partial">Частичная стипендия</option><option value="need-based">Need-based aid</option><option value="none">Без стипендии</option></select></div>
+        <div class="filter-field"><label for="filterExams">Экзамены и тесты</label><input id="filterExams" class="filter-control" placeholder="IELTS, SAT, HSK"></div>
+        <div class="filter-field"><label for="filterExtra">Дополнительные условия</label><input id="filterExtra" class="filter-control" placeholder="Общежитие, работа, без SAT"></div>
+      </div>
+      <div class="filter-actions"><button id="applyFiltersBtn" class="primary-btn" type="button">Подобрать университеты</button><button id="clearFiltersBtn" class="secondary-btn" type="button">Сбросить фильтры</button><span class="muted">Фильтры передаются поисковой системе как отдельные поля.</span></div>
     </div>
-    <div class="search-row">
-      <input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="Например: University of Oxford или Computer Science в Европе с грантом">
-      <button id="searchBtn" class="search-btn" type="button">Найти университеты</button>
-    </div>
-    <p id="searchHint" class="search-hint">Введи название университета, города или страны. Список ниже отфильтруется по мере ввода.</p>
     <div id="statusLine" class="status-line" role="status" aria-live="polite"></div>
   </section>
-
   <section>
-    <div class="section-head">
-      <div>
-        <h2 id="cardsHeading">Университеты для изучения</h2>
-        <p id="cardsSubheading">Первые 50 записей из каталога EduPath. Актуальные условия проверяются отдельно при открытии досье.</p>
-      </div>
-      <div class="scroll-label">Прокручивай карточки по горизонтали →</div>
-    </div>
-    <div id="cardsTrack" class="cards-track" aria-label="Список университетов"></div>
+    <div class="section-head"><div><h2 id="cardsHeading">50 университетов для изучения</h2><p id="cardsSubheading">Динамическая подборка из актуальных веб-источников · обновляется автоматически</p></div><button id="refreshCatalogBtn" class="secondary-btn" type="button">Обновить каталог</button></div>
+    <div id="cardsTrack" class="cards-track" aria-label="Список университетов"><div class="loading-panel">Загружаем актуальную подборку университетов…</div></div>
   </section>
-
-  <section class="detail-shell" id="detailShell">
-    <div class="empty-state" id="emptyState">
-      <h2>Выбери университет</h2>
-      <p>Нажми на карточку, чтобы открыть подробное досье: требования, расходы, стипендии, направления, карту и источники.</p>
-    </div>
-    <div id="detailContent"></div>
-  </section>
-  <p class="footer-note">EduPath © 2026 · Информация для предварительного ознакомления. Всегда сверяй требования с официальной страницей выбранной программы.</p>
+  <section class="detail-shell" id="detailShell"><div class="empty-state" id="emptyState"><h2>Выбери университет</h2><p>Открой карточку, чтобы увидеть требования, дедлайны, финансы, сведения о городе и стране, карту, изображения и официальные ссылки.</p></div><div id="detailContent"></div></section>
+  <p class="footer-note">EduPath © 2026 · Динамическая справочная информация. Перед подачей документов проверяй требования на официальном сайте программы.</p>
 </main>
-
-<script src="i18n.js"></script>
-<script src="auth.js"></script>
-<script src="universities-live.js"></script>
-</body>
-</html>
+<script src="i18n.js"></script><script src="auth.js"></script><script src="universities-live.js"></script>
+</body></html>
