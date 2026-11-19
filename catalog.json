@@ -1,0 +1,307 @@
+{
+ "version": 1,
+ "updated": "2026-11-19",
+ "note": "Список каталога EduPath. Меняйте свободно: name — официальное английское название, website — официальный сайт. Требования и дедлайны сюда НЕ пишутся, они подтягиваются автоматически.",
+ "universities": [
+  {
+   "name": "Massachusetts Institute of Technology",
+   "city": "Cambridge",
+   "country": "United States",
+   "website": "https://www.mit.edu"
+  },
+  {
+   "name": "Stanford University",
+   "city": "Stanford",
+   "country": "United States",
+   "website": "https://www.stanford.edu"
+  },
+  {
+   "name": "Harvard University",
+   "city": "Cambridge",
+   "country": "United States",
+   "website": "https://www.harvard.edu"
+  },
+  {
+   "name": "California Institute of Technology",
+   "city": "Pasadena",
+   "country": "United States",
+   "website": "https://www.caltech.edu"
+  },
+  {
+   "name": "University of California, Berkeley",
+   "city": "Berkeley",
+   "country": "United States",
+   "website": "https://www.berkeley.edu"
+  },
+  {
+   "name": "Princeton University",
+   "city": "Princeton",
+   "country": "United States",
+   "website": "https://www.princeton.edu"
+  },
+  {
+   "name": "Yale University",
+   "city": "New Haven",
+   "country": "United States",
+   "website": "https://www.yale.edu"
+  },
+  {
+   "name": "Columbia University",
+   "city": "New York",
+   "country": "United States",
+   "website": "https://www.columbia.edu"
+  },
+  {
+   "name": "University of Chicago",
+   "city": "Chicago",
+   "country": "United States",
+   "website": "https://www.uchicago.edu"
+  },
+  {
+   "name": "University of Pennsylvania",
+   "city": "Philadelphia",
+   "country": "United States",
+   "website": "https://www.upenn.edu"
+  },
+  {
+   "name": "Cornell University",
+   "city": "Ithaca",
+   "country": "United States",
+   "website": "https://www.cornell.edu"
+  },
+  {
+   "name": "Johns Hopkins University",
+   "city": "Baltimore",
+   "country": "United States",
+   "website": "https://www.jhu.edu"
+  },
+  {
+   "name": "Carnegie Mellon University",
+   "city": "Pittsburgh",
+   "country": "United States",
+   "website": "https://www.cmu.edu"
+  },
+  {
+   "name": "University of Oxford",
+   "city": "Oxford",
+   "country": "United Kingdom",
+   "website": "https://www.ox.ac.uk"
+  },
+  {
+   "name": "University of Cambridge",
+   "city": "Cambridge",
+   "country": "United Kingdom",
+   "website": "https://www.cam.ac.uk"
+  },
+  {
+   "name": "Imperial College London",
+   "city": "London",
+   "country": "United Kingdom",
+   "website": "https://www.imperial.ac.uk"
+  },
+  {
+   "name": "University College London",
+   "city": "London",
+   "country": "United Kingdom",
+   "website": "https://www.ucl.ac.uk"
+  },
+  {
+   "name": "London School of Economics and Political Science",
+   "city": "London",
+   "country": "United Kingdom",
+   "website": "https://www.lse.ac.uk"
+  },
+  {
+   "name": "King's College London",
+   "city": "London",
+   "country": "United Kingdom",
+   "website": "https://www.kcl.ac.uk"
+  },
+  {
+   "name": "University of Edinburgh",
+   "city": "Edinburgh",
+   "country": "United Kingdom",
+   "website": "https://www.ed.ac.uk"
+  },
+  {
+   "name": "University of Manchester",
+   "city": "Manchester",
+   "country": "United Kingdom",
+   "website": "https://www.manchester.ac.uk"
+  },
+  {
+   "name": "ETH Zurich",
+   "city": "Zurich",
+   "country": "Switzerland",
+   "website": "https://ethz.ch"
+  },
+  {
+   "name": "École Polytechnique Fédérale de Lausanne",
+   "city": "Lausanne",
+   "country": "Switzerland",
+   "website": "https://www.epfl.ch"
+  },
+  {
+   "name": "Technical University of Munich",
+   "city": "Munich",
+   "country": "Germany",
+   "website": "https://www.tum.de"
+  },
+  {
+   "name": "Ludwig-Maximilians-Universität München",
+   "city": "Munich",
+   "country": "Germany",
+   "website": "https://www.lmu.de"
+  },
+  {
+   "name": "Heidelberg University",
+   "city": "Heidelberg",
+   "country": "Germany",
+   "website": "https://www.uni-heidelberg.de"
+  },
+  {
+   "name": "Delft University of Technology",
+   "city": "Delft",
+   "country": "Netherlands",
+   "website": "https://www.tudelft.nl"
+  },
+  {
+   "name": "University of Amsterdam",
+   "city": "Amsterdam",
+   "country": "Netherlands",
+   "website": "https://www.uva.nl"
+  },
+  {
+   "name": "KU Leuven",
+   "city": "Leuven",
+   "country": "Belgium",
+   "website": "https://www.kuleuven.be"
+  },
+  {
+   "name": "University of Copenhagen",
+   "city": "Copenhagen",
+   "country": "Denmark",
+   "website": "https://www.ku.dk"
+  },
+  {
+   "name": "KTH Royal Institute of Technology",
+   "city": "Stockholm",
+   "country": "Sweden",
+   "website": "https://www.kth.se"
+  },
+  {
+   "name": "Politecnico di Milano",
+   "city": "Milan",
+   "country": "Italy",
+   "website": "https://www.polimi.it"
+  },
+  {
+   "name": "National University of Singapore",
+   "city": "Singapore",
+   "country": "Singapore",
+   "website": "https://nus.edu.sg"
+  },
+  {
+   "name": "Nanyang Technological University",
+   "city": "Singapore",
+   "country": "Singapore",
+   "website": "https://www.ntu.edu.sg"
+  },
+  {
+   "name": "Tsinghua University",
+   "city": "Beijing",
+   "country": "China",
+   "website": "https://www.tsinghua.edu.cn"
+  },
+  {
+   "name": "Peking University",
+   "city": "Beijing",
+   "country": "China",
+   "website": "https://www.pku.edu.cn"
+  },
+  {
+   "name": "University of Tokyo",
+   "city": "Tokyo",
+   "country": "Japan",
+   "website": "https://www.u-tokyo.ac.jp"
+  },
+  {
+   "name": "Kyoto University",
+   "city": "Kyoto",
+   "country": "Japan",
+   "website": "https://www.kyoto-u.ac.jp"
+  },
+  {
+   "name": "Korea Advanced Institute of Science and Technology",
+   "city": "Daejeon",
+   "country": "South Korea",
+   "website": "https://www.kaist.ac.kr"
+  },
+  {
+   "name": "Seoul National University",
+   "city": "Seoul",
+   "country": "South Korea",
+   "website": "https://www.snu.ac.kr"
+  },
+  {
+   "name": "University of Hong Kong",
+   "city": "Hong Kong",
+   "country": "Hong Kong",
+   "website": "https://www.hku.hk"
+  },
+  {
+   "name": "Hong Kong University of Science and Technology",
+   "city": "Hong Kong",
+   "country": "Hong Kong",
+   "website": "https://hkust.edu.hk"
+  },
+  {
+   "name": "University of Toronto",
+   "city": "Toronto",
+   "country": "Canada",
+   "website": "https://www.utoronto.ca"
+  },
+  {
+   "name": "McGill University",
+   "city": "Montreal",
+   "country": "Canada",
+   "website": "https://www.mcgill.ca"
+  },
+  {
+   "name": "University of British Columbia",
+   "city": "Vancouver",
+   "country": "Canada",
+   "website": "https://www.ubc.ca"
+  },
+  {
+   "name": "University of Melbourne",
+   "city": "Melbourne",
+   "country": "Australia",
+   "website": "https://www.unimelb.edu.au"
+  },
+  {
+   "name": "University of Sydney",
+   "city": "Sydney",
+   "country": "Australia",
+   "website": "https://www.sydney.edu.au"
+  },
+  {
+   "name": "Australian National University",
+   "city": "Canberra",
+   "country": "Australia",
+   "website": "https://www.anu.edu.au"
+  },
+  {
+   "name": "Nazarbayev University",
+   "city": "Astana",
+   "country": "Kazakhstan",
+   "website": "https://nu.edu.kz"
+  },
+  {
+   "name": "Middle East Technical University",
+   "city": "Ankara",
+   "country": "Turkey",
+   "website": "https://www.metu.edu.tr"
+  }
+ ]
+}
