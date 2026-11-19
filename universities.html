@@ -40,6 +40,12 @@
     #cardsTrack>.uni-card,#similarTrack>.uni-card{scroll-snap-align:start}
     #cardsTrack>.loading-panel,#cardsTrack>.empty-state,#similarTrack>.loading-panel,#similarTrack>.empty-state{grid-column:1/-1;min-width:min(100%,600px)}
     .track-hint{font-size:11px;color:var(--muted);margin:-6px 2px 8px}
+    .cit-select{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:8px 10px;font:inherit;font-size:13px;color:var(--espresso);max-width:100%}.cit-hint{font-size:11px;color:var(--muted)}
+    .group-chip{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--cream-deep);color:var(--bark);margin:4px 0}
+    .cost-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 10px}.cost-total{font-size:20px;font-weight:700;color:var(--espresso)}.cost-conv{font-size:13px;color:var(--bark)}
+    .level-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px}.level-низкий{background:#dcebdf;color:#2f6b43}.level-средний{background:#f3e9c9;color:#7a5b10}.level-высокий{background:#f6dcc6;color:#8a4a12}.level-очень{background:#f3d0cb;color:#8b3a30}
+    .cost-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:6px}.cost-table td{padding:7px 4px;border-bottom:1px dashed var(--line);vertical-align:top}.cost-table td:last-child{text-align:right;white-space:nowrap}.cost-table small{display:block;color:var(--muted)}
+    .domestic-note{padding:12px;border-radius:12px;background:#e4efe6;color:#2f5b3b;font-size:12px}
   </style>
 </head>
 <body>
@@ -51,9 +57,10 @@
   </div>
 </nav></header>
 <main class="page">
-  <section class="hero"><div><div class="eyebrow">EduPath · University discovery</div><h1>Найди университет, который подходит именно тебе</h1><p>Введи название — получишь сам университет и его официальный сайт. Затем открой подробное досье или подбери 19 похожих университетов.</p></div><aside class="trust-note"><strong>Актуальность и проверка</strong>Университеты — из открытого реестра ROR. Требования и дедлайны — с официального сайта вуза (сторонние источники помечены), фото — Wikimedia Commons, климат — Open-Meteo, статистика страны — Всемирный банк. Найденные данные хранятся 30 дней.</aside></section>
+  <section class="hero"><div><div class="eyebrow">EduPath · University discovery</div><h1>Найди университет, который подходит именно тебе</h1><p>Введи название — получишь сам университет и его официальный сайт. Затем открой подробное досье или подбери 19 похожих университетов.</p></div><aside class="trust-note"><strong>Актуальность и проверка</strong>Университеты — из открытого реестра ROR. Требования, цены и дедлайны — с официального сайта вуза (сторонние источники помечены), стоимость жизни — открытые источники, фото — Wikimedia Commons, климат — Open-Meteo, валюта и языки — Wikidata. Найденные данные хранятся 30+ дней.</aside></section>
   <section class="search-panel" aria-label="Поиск университетов">
     <div class="degree-bar"><span class="degree-label">Уровень обучения</span><div class="degree-switch" data-degree-switch role="radiogroup" aria-label="Уровень обучения"><button type="button" role="radio" data-degree="foundation">Foundation</button><button type="button" role="radio" data-degree="bachelor">Бакалавриат</button><button type="button" role="radio" data-degree="master">Магистратура</button><button type="button" role="radio" data-degree="phd">Докторантура</button></div></div>
+    <div class="degree-bar cit-bar"><label class="degree-label" for="citizenship">Моё гражданство</label><select id="citizenship" class="cit-select" data-cit-select aria-describedby="citHint"></select><span id="citHint" class="cit-hint">Условия, цена и виза зависят от гражданства</span></div>
     <div class="search-modes"><button type="button" class="mode-btn active" data-mode="name">По названию</button><button type="button" class="mode-btn" data-mode="criteria">По моим условиям</button></div>
     <div class="search-row"><div class="search-box"><input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="Например: University of Toronto, MIT, Назарбаев университет" role="combobox" aria-expanded="false" aria-controls="suggestBox"><div id="suggestBox" class="suggest-box" role="listbox" hidden></div></div><button id="searchBtn" class="primary-btn" type="button">Найти</button></div>
     <p id="searchHint" class="search-hint">Начни вводить название — появятся подсказки. Поиск показывает только университеты и их официальные сайты.</p>
@@ -62,6 +69,7 @@
         <div class="filter-field"><label for="filterField">Направление</label><input id="filterField" class="filter-control" placeholder="Computer Science"></div>
         <div class="filter-field"><label for="filterCountries">Страны</label><input id="filterCountries" class="filter-control" placeholder="Канада, Германия, Япония"><small>Перечисли через запятую</small></div>
         <div class="filter-field"><label for="filterDegree">Уровень обучения</label><select id="filterDegree" class="filter-control"><option value="foundation">Foundation</option><option value="bachelor">Бакалавриат</option><option value="master">Магистратура</option><option value="phd">Докторантура</option></select><small>Совпадает с переключателем вверху</small></div>
+        <div class="filter-field"><label for="filterCitizenship">Гражданство</label><select id="filterCitizenship" class="filter-control" data-cit-select></select><small>Совпадает с выбором вверху</small></div>
         <div class="filter-field"><label for="filterBudget">Максимальный бюджет за год</label><input id="filterBudget" class="filter-control" type="number" min="0" placeholder="15000"></div>
         <div class="filter-field"><label for="filterCurrency">Валюта бюджета</label><select id="filterCurrency" class="filter-control"><option>USD</option><option>EUR</option><option>GBP</option><option>KZT</option><option>CNY</option></select></div>
         <div class="filter-field"><label for="filterIntake">Год / сезон поступления</label><input id="filterIntake" class="filter-control" placeholder="Fall 2027"></div>
@@ -86,5 +94,5 @@
   </section>
   <p class="footer-note">EduPath © 2026 · Динамическая справочная информация. Перед подачей документов проверяй требования на официальном сайте программы.</p>
 </main>
-<script src="i18n.js"></script><script src="auth.js"></script><script src="universities-live.js?v=5"></script>
+<script src="i18n.js"></script><script src="auth.js"></script><script src="universities-live.js?v=6"></script>
 </body></html>
