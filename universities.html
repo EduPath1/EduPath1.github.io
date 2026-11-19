@@ -22,6 +22,13 @@
     @media(max-width:1000px){.cards-track{grid-template-columns:repeat(3,minmax(0,1fr))}.detail-grid{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.trust-note{max-width:500px}}
     @media(max-width:700px){.nav-wrap{padding:10px 16px;flex-wrap:wrap}.nav-links{order:3;width:100%;overflow-x:auto}.nav-links a{white-space:nowrap;font-size:11px;padding:8px}.page{padding:23px 15px 55px}.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cards-track{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-head,.detail-grid{padding:18px 15px}.disclaimer{padding:12px 15px}.search-panel{padding:14px}}
     @media(max-width:460px){.search-row{grid-template-columns:1fr}.filter-grid,.cards-track,.info-grid{grid-template-columns:1fr}.primary-btn{width:100%}.filter-actions{display:grid;grid-template-columns:1fr}.uni-card{min-height:185px}}
+
+    .search-box{position:relative;min-width:0}.suggest-box{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);max-height:380px;overflow:auto}.suggest-box[hidden]{display:none}.suggest-item{display:flex;flex-direction:column;gap:2px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--line)}.suggest-item:last-child{border-bottom:0}.suggest-item:hover,.suggest-item.active{background:var(--cream-deep)}.suggest-item strong{font-size:14px;font-weight:600}.suggest-item span{font-size:11px;color:var(--muted)}.suggest-empty{padding:12px 14px;font-size:12px;color:var(--muted)}
+    .similar-section[hidden]{display:none}.similar-section{margin-top:34px}.result-card{cursor:pointer}.result-link{font-size:11px;color:var(--clay);text-decoration:underline;overflow-wrap:anywhere}.result-link.missing{color:var(--muted);text-decoration:none}.match-chip{align-self:flex-start;font-size:10px;padding:4px 8px;border-radius:999px;background:var(--cream-deep);color:var(--bark)}
+    .primary-btn.small{padding:9px 13px;font-size:11px;border-radius:9px}.action-btn.accent{background:var(--clay);border-color:var(--clay);color:#fff}.action-btn.accent:hover{background:var(--bark)}
+    .month-bars{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;align-items:end;height:130px;margin:10px 0 4px}.mbar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:9px;color:var(--muted);gap:2px}.mbar i{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--caramel);min-height:6px}.mbar.cold i{background:#7da2c9}.mbar b{font-weight:500}.mbar small{font-size:9px;color:var(--espresso)}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:9px}.photo-fig{margin:0}.photo-fig figcaption{font-size:9px;color:var(--muted);line-height:1.3;margin-top:3px;overflow-wrap:anywhere}.photo-fig figcaption a{text-decoration:underline}.about-text{font-size:12px;color:var(--bark);margin:0 0 12px}
+    @media(max-width:460px){.month-bars{gap:2px}.mbar small{display:none}.stat-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -33,11 +40,11 @@
   </div>
 </nav></header>
 <main class="page">
-  <section class="hero"><div><div class="eyebrow">EduPath · University discovery</div><h1>Найди университет, который подходит именно тебе</h1><p>Живой поиск университетов, гибкие альтернативы и подробные досье с источниками. Каталог обновляется автоматически — без ручных JSON-списков.</p></div><aside class="trust-note"><strong>Актуальность и проверка</strong>Данные собираются из веб-источников при поиске. Условия зависят от программы, уровня обучения, гражданства и года набора. Неподтверждённые значения отмечаются отдельно.</aside></section>
+  <section class="hero"><div><div class="eyebrow">EduPath · University discovery</div><h1>Найди университет, который подходит именно тебе</h1><p>Введи название — получишь сам университет и его официальный сайт. Затем открой подробное досье или подбери 19 похожих университетов.</p></div><aside class="trust-note"><strong>Актуальность и проверка</strong>Университеты берутся из открытого реестра ROR. Требования и дедлайны читаются только с официального сайта вуза, фото — из Wikimedia Commons, климат — Open-Meteo, статистика страны — Всемирный банк. Неподтверждённое помечается отдельно.</aside></section>
   <section class="search-panel" aria-label="Поиск университетов">
     <div class="search-modes"><button type="button" class="mode-btn active" data-mode="name">По названию</button><button type="button" class="mode-btn" data-mode="criteria">По моим условиям</button></div>
-    <div class="search-row"><input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="Например: University of Toronto"><button id="searchBtn" class="primary-btn" type="button">Найти похожие</button></div>
-    <p id="searchHint" class="search-hint">Введи название университета. EduPath изучит его профиль и подберёт до 19 гибких альтернатив.</p>
+    <div class="search-row"><div class="search-box"><input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="Например: University of Toronto, MIT, Назарбаев университет" role="combobox" aria-expanded="false" aria-controls="suggestBox"><div id="suggestBox" class="suggest-box" role="listbox" hidden></div></div><button id="searchBtn" class="primary-btn" type="button">Найти</button></div>
+    <p id="searchHint" class="search-hint">Начни вводить название — появятся подсказки. Поиск показывает только университеты и их официальные сайты.</p>
     <div id="filterPanel" class="filter-panel">
       <div class="filter-grid">
         <div class="filter-field"><label for="filterField">Направление</label><input id="filterField" class="filter-control" placeholder="Computer Science"></div>
@@ -60,7 +67,11 @@
     <div id="cardsTrack" class="cards-track" aria-label="Список университетов"><div class="loading-panel">Загружаем актуальную подборку университетов…</div></div>
   </section>
   <section class="detail-shell" id="detailShell"><div class="empty-state" id="emptyState"><h2>Выбери университет</h2><p>Открой карточку, чтобы увидеть требования, дедлайны, финансы, сведения о городе и стране, карту, изображения и официальные ссылки.</p></div><div id="detailContent"></div></section>
+  <section class="similar-section" id="similarSection" hidden>
+    <div class="section-head"><div><h2 id="similarHeading">Похожие университеты</h2><p id="similarSub"></p></div></div>
+    <div id="similarTrack" class="cards-track" aria-label="Похожие университеты"></div>
+  </section>
   <p class="footer-note">EduPath © 2026 · Динамическая справочная информация. Перед подачей документов проверяй требования на официальном сайте программы.</p>
 </main>
-<script src="i18n.js"></script><script src="auth.js"></script><script src="universities-live.js"></script>
+<script src="i18n.js"></script><script src="auth.js"></script><script src="universities-live.js?v=4"></script>
 </body></html>
