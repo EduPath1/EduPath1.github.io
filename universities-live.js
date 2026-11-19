@@ -1,17 +1,27 @@
 (() => {
   "use strict";
-  /* EduPath — страница «Университеты», v5 */
+  /* EduPath — страница «Университеты», v6 */
   const SEARCH_API = "https://edupath-university-search.muqiyatalkar.workers.dev";
   const CATALOG_URL = "catalog.json";
   const DEGREES = { foundation: "Foundation", bachelor: "Бакалавриат", master: "Магистратура", phd: "Докторантура" };
   const MATCH_LABEL = { close: "Близкий аналог", accessible: "Доступнее", value: "Выгодно по цене", funding: "Сильные стипендии", academic: "Академически близок" };
   const MONTHS = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
   const DAY = 86400000;
-  const LS_TTL = { base: 14 * DAY, adm: 7 * DAY, life: 14 * DAY, sum: 6 * 3600000 };
+  const LS_TTL = { base: 14 * DAY, adm: 7 * DAY, life: 14 * DAY, sum: 6 * 3600000, rates: 12 * 3600000 };
+  // Гражданство абитуриента: [код ISO, название, валюта для пересчёта бюджета]
+  const CITIZENSHIPS = [["KZ", "Казахстан", "KZT"], ["UZ", "Узбекистан", "UZS"], ["KG", "Кыргызстан", "KGS"], ["TJ", "Таджикистан", "TJS"], ["TM", "Туркменистан", "TMT"],
+    ["RU", "Россия", "RUB"], ["BY", "Беларусь", "BYN"], ["UA", "Украина", "UAH"], ["AZ", "Азербайджан", "AZN"], ["GE", "Грузия", "GEL"], ["AM", "Армения", "AMD"],
+    ["MN", "Монголия", "MNT"], ["TR", "Турция", "TRY"], ["CN", "Китай", "CNY"], ["KR", "Южная Корея", "KRW"], ["JP", "Япония", "JPY"], ["IN", "Индия", "INR"],
+    ["US", "США", "USD"], ["CA", "Канада", "CAD"], ["GB", "Великобритания", "GBP"], ["DE", "Германия", "EUR"], ["FR", "Франция", "EUR"], ["IT", "Италия", "EUR"],
+    ["ES", "Испания", "EUR"], ["NL", "Нидерланды", "EUR"], ["PL", "Польша", "PLN"], ["CZ", "Чехия", "CZK"], ["AU", "Австралия", "AUD"], ["SG", "Сингапур", "SGD"],
+    ["AE", "ОАЭ", "AED"], ["XX", "Другая страна", "USD"]];
+  const CIT = Object.fromEntries(CITIZENSHIPS.map(([c, n, cur]) => [c, { name: n, cur }]));
+  const EU = new Set(["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO","CH"]);
+  const GROUP_LABEL = { domestic: "для граждан страны", eu: "для граждан ЕС", international: "для иностранцев" };
   const nf = new Intl.NumberFormat("ru-RU");
   const $ = id => document.getElementById(id);
 
-  const state = { degree: "bachelor", mode: "name", catalog: [], summary: {}, selected: null, openToken: 0, ctl: {}, lastBase: null };
+  const state = { degree: "bachelor", cit: "KZ", mode: "name", catalog: [], groups: {}, selected: null, openToken: 0, ctl: {}, rates: null };
   let suggestTimer = null, suggestItems = [], activeIdx = -1;
   const suggestMemo = new Map();
 
@@ -25,13 +35,13 @@
   const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
 
   function lsGet(k) {
-    try { const v = JSON.parse(localStorage.getItem("ep5:" + k)); return v && Date.now() < v.e ? v.d : null; } catch { return null; }
+    try { const v = JSON.parse(localStorage.getItem("ep6:" + k)); return v && Date.now() < v.e ? v.d : null; } catch { return null; }
   }
   function lsSet(k, d, ttl) {
-    const put = () => localStorage.setItem("ep5:" + k, JSON.stringify({ e: Date.now() + ttl, d }));
+    const put = () => localStorage.setItem("ep6:" + k, JSON.stringify({ e: Date.now() + ttl, d }));
     try { put(); } catch {
       try { // память браузера переполнена — удаляем самые старые записи EduPath
-        const keys = Object.keys(localStorage).filter(x => x.startsWith("ep5:"));
+        const keys = Object.keys(localStorage).filter(x => x.startsWith("ep6:"));
         keys.slice(0, Math.ceil(keys.length / 2)).forEach(x => localStorage.removeItem(x)); put();
       } catch { /* браузер без хранилища — работаем без него */ }
     }
@@ -56,6 +66,33 @@
   const isCancel = e => e?.name === "AbortError" || (e?.message || "").includes("aborted");
   function newCtl(name) { state.ctl[name]?.abort(); state.ctl[name] = new AbortController(); return state.ctl[name].signal; }
 
+  /* ---------- гражданство ---------- */
+  function groupOf(cc) {
+    const c = state.cit, u = String(cc || "").toUpperCase();
+    if (!u || c === "XX") return "international";
+    if (c === u) return "domestic";
+    return EU.has(c) && EU.has(u) ? "eu" : "international";
+  }
+  function syncCitUI() {
+    document.querySelectorAll("[data-cit-select]").forEach(sel => {
+      if (!sel.options.length) sel.innerHTML = CITIZENSHIPS.map(([c, n]) => `<option value="${c}">${esc(n)}</option>`).join("");
+      sel.value = state.cit;
+    });
+  }
+  function setCitizenship(cc) {
+    if (!CIT[cc] || cc === state.cit) { syncCitUI(); return; }
+    const before = state.selected ? groupOf(state.selected.countryCode) : null;
+    state.cit = cc;
+    try { localStorage.setItem("ep6:cit", cc); } catch { /* ignore */ }
+    const u = new URL(location.href); u.searchParams.set("cit", cc); history.replaceState(null, "", u);
+    syncCitUI(); refreshCardFacts();
+    if (state.selected) {
+      // поиск не повторяется: Worker берёт уже найденные страницы и разбирает их для другой группы
+      if (groupOf(state.selected.countryCode) !== before) loadAdmissions(state.selected, false);
+      loadLife(state.selected, false);
+    }
+  }
+
   /* ---------- уровень обучения ---------- */
   function syncDegreeUI() {
     document.querySelectorAll("[data-degree-switch] button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.degree === state.degree)));
@@ -64,7 +101,7 @@
   function setDegree(deg, { silent = false } = {}) {
     if (!DEGREES[deg] || (deg === state.degree && !silent)) { syncDegreeUI(); return; }
     state.degree = deg;
-    try { localStorage.setItem("ep5:degree", deg); } catch { /* ignore */ }
+    try { localStorage.setItem("ep6:degree", deg); } catch { /* ignore */ }
     const u = new URL(location.href); u.searchParams.set("degree", deg); history.replaceState(null, "", u);
     syncDegreeUI();
     if (silent) return;
@@ -79,20 +116,22 @@
     const days = Math.ceil((new Date(date + "T23:59:59") - new Date()) / DAY);
     return days < 0 ? "" : days <= 30 ? "red" : days <= 90 ? "yellow" : "green";
   }
-  const summaryFor = u => state.summary[norm(u.name)] || (u.id && state.summary[u.id]) || null;
+  const summaryFor = u => { const g = state.groups[groupOf(u.countryCode)] || {}; return g[norm(u.name)] || (u.id && g[u.id]) || null; };
 
   function factsHtml(u) {
     const s = summaryFor(u);
     if (s && s.offered === false) return `<div class="not-offered">По данным сайта, уровня «${esc(DEGREES[state.degree])}» нет</div>`;
-    const row = (label, v) => `<div><dt>${label}</dt><dd class="${v ? "" : "none"}">${esc(v || "—")}</dd></div>`;
-    return `<dl class="card-facts">${row("Подача", s?.type)}${row("Дедлайн", s?.nextDeadline?.display || s?.nextDeadline?.date)}${row("Приём", s?.acceptanceRate)}</dl>`;
+    const row = (label, v, title = "") => `<div${title ? ` title="${esc(title)}"` : ""}><dt>${label}</dt><dd class="${v ? "" : "none"}">${esc(v || "—")}</dd></div>`;
+    const grp = u.countryCode ? GROUP_LABEL[groupOf(u.countryCode)] : null;
+    const short = v => v && v.length > 42 ? v.slice(0, 40) + "…" : v;
+    return `<dl class="card-facts">${row("Условия", grp, `Гражданство: ${CIT[state.cit]?.name || ""}`)}${row("Подача", short(s?.type), s?.type || "")}${row("Дедлайн", s?.nextDeadline?.display || s?.nextDeadline?.date)}${row("Обучение", short(s?.tuition), s?.tuition || "")}${row("Приём", s?.acceptanceRate)}</dl>`;
   }
   function renderCards(items, track, opts = {}) {
     track.innerHTML = "";
     if (!items.length) { track.innerHTML = `<div class="empty-state">${esc(opts.empty || "Ничего не найдено.")}</div>`; return; }
     for (const uni of items) {
       const card = document.createElement("article");
-      card.tabIndex = 0; card.setAttribute("role", "button"); card.dataset.key = uniKey(uni); card.dataset.name = norm(uni.name);
+      card.tabIndex = 0; card.setAttribute("role", "button"); card.dataset.key = uniKey(uni); card.dataset.name = norm(uni.name); card.dataset.cc = uni.countryCode || "";
       card.className = "uni-card result-card" + (state.selected && uniKey(state.selected) === uniKey(uni) ? " selected" : "");
       const site = safeUrl(uni.website);
       const siteHtml = site ? `<a class="result-link" href="${esc(site)}" target="_blank" rel="noopener noreferrer">Официальный сайт: ${esc(uni.domain || hostOf(site))} ↗</a>`
@@ -113,7 +152,7 @@
   }
   function refreshCardFacts() {
     document.querySelectorAll(".uni-card").forEach(card => {
-      const fake = { name: card.querySelector("h3")?.textContent || "", id: card.dataset.key.startsWith("https://") ? card.dataset.key : null };
+      const fake = { name: card.querySelector("h3")?.textContent || "", id: card.dataset.key.startsWith("https://") ? card.dataset.key : null, countryCode: card.dataset.cc || "" };
       const s = summaryFor(fake);
       const wrap = card.querySelector(".card-facts-wrap"); if (wrap) wrap.innerHTML = factsHtml(fake);
       const dot = card.querySelector(".deadline-dot"); if (dot) dot.className = "deadline-dot " + dotClass(s?.nextDeadline?.date);
@@ -139,25 +178,27 @@
   }
   function showCatalog() {
     $("cardsHeading").textContent = `${state.catalog.length} университетов для изучения`;
-    $("cardsSubheading").textContent = "Тип подачи, ближайший дедлайн и процент приёма — для выбранного уровня обучения";
+    $("cardsSubheading").textContent = "Условия, подача, дедлайн, цена обучения и процент приёма — для выбранного уровня и гражданства";
     renderCards(state.catalog, $("cardsTrack"), { empty: "Каталог пуст." });
   }
   async function loadSummary(force) {
     const deg = state.degree, cached = !force && lsGet("sum:" + deg);
-    if (cached) { state.summary = cached; refreshCardFacts(); return; }
+    if (cached) { state.groups = cached; refreshCardFacts(); return; }
     try {
       const data = await api("/catalog-status", { body: { degree: deg }, timeout: 20000 });
       if (deg !== state.degree) return;
-      state.summary = data.summary || {};
-      lsSet("sum:" + deg, state.summary, LS_TTL.sum);
+      state.groups = data.groups || {};
+      lsSet("sum:" + deg, state.groups, LS_TTL.sum);
       refreshCardFacts();
     } catch (e) { console.warn("catalog-status", e.message); }
   }
   function rememberSummary(u, adm) {
+    if (adm.degree !== state.degree) return;
     const entry = { name: u.name, type: adm.application?.type || null, nextDeadline: adm.application?.nextDeadline || null,
-      acceptanceRate: adm.acceptanceRate || null, offered: adm.offered };
-    state.summary[norm(u.name)] = entry; if (u.id) state.summary[u.id] = entry;
-    if (adm.degree === state.degree) { lsSet("sum:" + state.degree, state.summary, LS_TTL.sum); refreshCardFacts(); }
+      acceptanceRate: adm.acceptanceRate || null, tuition: adm.financial?.tuition || null, offered: adm.offered };
+    const g = state.groups[adm.group] = state.groups[adm.group] || {};
+    g[norm(u.name)] = entry; if (u.id) g[u.id] = entry;
+    lsSet("sum:" + state.degree, state.groups, LS_TTL.sum); refreshCardFacts();
   }
 
   /* ---------- подсказки поиска ---------- */
@@ -258,11 +299,11 @@
         <div class="detail-actions" id="dActions">${linkBtn("Официальный сайт", u.website)}<span id="dLinks"></span><button class="action-btn accent" id="similarBtn" type="button">Найти 19 похожих ↓</button><button class="action-btn" id="saveUniBtn" type="button">☆ Сохранить в избранное</button><button class="action-btn" id="refreshUniBtn" type="button" title="Собрать данные заново (тратит лимиты поиска)">↻ Обновить данные</button></div></header>
       <div class="detail-grid"><div>
         <div id="dAbout"></div>
-        <section class="detail-section"><h3>1. Условия поступления — <span class="dDegreeName"></span></h3><div id="admReq">${loadingHtml("Читаем официальный сайт вуза…")}</div></section>
+        <section class="detail-section"><h3>1. Условия поступления — <span class="dDegreeName"></span></h3><span class="group-chip" id="dGroup"></span><div id="admReq">${loadingHtml("Читаем официальный сайт вуза…")}</div></section>
         <section class="detail-section"><h3>2. Тип подачи и дедлайны</h3><div id="admApp">${loadingHtml("Ищем дедлайны…")}</div></section>
         <section class="detail-section"><h3>3. Стоимость и финансовая помощь</h3><div id="admFin">${loadingHtml("Ищем стоимость и стипендии…")}</div></section>
-        <section class="detail-section"><h3>4. Жизнь в городе${u.city ? ": " + esc(u.city) : ""}</h3><div id="cityClimate"></div><div id="lifeCity">${loadingHtml("Собираем данные о городе…")}</div></section>
-        <section class="detail-section"><h3>5. Жизнь в стране${u.country ? ": " + esc(u.country) : ""}</h3><div id="countryStats">${loadingHtml("Загружаем статистику страны…")}</div><div id="lifeCountry"></div></section>
+        <section class="detail-section"><h3>4. Сколько стоит жизнь${u.city ? ": " + esc(u.city) : ""}</h3><div id="lifeCity">${loadingHtml("Считаем бюджет студента в месяц…")}</div><div id="cityClimate"></div></section>
+        <section class="detail-section"><h3>5. Страна${u.country ? ": " + esc(u.country) : ""}</h3><div id="countryStats">${loadingHtml("…")}</div><div id="lifeCountry"></div></section>
         <section class="detail-section"><h3>6. Академическая среда</h3><div id="admAcademic">${loadingHtml("…")}</div></section>
       </div><aside>
         <section class="detail-section"><h3>7. Местоположение и Google Maps</h3><div id="dMap">${mapHtml(u)}</div></section>
@@ -270,7 +311,7 @@
         <section class="detail-section"><h3>9. Источники</h3><div id="dSources" class="sources">${loadingHtml("…")}</div></section>
       </aside></div>
       <div class="disclaimer">Справка собрана автоматически. Требования и дедлайны зависят от программы, гражданства и года набора. «Нет подтверждённых данных» значит «не нашли», а не «не требуется». Перед подачей проверь на официальном сайте.</div></article>`;
-    syncDegreeUI();
+    syncDegreeUI(); paintGroup();
     document.querySelectorAll(".dDegreeName").forEach(el => el.textContent = DEGREES[state.degree]);
     $("detailContent").querySelectorAll("[data-degree-switch] button").forEach(b => b.addEventListener("click", () => setDegree(b.dataset.degree)));
     $("similarBtn").addEventListener("click", () => loadSimilar(state.selected));
@@ -295,7 +336,9 @@
   function fillBase(d) {
     const u = state.selected;
     Object.assign(u, { id: d.id || u.id, name: d.name || u.name, city: d.city || u.city, country: d.country || u.country,
-      website: d.website || u.website, domain: d.domain || u.domain, lat: d.location?.latitude ?? u.lat, lng: d.location?.longitude ?? u.lng });
+      website: d.website || u.website, domain: d.domain || u.domain, countryCode: d.countryCode || u.countryCode, lat: d.location?.latitude ?? u.lat, lng: d.location?.longitude ?? u.lng });
+    state.countryInfo = d.countryInfo || null;
+    paintGroup();
     $("dName").textContent = u.name;
     $("dLocation").textContent = "📍 " + (place(u) || "Местоположение уточняется") + (d.established ? ` · основан в ${d.established}` : "");
     $("dEyebrow").textContent = `University dossier · ${u.domain || "сайт не найден"}`;
@@ -305,10 +348,10 @@
     const photos = (d.photos || []).filter(p => safeUrl(p.url));
     set("dPhotos", photos.length ? `<div class="photo-grid">${photos.map((p, i) => `<figure class="photo-fig"><img src="${esc(safeUrl(p.url))}" alt="${esc(p.title || "Кампус " + (i + 1))}" loading="lazy" referrerpolicy="no-referrer"><figcaption>${esc([p.author, p.license].filter(Boolean).join(" · "))}${safeUrl(p.page) ? ` <a href="${esc(safeUrl(p.page))}" target="_blank" rel="noopener noreferrer">Commons ↗</a>` : ""}</figcaption></figure>`).join("")}</div><p class="muted">Фото — Wikimedia Commons, авторы и лицензии под снимками.</p>` : '<p class="muted">Свободных фотографий кампуса не нашлось.</p>');
     set("cityClimate", climateHtml(d.climate));
-    const s = d.countryStats || {};
-    set("countryStats", `<div class="stat-grid">${[box("Столица", s.capital), box("Регион", s.region), box("Языки", (s.languages || []).join(", ")), box("Валюта", (s.currencies || []).join(", ")),
-      box("Население", s.population ? nf.format(s.population) : null), box("Убийств на 100 тыс. человек", num(s.homicideRate)), box("ВВП на душу (по ППС, $)", num(s.gdpPpp)),
-      box("Продолжительность жизни", num(s.lifeExpectancy, " лет")), box("Инфляция за год", num(s.inflation, " %"))].join("")}</div><p class="muted">Источник: ${esc(s.source || "Всемирный банк")}. Последнее доступное значение, год в скобках.</p>`);
+    const c = d.countryInfo || {};
+    set("countryStats", c.currencies?.length || c.languages?.length
+      ? `<div class="stat-grid">${box("Валюта", (c.currencies || []).join(", ") + (c.currencyCode ? ` (${c.currencyCode})` : ""))}${box("Официальные языки", (c.languages || []).join(", "))}${box("Столица", c.capital)}</div><p class="muted">Источник: Wikidata.</p>`
+      : '<p class="muted">Данные о стране временно недоступны.</p>');
     setupSave(u);
   }
 
@@ -326,13 +369,13 @@
       $("retryAdm").addEventListener("click", () => loadAdmissions(state.selected, true));
       return;
     }
-    set("admReq", offered + fallback + subCards(a.requirements, x => `<div class="sub-card"><strong>${esc(x.name)}: ${esc(x.value)}</strong>${badge(x.official)}<br>${x.program ? `Программа: ${esc(x.program)}. ` : ""}${x.applicantType ? `Абитуриент: ${esc(x.applicantType)}. ` : ""}${x.notes ? esc(x.notes) : ""}${srcLink(x.sourceUrl)}</div>`,
+    set("admReq", offered + fallback + subCards(a.requirements, x => `<div class="sub-card"><strong>${esc(x.name)}: ${esc(x.value)}</strong>${badge(x.official)}<br>${x.program ? `Программа: ${esc(x.program)}. ` : ""}${x.notes ? esc(x.notes) : ""}${srcLink(x.sourceUrl)}</div>`,
       "Требования не найдены на страницах вуза. Это не значит, что экзамены не нужны.") + (a.acceptanceRate ? box("Процент приёма", a.acceptanceRate) : "") + diag);
     const app = a.application || {};
     set("admApp", `<div class="info-grid">${box("Тип подачи", app.type)}${box("Стоимость заявки", app.applicationFee)}</div>` +
-      subCards(app.deadlines, x => `<div class="sub-card"><span class="deadline-dot ${dotClass(x.date)}"></span> <strong>${esc(x.label)}: ${esc(x.display || x.date)}</strong>${badge(x.official)}<br>${[x.program, x.intake, x.applicantType].filter(Boolean).map(esc).join(" · ")}${srcLink(x.sourceUrl)}</div>`, "Дедлайны не найдены."));
+      subCards(app.deadlines, x => `<div class="sub-card"><span class="deadline-dot ${dotClass(x.date)}"></span> <strong>${esc(x.label)}: ${esc(x.display || x.date)}</strong>${badge(x.official)}<br>${[x.program, x.intake].filter(Boolean).map(esc).join(" · ")}${srcLink(x.sourceUrl)}</div>`, "Дедлайны не найдены."));
     const f = a.financial || {};
-    set("admFin", `<div class="info-grid">${box("Обучение", f.tuition)}${box("Валюта", f.currency)}${box("Проживание", f.accommodation)}${box("Расходы на жизнь", f.livingExpenses)}</div>` +
+    set("admFin", `<div class="info-grid">${box("Обучение — " + (a.groupLabel || ""), f.tuition)}${box("Проживание (от вуза)", f.accommodation)}${box("Расходы на жизнь (по данным вуза)", f.livingExpenses)}${box("Полная стоимость года", f.totalCostOfAttendance)}</div>` +
       subCards(f.scholarships, x => `<div class="sub-card"><strong>${esc(x.name)}</strong>${badge(x.official)}<br>${[x.value, x.eligibility, x.deadline].filter(Boolean).map(esc).join(" · ")}${srcLink(x.sourceUrl)}</div>`, "Стипендии не найдены."));
     set("admAcademic", `<strong>Сильные направления</strong>${list(a.academic?.strongFields)}<strong>Чем известен</strong>${list(a.academic?.highlights)}`);
     const l = a.links || {};
@@ -343,13 +386,39 @@
     rememberSummary(state.selected, a);
   }
 
+  function paintGroup() {
+    const u = state.selected; if (!u || !$("dGroup")) return;
+    const g = u.countryCode ? groupOf(u.countryCode) : null;
+    $("dGroup").textContent = g ? `Гражданство: ${CIT[state.cit]?.name} → условия ${GROUP_LABEL[g]}` : `Гражданство: ${CIT[state.cit]?.name}`;
+  }
+  const SYM = { KZT: "₸", RUB: "₽", USD: "$", EUR: "€", GBP: "£", UZS: "сум", KGS: "сом", TRY: "₺", CNY: "¥", JPY: "¥", KRW: "₩", INR: "₹", UAH: "₴", AZN: "₼", GEL: "₾", PLN: "zł" };
+  const money = (n, cur) => `${nf.format(Math.round(n))} ${SYM[cur] || cur}`;
+  function moneyRange(r, cur) { return !r ? null : r.min === r.max ? money(r.min, cur) : `${money(r.min, cur)} – ${money(r.max, cur)}`; }
+  // пересчёт в валюту гражданства пользователя (тенге для Казахстана)
+  function convert(r, from) {
+    const to = CIT[state.cit]?.cur || "USD", rates = state.rates?.rates;
+    if (!r || !rates || from === to || !rates[from] || !rates[to]) return null;
+    const k = rates[to] / rates[from], round = v => { const x = v * k; const p = Math.pow(10, Math.max(0, Math.floor(Math.log10(x)) - 1)); return Math.round(x / p) * p; };
+    return "≈ " + moneyRange({ min: round(r.min), max: round(r.max) }, to);
+  }
   function fillLife(data) {
     const l = data?.life;
     if (!l) { set("lifeCity", '<p class="muted">Город и страна неизвестны.</p>'); return; }
-    const c = l.cityFacts || {}, k = l.countryFacts || {};
-    const links = arr => (arr || []).map((u, i) => srcLink(u, `Источник ${i + 1}`)).join("");
-    set("lifeCity", `<div class="info-grid">${box("Стоимость жизни", c.livingCost)}${box("Аренда", c.rent)}${box("Безопасность", c.safety)}${box("Статистика преступности", c.crimeStatistics)}${box("Транспорт", c.transport)}${box("Студенческая жизнь", c.studentLife)}</div>${links(c.sources)}`);
-    set("lifeCountry", `<div class="info-grid">${box("Безопасность", k.safety)}${box("Здравоохранение", k.healthcare)}${box("Работа студентов", k.studentWork)}${box("Визовые особенности", k.visaNotes)}</div>${links(k.sources)}`);
+    if (l.rates) state.rates = l.rates;
+    const c = l.cost, srcs = arr => (arr || []).filter(safeUrl).map(u => `<a class="source-link" href="${esc(safeUrl(u))}" target="_blank" rel="noopener noreferrer">${esc(hostOf(u))} ↗</a>`).join(" · ");
+    if (!c) set("lifeCity", '<p class="muted">Не нашли надёжных цифр о стоимости жизни в этом городе.</p>');
+    else {
+      const cur = c.currency, row = (label, r, note) => r ? `<tr><td>${label}${note ? `<small>${esc(note)}</small>` : ""}</td><td>${esc(moneyRange(r, cur))}${convert(r, cur) ? `<small>${esc(convert(r, cur))}</small>` : ""}</td></tr>` : "";
+      const lvl = c.level ? `<span class="level-badge level-${esc(c.level.split(" ")[0])}">Уровень цен: ${esc(c.level)}</span>` : "";
+      set("lifeCity", `<div class="cost-head">${c.monthlyTotal ? `<span class="cost-total">${esc(moneyRange(c.monthlyTotal, cur))} в месяц</span>${convert(c.monthlyTotal, cur) ? `<span class="cost-conv">${esc(convert(c.monthlyTotal, cur))}</span>` : ""}` : ""}${lvl}</div>
+        <table class="cost-table">${row("Аренда жилья", c.rent, c.rentNote)}${row("Еда и продукты", c.food)}${row("Транспорт", c.transport)}${row("Коммунальные услуги и связь", c.utilities)}</table>
+        <p class="muted">Бюджет одного студента, живущего отдельно${c.monthlyTotal?.summed ? " (сумма найденных статей)" : ""}. ${esc(c.note || "")}${c.usdPerMonth ? ` Уровень считается по сумме ≈ ${nf.format(c.usdPerMonth)} USD в месяц: до 450 — низкий, до 900 — средний, до 1500 — высокий, выше — очень высокий.` : ""}</p>
+        <p class="diag-line">Источники: ${srcs(c.sources) || "—"}${l.rates?.updated ? ` · курс от ${new Date(l.rates.updated).toLocaleDateString()}` : ""}</p>`);
+    }
+    if (l.group === "domestic") set("lifeCountry", `<div class="domestic-note">Ты гражданин этой страны: студенческая виза и разрешение на работу не нужны.</div>`);
+    else if (l.visa) set("lifeCountry", `<h4>Виза и работа для иностранных студентов</h4><div class="info-grid">${box("Виза", l.visa.visa)}${box("Работа во время учёбы", l.visa.work)}${box("Медицинская страховка", l.visa.insurance)}</div>
+        <p class="diag-line">Общие правила для иностранцев${l.group === "eu" ? " (для граждан ЕС обычно проще)" : ""} — для гражданства «${esc(CIT[state.cit]?.name)}» уточни на сайте посольства. Источники: ${srcs(l.visa.sources) || "—"}</p>`);
+    else set("lifeCountry", '<p class="muted">Правила о визе и работе не найдены.</p>');
   }
 
   async function loadBase(u, refresh) {
@@ -372,15 +441,16 @@
     }
   }
   async function loadAdmissions(u, refresh) {
-    const deg = state.degree, key = `adm:${deg}:` + uniKey(u), token = state.openToken;
+    const deg = state.degree, grp = groupOf(u.countryCode), key = `adm:${deg}:${grp}:` + uniKey(u), token = state.openToken;
+    paintGroup();
     ["admReq", "admApp", "admFin"].forEach(id => set(id, loadingHtml(id === "admReq" ? `Читаем официальный сайт вуза (${DEGREES[deg]})… обычно 10–40 секунд, повторно — мгновенно` : "…")));
     set("admAcademic", loadingHtml("…")); set("dLinks", ""); set("dSources", loadingHtml("…"));
     document.querySelectorAll(".dDegreeName").forEach(el => el.textContent = DEGREES[deg]);
     const cached = !refresh && lsGet(key);
     if (cached) { fillAdmissions(cached); return; }
     try {
-      const data = await api("/details/admissions", { body: { id: u.id || "", name: u.name, city: u.city || "", country: u.country || "", website: u.website || "", degree: deg, refresh }, signal: newCtl("adm"), timeout: 110000 });
-      if (token !== state.openToken || deg !== state.degree) return;
+      const data = await api("/details/admissions", { body: { id: u.id || "", name: u.name, city: u.city || "", country: u.country || "", countryCode: u.countryCode || "", website: u.website || "", degree: deg, citizenship: state.cit, refresh }, signal: newCtl("adm"), timeout: 110000 });
+      if (token !== state.openToken || deg !== state.degree || grp !== groupOf(u.countryCode)) return;
       if (data.meta?.ai?.requirements || data.meta?.ai?.finance) lsSet(key, data, LS_TTL.adm);
       fillAdmissions(data);
     } catch (e) {
@@ -391,14 +461,14 @@
     }
   }
   async function loadLife(u, refresh) {
-    const key = "life:" + norm(u.city) + "|" + norm(u.country), token = state.openToken;
+    const grp = groupOf(u.countryCode), key = "life:" + norm(u.city) + "|" + norm(u.country) + "|" + grp, token = state.openToken, cit = state.cit;
     const cached = !refresh && (u.city || u.country) && lsGet(key);
     if (cached) { fillLife(cached); return; }
     try {
-      const data = await api("/details/life", { body: { id: u.id || "", name: u.name, city: u.city || "", country: u.country || "", refresh }, signal: newCtl("life"), timeout: 90000 });
-      if (token !== state.openToken) return;
+      const data = await api("/details/life", { body: { id: u.id || "", name: u.name, city: u.city || "", country: u.country || "", countryCode: u.countryCode || "", citizenship: cit, refresh }, signal: newCtl("life"), timeout: 90000 });
+      if (token !== state.openToken || cit !== state.cit) return;
       if (data.meta?.ai && data.life) lsSet(key, data, LS_TTL.life);
-      if (data.life && !data.meta?.ai) { set("lifeCity", errorHtml("ИИ не успел разобрать данные о городе.", "retryLife", "Повтор не тратит лимиты поиска.")); $("retryLife").addEventListener("click", () => loadLife(state.selected, false)); return; }
+      if (data.life && !data.meta?.ai && !data.life.cost) { set("lifeCity", errorHtml("Не удалось посчитать стоимость жизни.", "retryLife", "Повтор не тратит лимиты поиска.")); $("retryLife").addEventListener("click", () => loadLife(state.selected, false)); return; }
       fillLife(data);
     } catch (e) {
       if (isCancel(e) || token !== state.openToken) return;
@@ -463,10 +533,10 @@
     if (!Object.entries(filters).some(([k, v]) => k !== "currency" && (Array.isArray(v) ? v.length : v !== null && v !== ""))) { status("Заполни хотя бы одно поле фильтра.", true); return; }
     $("applyFiltersBtn").disabled = true; status(`Подбираем университеты (${DEGREES[state.degree]}) и проверяем по реестру…`);
     try {
-      const data = await api("/search", { body: { mode: "criteria", degree: state.degree, filters, limit: 20 }, signal: newCtl("criteria"), timeout: 110000 });
+      const data = await api("/search", { body: { mode: "criteria", degree: state.degree, citizenship: state.cit, filters, limit: 20 }, signal: newCtl("criteria"), timeout: 110000 });
       const items = data.candidates || [];
       $("cardsHeading").textContent = "Подборка по твоим условиям";
-      $("cardsSubheading").textContent = `Найдено ${items.length} · уровень: ${DEGREES[state.degree]} · каждый вуз подтверждён реестром ROR`;
+      $("cardsSubheading").textContent = `Найдено ${items.length} · уровень: ${DEGREES[state.degree]} · гражданство: ${CIT[state.cit]?.name} · каждый вуз подтверждён реестром ROR`;
       renderCards(items, $("cardsTrack"), { showMatch: true, reason: true, empty: "Не удалось подобрать. Попробуй изменить условия." });
       status(items.length ? `Найдено: ${items.length}.` : "Ничего не найдено.", !items.length);
     } catch (e) { if (!isCancel(e)) status(e.message, true); }
@@ -481,15 +551,18 @@
     closeSuggest();
     $("searchHint").textContent = state.mode === "name"
       ? "Начни вводить название — появятся подсказки. Поиск показывает только университеты и их официальные сайты."
-      : "Заполни только важные для тебя поля. Уровень обучения берётся из переключателя вверху.";
+      : "Заполни только важные для тебя поля. Уровень обучения и гражданство берутся из выбора вверху.";
   }
 
   function init() {
     if (!$("cardsTrack")) return;
     const params = new URLSearchParams(location.search);
-    let deg = params.get("degree"); try { deg = deg || localStorage.getItem("ep5:degree"); } catch { /* ignore */ }
+    let deg = params.get("degree"), cit = (params.get("cit") || "").toUpperCase();
+    try { deg = deg || localStorage.getItem("ep6:degree"); cit = cit || localStorage.getItem("ep6:cit") || ""; } catch { /* ignore */ }
     state.degree = DEGREES[deg] ? deg : "bachelor";
-    syncDegreeUI();
+    state.cit = CIT[cit] ? cit : "KZ";
+    syncDegreeUI(); syncCitUI();
+    document.querySelectorAll("[data-cit-select]").forEach(sel => sel.addEventListener("change", e => setCitizenship(e.target.value)));
     document.querySelectorAll(".search-panel [data-degree-switch] button").forEach(b => b.addEventListener("click", () => setDegree(b.dataset.degree)));
     $("filterDegree")?.addEventListener("change", e => setDegree(e.target.value));
     document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
