@@ -1,307 +1,357 @@
 {
- "version": 1,
- "updated": "2026-11-19",
- "note": "Список каталога EduPath. Меняйте свободно: name — официальное английское название, website — официальный сайт. Требования и дедлайны сюда НЕ пишутся, они подтягиваются автоматически.",
+ "version": 2,
+ "updated": "2026-11-20",
+ "note": "Список каталога EduPath. Меняйте свободно: name — официальное английское название, website — официальный сайт. Требования и дедлайны сюда НЕ пишутся, они подтягиваются автоматически. countryCode — двухбуквенный код страны (ISO), по нему считается, гражданин вы или иностранец.",
  "universities": [
   {
    "name": "Massachusetts Institute of Technology",
    "city": "Cambridge",
    "country": "United States",
-   "website": "https://www.mit.edu"
+   "website": "https://www.mit.edu",
+   "countryCode": "US"
   },
   {
    "name": "Stanford University",
    "city": "Stanford",
    "country": "United States",
-   "website": "https://www.stanford.edu"
+   "website": "https://www.stanford.edu",
+   "countryCode": "US"
   },
   {
    "name": "Harvard University",
    "city": "Cambridge",
    "country": "United States",
-   "website": "https://www.harvard.edu"
+   "website": "https://www.harvard.edu",
+   "countryCode": "US"
   },
   {
    "name": "California Institute of Technology",
    "city": "Pasadena",
    "country": "United States",
-   "website": "https://www.caltech.edu"
+   "website": "https://www.caltech.edu",
+   "countryCode": "US"
   },
   {
    "name": "University of California, Berkeley",
    "city": "Berkeley",
    "country": "United States",
-   "website": "https://www.berkeley.edu"
+   "website": "https://www.berkeley.edu",
+   "countryCode": "US"
   },
   {
    "name": "Princeton University",
    "city": "Princeton",
    "country": "United States",
-   "website": "https://www.princeton.edu"
+   "website": "https://www.princeton.edu",
+   "countryCode": "US"
   },
   {
    "name": "Yale University",
    "city": "New Haven",
    "country": "United States",
-   "website": "https://www.yale.edu"
+   "website": "https://www.yale.edu",
+   "countryCode": "US"
   },
   {
    "name": "Columbia University",
    "city": "New York",
    "country": "United States",
-   "website": "https://www.columbia.edu"
+   "website": "https://www.columbia.edu",
+   "countryCode": "US"
   },
   {
    "name": "University of Chicago",
    "city": "Chicago",
    "country": "United States",
-   "website": "https://www.uchicago.edu"
+   "website": "https://www.uchicago.edu",
+   "countryCode": "US"
   },
   {
    "name": "University of Pennsylvania",
    "city": "Philadelphia",
    "country": "United States",
-   "website": "https://www.upenn.edu"
+   "website": "https://www.upenn.edu",
+   "countryCode": "US"
   },
   {
    "name": "Cornell University",
    "city": "Ithaca",
    "country": "United States",
-   "website": "https://www.cornell.edu"
+   "website": "https://www.cornell.edu",
+   "countryCode": "US"
   },
   {
    "name": "Johns Hopkins University",
    "city": "Baltimore",
    "country": "United States",
-   "website": "https://www.jhu.edu"
+   "website": "https://www.jhu.edu",
+   "countryCode": "US"
   },
   {
    "name": "Carnegie Mellon University",
    "city": "Pittsburgh",
    "country": "United States",
-   "website": "https://www.cmu.edu"
+   "website": "https://www.cmu.edu",
+   "countryCode": "US"
   },
   {
    "name": "University of Oxford",
    "city": "Oxford",
    "country": "United Kingdom",
-   "website": "https://www.ox.ac.uk"
+   "website": "https://www.ox.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "University of Cambridge",
    "city": "Cambridge",
    "country": "United Kingdom",
-   "website": "https://www.cam.ac.uk"
+   "website": "https://www.cam.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "Imperial College London",
    "city": "London",
    "country": "United Kingdom",
-   "website": "https://www.imperial.ac.uk"
+   "website": "https://www.imperial.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "University College London",
    "city": "London",
    "country": "United Kingdom",
-   "website": "https://www.ucl.ac.uk"
+   "website": "https://www.ucl.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "London School of Economics and Political Science",
    "city": "London",
    "country": "United Kingdom",
-   "website": "https://www.lse.ac.uk"
+   "website": "https://www.lse.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "King's College London",
    "city": "London",
    "country": "United Kingdom",
-   "website": "https://www.kcl.ac.uk"
+   "website": "https://www.kcl.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "University of Edinburgh",
    "city": "Edinburgh",
    "country": "United Kingdom",
-   "website": "https://www.ed.ac.uk"
+   "website": "https://www.ed.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "University of Manchester",
    "city": "Manchester",
    "country": "United Kingdom",
-   "website": "https://www.manchester.ac.uk"
+   "website": "https://www.manchester.ac.uk",
+   "countryCode": "GB"
   },
   {
    "name": "ETH Zurich",
    "city": "Zurich",
    "country": "Switzerland",
-   "website": "https://ethz.ch"
+   "website": "https://ethz.ch",
+   "countryCode": "CH"
   },
   {
    "name": "École Polytechnique Fédérale de Lausanne",
    "city": "Lausanne",
    "country": "Switzerland",
-   "website": "https://www.epfl.ch"
+   "website": "https://www.epfl.ch",
+   "countryCode": "CH"
   },
   {
    "name": "Technical University of Munich",
    "city": "Munich",
    "country": "Germany",
-   "website": "https://www.tum.de"
+   "website": "https://www.tum.de",
+   "countryCode": "DE"
   },
   {
    "name": "Ludwig-Maximilians-Universität München",
    "city": "Munich",
    "country": "Germany",
-   "website": "https://www.lmu.de"
+   "website": "https://www.lmu.de",
+   "countryCode": "DE"
   },
   {
    "name": "Heidelberg University",
    "city": "Heidelberg",
    "country": "Germany",
-   "website": "https://www.uni-heidelberg.de"
+   "website": "https://www.uni-heidelberg.de",
+   "countryCode": "DE"
   },
   {
    "name": "Delft University of Technology",
    "city": "Delft",
    "country": "Netherlands",
-   "website": "https://www.tudelft.nl"
+   "website": "https://www.tudelft.nl",
+   "countryCode": "NL"
   },
   {
    "name": "University of Amsterdam",
    "city": "Amsterdam",
    "country": "Netherlands",
-   "website": "https://www.uva.nl"
+   "website": "https://www.uva.nl",
+   "countryCode": "NL"
   },
   {
    "name": "KU Leuven",
    "city": "Leuven",
    "country": "Belgium",
-   "website": "https://www.kuleuven.be"
+   "website": "https://www.kuleuven.be",
+   "countryCode": "BE"
   },
   {
    "name": "University of Copenhagen",
    "city": "Copenhagen",
    "country": "Denmark",
-   "website": "https://www.ku.dk"
+   "website": "https://www.ku.dk",
+   "countryCode": "DK"
   },
   {
    "name": "KTH Royal Institute of Technology",
    "city": "Stockholm",
    "country": "Sweden",
-   "website": "https://www.kth.se"
+   "website": "https://www.kth.se",
+   "countryCode": "SE"
   },
   {
    "name": "Politecnico di Milano",
    "city": "Milan",
    "country": "Italy",
-   "website": "https://www.polimi.it"
+   "website": "https://www.polimi.it",
+   "countryCode": "IT"
   },
   {
    "name": "National University of Singapore",
    "city": "Singapore",
    "country": "Singapore",
-   "website": "https://nus.edu.sg"
+   "website": "https://nus.edu.sg",
+   "countryCode": "SG"
   },
   {
    "name": "Nanyang Technological University",
    "city": "Singapore",
    "country": "Singapore",
-   "website": "https://www.ntu.edu.sg"
+   "website": "https://www.ntu.edu.sg",
+   "countryCode": "SG"
   },
   {
    "name": "Tsinghua University",
    "city": "Beijing",
    "country": "China",
-   "website": "https://www.tsinghua.edu.cn"
+   "website": "https://www.tsinghua.edu.cn",
+   "countryCode": "CN"
   },
   {
    "name": "Peking University",
    "city": "Beijing",
    "country": "China",
-   "website": "https://www.pku.edu.cn"
+   "website": "https://www.pku.edu.cn",
+   "countryCode": "CN"
   },
   {
    "name": "University of Tokyo",
    "city": "Tokyo",
    "country": "Japan",
-   "website": "https://www.u-tokyo.ac.jp"
+   "website": "https://www.u-tokyo.ac.jp",
+   "countryCode": "JP"
   },
   {
    "name": "Kyoto University",
    "city": "Kyoto",
    "country": "Japan",
-   "website": "https://www.kyoto-u.ac.jp"
+   "website": "https://www.kyoto-u.ac.jp",
+   "countryCode": "JP"
   },
   {
    "name": "Korea Advanced Institute of Science and Technology",
    "city": "Daejeon",
    "country": "South Korea",
-   "website": "https://www.kaist.ac.kr"
+   "website": "https://www.kaist.ac.kr",
+   "countryCode": "KR"
   },
   {
    "name": "Seoul National University",
    "city": "Seoul",
    "country": "South Korea",
-   "website": "https://www.snu.ac.kr"
+   "website": "https://www.snu.ac.kr",
+   "countryCode": "KR"
   },
   {
    "name": "University of Hong Kong",
    "city": "Hong Kong",
    "country": "Hong Kong",
-   "website": "https://www.hku.hk"
+   "website": "https://www.hku.hk",
+   "countryCode": "HK"
   },
   {
    "name": "Hong Kong University of Science and Technology",
    "city": "Hong Kong",
    "country": "Hong Kong",
-   "website": "https://hkust.edu.hk"
+   "website": "https://hkust.edu.hk",
+   "countryCode": "HK"
   },
   {
    "name": "University of Toronto",
    "city": "Toronto",
    "country": "Canada",
-   "website": "https://www.utoronto.ca"
+   "website": "https://www.utoronto.ca",
+   "countryCode": "CA"
   },
   {
    "name": "McGill University",
    "city": "Montreal",
    "country": "Canada",
-   "website": "https://www.mcgill.ca"
+   "website": "https://www.mcgill.ca",
+   "countryCode": "CA"
   },
   {
    "name": "University of British Columbia",
    "city": "Vancouver",
    "country": "Canada",
-   "website": "https://www.ubc.ca"
+   "website": "https://www.ubc.ca",
+   "countryCode": "CA"
   },
   {
    "name": "University of Melbourne",
    "city": "Melbourne",
    "country": "Australia",
-   "website": "https://www.unimelb.edu.au"
+   "website": "https://www.unimelb.edu.au",
+   "countryCode": "AU"
   },
   {
    "name": "University of Sydney",
    "city": "Sydney",
    "country": "Australia",
-   "website": "https://www.sydney.edu.au"
+   "website": "https://www.sydney.edu.au",
+   "countryCode": "AU"
   },
   {
    "name": "Australian National University",
    "city": "Canberra",
    "country": "Australia",
-   "website": "https://www.anu.edu.au"
+   "website": "https://www.anu.edu.au",
+   "countryCode": "AU"
   },
   {
    "name": "Nazarbayev University",
    "city": "Astana",
    "country": "Kazakhstan",
-   "website": "https://nu.edu.kz"
+   "website": "https://nu.edu.kz",
+   "countryCode": "KZ"
   },
   {
    "name": "Middle East Technical University",
    "city": "Ankara",
    "country": "Turkey",
-   "website": "https://www.metu.edu.tr"
+   "website": "https://www.metu.edu.tr",
+   "countryCode": "TR"
   }
  ]
 }
