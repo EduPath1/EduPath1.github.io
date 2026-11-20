@@ -84,6 +84,12 @@
   .ct-play{ position:absolute; left:50%; top:50%; width:54px; height:38px; margin:-19px 0 0 -27px; border-radius:11px; background:rgba(43,27,16,.78); display:grid; place-items:center; transition:background .2s; }
   .ct-card:hover .ct-play{ background:#c4302b; }
   .ct-play svg{ width:18px; height:18px; fill:#fff; margin-left:3px; }
+  /* Обложка-заглушка, если у новости нет своей картинки */
+  .ct-cover{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:16px 18px; color:#fff; background:linear-gradient(135deg, var(--c1), var(--c2)); }
+  .ct-cover::after{ content:""; position:absolute; right:-30px; bottom:-40px; width:170px; height:170px; border-radius:50%; background:rgba(255,255,255,.08); }
+  .ct-cover-icon{ font-size:38px; line-height:1; filter:drop-shadow(0 4px 10px rgba(0,0,0,.18)); }
+  .ct-cover-src{ font-family:'Fraunces',serif; font-size:20px; font-weight:600; line-height:1.15; max-width:85%; text-shadow:0 2px 10px rgba(0,0,0,.18); position:relative; z-index:1; }
+  .ct-cover-topic{ font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.85; margin-top:4px; }
   .ct-city{ position:absolute; left:10px; top:10px; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; background:rgba(251,246,236,.94); color:var(--espresso); }
   .ct-body{ display:flex; flex-direction:column; gap:7px; padding:14px 16px 16px; flex:1; }
   .ct-meta{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:11px; color:var(--text-muted); }
@@ -263,17 +269,32 @@
     return t ? pick(t.title) : id;
   }
 
+  const COVER = {
+    study:      { icon: "🎓", c1: "#8C5A34", c2: "#C79256" },
+    visa:       { icon: "🛂", c1: "#2c4a73", c2: "#5d7fa8" },
+    life:       { icon: "🌍", c1: "#3d5c31", c2: "#7a9a5c" },
+    students:   { icon: "🧑‍🎓", c1: "#5A3B26", c2: "#A0673A" },
+    motivation: { icon: "💡", c1: "#7a5b10", c2: "#C79256" },
+    walks:      { icon: "🚶", c1: "#4b5f6b", c2: "#8aa1ad" },
+    world:      { icon: "🗞️", c1: "#2B1B10", c2: "#7A6552" }
+  };
+  function coverHtml(it) {
+    const c = COVER[it.topic] || COVER.world;
+    return `<div class="ct-cover" style="--c1:${c.c1};--c2:${c.c2}"><span class="ct-cover-icon">${c.icon}</span>` +
+           `<div><div class="ct-cover-src">${esc(it.sname)}</div><div class="ct-cover-topic">${esc(topicTitle(it.topic))}</div></div></div>`;
+  }
+
   function cardHtml(it) {
     const url = safeUrl(it.url);
     const isVideo = it.kind === "video";
     const city = it.city && CITY[it.city] ? pick(CITY[it.city]) : "";
-    const thumb = it.img
-      ? `<div class="ct-thumb">
-           <img src="${esc(safeUrl(it.img))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.remove()">
+    // У каждой карточки есть обложка: своя картинка новости/видео, а если её нет или она не загрузилась — заглушка по теме
+    const cover = coverHtml(it);
+    const thumb = `<div class="ct-thumb">
+           ${it.img ? `<img src="${esc(safeUrl(it.img))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-cover="${esc(cover)}" onerror="this.outerHTML=this.dataset.cover">` : cover}
            ${isVideo ? '<span class="ct-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>' : ""}
            ${city ? `<span class="ct-city">📍 ${esc(city)}</span>` : ""}
-         </div>`
-      : "";
+         </div>`;
     const chips = [`<span class="chip ${isVideo ? "video" : "news"}">${esc(ui(isVideo ? "video" : "news"))}</span>`,
                    `<span class="chip">${esc(topicTitle(it.topic))}</span>`];
     if (it.official) chips.push(`<span class="chip official">✓ ${esc(ui("official"))}</span>`);
