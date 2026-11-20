@@ -1,0 +1,64 @@
+# Еженедельная проверка страницы «Полезное» (resources.html / resources.json)
+# 1) открывает все ссылки и сообщает о сломанных/переехавших через Issue на GitHub
+# 2) скачивает недостающие логотипы в assets/logos/ и сохраняет их коммитом
+# Ничего не тратит: ни ИИ, ни Tavily, ни Cloudflare. Бесплатные минуты GitHub Actions.
+name: Проверка «Полезное»
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # каждый понедельник, 08:17 по Алматы
+  workflow_dispatch:
+    inputs:
+      refresh_logos:
+        description: "Перекачать все логотипы заново"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: resources-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Проверить ссылки и логотипы
+        id: check
+        run: |
+          if [ "${{ inputs.refresh_logos }}" = "true" ]; then
+            python3 scripts/check_resources.py --refresh-logos
+          else
+            python3 scripts/check_resources.py
+          fi
+
+      - name: Сохранить новые логотипы
+        run: |
+          git config user.name "edupath-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/logos
+          if git diff --cached --quiet; then
+            echo "Новых логотипов нет"
+          else
+            git commit -m "Логотипы для «Полезное» (автоматически)"
+            git push
+          fi
+
+      - name: Сообщить о проблемах через Issue
+        if: steps.check.outputs.problems != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create resources-check --color D93F0B --description "Сломанные ссылки на странице «Полезное»" --force
+          num=$(gh issue list --label resources-check --state open --json number --jq '.[0].number')
+          if [ -n "$num" ]; then
+            gh issue comment "$num" --body-file "$RUNNER_TEMP/report.md"
+          else
+            gh issue create --title "«Полезное»: есть сломанные ссылки" --label resources-check --body-file "$RUNNER_TEMP/report.md"
+          fi
