@@ -1,0 +1,64 @@
+# Лента страницы «Контент» (content.html / feed.json)
+# Каждые 3 часа собирает свежие видео (RSS каналов YouTube) и новости (RSS и официальные страницы),
+# сохраняет feed.json коммитом — только если появилось что-то новое.
+# Если источник сломался или канал давно молчит — обновляет один Issue с меткой content-feed.
+# Ничего не тратит: ни ИИ, ни Tavily, ни Cloudflare, ни Supabase. Бесплатные минуты GitHub Actions.
+name: Лента «Контент»
+
+on:
+  schedule:
+    - cron: "41 */3 * * *"   # каждые 3 часа (в :41, чтобы не попасть в общую очередь на :00)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: content-feed
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Собрать ленту
+        id: feed
+        run: python3 scripts/fetch_feeds.py
+
+      - name: Сохранить feed.json
+        run: |
+          git config user.name "edupath-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add feed.json
+          if git diff --cached --quiet; then
+            echo "Лента не изменилась"
+            exit 0
+          fi
+          git commit -m "Лента «Контент» (автоматически)"
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep 5
+          done
+          exit 1
+
+      - name: Обновить Issue с проблемами
+        if: always() && steps.feed.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROBLEMS: ${{ steps.feed.outputs.problems }}
+        run: |
+          gh label create content-feed --color 1E4E8C --description "Источники страницы «Контент»" --force
+          num=$(gh issue list --label content-feed --state open --json number --jq '.[0].number')
+          if [ "${PROBLEMS:-0}" != "0" ]; then
+            if [ -n "$num" ]; then
+              gh issue edit "$num" --body-file "$RUNNER_TEMP/content-report.md"
+            else
+              gh issue create --title "«Контент»: источники требуют внимания" --label content-feed --body-file "$RUNNER_TEMP/content-report.md"
+            fi
+          elif [ -n "$num" ]; then
+            gh issue close "$num" --comment "Все источники снова работают ✅"
+          fi
