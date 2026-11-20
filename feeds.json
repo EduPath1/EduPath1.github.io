@@ -1,0 +1,99 @@
+{
+  "_help": "Источники страницы «Контент». type: youtube (канал), rss (лента RSS/Atom), page (страница новостей официального сайта без RSS). Чтобы выключить источник — добавь \"disabled\": true. Для канала YouTube лучше всего указать channel_id (UC...), иначе он ищется по handle или по названию. max — сколько записей этого источника максимум держать на странице.",
+  "topics": [
+    { "id": "study",      "title": { "ru": "Поступление и учёба", "en": "Admission & study", "zh": "申请与学习", "kk": "Түсу және оқу", "ky": "Тапшыруу жана окуу" } },
+    { "id": "visa",       "title": { "ru": "Визы", "en": "Visas", "zh": "签证", "kk": "Визалар", "ky": "Визалар" } },
+    { "id": "life",       "title": { "ru": "Жизнь в странах", "en": "Life abroad", "zh": "海外生活", "kk": "Елдердегі өмір", "ky": "Өлкөлөрдөгү жашоо" } },
+    { "id": "students",   "title": { "ru": "Опыт студентов", "en": "Student stories", "zh": "学生经历", "kk": "Студенттер тәжірибесі", "ky": "Студенттердин тажрыйбасы" } },
+    { "id": "motivation", "title": { "ru": "Мотивация и цитаты", "en": "Motivation & ideas", "zh": "励志与思想", "kk": "Мотивация және дәйексөздер", "ky": "Мотивация жана цитаталар" } },
+    { "id": "walks",      "title": { "ru": "Прогулки по городам", "en": "City walks", "zh": "城市漫步", "kk": "Қалалар бойынша серуен", "ky": "Шаарлар боюнча сейил" } },
+    { "id": "world",      "title": { "ru": "Мир и политика", "en": "World & politics", "zh": "世界与政治", "kk": "Әлем және саясат", "ky": "Дүйнө жана саясат" } }
+  ],
+  "topic_rules": [
+    { "topic": "visa",  "words": ["visa", "виза", "визы", "визов", "study permit", "student permit", "immigration", "иммиграц", "residence permit", "вид на жительство", "ВНЖ"] },
+    { "topic": "study", "words": ["scholarship", "стипенди", "грант", "university", "университет", "вуз", "admission", "поступлен", "tuition", "students", "студент", "ielts", "toefl", "sat ", "exam"] }
+  ],
+  "cities": [
+    { "id": "new-york", "words": ["New York", "NYC", "Manhattan", "Brooklyn", "Нью-Йорк"] },
+    { "id": "london",   "words": ["London", "Лондон"] },
+    { "id": "tokyo",    "words": ["Tokyo", "Shibuya", "Shinjuku", "Токио"] },
+    { "id": "kyoto",    "words": ["Kyoto", "Киото"] },
+    { "id": "osaka",    "words": ["Osaka", "Осака"] },
+    { "id": "seoul",    "words": ["Seoul", "Сеул"] },
+    { "id": "paris",    "words": ["Paris", "Париж"] },
+    { "id": "istanbul", "words": ["Istanbul", "Стамбул"] },
+    { "id": "berlin",   "words": ["Berlin", "Берлин"] },
+    { "id": "rome",     "words": ["Rome", "Roma", "Рим"] },
+    { "id": "singapore","words": ["Singapore", "Сингапур"] },
+    { "id": "hong-kong","words": ["Hong Kong", "Гонконг"] },
+    { "id": "dubai",    "words": ["Dubai", "Дубай"] },
+    { "id": "boston",   "words": ["Boston", "Бостон"] },
+    { "id": "chicago",  "words": ["Chicago", "Чикаго"] },
+    { "id": "amsterdam","words": ["Amsterdam", "Амстердам"] },
+    { "id": "prague",   "words": ["Prague", "Прага"] }
+  ],
+  "sources": [
+    { "id": "yt-campusfrance", "type": "youtube", "kind": "video", "name": "Campus France", "search": "Campus France", "lang": "en", "topic": "study", "official": true, "max": 6 },
+    { "id": "yt-collegeessayguy", "type": "youtube", "kind": "video", "name": "College Essay Guy", "search": "College Essay Guy", "lang": "en", "topic": "study", "max": 6 },
+
+    { "id": "yt-harvard",  "type": "youtube", "kind": "video", "name": "Harvard University", "handle": "@harvard", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "student", "campus", "day in the life", "freshman", "first-year", "dorm", "commencement", "graduat", "class of", "tour"] },
+    { "id": "yt-stanford", "type": "youtube", "kind": "video", "name": "Stanford", "handle": "@stanford", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "student", "campus", "day in the life", "freshman", "first-year", "dorm", "commencement", "graduat", "class of", "tour"] },
+    { "id": "yt-mit", "type": "youtube", "kind": "video", "name": "MIT", "handle": "@mit", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "student", "campus", "day in the life", "freshman", "first-year", "dorm", "commencement", "graduat", "class of", "tour"] },
+    { "id": "yt-oxford", "type": "youtube", "kind": "video", "name": "University of Oxford", "search": "University of Oxford", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "applying", "interview", "student", "campus", "day in the life", "fresher", "college", "graduat", "tour"] },
+    { "id": "yt-cambridge", "type": "youtube", "kind": "video", "name": "University of Cambridge", "search": "University of Cambridge", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "applying", "interview", "student", "campus", "day in the life", "fresher", "college", "graduat", "tour"] },
+    { "id": "yt-ucl", "type": "youtube", "kind": "video", "name": "UCL", "search": "UCL University College London", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "applying", "student", "campus", "day in the life", "fresher", "graduat", "tour", "international"] },
+    { "id": "yt-nus", "type": "youtube", "kind": "video", "name": "National University of Singapore", "search": "National University of Singapore NUS", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "student", "campus", "day in the life", "freshman", "hall", "graduat", "tour", "international"] },
+    { "id": "yt-kaist", "type": "youtube", "kind": "video", "name": "KAIST", "search": "KAIST official", "lang": "en", "topic": "students", "official": true, "max": 4,
+      "include": ["admission", "student", "campus", "day in the life", "freshman", "dorm", "graduat", "tour", "international"] },
+
+    { "id": "yt-veekativhu", "type": "youtube", "kind": "video", "name": "Vee Kativhu", "search": "Vee Kativhu", "lang": "en", "topic": "students", "max": 6 },
+    { "id": "yt-unjadedjade", "type": "youtube", "kind": "video", "name": "UnJaded Jade", "search": "UnJaded Jade", "lang": "en", "topic": "students", "max": 6 },
+    { "id": "yt-aliabdaal", "type": "youtube", "kind": "video", "name": "Ali Abdaal", "handle": "@aliabdaal", "lang": "en", "topic": "students", "max": 6 },
+
+    { "id": "yt-ted", "type": "youtube", "kind": "video", "name": "TED", "handle": "@TED", "lang": "en", "topic": "motivation", "max": 8 },
+    { "id": "yt-bigthink", "type": "youtube", "kind": "video", "name": "Big Think", "handle": "@bigthink", "lang": "en", "topic": "motivation", "max": 8 },
+    { "id": "yt-schooloflife", "type": "youtube", "kind": "video", "name": "The School of Life", "search": "The School of Life", "lang": "en", "topic": "motivation", "max": 6 },
+
+    { "id": "yt-dwdocumentary", "type": "youtube", "kind": "video", "name": "DW Documentary", "handle": "@DWDocumentary", "lang": "en", "topic": "life", "max": 8 },
+
+    { "id": "yt-rambalac", "type": "youtube", "kind": "video", "name": "Rambalac", "handle": "@Rambalac", "lang": "en", "topic": "walks", "max": 6 },
+    { "id": "yt-actionkid", "type": "youtube", "kind": "video", "name": "ActionKid", "handle": "@ActionKid", "lang": "en", "topic": "walks", "max": 6 },
+    { "id": "yt-watchedwalker", "type": "youtube", "kind": "video", "name": "Watched Walker", "search": "Watched Walker", "lang": "en", "topic": "walks", "max": 6 },
+    { "id": "yt-prowalk", "type": "youtube", "kind": "video", "name": "Prowalk Tours", "search": "Prowalk Tours", "lang": "en", "topic": "walks", "max": 8 },
+
+    { "id": "pie", "type": "rss", "kind": "news", "name": "The PIE News", "url": "https://thepienews.com/feed/", "lang": "en", "topic": "study", "auto_topic": true },
+    { "id": "icef", "type": "rss", "kind": "news", "name": "ICEF Monitor", "url": "https://monitor.icef.com/feed/", "lang": "en", "topic": "study", "auto_topic": true },
+    { "id": "uwn", "type": "page", "kind": "news", "name": "University World News", "url": "https://www.universityworldnews.com/", "lang": "en", "topic": "study", "auto_topic": true },
+    { "id": "studyintl", "type": "rss", "kind": "news", "name": "Study International", "url": "https://www.studyinternational.com/feed/", "lang": "en", "topic": "study", "auto_topic": true },
+    { "id": "ihe", "type": "rss", "kind": "news", "name": "Inside Higher Ed", "url": "https://www.insidehighered.com/rss.xml", "lang": "en", "topic": "study", "auto_topic": true, "max": 6 },
+
+    { "id": "g-bolashak", "type": "page", "kind": "news", "name": "Болашак (Казахстан)", "url": "https://bolashak.gov.kz/ru/allnews", "lang": "ru", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-chevening", "type": "page", "kind": "news", "name": "Chevening (Великобритания)", "url": "https://www.chevening.org/news/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-daad", "type": "page", "kind": "news", "name": "DAAD (Германия)", "url": "https://www.daad.de/en/the-daad/communication-publications/press/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-gks", "type": "page", "kind": "news", "name": "Study in Korea / GKS (Корея)", "url": "https://www.studyinkorea.go.kr/en/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-campuschina", "type": "page", "kind": "news", "name": "Campus China / CSC (Китай)", "url": "https://www.campuschina.org/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-turkiye", "type": "page", "kind": "news", "name": "Türkiye Bursları (Турция)", "url": "https://www.turkiyeburslari.gov.tr/en/announcements", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-hungary", "type": "page", "kind": "news", "name": "Stipendium Hungaricum (Венгрия)", "url": "https://stipendiumhungaricum.hu/news/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-japan", "type": "page", "kind": "news", "name": "Study in Japan / MEXT (Япония)", "url": "https://www.studyinjapan.go.jp/en/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-erasmus", "type": "page", "kind": "news", "name": "Erasmus+ (Евросоюз)", "url": "https://erasmus-plus.ec.europa.eu/news", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-fulbright", "type": "page", "kind": "news", "name": "Fulbright (США)", "url": "https://fulbrightprogram.org/news/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+
+    { "id": "v-ukvi", "type": "rss", "kind": "news", "name": "GOV.UK — UK Visas and Immigration", "url": "https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=uk-visas-and-immigration", "lang": "en", "topic": "visa", "official": true, "max": 8 },
+    { "id": "v-ircc", "type": "page", "kind": "news", "name": "IRCC (Канада)", "url": "https://www.canada.ca/en/immigration-refugees-citizenship/news.html", "lang": "en", "topic": "visa", "official": true, "max": 8 },
+    { "id": "v-australia", "type": "page", "kind": "news", "name": "Home Affairs (Австралия)", "url": "https://immi.homeaffairs.gov.au/news-media/archive", "lang": "en", "topic": "visa", "official": true, "max": 8 },
+    { "id": "v-usa", "type": "page", "kind": "news", "name": "travel.state.gov (США)", "url": "https://travel.state.gov/content/travel/en/News/visas-news.html", "lang": "en", "topic": "visa", "official": true, "max": 8 },
+
+    { "id": "w-bbcru", "type": "rss", "kind": "news", "name": "BBC News Русская служба", "url": "https://feeds.bbci.co.uk/russian/rss.xml", "lang": "ru", "topic": "world", "auto_topic": true, "max": 10 },
+    { "id": "w-dwru", "type": "rss", "kind": "news", "name": "DW на русском", "url": "https://rss.dw.com/xml/rss-ru-all", "lang": "ru", "topic": "world", "auto_topic": true, "max": 10 },
+    { "id": "w-euronewsru", "type": "rss", "kind": "news", "name": "Euronews на русском", "url": "https://ru.euronews.com/rss", "lang": "ru", "topic": "world", "auto_topic": true, "max": 10 },
+    { "id": "w-bbcworld", "type": "rss", "kind": "news", "name": "BBC World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "lang": "en", "topic": "world", "auto_topic": true, "max": 10 }
+  ]
+}
+
