@@ -43,6 +43,7 @@ VIDEO_MAX_AGE_DAYS = 180
 SILENT_CHANNEL_DAYS = 90
 TEASER_LEN = 200
 MAX_SHORTS_CHECKS = 200          # per run, keeps the job fast
+MAX_COVER_CHECKS = 150           # news pages opened per run to find a cover image
 DEFAULT_PER_SOURCE = 10           # max items of one source in the final list
 TOTAL_NEWS = 120
 TOTAL_VIDEOS = 120
@@ -265,6 +266,8 @@ def parse_news_page(page_html, page_url, pattern=None, limit=10):
         else:
             if len(title) < 25 or len(title) > 200 or NAV_WORDS.search(title):
                 continue
+            if len(title.split()) < 4:   # "John Steinbeck" — a person page, not news
+                continue
             if len([p for p in path.split("/") if p]) < 2:
                 continue
             if re.search(r"\.(pdf|docx?|xlsx?|jpg|png|zip)$", path, re.I):
@@ -362,6 +365,31 @@ def collect_youtube(src, cache, shorts, budget, info):
     return items, newest, cid
 
 
+# ---------------------------------------------------------------- covers
+def find_cover(url):
+    """Cover picture of an article: the same og:image that Telegram/WhatsApp show in link previews."""
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "text/html,*/*",
+                                               "Accept-Language": "en-US,en;q=0.9,ru;q=0.8"})
+    with urllib.request.urlopen(req, timeout=15) as r:
+        data = r.read(400_000)
+        charset = r.headers.get_content_charset() or "utf-8"
+    try:
+        page = data.decode(charset, errors="replace")
+    except LookupError:
+        page = data.decode("utf-8", errors="replace")
+    head = page.split("</head>", 1)[0]
+    for prop in ("og:image:secure_url", "og:image", "twitter:image", "twitter:image:src"):
+        for m in re.finditer(r"<meta\b[^>]*>", head, re.I):
+            tag = m.group(0)
+            if re.search(r'(property|name)=["\']' + re.escape(prop) + r'["\']', tag, re.I):
+                c = re.search(r'content=["\']([^"\']+)', tag, re.I)
+                u = safe_url(c.group(1), url) if c else ""
+                if u and not re.search(r"\.svg(\?|$)", u, re.I):
+                    return u
+    m = re.search(r'<link\b[^>]*rel=["\']image_src["\'][^>]*href=["\']([^"\']+)', head, re.I)
+    return safe_url(m.group(1), url) if m else ""
+
+
 # ---------------------------------------------------------------- main
 def classify(src, title, summary, rules):
     if not src.get("auto_topic"):
@@ -395,6 +423,8 @@ def main():
     state = old.get("state") or {}
     yt_cache = state.get("yt_ids", {})
     shorts = state.get("shorts", {})
+    covers = state.get("covers", {})
+    cover_budget = [MAX_COVER_CHECKS]
     budget = [MAX_SHORTS_CHECKS]
 
     sources = [s for s in cfg["sources"] if not s.get("disabled")]
@@ -471,6 +501,16 @@ def main():
                         it["city"] = tag
             if src.get("official"):
                 it["official"] = True
+            if kind == "news" and not it["img"] and not src.get("no_cover"):
+                if iid in covers:
+                    it["img"] = covers[iid]
+                elif cover_budget[0] > 0:
+                    cover_budget[0] -= 1
+                    try:
+                        covers[iid] = find_cover(it["url"])
+                    except Exception:
+                        covers[iid] = ""
+                    it["img"] = covers[iid]
             fresh[iid] = it
             n += 1
         if not raw:
@@ -502,20 +542,22 @@ def main():
         final.append(it)
 
     keep_vids = {it.get("vid") for it in final if it.get("vid")}
+    keep_ids = {it["id"] for it in final}
+    covers = {k: v for k, v in covers.items() if k in keep_ids}
     # remember checked non-Shorts of recent items; forget the rest so the file stays small
     shorts = {k: v for k, v in shorts.items() if k in keep_vids or v}
     if len(shorts) > 3000:
         shorts = dict(list(shorts.items())[-3000:])
 
-    changed = ([(i["id"], i["date"], i["topic"], i["title"]) for i in final] !=
-               [(i["id"], i["date"], i["topic"], i["title"]) for i in old.get("items", [])]) \
+    changed = ([(i["id"], i["date"], i["topic"], i["title"], i["img"]) for i in final] !=
+               [(i["id"], i["date"], i["topic"], i["title"], i.get("img", "")) for i in old.get("items", [])]) \
         or yt_cache != state.get("yt_ids", {})
     if changed:
         out = {
             "updated": iso(NOW),
             "counts": totals,
             "items": final,
-            "state": {"yt_ids": yt_cache, "shorts": shorts},
+            "state": {"yt_ids": yt_cache, "shorts": shorts, "covers": covers},
         }
         with open(OUT, "w", encoding="utf-8") as f:
             json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
