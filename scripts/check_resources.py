@@ -62,26 +62,7 @@
 
 if __name__ == "__main__":
     main()
-a
-aa
-a
-a
-a
-a
 
-a
-a
-a
-a
-
-aa
-a
-a
-a
-
-
-a
-aaa
 
 
 
