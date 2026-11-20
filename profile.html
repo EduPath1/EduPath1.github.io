@@ -298,6 +298,7 @@ function renderTests(tests) {
     const currentClass = isFirst ? "test-current" : "";
     
     const cats = tData.categories || {};
+    const meta = (cats.meta && typeof cats.meta === "object") ? cats.meta : {};
     const catDefs = [
       { key: "academic",  icon: "🎓", title: t("test_cat_academic", "По учебным показателям") },
       { key: "lifestyle", icon: "🌍", title: t("test_cat_lifestyle", "По желанию жить") },
@@ -314,10 +315,10 @@ function renderTests(tests) {
         listHtml = `<div class="empty-mini">${t("test_empty_category", "Ничего не подошло в этой категории")}</div>`;
       } else {
         listHtml = `<div class="uni-list-mini">` + list.map(u => `
-          <div class="uni-mini" data-uni-name="${escapeAttr(u.name || "")}">
+          <div class="uni-mini" data-uni-name="${escapeAttr(u.name || "")}" data-uni-id="${escapeAttr(u.id || "")}" data-uni-country="${escapeAttr(u.country || "")}" data-uni-city="${escapeAttr(u.city || "")}" data-degree="${escapeAttr(meta.degree || "")}" data-cit="${escapeAttr(meta.cit || "")}">
             <div class="uni-mini-name">${escapeHtml(u.name || "—")}</div>
-            <div class="uni-mini-country">${escapeHtml(u.country || "")}</div>
-            <div class="uni-mini-reason">${escapeHtml(u.reason || "")}</div>
+            <div class="uni-mini-country">${escapeHtml([u.city, u.country].filter(Boolean).join(", "))}</div>
+            ${u.reason ? `<div class="uni-mini-reason">${escapeHtml(u.reason)}</div>` : ""}
             <div class="uni-mini-arrow">${t("test_more", "Подробнее →")}</div>
           </div>
         `).join("") + `</div>`;
@@ -445,7 +446,14 @@ document.addEventListener("click", async (e) => {
 
   const uniMini = e.target.closest(".uni-mini");
   if (uniMini && uniMini.dataset.uniName) {
-    window.location.href = "universities.html?uni=" + encodeURIComponent(uniMini.dataset.uniName);
+    // открываем полную карточку вуза в «Университетах» — на том же уровне обучения и гражданстве, что в тесте
+    const d = uniMini.dataset, q = new URLSearchParams({ uni: d.uniName });
+    if (d.uniId) q.set("id", d.uniId);
+    if (d.uniCountry) q.set("country", d.uniCountry);
+    if (d.uniCity) q.set("city", d.uniCity);
+    if (d.degree) q.set("degree", d.degree);
+    if (d.cit && d.cit !== "XX") q.set("cit", d.cit);
+    window.location.href = "universities.html?" + q.toString() + "#detailShell";
     return;
   }
 });
