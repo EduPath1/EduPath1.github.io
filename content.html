@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F7EFE1">
+<title>EduPath — Контент</title>
+<meta name="description" content="Свежие видео и новости про поступление, визы, жизнь в других странах и опыт студентов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
+    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
+    --caramel:#C79256; --sand:#D9BD93;
+    --text-main:#2B1B10; --text-muted:#7A6552;
+    --line:rgba(43,27,16,0.14);
+    --shadow:0 16px 42px rgba(43,27,16,.09);
+    --ease:cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Fraunces', serif; letter-spacing:-.02em; }
+  a{ text-decoration:none; color:inherit; }
+  button,input{ font:inherit; }
+  button{ cursor:pointer; border:none; background:none; appearance:none; }
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 64px; }
+
+  /* Шапка — как на остальных страницах */
+  header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
+  .logo:hover svg{ transform:rotate(90deg); }
+  .nav-links{ display:flex; align-items:center; gap:8px; }
+  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .15s, color .15s; }
+  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
+  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
+  .nav-right{ display:flex; align-items:center; gap:14px; }
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .15s, color .15s; }
+  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-dropdown{ position:relative; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
+
+  /* Hero */
+  .ct-hero{ padding-top:48px; padding-bottom:22px; }
+  .eyebrow{ color:var(--clay); font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; margin-bottom:12px; }
+  .ct-hero h1{ font-size:clamp(34px,4.5vw,54px); font-weight:600; line-height:1.1; margin-bottom:12px; }
+  .ct-hero p{ color:var(--text-muted); max-width:720px; }
+
+  /* Панель: тип, поиск, темы, язык */
+  .ct-panel{ position:sticky; top:0; z-index:4; background:rgba(247,239,225,.95); backdrop-filter:blur(10px); padding:14px 0 10px; border-bottom:1px solid var(--line); }
+  .ct-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .ct-kinds{ display:flex; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:4px; gap:2px; }
+  .ct-kind{ padding:8px 16px; border-radius:9px; font-size:14px; color:var(--bark); white-space:nowrap; transition:background .15s, color .15s; }
+  .ct-kind:hover{ background:var(--cream-deep); }
+  .ct-kind[aria-pressed="true"]{ background:var(--espresso); color:var(--paper); }
+  .ct-search{ flex:1 1 240px; min-width:0; padding:11px 14px; border:1px solid var(--line); border-radius:11px; background:#fffdf8; color:var(--espresso); outline:none; }
+  .ct-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(140,90,52,.12); }
+  .ct-langs{ display:flex; gap:4px; }
+  .ct-lang{ padding:8px 11px; border-radius:9px; font-size:12px; font-weight:600; color:var(--bark); border:1px solid var(--line); background:var(--paper); }
+  .ct-lang[aria-pressed="true"]{ background:var(--bark); border-color:var(--bark); color:var(--paper); }
+  .ct-topics{ display:flex; gap:6px; overflow-x:auto; padding:12px 0 2px; scrollbar-width:thin; }
+  .ct-topic{ flex:none; padding:7px 13px; border-radius:999px; border:1px solid var(--line); color:var(--bark); background:transparent; font-size:13px; white-space:nowrap; transition:background .15s, color .15s; }
+  .ct-topic:hover{ background:var(--cream-deep); }
+  .ct-topic[aria-selected="true"]{ background:var(--espresso); border-color:var(--espresso); color:var(--paper); }
+  .ct-topic .count{ opacity:.6; margin-left:4px; font-size:11px; }
+
+  /* Карточки */
+  main.wrap{ padding-top:26px; padding-bottom:70px; }
+  .ct-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; }
+  .ct-card{ display:flex; flex-direction:column; background:var(--paper); border:1px solid var(--line); border-radius:16px; overflow:hidden; transition:transform .2s, box-shadow .2s, border-color .2s; }
+  .ct-card:hover, .ct-card:focus-visible{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:var(--caramel); outline:none; }
+  .ct-thumb{ position:relative; aspect-ratio:16/9; background:var(--cream-deep); overflow:hidden; }
+  .ct-thumb img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s var(--ease); }
+  .ct-card:hover .ct-thumb img{ transform:scale(1.04); }
+  .ct-play{ position:absolute; left:50%; top:50%; width:54px; height:38px; margin:-19px 0 0 -27px; border-radius:11px; background:rgba(43,27,16,.78); display:grid; place-items:center; transition:background .2s; }
+  .ct-card:hover .ct-play{ background:#c4302b; }
+  .ct-play svg{ width:18px; height:18px; fill:#fff; margin-left:3px; }
+  .ct-city{ position:absolute; left:10px; top:10px; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; background:rgba(251,246,236,.94); color:var(--espresso); }
+  .ct-body{ display:flex; flex-direction:column; gap:7px; padding:14px 16px 16px; flex:1; }
+  .ct-meta{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:11px; color:var(--text-muted); }
+  .ct-meta .src{ font-weight:700; color:var(--bark); }
+  .ct-meta .dot{ opacity:.5; }
+  .ct-title{ font-family:'Fraunces',serif; font-size:17px; font-weight:600; line-height:1.28; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .ct-card:hover .ct-title{ color:var(--clay); }
+  .ct-teaser{ font-size:13px; color:var(--bark); line-height:1.45; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:auto; padding-top:4px; }
+  .chip{ font-size:10px; font-weight:600; padding:3px 8px; border-radius:999px; background:var(--cream); color:var(--bark); }
+  .chip.official{ background:#e2e9f3; color:#2c4a73; }
+  .chip.video{ background:#f6dcd6; color:#8b2f24; }
+  .chip.news{ background:#e5ecdf; color:#3d5c31; }
+  .ct-go{ font-size:12px; color:var(--clay); font-weight:600; }
+  .ct-more{ display:block; margin:28px auto 0; padding:12px 26px; border-radius:12px; background:var(--espresso); color:var(--paper); font-weight:600; font-size:14px; }
+  .ct-more:hover{ background:var(--bark); }
+  .ct-empty, .ct-loading{ background:rgba(251,246,236,.7); border:1px dashed var(--sand); border-radius:18px; padding:30px; text-align:center; color:var(--text-muted); }
+  .ct-foot{ margin-top:40px; font-size:12px; color:var(--text-muted); text-align:center; line-height:1.6; }
+  footer{ text-align:center; padding:26px; font-size:13px; color:var(--text-muted); border-top:1px solid var(--line); }
+
+  @media (max-width:900px){
+    .wrap{ padding:0 22px; }
+    .nav-links{ display:none !important; }
+  }
+  @media (max-width:560px){
+    .ct-grid{ grid-template-columns:1fr; }
+    .ct-hero{ padding-top:30px; }
+    .ct-panel{ position:static; }
+    .ct-kinds{ width:100%; }
+    .ct-kind{ flex:1; padding:8px 6px; }
+  }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
+        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
+        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
+      </svg>
+      EduPath
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+      <a href="resources.html" data-i18n="nav_resources">Полезное</a>
+      <a href="content.html" class="active" data-i18n="nav_content">Контент</a>
+      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="ct-hero wrap">
+  <div class="eyebrow" data-c="eyebrow">EduPath · Контент</div>
+  <h1 data-c="title">Видео и новости для тех, кто едет учиться</h1>
+  <p data-c="sub">Поступление, визы, жизнь в других странах, опыт студентов и прогулки по городам. Лента обновляется сама каждые 3 часа. Нажми на карточку — откроется оригинал.</p>
+</section>
+
+<div class="ct-panel">
+  <div class="wrap">
+    <div class="ct-row">
+      <div class="ct-kinds" id="ctKinds" role="group">
+        <button type="button" class="ct-kind" data-kind="all" aria-pressed="true" data-c="kAll">Всё</button>
+        <button type="button" class="ct-kind" data-kind="news" aria-pressed="false" data-c="kNews">Новости</button>
+        <button type="button" class="ct-kind" data-kind="video" aria-pressed="false" data-c="kVideo">Видео</button>
+      </div>
+      <input type="search" id="ctSearch" class="ct-search" autocomplete="off" placeholder="Поиск: виза, Корея, стипендия…" aria-label="Поиск">
+      <div class="ct-langs" id="ctLangs" role="group" aria-label="Language"></div>
+    </div>
+    <div class="ct-topics" id="ctTopics" role="tablist"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="ctList"><div class="ct-loading" data-c="loading">Загружаем ленту…</div></div>
+  <button type="button" class="ct-more" id="ctMore" hidden data-c="more">Показать ещё</button>
+  <p class="ct-foot" id="ctFoot"></p>
+</main>
+
+<footer data-i18n="home_footer">EduPath © 2026. Все права защищены</footer>
+
+<script src="i18n.js"></script>
+<script src="auth.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const UI = {
+    ru: { eyebrow: "EduPath · Контент", title: "Видео и новости для тех, кто едет учиться", sub: "Поступление, визы, жизнь в других странах, опыт студентов и прогулки по городам. Лента обновляется сама каждые 3 часа. Нажми на карточку — откроется оригинал.", kAll: "Всё", kNews: "Новости", kVideo: "Видео", search: "Поиск: виза, Корея, стипендия…", allTopics: "Все темы", allLangs: "Все", loading: "Загружаем ленту…", empty: "Ничего не нашлось. Попробуй другую тему или запрос.", soon: "Лента скоро появится — первые видео и новости подтянутся автоматически.", error: "Не удалось загрузить ленту. Обнови страницу.", more: "Показать ещё", read: "Читать на сайте →", watch: "Смотреть на YouTube →", official: "Официальный", news: "Новость", video: "Видео", foot: "Обновлено: {d}. Материалы принадлежат их авторам; EduPath показывает только заголовок, короткий анонс и ссылку на оригинал и не связан с этими источниками." },
+    en: { eyebrow: "EduPath · Content", title: "Videos and news for future students abroad", sub: "Admission, visas, life in other countries, student stories and city walks. The feed refreshes itself every 3 hours. Click a card to open the original.", kAll: "All", kNews: "News", kVideo: "Videos", search: "Search: visa, Korea, scholarship…", allTopics: "All topics", allLangs: "All", loading: "Loading the feed…", empty: "Nothing found. Try another topic or search.", soon: "The feed will appear soon — the first videos and news are added automatically.", error: "Could not load the feed. Please refresh the page.", more: "Show more", read: "Read on the website →", watch: "Watch on YouTube →", official: "Official", news: "News", video: "Video", foot: "Updated: {d}. All materials belong to their authors; EduPath shows only the headline, a short teaser and a link to the original and is not affiliated with these sources." },
+    zh: { eyebrow: "EduPath · 内容", title: "留学生的视频与新闻", sub: "申请、签证、海外生活、学生经历和城市漫步。内容每 3 小时自动更新。点击卡片即可打开原文。", kAll: "全部", kNews: "新闻", kVideo: "视频", search: "搜索：签证、韩国、奖学金…", allTopics: "全部主题", allLangs: "全部", loading: "正在加载…", empty: "未找到结果。请尝试其他主题或关键词。", soon: "内容即将上线，首批视频和新闻会自动添加。", error: "无法加载内容，请刷新页面。", more: "显示更多", read: "在网站上阅读 →", watch: "在 YouTube 上观看 →", official: "官方", news: "新闻", video: "视频", foot: "更新时间：{d}。所有内容归原作者所有；EduPath 仅显示标题、简短摘要和原文链接，与这些来源无关联。" },
+    kk: { eyebrow: "EduPath · Контент", title: "Оқуға аттанатындарға арналған видео мен жаңалықтар", sub: "Түсу, визалар, басқа елдердегі өмір, студенттер тәжірибесі және қалалар бойынша серуен. Лента әр 3 сағат сайын өзі жаңарады. Карточканы бассаң — түпнұсқа ашылады.", kAll: "Барлығы", kNews: "Жаңалықтар", kVideo: "Видео", search: "Іздеу: виза, Корея, стипендия…", allTopics: "Барлық тақырып", allLangs: "Барлығы", loading: "Лента жүктелуде…", empty: "Ештеңе табылмады. Басқа тақырыпты немесе сұранысты көр.", soon: "Лента жақында пайда болады — алғашқы видео мен жаңалықтар автоматты түрде қосылады.", error: "Лентаны жүктеу мүмкін болмады. Бетті жаңарт.", more: "Тағы көрсету", read: "Сайтта оқу →", watch: "YouTube-та көру →", official: "Ресми", news: "Жаңалық", video: "Видео", foot: "Жаңартылды: {d}. Материалдар авторларына тиесілі; EduPath тек тақырыпты, қысқа анонсты және түпнұсқаға сілтемені көрсетеді және бұл дереккөздермен байланысты емес." },
+    ky: { eyebrow: "EduPath · Контент", title: "Окууга бараткандар үчүн видео жана жаңылыктар", sub: "Тапшыруу, визалар, башка өлкөлөрдөгү жашоо, студенттердин тажрыйбасы жана шаарлар боюнча сейил. Лента ар 3 саатта өзү жаңырат. Карточканы бассаң — түп нуска ачылат.", kAll: "Баары", kNews: "Жаңылыктар", kVideo: "Видео", search: "Издөө: виза, Корея, стипендия…", allTopics: "Бардык темалар", allLangs: "Баары", loading: "Лента жүктөлүүдө…", empty: "Эч нерсе табылган жок. Башка теманы же суроону көр.", soon: "Лента жакында пайда болот — алгачкы видео жана жаңылыктар автоматтык түрдө кошулат.", error: "Лентаны жүктөө мүмкүн болгон жок. Баракты жаңырт.", more: "Дагы көрсөтүү", read: "Сайттан окуу →", watch: "YouTube'дан көрүү →", official: "Расмий", news: "Жаңылык", video: "Видео", foot: "Жаңыланды: {d}. Материалдар авторлоруна таандык; EduPath аталышты, кыскача анонсту жана түп нускага шилтемени гана көрсөтөт жана бул булактар менен байланышы жок." }
+  };
+  // Названия городов для прогулок (на остальных языках — английское)
+  const CITY = {
+    "new-york": { ru: "Нью-Йорк", en: "New York" }, london: { ru: "Лондон", en: "London" }, tokyo: { ru: "Токио", en: "Tokyo" },
+    kyoto: { ru: "Киото", en: "Kyoto" }, osaka: { ru: "Осака", en: "Osaka" }, seoul: { ru: "Сеул", en: "Seoul" },
+    paris: { ru: "Париж", en: "Paris" }, istanbul: { ru: "Стамбул", en: "Istanbul" }, berlin: { ru: "Берлин", en: "Berlin" },
+    rome: { ru: "Рим", en: "Rome" }, singapore: { ru: "Сингапур", en: "Singapore" }, "hong-kong": { ru: "Гонконг", en: "Hong Kong" },
+    dubai: { ru: "Дубай", en: "Dubai" }, boston: { ru: "Бостон", en: "Boston" }, chicago: { ru: "Чикаго", en: "Chicago" },
+    amsterdam: { ru: "Амстердам", en: "Amsterdam" }, prague: { ru: "Прага", en: "Prague" }
+  };
+  const CONTENT_LANGS = [{ id: "ru", label: "RU" }, { id: "en", label: "EN" }];
+  const PAGE = 24;
+
+  const $ = (id) => document.getElementById(id);
+  let FEED = null, TOPICS = [];
+  const st = { kind: "all", topic: "all", clang: "all", shown: PAGE };
+
+  function lang() {
+    try { return (window.I18N && window.I18N.getLang()) || localStorage.getItem("edupath_lang") || "ru"; }
+    catch (e) { return "ru"; }
+  }
+  function ui(key) { const L = UI[lang()] || UI.ru; return L[key] != null ? L[key] : UI.ru[key]; }
+  function pick(obj) {
+    if (!obj) return "";
+    const l = lang();
+    return obj[l] || ({ kk: obj.ru, ky: obj.ru, zh: obj.en }[l]) || obj.ru || obj.en || "";
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function safeUrl(u) {
+    try { const x = new URL(u); return (x.protocol === "https:" || x.protocol === "http:") ? x.href : "#"; }
+    catch (e) { return "#"; }
+  }
+  function norm(s) { return String(s || "").toLowerCase().replace(/ё/g, "е"); }
+  function locale() { return { ru: "ru", en: "en", zh: "zh", kk: "kk", ky: "ky" }[lang()] || "ru"; }
+
+  function ago(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "";
+    const sec = (d.getTime() - Date.now()) / 1000;
+    const steps = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+    try {
+      const rtf = new Intl.RelativeTimeFormat(locale(), { numeric: "auto" });
+      for (const [unit, s] of steps) if (Math.abs(sec) >= s) return rtf.format(Math.round(sec / s), unit);
+      return rtf.format(0, "minute");
+    } catch (e) {
+      return d.toLocaleDateString();
+    }
+  }
+  function fullDate(iso) {
+    const d = new Date(iso);
+    if (isNaN(d)) return "—";
+    try { return d.toLocaleString(locale(), { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); }
+    catch (e) { return d.toLocaleString(); }
+  }
+
+  function applyStaticTexts() {
+    document.querySelectorAll("[data-c]").forEach((el) => { el.textContent = ui(el.getAttribute("data-c")); });
+    $("ctSearch").placeholder = ui("search");
+    document.title = "EduPath — " + (window.I18N ? window.I18N.t("nav_content") : "Контент");
+  }
+
+  function topicTitle(id) {
+    const t = TOPICS.find((x) => x.id === id);
+    return t ? pick(t.title) : id;
+  }
+
+  function cardHtml(it) {
+    const url = safeUrl(it.url);
+    const isVideo = it.kind === "video";
+    const city = it.city && CITY[it.city] ? pick(CITY[it.city]) : "";
+    const thumb = it.img
+      ? `<div class="ct-thumb">
+           <img src="${esc(safeUrl(it.img))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.remove()">
+           ${isVideo ? '<span class="ct-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>' : ""}
+           ${city ? `<span class="ct-city">📍 ${esc(city)}</span>` : ""}
+         </div>`
+      : "";
+    const chips = [`<span class="chip ${isVideo ? "video" : "news"}">${esc(ui(isVideo ? "video" : "news"))}</span>`,
+                   `<span class="chip">${esc(topicTitle(it.topic))}</span>`];
+    if (it.official) chips.push(`<span class="chip official">✓ ${esc(ui("official"))}</span>`);
+    return `
+      <a class="ct-card" href="${url}" target="_blank" rel="noopener noreferrer">
+        ${thumb}
+        <div class="ct-body">
+          <div class="ct-meta"><span class="src">${esc(it.sname)}</span><span class="dot">•</span><time datetime="${esc(it.date)}">${esc(ago(it.date))}</time></div>
+          <h3 class="ct-title">${esc(it.title)}</h3>
+          ${it.teaser ? `<p class="ct-teaser">${esc(it.teaser)}</p>` : ""}
+          <div class="chips">${chips.join("")}</div>
+          <span class="ct-go">${esc(ui(isVideo ? "watch" : "read"))}</span>
+        </div>
+      </a>`;
+  }
+
+  function matches(it, q, ignoreTopic) {
+    if (st.kind !== "all" && it.kind !== st.kind) return false;
+    if (st.clang !== "all" && it.lang !== st.clang) return false;
+    if (!ignoreTopic && st.topic !== "all" && it.topic !== st.topic) return false;
+    if (!q) return true;
+    const hay = norm([it.title, it.teaser, it.sname, topicTitle(it.topic), it.city && CITY[it.city] ? CITY[it.city].ru + " " + CITY[it.city].en : ""].join(" "));
+    return q.split(/\s+/).filter(Boolean).every((w) => hay.includes(w.length > 4 ? w.slice(0, w.length - 2) : w));
+  }
+
+  function renderControls(q) {
+    document.querySelectorAll(".ct-kind").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.kind === st.kind)));
+
+    const counts = { all: 0 };
+    FEED.items.forEach((it) => { if (matches(it, q, true)) { counts.all++; counts[it.topic] = (counts[it.topic] || 0) + 1; } });
+    const tabs = [{ id: "all", label: ui("allTopics"), n: counts.all }]
+      .concat(TOPICS.map((t) => ({ id: t.id, label: pick(t.title), n: counts[t.id] || 0 })))
+      .filter((t) => t.id === "all" || t.n > 0 || t.id === st.topic);
+    $("ctTopics").innerHTML = tabs.map((t) =>
+      `<button type="button" class="ct-topic" role="tab" data-topic="${esc(t.id)}" aria-selected="${t.id === st.topic}">${esc(t.label)}<span class="count">${t.n}</span></button>`
+    ).join("");
+
+    const present = new Set(FEED.items.map((it) => it.lang));
+    const langs = CONTENT_LANGS.filter((l) => present.has(l.id));
+    $("ctLangs").innerHTML = langs.length > 1
+      ? [{ id: "all", label: ui("allLangs") }].concat(langs).map((l) =>
+          `<button type="button" class="ct-lang" data-clang="${l.id}" aria-pressed="${l.id === st.clang}">${esc(l.label)}</button>`).join("")
+      : "";
+  }
+
+  function render() {
+    if (!FEED) return;
+    const q = norm($("ctSearch").value.trim());
+    renderControls(q);
+    if (!FEED.items.length) {
+      $("ctList").innerHTML = `<div class="ct-empty">${esc(ui("soon"))}</div>`;
+      $("ctMore").hidden = true;
+      $("ctFoot").textContent = "";
+      return;
+    }
+    const list = FEED.items.filter((it) => matches(it, q, false));
+    $("ctList").innerHTML = list.length
+      ? `<div class="ct-grid">${list.slice(0, st.shown).map(cardHtml).join("")}</div>`
+      : `<div class="ct-empty">${esc(ui("empty"))}</div>`;
+    $("ctMore").hidden = list.length <= st.shown;
+    $("ctFoot").textContent = ui("foot").replace("{d}", fullDate(FEED.updated));
+  }
+
+  function reset() { st.shown = PAGE; render(); }
+
+  function bind() {
+    let timer = null;
+    $("ctSearch").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(reset, 140); });
+    $("ctKinds").addEventListener("click", (e) => {
+      const b = e.target.closest(".ct-kind"); if (!b) return;
+      st.kind = b.dataset.kind; reset();
+    });
+    $("ctTopics").addEventListener("click", (e) => {
+      const b = e.target.closest(".ct-topic"); if (!b) return;
+      st.topic = b.dataset.topic; reset();
+    });
+    $("ctLangs").addEventListener("click", (e) => {
+      const b = e.target.closest(".ct-lang"); if (!b) return;
+      st.clang = b.dataset.clang; reset();
+    });
+    $("ctMore").addEventListener("click", () => { st.shown += PAGE; render(); });
+    window.addEventListener("edupath-lang-change", () => { applyStaticTexts(); render(); });
+  }
+
+  async function load() {
+    applyStaticTexts();
+    bind();
+    try {
+      const [feedRes, cfgRes] = await Promise.all([
+        fetch("feed.json", { cache: "no-cache" }),
+        fetch("feeds.json", { cache: "no-cache" })
+      ]);
+      if (!feedRes.ok || !cfgRes.ok) throw new Error("HTTP " + feedRes.status + "/" + cfgRes.status);
+      FEED = await feedRes.json();
+      const cfg = await cfgRes.json();
+      TOPICS = cfg.topics || [];
+      if (!FEED || !Array.isArray(FEED.items)) throw new Error("bad data");
+      FEED.items.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      render();
+    } catch (e) {
+      console.error("[content]", e);
+      $("ctList").innerHTML = `<div class="ct-empty">${esc(ui("error"))}</div>`;
+    }
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", load);
+  else load();
+})();
+</script>
+</body>
+</html>
