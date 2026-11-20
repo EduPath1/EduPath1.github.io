@@ -81,7 +81,7 @@
     { "id": "g-campuschina", "type": "page", "kind": "news", "name": "Campus China / CSC (Китай)", "url": "https://www.campuschina.org/", "lang": "en", "topic": "study", "official": true, "max": 5 },
     { "id": "g-turkiye", "type": "page", "kind": "news", "name": "Türkiye Bursları (Турция)", "url": "https://www.turkiyeburslari.gov.tr/en/announcements", "lang": "en", "topic": "study", "official": true, "max": 5 },
     { "id": "g-hungary", "type": "page", "kind": "news", "name": "Stipendium Hungaricum (Венгрия)", "url": "https://stipendiumhungaricum.hu/news/", "lang": "en", "topic": "study", "official": true, "max": 5 },
-    { "id": "g-japan", "type": "page", "kind": "news", "name": "Study in Japan / MEXT (Япония)", "url": "https://www.studyinjapan.go.jp/en/", "lang": "en", "topic": "study", "official": true, "max": 5 },
+    { "id": "g-japan", "type": "page", "kind": "news", "name": "Study in Japan / MEXT (Япония)", "url": "https://www.studyinjapan.go.jp/en/news/", "pattern": "^/en/news/.+", "lang": "en", "topic": "study", "official": true, "max": 5 },
     { "id": "g-erasmus", "type": "page", "kind": "news", "name": "Erasmus+ (Евросоюз)", "url": "https://erasmus-plus.ec.europa.eu/news", "lang": "en", "topic": "study", "official": true, "max": 5 },
     { "id": "g-fulbright", "type": "page", "kind": "news", "name": "Fulbright (США)", "url": "https://fulbrightprogram.org/news/", "lang": "en", "topic": "study", "official": true, "max": 5 },
 
