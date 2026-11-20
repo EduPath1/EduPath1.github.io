@@ -1,5 +1,6 @@
 // ============================================================
-// EduPath — i18n.js (v8.1, full)
+// EduPath — i18n.js (v8.2, full)
+// + «Полезное» (resources.html) в меню
 // RU / EN / ZH / KK / KY
 // + Fun Zone (v2, dashboard)
 // + Auth modal
@@ -23,6 +24,7 @@
       nav_home: "Главная", nav_universities: "Университеты", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "О нашей команде",
+      nav_resources: "Полезное",
       nav_login: "Войти", nav_logout: "Выйти", nav_hello: "Привет",
 
       home_eyebrow: "Тест на подбор университета",
@@ -534,6 +536,7 @@
       nav_home: "Home", nav_universities: "Universities", nav_profile: "Profile",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "Our Team",
+      nav_resources: "Resources",
       nav_login: "Log in", nav_logout: "Log out", nav_hello: "Hi",
 
       home_eyebrow: "University matching test",
@@ -1035,6 +1038,7 @@
       nav_home: "首页", nav_universities: "大学", nav_profile: "个人主页",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "我们的团队",
+      nav_resources: "实用网站",
       nav_login: "登录", nav_logout: "退出", nav_hello: "你好",
 
       home_eyebrow: "大学匹配测试",
@@ -1520,6 +1524,7 @@
       nav_home: "Басты бет", nav_universities: "Университеттер", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "Біздің команда",
+      nav_resources: "Пайдалы",
       nav_login: "Кіру", nav_logout: "Шығу", nav_hello: "Сәлем",
 
       home_eyebrow: "Университет таңдау тесті",
@@ -2012,6 +2017,7 @@
       nav_home: "Башкы бет", nav_universities: "Университеттер", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "Биздин команда",
+      nav_resources: "Пайдалуу",
       nav_login: "Кирүү", nav_logout: "Чыгуу", nav_hello: "Салам",
 
       home_eyebrow: "Университет тандоо тести",
@@ -2562,6 +2568,7 @@
       <div class="burger-panel-inner">
         <a href="index.html" data-i18n="nav_home">Главная</a>
         <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+        <a href="resources.html" data-i18n="nav_resources">Полезное</a>
         <a href="profile.html" data-i18n="nav_profile">Профиль</a>
         <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
         <a href="team.html" data-i18n="nav_team">О нашей команде</a>
@@ -2674,7 +2681,22 @@
     });
   }
 
+  // Пункт «Полезное» в верхнем меню всех страниц (чтобы не править каждую HTML-страницу)
+  function ensureResourcesLink() {
+    document.querySelectorAll(".nav-links").forEach(links => {
+      if (links.querySelector('a[href="resources.html"]')) return;
+      const a = document.createElement("a");
+      a.href = "resources.html";
+      a.setAttribute("data-i18n", "nav_resources");
+      a.textContent = t("nav_resources");
+      const uni = links.querySelector('a[href="universities.html"]');
+      if (uni && uni.nextSibling) links.insertBefore(a, uni.nextSibling);
+      else links.appendChild(a);
+    });
+  }
+
   function init() {
+    ensureResourcesLink();
     injectStyles();
     buildBurgerMenu();
     bindLangSwitcher();

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F7EFE1">
+<title>EduPath — Полезное</title>
+<meta name="description" content="Официальные сайты экзаменов, стипендий, подачи документов и подготовки к поступлению за рубеж.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
+    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
+    --caramel:#C79256; --sand:#D9BD93;
+    --text-main:#2B1B10; --text-muted:#7A6552;
+    --line:rgba(43,27,16,0.14);
+    --shadow:0 16px 42px rgba(43,27,16,.09);
+    --ease:cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Fraunces', serif; letter-spacing:-.02em; }
+  a{ text-decoration:none; color:inherit; }
+  button,input{ font:inherit; }
+  button{ cursor:pointer; border:none; background:none; appearance:none; }
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 64px; }
+
+  /* Шапка — как на остальных страницах */
+  header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
+  .logo:hover svg{ transform:rotate(90deg); }
+  .nav-links{ display:flex; align-items:center; gap:8px; }
+  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .15s, color .15s; }
+  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
+  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
+  .nav-right{ display:flex; align-items:center; gap:14px; }
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .15s, color .15s; }
+  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-dropdown{ position:relative; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
+
+  /* Hero */
+  .res-hero{ padding-top:48px; padding-bottom:22px; }
+  .eyebrow{ color:var(--clay); font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; margin-bottom:12px; }
+  .res-hero h1{ font-size:clamp(34px,4.5vw,54px); font-weight:600; line-height:1.1; margin-bottom:12px; }
+  .res-hero p{ color:var(--text-muted); max-width:720px; }
+
+  /* Панель поиска и фильтров */
+  .res-panel{ position:sticky; top:0; z-index:4; background:rgba(247,239,225,.95); backdrop-filter:blur(10px); padding:14px 0 12px; border-bottom:1px solid var(--line); }
+  .res-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .res-search{ flex:1 1 280px; min-width:0; padding:12px 14px; border:1px solid var(--line); border-radius:11px; background:#fffdf8; color:var(--espresso); outline:none; }
+  .res-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(140,90,52,.12); }
+  .free-toggle{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--bark); padding:10px 12px; border:1px solid var(--line); border-radius:11px; background:var(--paper); user-select:none; cursor:pointer; }
+  .free-toggle input{ accent-color:var(--clay); width:16px; height:16px; }
+  .res-tabs{ display:flex; gap:6px; overflow-x:auto; padding:12px 0 2px; scrollbar-width:thin; }
+  .res-tab{ flex:none; padding:8px 14px; border-radius:999px; border:1px solid var(--line); color:var(--bark); background:transparent; font-size:13px; white-space:nowrap; transition:background .15s, color .15s; }
+  .res-tab:hover{ background:var(--cream-deep); }
+  .res-tab[aria-selected="true"]{ background:var(--espresso); border-color:var(--espresso); color:var(--paper); }
+  .res-tab .count{ opacity:.6; margin-left:4px; font-size:11px; }
+
+  /* Секции и карточки */
+  main{ padding-bottom:70px; }
+  .res-section{ margin-top:30px; }
+  .res-section h2{ font-size:26px; font-weight:600; margin-bottom:14px; }
+  .res-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(330px, 1fr)); gap:14px; }
+  .res-card{ display:flex; gap:16px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:16px; transition:transform .2s, box-shadow .2s, border-color .2s; }
+  .res-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:var(--caramel); }
+  .res-logo{ flex:none; width:64px; height:64px; border-radius:14px; background:#fff; border:1px solid var(--line); display:grid; place-items:center; overflow:hidden; transition:transform .2s, box-shadow .2s; }
+  .res-logo:hover, .res-logo:focus-visible{ transform:scale(1.06); box-shadow:0 8px 18px -8px rgba(43,27,16,.35); outline:none; }
+  .res-logo img{ width:44px; height:44px; object-fit:contain; }
+  .res-logo .letter{ font-family:'Fraunces',serif; font-size:28px; font-weight:600; color:var(--paper); width:100%; height:100%; display:grid; place-items:center; }
+  .res-body{ min-width:0; flex:1; display:flex; flex-direction:column; gap:6px; }
+  .res-name{ font-family:'Fraunces',serif; font-size:19px; font-weight:600; line-height:1.2; }
+  .res-name:hover{ color:var(--clay); }
+  .res-domain{ font-size:11px; color:var(--text-muted); }
+  .res-desc{ font-size:13px; color:var(--bark); line-height:1.45; }
+  .res-warn{ font-size:12px; color:#8b3a30; background:#f8e7e3; border-radius:9px; padding:7px 9px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
+  .chip{ font-size:10px; font-weight:600; padding:3px 8px; border-radius:999px; background:var(--cream); color:var(--bark); }
+  .chip.free{ background:#dcebdf; color:#2f6b43; }
+  .chip.freemium{ background:#f3e9c9; color:#7a5b10; }
+  .chip.paid{ background:#efe1c6; color:#5A3B26; }
+  .chip.official{ background:#e2e9f3; color:#2c4a73; }
+  .chip.only{ background:#f6dcc6; color:#8a4a12; }
+  .res-go{ align-self:flex-start; font-size:12px; color:var(--clay); font-weight:600; margin-top:2px; }
+  .res-go:hover{ text-decoration:underline; }
+  .res-empty, .res-loading{ background:rgba(251,246,236,.7); border:1px dashed var(--sand); border-radius:18px; padding:30px; text-align:center; color:var(--text-muted); margin-top:30px; }
+  .res-foot{ margin-top:40px; font-size:12px; color:var(--text-muted); text-align:center; line-height:1.6; }
+  footer{ text-align:center; padding:26px; font-size:13px; color:var(--text-muted); border-top:1px solid var(--line); }
+
+  @media (max-width:900px){
+    .wrap{ padding:0 22px; }
+    .nav-links{ display:none !important; }
+  }
+  @media (max-width:520px){
+    .res-grid{ grid-template-columns:1fr; }
+    .res-logo{ width:54px; height:54px; }
+    .res-logo img{ width:36px; height:36px; }
+    .res-hero{ padding-top:30px; }
+    .res-panel{ position:static; }
+  }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
+        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
+        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
+      </svg>
+      EduPath
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+      <a href="resources.html" class="active" data-i18n="nav_resources">Полезное</a>
+      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
+      <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
+      <a href="team.html" data-i18n="nav_team">О нашей команде</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="res-hero wrap">
+  <div class="eyebrow" data-r="eyebrow">EduPath · Полезное</div>
+  <h1 data-r="title">Полезные сайты для поступления</h1>
+  <p data-r="sub">Официальные сайты экзаменов, стипендий и подачи документов, а также проверенные сервисы для подготовки. Нажми на логотип — откроется сам сайт.</p>
+</section>
+
+<div class="res-panel">
+  <div class="wrap">
+    <div class="res-row">
+      <input type="search" id="resSearch" class="res-search" autocomplete="off" placeholder="Поиск: IELTS, стипендия, Германия…" aria-label="Поиск">
+      <label class="free-toggle"><input type="checkbox" id="resFree"> <span data-r="onlyFree">Только бесплатные</span></label>
+    </div>
+    <div class="res-tabs" id="resTabs" role="tablist"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="resList"><div class="res-loading" data-r="loading">Загружаем сайты…</div></div>
+  <p class="res-foot" id="resFoot"></p>
+</main>
+
+<footer data-i18n="home_footer">EduPath © 2026. Все права защищены</footer>
+
+<script src="i18n.js"></script>
+<script src="auth.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // Тексты этой страницы на 5 языках (общее меню переводит i18n.js)
+  const UI = {
+    ru: { eyebrow: "EduPath · Полезное", title: "Полезные сайты для поступления", sub: "Официальные сайты экзаменов, стипендий и подачи документов, а также проверенные сервисы для подготовки. Нажми на логотип — откроется сам сайт.", search: "Поиск: IELTS, стипендия, Германия…", onlyFree: "Только бесплатные", all: "Все", loading: "Загружаем сайты…", empty: "Ничего не нашлось. Попробуй другой запрос или сними фильтр.", error: "Не удалось загрузить список. Обнови страницу.", go: "Перейти на сайт →", free: "Бесплатно", freemium: "Есть бесплатная часть", paid: "Платно", official: "Официальный", only: "Только для граждан: ", foundation: "Foundation", bachelor: "Бакалавриат", master: "Магистратура", phd: "Докторантура", KZ: "Казахстан", KG: "Кыргызстан", foot: "Ссылки автоматически проверяются раз в неделю. Последнее обновление списка: {d}. EduPath не связан с этими сайтами — условия и цены смотри на их официальных страницах.", open: "Открыть сайт" },
+    en: { eyebrow: "EduPath · Resources", title: "Useful websites for admission", sub: "Official sites for exams, scholarships and applications, plus trusted prep services. Click a logo to open the site.", search: "Search: IELTS, scholarship, Germany…", onlyFree: "Free only", all: "All", loading: "Loading websites…", empty: "Nothing found. Try another search or clear the filter.", error: "Could not load the list. Please refresh the page.", go: "Visit website →", free: "Free", freemium: "Free tier", paid: "Paid", official: "Official", only: "Citizens only: ", foundation: "Foundation", bachelor: "Bachelor's", master: "Master's", phd: "PhD", KZ: "Kazakhstan", KG: "Kyrgyzstan", foot: "Links are checked automatically every week. List last updated: {d}. EduPath is not affiliated with these websites — check their official pages for terms and prices.", open: "Open website" },
+    zh: { eyebrow: "EduPath · 实用网站", title: "申请大学的实用网站", sub: "考试、奖学金和申请的官方网站，以及可靠的备考工具。点击标志即可打开网站。", search: "搜索：IELTS、奖学金、德国…", onlyFree: "仅免费", all: "全部", loading: "正在加载…", empty: "未找到结果。请尝试其他关键词或取消筛选。", error: "无法加载列表，请刷新页面。", go: "访问网站 →", free: "免费", freemium: "部分免费", paid: "付费", official: "官方", only: "仅限公民：", foundation: "预科", bachelor: "本科", master: "硕士", phd: "博士", KZ: "哈萨克斯坦", KG: "吉尔吉斯斯坦", foot: "链接每周自动检查。列表最后更新：{d}。EduPath 与这些网站无关联，条件和价格请以官方页面为准。", open: "打开网站" },
+    kk: { eyebrow: "EduPath · Пайдалы", title: "Түсуге арналған пайдалы сайттар", sub: "Емтихандардың, стипендиялардың және құжат тапсырудың ресми сайттары, сондай-ақ дайындыққа арналған сенімді сервистер. Логотипті бассаң — сайт ашылады.", search: "Іздеу: IELTS, стипендия, Германия…", onlyFree: "Тек тегін", all: "Барлығы", loading: "Сайттар жүктелуде…", empty: "Ештеңе табылмады. Басқа сұраныс жазып көр немесе сүзгіні алып таста.", error: "Тізімді жүктеу мүмкін болмады. Бетті жаңарт.", go: "Сайтқа өту →", free: "Тегін", freemium: "Тегін бөлігі бар", paid: "Ақылы", official: "Ресми", only: "Тек азаматтарға: ", foundation: "Foundation", bachelor: "Бакалавриат", master: "Магистратура", phd: "Докторантура", KZ: "Қазақстан", KG: "Қырғызстан", foot: "Сілтемелер аптасына бір рет автоматты түрде тексеріледі. Тізім соңғы рет жаңартылды: {d}. EduPath бұл сайттармен байланысты емес — шарттар мен бағаларды олардың ресми беттерінен қара.", open: "Сайтты ашу" },
+    ky: { eyebrow: "EduPath · Пайдалуу", title: "Окууга тапшыруу үчүн пайдалуу сайттар", sub: "Сынактардын, стипендиялардын жана документ тапшыруунун расмий сайттары, ошондой эле даярдануу үчүн ишенимдүү сервистер. Логотипти бассаң — сайт ачылат.", search: "Издөө: IELTS, стипендия, Германия…", onlyFree: "Акысыздар гана", all: "Баары", loading: "Сайттар жүктөлүүдө…", empty: "Эч нерсе табылган жок. Башка суроо жазып көр же чыпканы алып сал.", error: "Тизмени жүктөө мүмкүн болгон жок. Баракты жаңырт.", go: "Сайтка өтүү →", free: "Акысыз", freemium: "Акысыз бөлүгү бар", paid: "Акылуу", official: "Расмий", only: "Жарандар үчүн гана: ", foundation: "Foundation", bachelor: "Бакалавриат", master: "Магистратура", phd: "Докторантура", KZ: "Казакстан", KG: "Кыргызстан", foot: "Шилтемелер жумасына бир жолу автоматтык түрдө текшерилет. Тизме акыркы жолу жаңыланган: {d}. EduPath бул сайттар менен байланышы жок — шарттарды жана бааларды алардын расмий барактарынан кара.", open: "Сайтты ачуу" }
+  };
+  // Описания сайтов есть на русском и английском: казахский и кыргызский берут русский, китайский — английский
+  const DESC_FALLBACK = { ru: "ru", kk: "ru", ky: "ru", en: "en", zh: "en" };
+  const LOGO_COLORS = ["#8C5A34", "#5A3B26", "#2B1B10", "#C79256", "#7A6552", "#A0673A"];
+
+  const $ = (id) => document.getElementById(id);
+  let DATA = null;
+  let activeCat = "all";
+
+  function lang() {
+    try { return (window.I18N && window.I18N.getLang()) || localStorage.getItem("edupath_lang") || "ru"; }
+    catch (e) { return "ru"; }
+  }
+  function ui(key) { const L = UI[lang()] || UI.ru; return L[key] != null ? L[key] : UI.ru[key]; }
+  function pick(obj) {
+    if (!obj) return "";
+    const l = lang();
+    return obj[l] || obj[DESC_FALLBACK[l] || "ru"] || obj.ru || obj.en || "";
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function safeUrl(u) {
+    try { const x = new URL(u); return (x.protocol === "https:" || x.protocol === "http:") ? x.href : "#"; }
+    catch (e) { return "#"; }
+  }
+  function host(u) {
+    try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; }
+  }
+  function norm(s) { return String(s || "").toLowerCase().replace(/ё/g, "е"); }
+
+  function applyStaticTexts() {
+    document.querySelectorAll("[data-r]").forEach((el) => { el.textContent = ui(el.getAttribute("data-r")); });
+    $("resSearch").placeholder = ui("search");
+    document.title = "EduPath — " + ui("title");
+  }
+
+  // Логотип: сначала локальный файл assets/logos/<id>.png, затем значок сайта через Google, затем буква
+  function logoHtml(item, idx) {
+    const color = LOGO_COLORS[idx % LOGO_COLORS.length];
+    const letter = esc((item.name || "?").trim().charAt(0).toUpperCase());
+    return `<img src="assets/logos/${encodeURIComponent(item.id)}.png" alt="" loading="lazy" decoding="async"
+              data-host="${esc(host(item.url))}" data-letter="${letter}" data-color="${color}">`;
+  }
+  function onLogoError(img) {
+    const stage = img.dataset.stage || "local";
+    if (stage === "local" && img.dataset.host) {
+      img.dataset.stage = "remote";
+      img.src = "https://www.google.com/s2/favicons?sz=128&domain=" + encodeURIComponent(img.dataset.host);
+      return;
+    }
+    const box = img.parentElement;
+    if (!box) return;
+    box.innerHTML = `<span class="letter" style="background:${img.dataset.color}">${img.dataset.letter}</span>`;
+  }
+
+  function cardHtml(item, idx) {
+    const url = safeUrl(item.url);
+    const name = esc(item.name);
+    const chips = [];
+    if (item.price) chips.push(`<span class="chip ${esc(item.price)}">${esc(ui(item.price))}</span>`);
+    if (item.official) chips.push(`<span class="chip official">✓ ${esc(ui("official"))}</span>`);
+    if (item.only) chips.push(`<span class="chip only">${esc(ui("only") + (ui(item.only) || item.only))}</span>`);
+    (item.levels || []).forEach((lv) => chips.push(`<span class="chip">${esc(ui(lv))}</span>`));
+    const warn = item.warn ? `<div class="res-warn">⚠️ ${esc(pick(item.warn))}</div>` : "";
+    return `
+      <article class="res-card">
+        <a class="res-logo" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${esc(ui("open"))}: ${name}" title="${esc(ui("open"))}: ${name}">
+          ${logoHtml(item, idx)}
+        </a>
+        <div class="res-body">
+          <a class="res-name" href="${url}" target="_blank" rel="noopener noreferrer">${name}</a>
+          <div class="res-domain">${esc(host(item.url))}</div>
+          <p class="res-desc">${esc(pick(item.desc))}</p>
+          ${warn}
+          <div class="chips">${chips.join("")}</div>
+          <a class="res-go" href="${url}" target="_blank" rel="noopener noreferrer">${esc(ui("go"))}</a>
+        </div>
+      </article>`;
+  }
+
+  function matches(item, q, freeOnly) {
+    if (freeOnly && item.price !== "free" && item.price !== "freemium") return false;
+    if (activeCat !== "all" && item.cat !== activeCat) return false;
+    if (!q) return true;
+    const cat = DATA.categories.find((c) => c.id === item.cat);
+    const hay = norm([item.name, host(item.url), item.desc && item.desc.ru, item.desc && item.desc.en,
+      cat && Object.values(cat.title).join(" "),
+      (item.levels || []).map((lv) => UI.ru[lv] + " " + UI.en[lv] + " " + ui(lv)).join(" ")].join(" "));
+    // Слова сравниваются по началу (без последних букв), чтобы «германия» находило «Германии»
+    return q.split(/\s+/).filter(Boolean).every((w) => hay.includes(w.length > 4 ? w.slice(0, w.length - 2) : w));
+  }
+
+  function renderTabs(counts) {
+    const tabs = [{ id: "all", label: ui("all"), n: counts.all }]
+      .concat(DATA.categories.map((c) => ({ id: c.id, label: pick(c.title) || c.title.ru, n: counts[c.id] || 0 })));
+    $("resTabs").innerHTML = tabs.map((t) =>
+      `<button type="button" class="res-tab" role="tab" data-cat="${esc(t.id)}" aria-selected="${t.id === activeCat}">${esc(t.label)}<span class="count">${t.n}</span></button>`
+    ).join("");
+  }
+
+  function render() {
+    if (!DATA) return;
+    const q = norm($("resSearch").value.trim());
+    const freeOnly = $("resFree").checked;
+
+    // Счётчики на вкладках учитывают поиск и фильтр «бесплатно», но не выбранную вкладку
+    const saved = activeCat; activeCat = "all";
+    const counts = { all: 0 };
+    DATA.items.forEach((it) => { if (matches(it, q, freeOnly)) { counts.all++; counts[it.cat] = (counts[it.cat] || 0) + 1; } });
+    activeCat = saved;
+    renderTabs(counts);
+
+    let idx = 0;
+    const html = DATA.categories
+      .filter((c) => activeCat === "all" || c.id === activeCat)
+      .map((c) => {
+        const items = DATA.items.filter((it) => it.cat === c.id && matches(it, q, freeOnly));
+        if (!items.length) return "";
+        return `<section class="res-section"><h2>${esc(pick(c.title) || c.title.ru)}</h2>
+                  <div class="res-grid">${items.map((it) => cardHtml(it, idx++)).join("")}</div></section>`;
+      }).join("");
+    $("resList").innerHTML = html || `<div class="res-empty">${esc(ui("empty"))}</div>`;
+    $("resList").querySelectorAll(".res-logo img").forEach((img) => {
+      img.addEventListener("error", () => onLogoError(img));
+      if (img.complete && img.naturalWidth === 0) onLogoError(img);
+    });
+    $("resFoot").textContent = ui("foot").replace("{d}", DATA.updated || "—");
+  }
+
+  function bind() {
+    let timer = null;
+    $("resSearch").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(render, 120); });
+    $("resFree").addEventListener("change", render);
+    $("resTabs").addEventListener("click", (e) => {
+      const b = e.target.closest(".res-tab");
+      if (!b) return;
+      activeCat = b.dataset.cat;
+      render();
+    });
+    window.addEventListener("edupath-lang-change", () => { applyStaticTexts(); render(); });
+  }
+
+  async function load() {
+    applyStaticTexts();
+    bind();
+    try {
+      const r = await fetch("resources.json", { cache: "no-cache" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      DATA = await r.json();
+      if (!DATA || !Array.isArray(DATA.items) || !Array.isArray(DATA.categories)) throw new Error("bad data");
+      render();
+    } catch (e) {
+      console.error("[resources]", e);
+      $("resList").innerHTML = `<div class="res-empty">${esc(ui("error"))}</div>`;
+    }
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", load);
+  else load();
+})();
+</script>
+</body>
+</html>
