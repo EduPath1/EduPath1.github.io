@@ -8,6 +8,8 @@
 
 import os
 import re
+import hashlib
+import requests
 import traceback
 from datetime import datetime, timedelta, timezone, date
 from functools import wraps
@@ -93,7 +95,7 @@ def db_error(label, e):
 
 @app.route("/", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "service": "EduPath API", "version": "1.2"})
+    return jsonify({"status": "ok", "service": "EduPath API", "version": "1.3"})
 
 
 # ============================================================
@@ -109,24 +111,92 @@ def session_payload(session):
     }
 
 
+def captcha_of(data):
+    """Токен Cloudflare Turnstile из формы. Пока капча не включена в Supabase,
+    его просто нет — тогда Supabase и не спрашивает."""
+    tok = (data.get("captcha_token") or "").strip()
+    return tok[:4000] or None
+
+
+def auth_options(data, extra=None):
+    opts = dict(extra or {})
+    tok = captcha_of(data)
+    if tok:
+        opts["captcha_token"] = tok
+    return opts
+
+
+def password_leaked(password):
+    """Проверка по базе утёкших паролей Have I Been Pwned (k-анонимность:
+    наружу уходят только первые 5 символов SHA-1, сам пароль никуда не уходит).
+    Если сервис не ответил — не мешаем регистрации."""
+    try:
+        h = hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
+        r = requests.get("https://api.pwnedpasswords.com/range/" + h[:5],
+                         headers={"Add-Padding": "true", "User-Agent": "EduPath"}, timeout=4)
+        if r.status_code != 200:
+            return False
+        tail = h[5:]
+        for line in r.text.splitlines():
+            part, _, count = line.partition(":")
+            if part.strip() == tail and int((count or "0").strip() or 0) > 0:
+                return True
+    except Exception:
+        print("HIBP check skipped:", traceback.format_exc(limit=1))
+    return False
+
+
+def password_problem(password):
+    if len(password) < 8:
+        return "Пароль должен быть не короче 8 символов"
+    if len(password) > 72:
+        return "Пароль слишком длинный (максимум 72 символа)"
+    if password.isdigit() or len(set(password)) < 4:
+        return "Пароль слишком простой. Добавь буквы и разные символы"
+    if password_leaked(password):
+        return "Этот пароль уже утёк в интернете в чужих базах. Придумай другой"
+    return None
+
+
+def email_allowed(client, email):
+    try:
+        res = client.rpc("is_email_allowed", {"p_email": email}).execute()
+        return res.data is not False
+    except Exception:
+        print("is_email_allowed skipped:", traceback.format_exc(limit=1))
+        return True
+
+
+DISPOSABLE_MSG = "Временные (одноразовые) почты не подходят. Используй свою обычную почту"
+
+
 @app.route("/api/register", methods=["POST"])
 def register():
     data = request.json or {}
-    name = (data.get("name") or "").strip()
+    name = (data.get("name") or "").strip()[:60]
     email = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
 
     if not name or not email or not password:
         return jsonify({"error": "Заполните все поля"}), 400
-    if len(password) < 4:
-        return jsonify({"error": "Пароль минимум 4 символа"}), 400
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email) or len(email) > 254:
+        return jsonify({"error": "Проверь email"}), 400
+    problem = password_problem(password)
+    if problem:
+        return jsonify({"error": problem, "code": "weak_password"}), 400
+
+    meta = {"name": name}
+    if data.get("consent") is True:
+        meta["consent_at"] = datetime.now(timezone.utc).isoformat()
 
     try:
         client = new_client()
+        if not email_allowed(client, email):
+            return jsonify({"error": DISPOSABLE_MSG, "code": "disposable_email"}), 400
         response = client.auth.sign_up({
             "email": email,
             "password": password,
-            "options": {"data": {"name": name}}
+            "options": auth_options(data, {"data": meta})
         })
 
         # Профиль (не критично). Если сессия есть — пишем от имени пользователя.
@@ -154,8 +224,17 @@ def register():
         msg = str(e)
         print("=== REGISTER ERROR ===")
         print(traceback.format_exc())
-        if "already registered" in msg.lower() or "already exists" in msg.lower():
+        low = msg.lower()
+        if "already registered" in low or "already exists" in low:
             return jsonify({"error": "Пользователь с таким email уже существует"}), 400
+        if "edupath_disposable_email" in low or "database error saving new user" in low:
+            return jsonify({"error": DISPOSABLE_MSG, "code": "disposable_email"}), 400
+        if "captcha" in low:
+            return jsonify({"error": "Проверка «я не робот» не прошла. Обнови страницу и попробуй ещё раз", "code": "captcha"}), 400
+        if "rate limit" in low or "too many" in low:
+            return jsonify({"error": "Слишком много регистраций. Попробуй позже", "code": "rate_limit"}), 429
+        if "weak" in low or "pwned" in low or "password" in low:
+            return jsonify({"error": "Пароль слишком простой или уже утёк. Придумай другой", "code": "weak_password"}), 400
         return jsonify({"error": msg}), 400
 
 
@@ -170,10 +249,11 @@ def login():
 
     try:
         client = new_client()
-        response = client.auth.sign_in_with_password({
-            "email": email,
-            "password": password
-        })
+        creds = {"email": email, "password": password}
+        opts = auth_options(data)
+        if opts:
+            creds["options"] = opts
+        response = client.auth.sign_in_with_password(creds)
 
         user_name = ""
         try:
@@ -197,6 +277,8 @@ def login():
         print(traceback.format_exc())
         if "email not confirmed" in msg.lower() or "email_not_confirmed" in msg.lower():
             return jsonify({"error": "Email не подтверждён. Проверь почту."}), 401
+        if "captcha" in msg.lower():
+            return jsonify({"error": "Проверка «я не робот» не прошла. Обнови страницу и попробуй ещё раз", "code": "captcha"}), 400
         if "invalid" in msg.lower() or "credentials" in msg.lower():
             return jsonify({"error": "Неверный email или пароль"}), 401
         return jsonify({"error": msg}), 401
@@ -247,7 +329,11 @@ def resend_confirmation():
         return jsonify({"error": "Email обязателен"}), 400
 
     try:
-        new_client().auth.resend({"type": "signup", "email": email})
+        params = {"type": "signup", "email": email}
+        opts = auth_options(data)
+        if opts:
+            params["options"] = opts
+        new_client().auth.resend(params)
         return jsonify({"ok": True, "message": "Письмо отправлено заново"}), 200
     except Exception as e:
         print("=== RESEND ERROR ===")
@@ -307,6 +393,8 @@ def add_saved(user, client):
         }).execute()
         return jsonify({"ok": True, "added": True})
     except Exception as e:
+        if "23505" in str(e) or "duplicate key" in str(e).lower():
+            return jsonify({"ok": True, "already": True})
         return db_error("POST /api/saved", e)
 
 
@@ -581,6 +669,106 @@ def remove_saved_quote(user, client, qid):
         return jsonify({"ok": True, "removed": True})
     except Exception as e:
         return db_error("DELETE /api/quotes/saved", e)
+
+
+# ============================================================
+# ПРОФИЛЬ: гражданство и уровень обучения (общие для всех устройств)
+# ============================================================
+
+DEGREES = ("foundation", "bachelor", "master", "phd")
+
+
+@app.route("/api/profile", methods=["GET"])
+@require_auth
+def get_profile(user, client):
+    try:
+        res = (client.table("profiles").select("name,citizenship,degree,consent_at,created_at")
+               .eq("id", user.id).limit(1).execute())
+        row = (res.data or [None])[0] or {}
+        return jsonify({"profile": {
+            "name": row.get("name") or "",
+            "citizenship": row.get("citizenship"),
+            "degree": row.get("degree"),
+            "consent_at": row.get("consent_at"),
+            "created_at": row.get("created_at")
+        }})
+    except Exception as e:
+        return db_error("GET /api/profile", e)
+
+
+@app.route("/api/profile", methods=["PUT", "PATCH"])
+@require_auth
+def update_profile(user, client):
+    data = request.json or {}
+    patch = {}
+    if "citizenship" in data:
+        cit = (data.get("citizenship") or "").strip().upper()
+        if cit and not re.match(r"^[A-Z]{2}$", cit):
+            return jsonify({"error": "citizenship must be a 2-letter code"}), 400
+        patch["citizenship"] = cit or None
+    if "degree" in data:
+        deg = (data.get("degree") or "").strip().lower()
+        if deg and deg not in DEGREES:
+            return jsonify({"error": "unknown degree"}), 400
+        patch["degree"] = deg or None
+    if not patch:
+        return jsonify({"error": "nothing to update"}), 400
+    patch["updated_at"] = datetime.now(timezone.utc).isoformat()
+    try:
+        res = client.table("profiles").update(patch).eq("id", user.id).execute()
+        if not res.data:
+            # строки профиля нет (старый аккаунт) — создаём
+            name = (user.user_metadata or {}).get("name", "") if user.user_metadata else ""
+            client.table("profiles").upsert(dict(patch, id=user.id, name=name)).execute()
+        return jsonify({"ok": True})
+    except Exception as e:
+        return db_error("PUT /api/profile", e)
+
+
+# ============================================================
+# ВЫХОД (завершает сессию и в Supabase, а не только в браузере)
+# ============================================================
+
+@app.route("/api/logout", methods=["POST"])
+def logout_route():
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        return jsonify({"ok": True})
+    try:
+        requests.post(SUPABASE_URL.rstrip("/") + "/auth/v1/logout?scope=local",
+                      headers={"apikey": SUPABASE_ANON_KEY, "Authorization": auth_header}, timeout=8)
+    except Exception:
+        print("logout skipped:", traceback.format_exc(limit=1))
+    return jsonify({"ok": True})
+
+
+# ============================================================
+# УДАЛЕНИЕ ДАННЫХ ПО ВЫБОРУ / УДАЛЕНИЕ АККАУНТА
+# Лимиты (ИИ-тесты и т.п.) при этом не обнуляются — они хранятся отдельно.
+# ============================================================
+
+DELETE_PARTS = ("saved", "tests", "study", "quotes", "profile", "account")
+
+
+@app.route("/api/account/delete", methods=["POST"])
+@require_auth
+def delete_account_data(user, client):
+    data = request.json or {}
+    parts = data.get("parts")
+    if not isinstance(parts, list) or not parts:
+        return jsonify({"error": "Выбери, что удалить"}), 400
+    parts = [str(p).strip().lower() for p in parts][:10]
+    if any(p not in DELETE_PARTS for p in parts):
+        return jsonify({"error": "unknown part"}), 400
+    if "account" in parts:
+        if (data.get("confirm") or "").strip().upper() not in ("УДАЛИТЬ", "DELETE", "ЖОЮ", "删除", "ӨЧҮРҮҮ"):
+            return jsonify({"error": "Чтобы удалить аккаунт, впиши слово для подтверждения"}), 400
+        parts = ["account"]
+    try:
+        res = client.rpc("delete_my_data", {"p_parts": parts}).execute()
+        return jsonify({"ok": True, "deleted": res.data or {}})
+    except Exception as e:
+        return db_error("POST /api/account/delete", e)
 
 
 if __name__ == "__main__":
