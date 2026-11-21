@@ -151,8 +151,8 @@ def password_problem(password):
         return "Пароль должен быть не короче 8 символов"
     if len(password) > 72:
         return "Пароль слишком длинный (максимум 72 символа)"
-    if password.isdigit() or len(set(password)) < 4:
-        return "Пароль слишком простой. Добавь буквы и разные символы"
+    if not re.search(r"[^\W\d_]", password) or not re.search(r"\d", password) or len(set(password)) < 4:
+        return "Пароль должен содержать и буквы, и цифры"
     if password_leaked(password):
         return "Этот пароль уже утёк в интернете в чужих базах. Придумай другой"
     return None
@@ -183,14 +183,15 @@ def client_ip():
     return (fwd.split(",")[0].strip() or request.remote_addr or "?")[:64]
 
 
-def ip_rate_limited(ip):
+def ip_rate_limited(ip, bucket="reg"):
     now = datetime.now(timezone.utc).timestamp()
-    hits = [t for t in _reg_hits.get(ip, []) if now - t < REG_WINDOW_SEC]
+    key = bucket + ":" + ip
+    hits = [t for t in _reg_hits.get(key, []) if now - t < REG_WINDOW_SEC]
     if len(hits) >= REG_LIMIT_PER_IP:
-        _reg_hits[ip] = hits
+        _reg_hits[key] = hits
         return True
     hits.append(now)
-    _reg_hits[ip] = hits
+    _reg_hits[key] = hits
     if len(_reg_hits) > 5000:          # не даём словарю расти бесконечно
         for k in list(_reg_hits)[:2500]:
             _reg_hits.pop(k, None)
@@ -204,6 +205,15 @@ def looks_like_bot(data):
     if isinstance(ms, (int, float)) and 0 <= ms < MIN_FORM_MS:
         return True
     return False
+
+
+UI_LANGS = ("ru", "en", "zh", "kk", "ky")
+SITE_URL = "https://edupath1.github.io/"
+
+
+def ui_lang(data):
+    l = (data.get("lang") or "").strip().lower()
+    return l if l in UI_LANGS else "en"
 
 
 DISPOSABLE_MSG = "Временные (одноразовые) почты не подходят. Используй свою обычную почту"
@@ -232,7 +242,7 @@ def register():
     if ip_rate_limited(client_ip()):
         return jsonify({"error": "Слишком много регистраций с этого устройства. Попробуй через час", "code": "rate_limit"}), 429
 
-    meta = {"name": name}
+    meta = {"name": name, "lang": ui_lang(data)}   # lang — язык писем (шаблоны Supabase)
     if data.get("consent") is True:
         meta["consent_at"] = datetime.now(timezone.utc).isoformat()
 
@@ -386,6 +396,72 @@ def resend_confirmation():
         print("=== RESEND ERROR ===")
         print(traceback.format_exc())
         return jsonify({"error": str(e)}), 400
+
+
+# ============================================================
+# ВОССТАНОВЛЕНИЕ ПАРОЛЯ
+# Запрос идёт напрямую в Supabase Auth (без PKCE), поэтому ссылка из письма
+# возвращает на сайт #access_token=...&type=recovery — его ловит auth.js
+# и показывает окно «Новый пароль».
+# ============================================================
+
+@app.route("/api/forgot", methods=["POST"])
+def forgot_password():
+    data = request.json or {}
+    email = (data.get("email") or "").strip().lower()
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email) or len(email) > 254:
+        return jsonify({"error": "Проверь email"}), 400
+    ok = {"ok": True}   # одинаковый ответ, есть такой аккаунт или нет — чужие почты не угадать
+    if (data.get("website") or "").strip():
+        return jsonify(ok), 200
+    if ip_rate_limited(client_ip(), "forgot"):
+        return jsonify({"error": "Слишком много запросов. Попробуй через час", "code": "rate_limit"}), 429
+    try:
+        r = requests.post(SUPABASE_URL.rstrip("/") + "/auth/v1/recover",
+                          params={"redirect_to": SITE_URL},
+                          json={"email": email},
+                          headers={"apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json"},
+                          timeout=20)
+        if r.status_code == 429:
+            return jsonify({"error": "Письмо уже отправлено недавно. Подожди минуту и попробуй снова", "code": "rate_limit"}), 429
+        if r.status_code >= 500:
+            print("=== FORGOT ERROR ===", r.status_code, r.text[:500])
+            return jsonify({"error": "Не получилось отправить письмо. Попробуй позже"}), 502
+    except Exception:
+        print("=== FORGOT ERROR ===")
+        print(traceback.format_exc())
+        return jsonify({"error": "Не получилось отправить письмо. Попробуй позже"}), 502
+    return jsonify(ok), 200
+
+
+@app.route("/api/update-password", methods=["POST"])
+@require_auth
+def update_password(user, client):
+    data = request.json or {}
+    password = data.get("password") or ""
+    problem = password_problem(password)
+    if problem:
+        return jsonify({"error": problem, "code": "weak_password"}), 400
+    token = request.headers.get("Authorization", "")[len("Bearer "):].strip()
+    try:
+        r = requests.put(SUPABASE_URL.rstrip("/") + "/auth/v1/user",
+                         json={"password": password},
+                         headers={"apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + token,
+                                  "Content-Type": "application/json"},
+                         timeout=20)
+        if r.status_code == 200:
+            return jsonify({"ok": True}), 200
+        body = (r.text or "").lower()
+        if "same_password" in body or "different from the old" in body:
+            return jsonify({"error": "Новый пароль должен отличаться от старого", "code": "same_password"}), 400
+        if "weak" in body or "pwned" in body:
+            return jsonify({"error": "Пароль слишком простой или уже утёк. Придумай другой", "code": "weak_password"}), 400
+        print("=== UPDATE PASSWORD ERROR ===", r.status_code, r.text[:500])
+        return jsonify({"error": "Не получилось сменить пароль. Запроси новую ссылку"}), 400
+    except Exception:
+        print("=== UPDATE PASSWORD ERROR ===")
+        print(traceback.format_exc())
+        return jsonify({"error": "Ошибка сервера. Попробуй ещё раз"}), 500
 
 
 @app.route("/api/me", methods=["GET"])
