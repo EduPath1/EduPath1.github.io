@@ -1,5 +1,5 @@
 // ============================================================
-// EduPath — auth.js (v3.1: Удален LinkedIn, Discord на всю ширину)
+// EduPath — auth.js (v3.2: метка устройства, капча, профиль на сервере, удаление данных)
 // ============================================================
 
 (function() {
@@ -12,6 +12,91 @@
   // Публичный адрес проекта Supabase (нужен для входа через Discord)
   const SUPABASE_URL = "https://upqvqqotslqubqdhvjkc.supabase.co";
   const FLASH_KEY = "edupath_flash";
+  const DEVICE_KEY = "edupath_device";
+
+  // Cloudflare Turnstile («я не робот»). Пусто = капча выключена.
+  // Сюда вставляется Site Key из Cloudflare (он публичный, это не секрет).
+  // ВАЖНО: сначала ключ на сайт, и только потом включать капчу в Supabase (см. INSTALL.md).
+  const TURNSTILE_SITE_KEY = "";
+
+  // ============================================================
+  // МЕТКА УСТРОЙСТВА
+  // Случайная строка, а не «отпечаток» браузера: лимиты ИИ-теста считаются
+  // и по ней тоже, поэтому несколько аккаунтов на одном устройстве делят один лимит.
+  // Хранится в двух местах (localStorage + cookie): если стереть одно, вернётся из другого.
+  // ============================================================
+
+  function readCookie(name) {
+    const m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([A-Za-z0-9_-]+)"));
+    return m ? m[1] : null;
+  }
+
+  function getDeviceId() {
+    const ok = v => typeof v === "string" && /^[A-Za-z0-9_-]{16,64}$/.test(v);
+    let id = null;
+    try { id = localStorage.getItem(DEVICE_KEY); } catch (e) {}
+    if (!ok(id)) id = readCookie("ep_did");
+    if (!ok(id)) {
+      try {
+        const a = new Uint8Array(18); crypto.getRandomValues(a);
+        id = btoa(String.fromCharCode.apply(null, a)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      } catch (e) {
+        id = (Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 24);
+      }
+    }
+    try { localStorage.setItem(DEVICE_KEY, id); } catch (e) {}
+    try { document.cookie = "ep_did=" + id + "; max-age=" + (400 * 86400) + "; path=/; SameSite=Lax; Secure"; } catch (e) {}
+    return id;
+  }
+
+  // ============================================================
+  // КАПЧА (Turnstile): невидимая, окно «я не робот» появляется только при подозрении
+  // ============================================================
+
+  let _tsLoading = null, _tsWidget = null, _tsWaiter = null;
+
+  function loadTurnstile() {
+    if (!TURNSTILE_SITE_KEY) return Promise.resolve(null);
+    if (window.turnstile) return Promise.resolve(window.turnstile);
+    if (_tsLoading) return _tsLoading;
+    _tsLoading = new Promise((resolve, reject) => {
+      const sc = document.createElement("script");
+      sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      sc.async = true;
+      sc.onload = () => resolve(window.turnstile);
+      sc.onerror = () => { _tsLoading = null; reject(new Error("captcha script")); };
+      document.head.appendChild(sc);
+    });
+    return _tsLoading;
+  }
+
+  async function getCaptchaToken() {
+    if (!TURNSTILE_SITE_KEY) return null;
+    const ts = await loadTurnstile();
+    const box = document.getElementById("edupathCaptcha");
+    if (!ts || !box) return null;
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => { _tsWaiter = null; reject(new Error(t("modal_captcha_fail", "Проверка «я не робот» не загрузилась. Обнови страницу."))); }, 45000);
+      _tsWaiter = {
+        ok: tok => { clearTimeout(timer); _tsWaiter = null; resolve(tok); },
+        fail: () => { clearTimeout(timer); _tsWaiter = null; reject(new Error(t("modal_captcha_fail", "Проверка «я не робот» не прошла. Обнови страницу."))); }
+      };
+      if (_tsWidget === null) {
+        _tsWidget = ts.render(box, {
+          sitekey: TURNSTILE_SITE_KEY,
+          execution: "execute",
+          appearance: "interaction-only",
+          language: (window.I18N && window.I18N.getLang && window.I18N.getLang()) || "auto",
+          callback: tok => _tsWaiter && _tsWaiter.ok(tok),
+          "error-callback": () => { if (_tsWaiter) _tsWaiter.fail(); return true; },
+          "expired-callback": () => {}
+        });
+      } else {
+        ts.reset(_tsWidget);
+      }
+      ts.execute(_tsWidget);
+    });
+  }
 
   // Лендинг = главная страница (index.html или корень сайта)
   function isLandingPage() {
@@ -237,6 +322,7 @@
 
     const token = getToken();
     if (token && !isAuthPath) headers["Authorization"] = "Bearer " + token;
+    try { headers["X-Device-Id"] = getDeviceId(); } catch (e) {}
 
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 30000);
@@ -295,14 +381,24 @@
   // AUTH: REGISTER / LOGIN / LOGOUT
   // ============================================================
 
-  async function register(name, email, password) {
+  async function register(name, email, password, consent) {
     if (!name || !email || !password) {
       return { ok: false, error: t("modal_fill_all", "Заполните все поля") };
     }
+    if (password.length < 8) {
+      return { ok: false, error: t("modal_password_short", "Пароль должен быть не короче 8 символов") };
+    }
+    if (!consent) {
+      return { ok: false, error: t("modal_consent_need", "Отметь согласие, чтобы создать аккаунт") };
+    }
+
+    let captcha_token = null;
+    try { captcha_token = await getCaptchaToken(); }
+    catch (e) { return { ok: false, error: e.message }; }
 
     const res = await apiFetchWithRetry("/api/register", {
       method: "POST",
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password, consent: true, captcha_token })
     });
 
     if (!res.ok) {
@@ -335,9 +431,13 @@
       return { ok: false, error: t("modal_fill_all", "Заполните все поля") };
     }
 
+    let captcha_token = null;
+    try { captcha_token = await getCaptchaToken(); }
+    catch (e) { return { ok: false, error: e.message }; }
+
     const res = await apiFetchWithRetry("/api/login", {
       method: "POST",
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, captcha_token })
     });
 
     if (!res.ok) {
@@ -360,9 +460,13 @@
   }
 
   async function resendConfirmation(email) {
+    let captcha_token = null;
+    try { captcha_token = await getCaptchaToken(); }
+    catch (e) { return { ok: false, error: e.message }; }
+
     const res = await apiFetchWithRetry("/api/resend-confirmation", {
       method: "POST",
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, captcha_token })
     });
 
     if (!res.ok) {
@@ -373,6 +477,14 @@
   }
 
   function logout() {
+    const tok = getToken();
+    if (tok) {
+      // завершаем сессию и на сервере (не ждём ответа)
+      try {
+        fetch(API_URL + "/api/logout", { method: "POST", keepalive: true,
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + tok } }).catch(() => {});
+      } catch (e) {}
+    }
     clearToken();
     _savedCache = null;
     _testsCache = null;
@@ -385,6 +497,102 @@
     let url = SUPABASE_URL + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
               "&redirect_to=" + encodeURIComponent(back);
     window.location.href = url;
+  }
+
+  // ============================================================
+  // ПРОФИЛЬ: гражданство и уровень обучения — общие для всех устройств
+  // На странице «Университеты» они по-прежнему лежат в ep6:cit / ep6:degree,
+  // а здесь синхронизируются с аккаунтом.
+  // ============================================================
+
+  const PREF_KEYS = { citizenship: "ep6:cit", degree: "ep6:degree" };
+  let _prefTimer = null, _prefPending = {};
+
+  function readLocalPrefs() {
+    const out = {};
+    try {
+      const c = localStorage.getItem(PREF_KEYS.citizenship), d = localStorage.getItem(PREF_KEYS.degree);
+      if (c && /^[A-Z]{2}$/.test(c)) out.citizenship = c;
+      if (d && /^(foundation|bachelor|master|phd)$/.test(d)) out.degree = d;
+    } catch (e) {}
+    return out;
+  }
+
+  async function getProfile() {
+    await waitForAuthReady();
+    if (!isLoggedIn()) return null;
+    const res = await apiFetchWithRetry("/api/profile", { method: "GET" }, 2000, 3);
+    return res.ok && res.data ? res.data.profile : null;
+  }
+
+  // вызывается страницей «Университеты» при смене фильтра
+  function saveProfilePrefs(patch) {
+    if (!isLoggedIn() || !patch) return;
+    Object.assign(_prefPending, patch);
+    clearTimeout(_prefTimer);
+    _prefTimer = setTimeout(() => {
+      const body = _prefPending; _prefPending = {};
+      apiFetchWithRetry("/api/profile", { method: "PUT", body: JSON.stringify(body) }, 3000, 4)
+        .catch(() => {});
+    }, 800);
+  }
+
+  // после входа: значения из аккаунта важнее; если в аккаунте пусто — отправляем то, что выбрано на устройстве
+  async function syncProfilePrefs() {
+    if (!isLoggedIn()) return;
+    let prof = null;
+    try { prof = await getProfile(); } catch (e) { return; }
+    if (!prof) return;
+    const local = readLocalPrefs(), push = {}, changed = {};
+    for (const k of ["citizenship", "degree"]) {
+      if (prof[k]) {
+        if (local[k] !== prof[k]) {
+          try { localStorage.setItem(PREF_KEYS[k], prof[k]); changed[k] = prof[k]; } catch (e) {}
+        }
+      } else if (local[k]) {
+        push[k] = local[k];
+      }
+    }
+    if (Object.keys(push).length) saveProfilePrefs(push);
+    if (Object.keys(changed).length) {
+      window.dispatchEvent(new CustomEvent("edupath-prefs-sync", { detail: changed }));
+    }
+  }
+
+  // ============================================================
+  // УДАЛЕНИЕ ДАННЫХ ПО ВЫБОРУ / АККАУНТА
+  // parts: saved, tests, study, quotes, profile, account
+  // Метка устройства и язык при этом не стираются.
+  // ============================================================
+
+  function clearLocalKeys(test) {
+    try {
+      Object.keys(localStorage).filter(test).forEach(k => localStorage.removeItem(k));
+    } catch (e) {}
+  }
+
+  async function deleteMyData(parts, confirmWord) {
+    if (!isLoggedIn()) return { ok: false, error: t("modal_session_expired", "Сессия истекла. Войди снова.") };
+    const res = await apiFetchWithRetry("/api/account/delete", {
+      method: "POST",
+      body: JSON.stringify({ parts, confirm: confirmWord || "" })
+    });
+    if (!res.ok) return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось удалить") };
+
+    if (parts.indexOf("account") !== -1) {
+      clearToken();
+      clearLocalKeys(k => k.indexOf("ep6:") === 0 || k.indexOf("ep_test_draft") === 0 ||
+                          k.indexOf("edupath_focus") === 0 || k === USER_KEY);
+      try { sessionStorage.clear(); } catch (e) {}
+      _savedCache = null; _testsCache = null; _quotesCache = null;
+      return { ok: true, account: true };
+    }
+    if (parts.indexOf("saved") !== -1) _savedCache = null;
+    if (parts.indexOf("tests") !== -1) _testsCache = null;
+    if (parts.indexOf("quotes") !== -1) _quotesCache = null;
+    if (parts.indexOf("study") !== -1) clearLocalKeys(k => k.indexOf("edupath_focus") === 0);
+    if (parts.indexOf("profile") !== -1) clearLocalKeys(k => k === PREF_KEYS.citizenship || k === PREF_KEYS.degree);
+    return { ok: true, deleted: (res.data && res.data.deleted) || {} };
   }
 
   // ============================================================
@@ -728,8 +936,13 @@
 
           <div class="edupath-field">
             <label data-i18n="modal_password">Пароль</label>
-            <input type="password" id="edupathPassword" data-i18n-placeholder="modal_password_ph" placeholder="Минимум 6 символов">
+            <input type="password" id="edupathPassword" data-i18n-placeholder="modal_password_ph" placeholder="Минимум 8 символов" autocomplete="new-password">
           </div>
+
+          <label class="edupath-consent" id="edupathConsentField">
+            <input type="checkbox" id="edupathConsent">
+            <span data-i18n="modal_consent">Я согласен(на), что EduPath хранит мои данные, чтобы сайт работал</span>
+          </label>
 
           <div class="edupath-error" id="edupathAuthError"></div>
 
@@ -743,6 +956,8 @@
           <button type="button" class="edupath-btn-ghost" id="edupathOpenMailBtn">Открыть Gmail</button>
           <button type="button" class="edupath-btn-link" id="edupathAlreadyConfirmedBtn">Я подтвердил — войти</button>
         </div>
+
+        <div id="edupathCaptcha" class="edupath-captcha"></div>
 
         <div class="edupath-switch" id="edupathSwitchWrap">
           <span id="edupathSwitchText">Уже есть аккаунт?</span>
@@ -772,6 +987,10 @@
         }
         .edupath-modal button { border: 0; cursor: pointer; }
         .edupath-modal { max-height: 94vh; overflow-y: auto; }
+        .edupath-consent { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 13px; line-height: 1.45; color: #5B4636; cursor: pointer; }
+        .edupath-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #8C5A34; }
+        .edupath-captcha:empty { display: none; }
+        .edupath-captcha { display: flex; justify-content: center; margin: 10px 0 0; }
 
         .edupath-btn-social {
           width: 100%; padding: 12px 10px;
@@ -956,6 +1175,8 @@
       title.textContent = t("modal_hello", "Добро пожаловать");
       sub.textContent   = t("modal_hello_sub", "Создай аккаунт, чтобы сохранять университеты");
       nameField.style.display = "block";
+      document.getElementById("edupathConsentField").style.display = "flex";
+      document.getElementById("edupathPassword").setAttribute("autocomplete", "new-password");
       submitBtn.textContent = t("modal_submit_register", "Создать аккаунт");
       switchText.textContent = t("modal_switch_register", "Уже есть аккаунт?");
       switchBtn.textContent  = t("modal_switch_register_btn", "Войти");
@@ -963,6 +1184,8 @@
       title.textContent = t("modal_welcome_back", "С возвращением");
       sub.textContent   = t("modal_welcome_back_sub", "Войди в свой аккаунт");
       nameField.style.display = "none";
+      document.getElementById("edupathConsentField").style.display = "none";
+      document.getElementById("edupathPassword").setAttribute("autocomplete", "current-password");
       submitBtn.textContent = t("modal_submit_login", "Войти");
       switchText.textContent = t("modal_switch_login", "Нет аккаунта?");
       switchBtn.textContent  = t("modal_switch_login_btn", "Создать");
@@ -1071,7 +1294,7 @@
     let result;
 
     if (modalMode === "register") {
-      result = await register(name, email, password);
+      result = await register(name, email, password, document.getElementById("edupathConsent").checked);
     } else {
       result = await login(email, password);
     }
@@ -1100,6 +1323,7 @@
 
     updateHeaderUI();
     if (_readyResolve) _readyResolve();
+    syncProfilePrefs().catch(() => {});
 
     if (isLandingPage()) {
       setTimeout(goToApp, 700);
@@ -1206,6 +1430,7 @@
     if (isLoggedIn()) {
       ensureFreshSession().then(() => {
         if (_readyResolve) _readyResolve();
+        syncProfilePrefs().catch(() => {});
       }).catch(e => {
         console.warn("Auth ready failed:", e);
         if (_readyResolve) _readyResolve();
@@ -1241,6 +1466,11 @@
     isQuoteSaved,
     toggleQuote,
     localDateStr,
+    getDeviceId,
+    getProfile,
+    saveProfilePrefs,
+    syncProfilePrefs,
+    deleteMyData,
     showToast,
     openModal,
     updateHeaderUI,
