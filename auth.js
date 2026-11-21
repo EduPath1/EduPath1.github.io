@@ -106,7 +106,7 @@
           retry: "auto",
           "refresh-expired": "auto",
           callback: tok => { tsLog("token ok"); _ts.token = tok; _ts.interactive = false; box.classList.remove("show"); tsFlush(tok); },
-          "error-callback": code => { tsLog("error " + code); return true; },
+          "error-callback": code => { tsLog("error " + code); _ts.lastError = String(code || ""); return true; },
           "expired-callback": () => { tsLog("token expired"); _ts.token = null; },
           "timeout-callback": () => tsLog("interactive timeout"),
           "unsupported-callback": () => { tsLog("browser unsupported"); tsFlush(null); },
@@ -144,14 +144,21 @@
         if (_ts.waiters.indexOf(resolve) === -1) return;
         if (Date.now() - start > (_ts.interactive ? 180000 : 15000)) {
           _ts.waiters = _ts.waiters.filter(f => f !== resolve);
-          tsLog("no token — sending without it. Log: " + _ts.log.join(" | "));
+          tsLog("no token. Log: " + _ts.log.join(" | "));
           resolve(null);
         } else setTimeout(tick, 500);
       };
       setTimeout(tick, 500);
     });
-    if (tok) consumeToken();
-    return tok;
+    if (tok) { consumeToken(); return tok; }
+    // Без токена Supabase всё равно откажет («no captcha_token found») — не шлём запрос зря,
+    // а показываем понятную причину с кодом ошибки Cloudflare
+    const code = _ts.lastError || "";
+    let why = "Проверка «я не робот» не загрузилась.";
+    if (code.startsWith("1102")) why = "Капча не настроена для этого сайта (домен не добавлен в Cloudflare Turnstile).";
+    else if (code.startsWith("1101") || code.startsWith("1100")) why = "Неверный ключ капчи (Site Key).";
+    else if (!window.turnstile) why = "Скрипт капчи Cloudflare заблокирован браузером или сетью. Отключи блокировщик рекламы / VPN.";
+    throw new Error(why + (code ? " Код: " + code : "") + " Обнови страницу и попробуй ещё раз");
   }
 
 
