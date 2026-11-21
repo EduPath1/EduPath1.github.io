@@ -7,7 +7,9 @@
 # ============================================================
 
 import os
+import re
 import traceback
+from datetime import datetime, timedelta, timezone, date
 from functools import wraps
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -91,7 +93,7 @@ def db_error(label, e):
 
 @app.route("/", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "service": "EduPath API", "version": "1.1"})
+    return jsonify({"status": "ok", "service": "EduPath API", "version": "1.2"})
 
 
 # ============================================================
@@ -350,6 +352,235 @@ def save_test(user, client):
         return jsonify({"ok": True})
     except Exception as e:
         return db_error("POST /api/tests", e)
+
+
+# ============================================================
+# ФОКУС: ТАЙМЕР УЧЁБЫ (таблица study_sessions)
+# ============================================================
+
+STUDY_MIN_SEC = 60            # меньше минуты не сохраняем
+STUDY_MAX_SEC = 12 * 3600     # один таймер — не больше 12 часов
+STUDY_MAX_AGE_DAYS = 14       # офлайн-очередь может прислать сессию максимум двухнедельной давности
+STREAK_MIN_SEC = 15 * 60      # день идёт в серию, если за него набралось 15 минут
+_CLIENT_ID_RE = re.compile(r"^[A-Za-z0-9_-]{6,64}$")
+
+
+def _parse_iso(value):
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        return None
+    return dt.astimezone(timezone.utc)
+
+
+def _clean_label(value):
+    label = re.sub(r"\s+", " ", str(value or "")).strip()
+    return label[:60]
+
+
+def _streaks(day_totals, today):
+    """day_totals: {date: секунды}. Серия — подряд идущие дни по 15+ минут.
+    Если сегодня ещё не набралось 15 минут, серия считается до вчера (она не сгорает до конца дня)."""
+    good = {d for d, s in day_totals.items() if s >= STREAK_MIN_SEC}
+    cur, d = 0, today
+    if d not in good:
+        d = d - timedelta(days=1)
+    while d in good:
+        cur += 1
+        d = d - timedelta(days=1)
+    best, run, prev = 0, 0, None
+    for d in sorted(good):
+        run = run + 1 if prev is not None and (d - prev).days == 1 else 1
+        best = max(best, run)
+        prev = d
+    return cur, best
+
+
+@app.route("/api/study/sessions", methods=["POST"])
+@require_auth
+def add_study_session(user, client):
+    data = request.json or {}
+    label = _clean_label(data.get("label"))
+    started = _parse_iso(data.get("started_at"))
+    ended = _parse_iso(data.get("ended_at"))
+    client_id = str(data.get("client_id") or "")
+    try:
+        duration = int(data.get("duration_sec"))
+    except (TypeError, ValueError):
+        duration = 0
+    try:
+        local_date = date.fromisoformat(str(data.get("local_date") or ""))
+    except ValueError:
+        local_date = None
+
+    now = datetime.now(timezone.utc)
+    if not label:
+        return jsonify({"error": "Напиши, что ты учил"}), 400
+    if not started or not ended or ended <= started:
+        return jsonify({"error": "Неверное время сессии"}), 400
+    if ended > now + timedelta(minutes=5):
+        return jsonify({"error": "Время сессии в будущем"}), 400
+    if ended < now - timedelta(days=STUDY_MAX_AGE_DAYS):
+        return jsonify({"error": "Сессия слишком старая"}), 400
+    if duration < STUDY_MIN_SEC:
+        return jsonify({"error": "Меньше минуты не сохраняется"}), 400
+    # активное время не может быть больше, чем прошло от старта до конца (паузы не считаются)
+    duration = min(duration, int((ended - started).total_seconds()) + 60, STUDY_MAX_SEC)
+    # локальная дата пользователя может отличаться от даты по UTC максимум на сутки
+    if not local_date or abs((local_date - ended.date()).days) > 1:
+        local_date = ended.date()
+    if client_id and not _CLIENT_ID_RE.match(client_id):
+        client_id = ""
+
+    row = {
+        "user_id": user.id,
+        "label": label,
+        "duration_sec": duration,
+        "started_at": started.isoformat(),
+        "ended_at": ended.isoformat(),
+        "local_date": local_date.isoformat(),
+    }
+    if client_id:
+        row["client_id"] = client_id
+
+    try:
+        client.table("study_sessions").insert(row).execute()
+        return jsonify({"ok": True, "duration_sec": duration, "local_date": row["local_date"]})
+    except Exception as e:
+        # та же сессия уже пришла раньше (повторная отправка из офлайн-очереди)
+        if "23505" in str(e) or "duplicate key" in str(e).lower():
+            return jsonify({"ok": True, "already": True})
+        return db_error("POST /api/study/sessions", e)
+
+
+@app.route("/api/study/summary", methods=["GET"])
+@require_auth
+def study_summary(user, client):
+    """Итоги по дням: сколько и что учил, серия дней.
+    ?today=YYYY-MM-DD — сегодняшняя дата по часам пользователя, ?days=N — сколько дней показать (до 90)."""
+    try:
+        today = date.fromisoformat(request.args.get("today", ""))
+    except ValueError:
+        today = datetime.now(timezone.utc).date()
+    if abs((today - datetime.now(timezone.utc).date()).days) > 1:
+        today = datetime.now(timezone.utc).date()
+    try:
+        days = max(1, min(90, int(request.args.get("days", 30))))
+    except ValueError:
+        days = 30
+
+    since = today - timedelta(days=400)
+    try:
+        rows, start = [], 0
+        while True:  # постранично, чтобы не упереться в лимит 1000 строк
+            res = (client.table("study_sessions")
+                   .select("label,duration_sec,local_date")
+                   .eq("user_id", user.id)
+                   .gte("local_date", since.isoformat())
+                   .order("local_date", desc=True)
+                   .range(start, start + 999).execute())
+            batch = res.data or []
+            rows.extend(batch)
+            if len(batch) < 1000 or len(rows) >= 20000:
+                break
+            start += 1000
+    except Exception as e:
+        return db_error("GET /api/study/summary", e)
+
+    totals, per_day = {}, {}
+    for r in rows:
+        try:
+            d = date.fromisoformat(r["local_date"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        sec = int(r.get("duration_sec") or 0)
+        totals[d] = totals.get(d, 0) + sec
+        if (today - d).days < days:
+            label = _clean_label(r.get("label")) or "—"
+            key = label.casefold()            # «Китайский» и «китайский» складываются
+            bucket = per_day.setdefault(d, {})
+            if key not in bucket:
+                bucket[key] = {"label": label, "sec": 0, "count": 0}
+            bucket[key]["sec"] += sec
+            bucket[key]["count"] += 1
+
+    current, best = _streaks(totals, today)
+    week = []
+    for i in range(6, -1, -1):
+        d = today - timedelta(days=i)
+        week.append({"date": d.isoformat(), "sec": totals.get(d, 0)})
+    out_days = []
+    for d in sorted(per_day.keys(), reverse=True):
+        items = sorted(per_day[d].values(), key=lambda x: -x["sec"])
+        out_days.append({"date": d.isoformat(), "total_sec": totals.get(d, 0), "items": items})
+
+    labels = []
+    for r in rows:  # недавние названия — для подсказок в поле «Что учишь?»
+        lab = _clean_label(r.get("label"))
+        if lab and lab.casefold() not in {x.casefold() for x in labels}:
+            labels.append(lab)
+        if len(labels) >= 8:
+            break
+
+    return jsonify({
+        "today": today.isoformat(),
+        "today_sec": totals.get(today, 0),
+        "streak": current,
+        "best_streak": best,
+        "streak_min_sec": STREAK_MIN_SEC,
+        "week": week,
+        "days": out_days,
+        "recent_labels": labels,
+    })
+
+
+# ============================================================
+# ФОКУС: СОХРАНЁННЫЕ ЦИТАТЫ (таблица saved_quotes)
+# ============================================================
+
+@app.route("/api/quotes/saved", methods=["GET"])
+@require_auth
+def get_saved_quotes(user, client):
+    try:
+        res = (client.table("saved_quotes").select("quote_id,saved_at")
+               .eq("user_id", user.id).order("saved_at", desc=True).execute())
+        return jsonify({"saved": [r["quote_id"] for r in (res.data or [])]})
+    except Exception as e:
+        return db_error("GET /api/quotes/saved", e)
+
+
+@app.route("/api/quotes/saved", methods=["POST"])
+@require_auth
+def add_saved_quote(user, client):
+    data = request.json or {}
+    try:
+        qid = int(data.get("quote_id"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "quote_id required"}), 400
+    if qid < 1 or qid > 10000:
+        return jsonify({"error": "quote_id out of range"}), 400
+    try:
+        client.table("saved_quotes").insert({"user_id": user.id, "quote_id": qid}).execute()
+        return jsonify({"ok": True, "added": True})
+    except Exception as e:
+        if "23505" in str(e) or "duplicate key" in str(e).lower():
+            return jsonify({"ok": True, "already": True})
+        return db_error("POST /api/quotes/saved", e)
+
+
+@app.route("/api/quotes/saved/<int:qid>", methods=["DELETE"])
+@require_auth
+def remove_saved_quote(user, client, qid):
+    try:
+        (client.table("saved_quotes").delete()
+         .eq("user_id", user.id).eq("quote_id", qid).execute())
+        return jsonify({"ok": True, "removed": True})
+    except Exception as e:
+        return db_error("DELETE /api/quotes/saved", e)
 
 
 if __name__ == "__main__":
