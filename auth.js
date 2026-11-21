@@ -153,6 +153,7 @@
     clearToken();
     _savedCache = null;
     _testsCache = null;
+    _quotesCache = null;
     if (!hadSession) return;
 
     updateHeaderUI();
@@ -375,6 +376,7 @@
     clearToken();
     _savedCache = null;
     _testsCache = null;
+    _quotesCache = null;
     if (_readyResolve) _readyResolve();
   }
 
@@ -553,6 +555,84 @@
   _testsCache = null;
   return { ok: true };
 }
+
+  // ============================================================
+  // ФОКУС: ТАЙМЕР УЧЁБЫ И ЦИТАТЫ
+  // ============================================================
+
+  // Сегодняшняя дата по часам пользователя (YYYY-MM-DD)
+  function localDateStr(d) {
+    d = d || new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  async function getStudySummary(opts) {
+    await waitForAuthReady();
+    if (!isLoggedIn()) return null;
+    const days = (opts && opts.days) || 30;
+    const res = await apiFetchWithRetry("/api/study/summary?today=" + localDateStr() + "&days=" + days, { method: "GET" });
+    if (!res.ok) {
+      if (opts && opts.strict) {
+        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
+        err.res = res;
+        throw err;
+      }
+      return null;
+    }
+    return res.data || null;
+  }
+
+  // session: { label, duration_sec, started_at, ended_at, local_date, client_id }
+  async function saveStudySession(session) {
+    await waitForAuthReady();
+    if (!isLoggedIn()) return { ok: false, error: "Не вошёл", offline: false };
+    const res = await apiFetchWithRetry("/api/study/sessions", {
+      method: "POST",
+      body: JSON.stringify(session)
+    }, 2000, 3);
+    if (res.ok) return { ok: true, data: res.data };
+    // сервер спит или нет сети — сессию можно отправить позже
+    const retryable = res.networkError || isServerSleeping(res.status) || res.status >= 500;
+    return { ok: false, retryable, status: res.status, error: humanError(res, "modal_error_generic", "Не удалось сохранить") };
+  }
+
+  let _quotesCache = null;
+
+  async function getSavedQuotes(opts) {
+    await waitForAuthReady();
+    if (!isLoggedIn()) { _quotesCache = []; return []; }
+    const res = await apiFetchWithRetry("/api/quotes/saved", { method: "GET" });
+    if (!res.ok) {
+      if (opts && opts.strict) {
+        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
+        err.res = res;
+        throw err;
+      }
+      return _quotesCache || [];
+    }
+    _quotesCache = ((res.data && res.data.saved) || []).map(Number);
+    return _quotesCache;
+  }
+
+  function isQuoteSaved(id) {
+    return !!_quotesCache && _quotesCache.indexOf(Number(id)) !== -1;
+  }
+
+  async function toggleQuote(id) {
+    id = Number(id);
+    if (!isLoggedIn()) return { ok: false, error: "Не вошёл" };
+    if (!_quotesCache) await getSavedQuotes();
+    if (isQuoteSaved(id)) {
+      const res = await apiFetchWithRetry("/api/quotes/saved/" + id, { method: "DELETE" });
+      if (!res.ok) return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось удалить") };
+      _quotesCache = _quotesCache.filter(x => x !== id);
+      return { ok: true, removed: true };
+    }
+    const res = await apiFetchWithRetry("/api/quotes/saved", { method: "POST", body: JSON.stringify({ quote_id: id }) });
+    if (!res.ok) return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить") };
+    _quotesCache = [id].concat(_quotesCache || []);
+    return { ok: true, added: true };
+  }
 
   // ============================================================
   // TOAST
@@ -1155,6 +1235,12 @@
     toggleSave,
     getTests,
     saveTestResult,
+    getStudySummary,
+    saveStudySession,
+    getSavedQuotes,
+    isQuoteSaved,
+    toggleQuote,
+    localDateStr,
     showToast,
     openModal,
     updateHeaderUI,
