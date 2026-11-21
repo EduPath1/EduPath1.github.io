@@ -70,33 +70,60 @@
     return _tsLoading;
   }
 
+  // Язык окна капчи: kk/ky Turnstile не знает — показываем по-русски
+  function captchaLang() {
+    const l = (window.I18N && window.I18N.getLang && window.I18N.getLang()) || "ru";
+    return ({ ru: "ru", en: "en", zh: "zh-cn", kk: "ru", ky: "ru" })[l] || "auto";
+  }
+
+  function captchaError(code) {
+    const base = t("modal_captcha_fail", "Проверка «я не робот» не прошла. Обнови страницу.");
+    return new Error(code ? base + " (" + code + ")" : base);
+  }
+
   async function getCaptchaToken() {
     if (!TURNSTILE_SITE_KEY) return null;
     const ts = await loadTurnstile();
     const box = document.getElementById("edupathCaptcha");
     if (!ts || !box) return null;
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => { _tsWaiter = null; reject(new Error(t("modal_captcha_fail", "Проверка «я не робот» не загрузилась. Обнови страницу."))); }, 45000);
+      // 30 с на невидимую проверку; если Cloudflare попросил нажать галочку — ждём человека до 3 минут
+      let timer = setTimeout(() => _tsWaiter && _tsWaiter.fail("timeout"), 30000);
       _tsWaiter = {
-        ok: tok => { clearTimeout(timer); _tsWaiter = null; resolve(tok); },
-        fail: () => { clearTimeout(timer); _tsWaiter = null; reject(new Error(t("modal_captcha_fail", "Проверка «я не робот» не прошла. Обнови страницу."))); }
+        ok: tok => { clearTimeout(timer); _tsWaiter = null; box.classList.remove("show"); resolve(tok); },
+        fail: code => { clearTimeout(timer); _tsWaiter = null; reject(captchaError(code)); },
+        interactive: () => { clearTimeout(timer); timer = setTimeout(() => _tsWaiter && _tsWaiter.fail("timeout"), 180000); }
       };
-      if (_tsWidget === null) {
-        _tsWidget = ts.render(box, {
-          sitekey: TURNSTILE_SITE_KEY,
-          execution: "execute",
-          appearance: "interaction-only",
-          language: (window.I18N && window.I18N.getLang && window.I18N.getLang()) || "auto",
-          callback: tok => _tsWaiter && _tsWaiter.ok(tok),
-          "error-callback": () => { if (_tsWaiter) _tsWaiter.fail(); return true; },
-          "expired-callback": () => {}
-        });
-      } else {
-        ts.reset(_tsWidget);
+      try {
+        if (_tsWidget === null) {
+          _tsWidget = ts.render(box, {
+            sitekey: TURNSTILE_SITE_KEY,
+            execution: "execute",
+            appearance: "interaction-only",
+            language: captchaLang(),
+            callback: tok => _tsWaiter && _tsWaiter.ok(tok),
+            "error-callback": code => { if (_tsWaiter) _tsWaiter.fail(code || "error"); return true; },
+            "timeout-callback": () => _tsWaiter && _tsWaiter.fail("timeout"),
+            "unsupported-callback": () => _tsWaiter && _tsWaiter.fail("unsupported"),
+            // Cloudflare просит нажать «Я не робот» — показываем блок и прокручиваем к нему
+            "before-interactive-callback": () => {
+              box.classList.add("show");
+              try { box.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+              if (_tsWaiter) _tsWaiter.interactive();
+            },
+            "after-interactive-callback": () => {},
+            "expired-callback": () => {}
+          });
+        } else {
+          ts.reset(_tsWidget);
+        }
+        ts.execute(_tsWidget);
+      } catch (e) {
+        if (_tsWaiter) _tsWaiter.fail("render");
       }
-      ts.execute(_tsWidget);
     });
   }
+
 
   // Лендинг = главная страница (index.html или корень сайта)
   function isLandingPage() {
@@ -989,8 +1016,9 @@
         .edupath-modal { max-height: 94vh; overflow-y: auto; }
         .edupath-consent { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 13px; line-height: 1.45; color: #5B4636; cursor: pointer; }
         .edupath-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #8C5A34; }
-        .edupath-captcha:empty { display: none; }
-        .edupath-captcha { display: flex; justify-content: center; margin: 10px 0 0; }
+        /* Контейнер капчи НЕЛЬЗЯ прятать через display:none — иначе галочка «я не робот» не видна и проверка зависает */
+        .edupath-captcha { display: flex; justify-content: center; margin: 0; min-height: 0; }
+        .edupath-captcha.show { margin: 12px 0 4px; }
 
         .edupath-btn-social {
           width: 100%; padding: 12px 10px;
