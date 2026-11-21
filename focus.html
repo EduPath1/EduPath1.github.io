@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F7EFE1">
+<title>EduPath — Фокус</title>
+<meta name="description" content="Таймер учёбы EduPath: пауза, продолжение, итоги по дням, серия дней и цитата дня.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
+    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
+    --caramel:#C79256; --sand:#D9BD93;
+    --text-main:#2B1B10; --text-muted:#7A6552;
+    --line:rgba(43,27,16,0.14);
+    --shadow:0 16px 42px rgba(43,27,16,.09);
+    --ok:#2f6b43; --ok-bg:#dcebdf;
+    --ease:cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Fraunces', serif; letter-spacing:-.02em; }
+  a{ text-decoration:none; color:inherit; }
+  button,input{ font:inherit; }
+  button{ cursor:pointer; border:none; background:none; appearance:none; }
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 64px; }
+
+  /* Шапка — как на остальных страницах */
+  header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
+  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
+  .logo:hover svg{ transform:rotate(90deg); }
+  .nav-links{ display:flex; align-items:center; gap:8px; }
+  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .15s, color .15s; }
+  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
+  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
+  .nav-right{ display:flex; align-items:center; gap:14px; }
+  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .15s, color .15s; }
+  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-dropdown{ position:relative; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
+  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
+
+  /* Hero */
+  .fc-hero{ padding-top:44px; padding-bottom:22px; }
+  .eyebrow{ color:var(--clay); font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; margin-bottom:12px; }
+  .fc-hero h1{ font-size:clamp(34px,4.5vw,54px); font-weight:600; line-height:1.1; margin-bottom:10px; }
+  .fc-hero p{ color:var(--text-muted); max-width:680px; }
+
+  main{ padding-bottom:80px; }
+  .fc-grid{ display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:18px; align-items:start; }
+  .fc-side{ display:flex; flex-direction:column; gap:18px; }
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:26px; }
+  .card-title{ font-family:'Fraunces',serif; font-size:20px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+
+  /* Таймер */
+  .timer-card{ padding:30px; }
+  .fc-label-row label{ display:block; font-size:12px; font-weight:600; color:var(--bark); margin-bottom:7px; letter-spacing:.02em; }
+  .fc-input{ width:100%; padding:13px 15px; border:1px solid var(--line); border-radius:12px; background:#fffdf8; color:var(--espresso); outline:none; font-size:16px; }
+  .fc-input:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(140,90,52,.12); }
+  .fc-input.invalid{ border-color:#B84A3A; box-shadow:0 0 0 3px rgba(184,74,58,.12); }
+  .fc-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; min-height:4px; }
+  .fc-chip{ font-size:12px; padding:5px 11px; border-radius:999px; border:1px solid var(--line); color:var(--bark); background:var(--cream); transition:background .15s, border-color .15s; }
+  .fc-chip:hover{ background:var(--cream-deep); border-color:var(--sand); }
+  .fc-display{ font-family:'Fraunces',serif; font-variant-numeric:tabular-nums; font-feature-settings:"tnum"; font-size:clamp(58px, 9vw, 104px); font-weight:600; line-height:1; text-align:center; color:var(--espresso); margin:30px 0 8px; letter-spacing:-.02em; }
+  .fc-display.paused{ color:var(--clay); }
+  .fc-state{ text-align:center; font-size:13px; color:var(--text-muted); min-height:20px; display:flex; align-items:center; justify-content:center; gap:7px; }
+  .fc-dot{ width:8px; height:8px; border-radius:50%; background:var(--sand); }
+  .fc-state.running .fc-dot{ background:#3f8a55; animation:blink 1.4s infinite; }
+  .fc-state.paused .fc-dot{ background:var(--caramel); }
+  @keyframes blink{ 50%{ opacity:.3; } }
+  .fc-buttons{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:24px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:14px; font-size:15px; font-weight:600; transition:background .15s, transform .15s, box-shadow .15s, color .15s; min-width:150px; }
+  .btn:active{ transform:scale(.98); }
+  .btn svg{ width:18px; height:18px; flex:none; }
+  .btn-main{ background:var(--espresso); color:var(--paper); }
+  .btn-main:hover{ background:var(--bark); }
+  .btn-save{ background:var(--clay); color:var(--paper); }
+  .btn-save:hover{ background:var(--bark); }
+  .btn-ghost{ background:transparent; color:var(--bark); border:1px solid var(--line); }
+  .btn-ghost:hover{ background:var(--cream-deep); }
+  .btn[disabled]{ opacity:.45; cursor:not-allowed; }
+  .fc-reset-row{ text-align:center; margin-top:14px; font-size:13px; color:var(--text-muted); min-height:22px; }
+  .linkish{ color:var(--text-muted); text-decoration:underline; text-underline-offset:3px; font-size:13px; }
+  .linkish:hover{ color:var(--espresso); }
+  .linkish.danger{ color:#B84A3A; font-weight:600; }
+  .fc-autosave{ display:flex; gap:9px; align-items:flex-start; margin-top:18px; font-size:12.5px; color:var(--bark); background:var(--cream); border-radius:12px; padding:10px 12px; line-height:1.45; }
+  .fc-autosave svg{ width:16px; height:16px; flex:none; margin-top:1px; color:var(--clay); }
+  .fc-autosave[hidden]{ display:none; }
+
+  /* Цитата дня */
+  .quote-card{ position:relative; background:var(--espresso); color:var(--paper); border-color:var(--espresso); overflow:hidden; }
+  .quote-card .eyebrow{ color:var(--caramel); margin-bottom:14px; }
+  .quote-text{ font-family:'Fraunces',serif; font-size:clamp(20px,2.1vw,25px); line-height:1.32; font-weight:500; letter-spacing:-.01em; }
+  .quote-text::before{ content:"«"; color:var(--caramel); margin-right:2px; }
+  .quote-text::after{ content:"»"; color:var(--caramel); margin-left:2px; }
+  html[lang="en"] .quote-text::before, html[lang="zh"] .quote-text::before{ content:"“"; }
+  html[lang="en"] .quote-text::after, html[lang="zh"] .quote-text::after{ content:"”"; }
+  .quote-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; }
+  .quote-author{ font-size:14px; color:var(--sand); }
+  .quote-author::before{ content:"— "; }
+  .quill{ width:44px; height:44px; flex:none; border-radius:50%; display:grid; place-items:center; color:var(--sand); border:1px solid rgba(217,189,147,.35); transition:background .2s, color .2s, transform .2s, border-color .2s; }
+  .quill:hover{ background:rgba(217,189,147,.14); color:var(--paper); }
+  .quill:active{ transform:scale(.92); }
+  .quill svg{ width:22px; height:22px; }
+  .quill .q-fill{ fill:transparent; transition:fill .2s; }
+  .quill[aria-pressed="true"]{ color:var(--espresso); background:var(--caramel); border-color:var(--caramel); }
+  .quill[aria-pressed="true"] .q-fill{ fill:currentColor; }
+  .quill.pop{ animation:pop .35s var(--ease); }
+  @keyframes pop{ 40%{ transform:scale(1.18) rotate(-8deg); } }
+  .quote-sub{ margin-top:14px; font-size:12px; color:rgba(247,239,225,.6); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .quote-sub a{ color:var(--sand); text-decoration:underline; text-underline-offset:3px; }
+
+  /* Статистика */
+  .streak{ display:flex; align-items:center; gap:14px; }
+  .streak-num{ font-family:'Fraunces',serif; font-size:46px; font-weight:600; line-height:1; color:var(--espresso); }
+  .streak-label{ font-size:13px; color:var(--text-muted); line-height:1.35; }
+  .streak-best{ font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .goal{ margin-top:16px; }
+  .goal-bar{ height:8px; border-radius:99px; background:var(--cream-deep); overflow:hidden; }
+  .goal-bar i{ display:block; height:100%; width:0; background:var(--clay); border-radius:99px; transition:width .6s var(--ease); }
+  .goal-bar.done i{ background:var(--ok); }
+  .goal-text{ font-size:12.5px; color:var(--bark); margin-top:7px; }
+  .week{ display:grid; grid-template-columns:repeat(7,1fr); gap:8px; align-items:end; height:120px; margin-top:20px; }
+  .wk{ display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end; }
+  .wk-bar{ width:100%; max-width:30px; border-radius:7px 7px 3px 3px; background:var(--sand); min-height:3px; transition:height .6s var(--ease); position:relative; }
+  .wk-bar.good{ background:var(--clay); }
+  .wk.today .wk-bar{ outline:2px solid var(--espresso); outline-offset:2px; }
+  .wk-day{ font-size:11px; color:var(--text-muted); text-transform:capitalize; }
+  .wk.today .wk-day{ color:var(--espresso); font-weight:700; }
+  .week-legend{ font-size:11.5px; color:var(--text-muted); margin-top:10px; }
+
+  /* Сегодня */
+  .today-section{ margin-top:18px; }
+  .today-list{ display:flex; flex-direction:column; gap:8px; }
+  .today-item{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 16px; background:var(--cream); border-radius:12px; font-size:15px; }
+  .today-item b{ font-weight:600; color:var(--espresso); }
+  .today-item .dur{ font-family:'Fraunces',serif; font-weight:600; white-space:nowrap; color:var(--bark); }
+  .today-item .cnt{ font-size:12px; color:var(--text-muted); margin-left:6px; }
+  .today-item.pending{ background:transparent; border:1px dashed var(--sand); }
+  .pending-tag{ font-size:11px; color:var(--clay); margin-left:6px; }
+  .today-total{ font-size:14px; color:var(--text-muted); }
+  .muted-box{ padding:18px; text-align:center; color:var(--text-muted); font-size:14px; background:rgba(239,225,198,.35); border-radius:12px; }
+  .muted-box a{ color:var(--clay); text-decoration:underline; }
+
+  /* Всплывающее предупреждение снизу */
+  .fc-toast{ position:fixed; left:50%; bottom:24px; transform:translate(-50%, 30px); opacity:0; pointer-events:none; z-index:9000; width:min(560px, calc(100vw - 28px)); background:var(--espresso); color:var(--paper); border-radius:16px; padding:14px 14px 14px 18px; display:flex; align-items:flex-start; gap:12px; box-shadow:0 20px 40px -16px rgba(43,27,16,.55); transition:opacity .25s var(--ease), transform .3s var(--ease); font-size:14px; line-height:1.45; }
+  .fc-toast.show{ opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
+  .fc-toast.ok{ background:#24402c; }
+  .fc-toast.err{ background:#8b3a30; }
+  .fc-toast .ti{ flex:none; width:20px; height:20px; margin-top:1px; color:var(--caramel); }
+  .fc-toast.ok .ti{ color:#9fd3ad; }
+  .fc-toast .tt{ flex:1; }
+  .fc-toast .tt b{ display:block; font-weight:600; margin-bottom:1px; }
+  .fc-toast .tx{ flex:none; width:28px; height:28px; border-radius:50%; color:var(--sand); display:grid; place-items:center; }
+  .fc-toast .tx:hover{ background:rgba(255,255,255,.08); color:var(--paper); }
+
+  footer{ text-align:center; padding:26px; font-size:13px; color:var(--text-muted); border-top:1px solid var(--line); }
+
+  @media (max-width:980px){
+    .fc-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width:900px){
+    .wrap{ padding:0 22px; }
+    .nav-links{ display:none !important; }
+  }
+  @media (max-width:520px){
+    .card, .timer-card{ padding:20px; border-radius:18px; }
+    .fc-hero{ padding-top:28px; }
+    .btn{ min-width:0; flex:1 1 140px; padding:14px 16px; }
+    .fc-display{ margin-top:22px; }
+  }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
+        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
+        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
+      </svg>
+      EduPath
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-i18n="nav_home">Главная</a>
+      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
+      <a href="focus.html" class="active" data-i18n="nav_focus">Фокус</a>
+      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
+      <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
+      <a href="team.html" data-i18n="nav_team">О нашей команде</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-dropdown">
+        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu">
+          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
+          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
+          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
+          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
+          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="fc-hero wrap">
+  <div class="eyebrow" data-f="eyebrow">EduPath · Фокус</div>
+  <h1 data-f="title">Фокус</h1>
+  <p data-f="sub">Запусти таймер, напиши, что учишь, и сохрани результат. Все итоги по дням появятся в профиле.</p>
+</section>
+
+<main class="wrap">
+  <div class="fc-grid">
+    <!-- Таймер -->
+    <section class="card timer-card" aria-labelledby="timerTitle">
+      <h2 class="card-title" id="timerTitle"><span data-f="timerTitle">Таймер учёбы</span></h2>
+      <div class="fc-label-row">
+        <label for="fcLabel" data-f="labelQ">Что учишь?</label>
+        <input id="fcLabel" class="fc-input" type="text" maxlength="60" autocomplete="off" placeholder="Например: китайский, SAT, эссе">
+        <div class="fc-chips" id="fcChips"></div>
+      </div>
+
+      <div class="fc-display" id="fcDisplay" aria-live="off">00:00:00</div>
+      <div class="fc-state" id="fcState"><span class="fc-dot"></span><span id="fcStateText"></span></div>
+
+      <div class="fc-buttons" id="fcButtons"></div>
+      <div class="fc-reset-row" id="fcResetRow"></div>
+
+      <div class="fc-autosave" id="fcAutosave" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+        <span data-f="autosave">Незаконченный таймер сохраняется автоматически: можно закрыть страницу и вернуться позже.</span>
+      </div>
+    </section>
+
+    <div class="fc-side">
+      <!-- Цитата дня -->
+      <section class="card quote-card" aria-labelledby="quoteEyebrow">
+        <div class="eyebrow" id="quoteEyebrow" data-f="quoteOfDay">Цитата дня</div>
+        <p class="quote-text" id="quoteText">…</p>
+        <div class="quote-foot">
+          <span class="quote-author" id="quoteAuthor"></span>
+          <button type="button" class="quill" id="quoteSave" aria-pressed="false" title="Сохранить цитату" aria-label="Сохранить цитату">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path class="q-fill" d="M20.2 3.8c-5.6.4-10.6 3.6-13 8.6-.9 1.9-1.4 3.9-1.5 6l3.1-.5c2.2-.3 4.2-1.3 5.8-2.8l-2.4-.6 3.4-1.4c1.9-1.3 3.4-3.1 4.2-5.3.4-1.3.6-2.6.4-4z"/>
+              <path d="M20.2 3.8c-5.6.4-10.6 3.6-13 8.6-.9 1.9-1.4 3.9-1.5 6l3.1-.5c2.2-.3 4.2-1.3 5.8-2.8l-2.4-.6 3.4-1.4c1.9-1.3 3.4-3.1 4.2-5.3.4-1.3.6-2.6.4-4z"/>
+              <path d="M16 8 4 20"/>
+            </svg>
+          </button>
+        </div>
+        <div class="quote-sub"><span data-f="quoteNext">Новая цитата — каждый день</span><a href="profile.html#savedQuotes" data-f="quoteSavedLink">Мои цитаты →</a></div>
+      </section>
+
+      <!-- Серия и неделя -->
+      <section class="card" aria-labelledby="statsTitle">
+        <h2 class="card-title" id="statsTitle"><span data-f="statsTitle">Серия дней</span></h2>
+        <div class="streak">
+          <div class="streak-num" id="streakNum">0</div>
+          <div>
+            <div class="streak-label" id="streakLabel"></div>
+            <div class="streak-best" id="streakBest"></div>
+          </div>
+        </div>
+        <div class="goal">
+          <div class="goal-bar" id="goalBar"><i></i></div>
+          <div class="goal-text" id="goalText"></div>
+        </div>
+        <div class="week" id="week"></div>
+        <div class="week-legend" data-f="weekLegend">Последние 7 дней. Тёмные столбики — дни, которые идут в серию (15+ минут).</div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Сегодня -->
+  <section class="card today-section" aria-labelledby="todayTitle">
+    <h2 class="card-title" id="todayTitle"><span data-f="todayTitle">Сегодня</span><span class="today-total" id="todayTotal"></span></h2>
+    <div class="today-list" id="todayList"><div class="muted-box" data-f="loading">Загружаем…</div></div>
+  </section>
+</main>
+
+<div class="fc-toast" id="fcToast" role="status" aria-live="polite">
+  <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v6M12 16.5v.5"/></svg>
+  <div class="tt" id="fcToastText"></div>
+  <button type="button" class="tx" id="fcToastClose" aria-label="Закрыть">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+</div>
+
+<footer data-i18n="home_footer">EduPath © 2026. Все права защищены</footer>
+
+<script src="i18n.js"></script>
+<script src="auth.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ============================================================
+  // ТЕКСТЫ СТРАНИЦЫ НА 5 ЯЗЫКАХ (общее меню переводит i18n.js)
+  // ============================================================
+  const UI = {
+    ru: { eyebrow: "EduPath · Фокус", title: "Фокус", sub: "Запусти таймер, напиши, что учишь, и сохрани результат. Все итоги по дням появятся в профиле.",
+      timerTitle: "Таймер учёбы", labelQ: "Что учишь?", placeholder: "Например: китайский, SAT, эссе",
+      start: "Старт", pause: "Пауза", resume: "Продолжить", save: "Сохранить результат", reset: "Сбросить таймер", resetQ: "Сбросить без сохранения?", yes: "Да, сбросить", no: "Нет",
+      stIdle: "Готов к старту", stRun: "Идёт учёба", stPause: "На паузе — можно отдохнуть и продолжить",
+      autosave: "Незаконченный таймер сохраняется автоматически: можно закрыть страницу и вернуться позже.",
+      tPauseB: "Таймер на паузе", tPause: "Незаконченный таймер сохраняется автоматически. Отдохни и нажми «Продолжить» — время продолжится с того же места.",
+      tRestoredB: "Таймер восстановлен", tRestored: "{t} · {l}. Нажми «Продолжить» или «Сохранить результат».", tRestoredRun: "{t} · {l}. Таймер шёл, пока тебя не было.",
+      tNeedLabel: "Напиши, что ты учишь, — так результат будет понятен в профиле.", tTooShort: "Меньше минуты не сохраняется. Позанимайся ещё немного 🙂",
+      tSavedB: "Сохранено", tSaved: "{d} — {l}", tQueued: "Сервер просыпается — результат сохранится автоматически, как только он ответит.",
+      tError: "Не удалось сохранить: {e}", tCap: "Один таймер — максимум 12 часов. Таймер поставлен на паузу, сохрани результат.",
+      quoteOfDay: "Цитата дня", quoteNext: "Новая цитата — каждый день", quoteSavedLink: "Мои цитаты →",
+      qSave: "Сохранить цитату", qSaved: "Цитата сохранена — она в профиле", qRemoved: "Цитата убрана из сохранённых", qSavedTitle: "Сохранено в профиле",
+      statsTitle: "Серия дней", streakDays: ["день подряд", "дня подряд", "дней подряд"], streakZero: "Начни серию: 15 минут учёбы сегодня",
+      best: "Рекорд: {n}", goalLeft: "До серии сегодня: ещё {d}", goalDone: "Сегодня в серии ✓ — всего {d}",
+      weekLegend: "Последние 7 дней. Тёмные столбики — дни, которые идут в серию (15+ минут).",
+      todayTitle: "Сегодня", todayTotal: "всего {d}", todayEmpty: "Сегодня пока ничего не сохранено. Запусти таймер — результат появится здесь и в <a href=\"profile.html#studyLog\">профиле</a>.",
+      pending: "ждёт отправки", times: "×{n}", loading: "Загружаем…", loadErr: "Не удалось загрузить итоги. Сервер просыпается — обнови страницу через полминуты.",
+      h: "ч", m: "мин", s: "сек", tabRun: "⏱ {t} · Фокус", tabPause: "⏸ {t} · Фокус", pageTitle: "EduPath — Фокус" },
+    en: { eyebrow: "EduPath · Focus", title: "Focus", sub: "Start the timer, write what you're studying and save the result. Your daily totals will appear in your profile.",
+      timerTitle: "Study timer", labelQ: "What are you studying?", placeholder: "For example: Chinese, SAT, essay",
+      start: "Start", pause: "Pause", resume: "Resume", save: "Save result", reset: "Reset timer", resetQ: "Reset without saving?", yes: "Yes, reset", no: "No",
+      stIdle: "Ready to start", stRun: "Studying", stPause: "Paused — take a break and resume",
+      autosave: "An unfinished timer is saved automatically: you can close the page and come back later.",
+      tPauseB: "Timer paused", tPause: "An unfinished timer is saved automatically. Take a break and press “Resume” — the time will continue from the same point.",
+      tRestoredB: "Timer restored", tRestored: "{t} · {l}. Press “Resume” or “Save result”.", tRestoredRun: "{t} · {l}. The timer kept running while you were away.",
+      tNeedLabel: "Write what you're studying so the result makes sense in your profile.", tTooShort: "Less than a minute isn't saved. Study a little more 🙂",
+      tSavedB: "Saved", tSaved: "{d} — {l}", tQueued: "The server is waking up — the result will be saved automatically as soon as it responds.",
+      tError: "Couldn't save: {e}", tCap: "One timer can run for up to 12 hours. The timer is paused — save your result.",
+      quoteOfDay: "Quote of the day", quoteNext: "A new quote every day", quoteSavedLink: "My quotes →",
+      qSave: "Save quote", qSaved: "Quote saved — it's in your profile", qRemoved: "Quote removed from saved", qSavedTitle: "Saved to profile",
+      statsTitle: "Day streak", streakDays: ["day in a row", "days in a row", "days in a row"], streakZero: "Start a streak: 15 minutes of study today",
+      best: "Best: {n}", goalLeft: "To keep the streak today: {d} more", goalDone: "Today counts ✓ — {d} in total",
+      weekLegend: "Last 7 days. Dark bars are days that count toward the streak (15+ minutes).",
+      todayTitle: "Today", todayTotal: "{d} total", todayEmpty: "Nothing saved yet today. Start the timer — the result will appear here and in your <a href=\"profile.html#studyLog\">profile</a>.",
+      pending: "waiting to send", times: "×{n}", loading: "Loading…", loadErr: "Couldn't load your totals. The server is waking up — refresh in half a minute.",
+      h: "h", m: "min", s: "sec", tabRun: "⏱ {t} · Focus", tabPause: "⏸ {t} · Focus", pageTitle: "EduPath — Focus" },
+    zh: { eyebrow: "EduPath · 专注", title: "专注", sub: "启动计时器，写下你在学习什么，然后保存结果。每天的学习记录会显示在个人资料中。",
+      timerTitle: "学习计时器", labelQ: "你在学什么？", placeholder: "例如：中文、SAT、文书",
+      start: "开始", pause: "暂停", resume: "继续", save: "保存结果", reset: "重置计时器", resetQ: "不保存直接重置？", yes: "是，重置", no: "否",
+      stIdle: "准备开始", stRun: "正在学习", stPause: "已暂停——休息一下再继续",
+      autosave: "未完成的计时会自动保存：你可以关闭页面，稍后再回来。",
+      tPauseB: "计时已暂停", tPause: "未完成的计时会自动保存。休息一下，然后点击“继续”——时间会从同一位置接着计。",
+      tRestoredB: "计时已恢复", tRestored: "{t} · {l}。点击“继续”或“保存结果”。", tRestoredRun: "{t} · {l}。你离开期间计时器一直在运行。",
+      tNeedLabel: "写下你在学什么，这样个人资料中的记录才清楚。", tTooShort: "不足一分钟不会保存。再学一会儿吧 🙂",
+      tSavedB: "已保存", tSaved: "{d} — {l}", tQueued: "服务器正在唤醒——它一响应，结果就会自动保存。",
+      tError: "保存失败：{e}", tCap: "单次计时最长 12 小时。计时已暂停，请保存结果。",
+      quoteOfDay: "每日名言", quoteNext: "每天一句新名言", quoteSavedLink: "我的名言 →",
+      qSave: "收藏名言", qSaved: "名言已收藏——可在个人资料中查看", qRemoved: "已取消收藏", qSavedTitle: "已收藏到个人资料",
+      statsTitle: "连续天数", streakDays: ["天连续", "天连续", "天连续"], streakZero: "开始连续记录：今天学习 15 分钟",
+      best: "最高纪录：{n}", goalLeft: "今天还差 {d} 计入连续天数", goalDone: "今天已计入 ✓ — 共 {d}",
+      weekLegend: "最近 7 天。深色柱表示计入连续天数的日子（15 分钟以上）。",
+      todayTitle: "今天", todayTotal: "共 {d}", todayEmpty: "今天还没有保存记录。启动计时器——结果会显示在这里和<a href=\"profile.html#studyLog\">个人资料</a>中。",
+      pending: "等待发送", times: "×{n}", loading: "加载中…", loadErr: "无法加载记录。服务器正在唤醒——请半分钟后刷新页面。",
+      h: "小时", m: "分钟", s: "秒", tabRun: "⏱ {t} · 专注", tabPause: "⏸ {t} · 专注", pageTitle: "EduPath — 专注" },
+    kk: { eyebrow: "EduPath · Фокус", title: "Фокус", sub: "Таймерді қос, не оқып жатқаныңды жаз да, нәтижені сақта. Күн бойынша барлық қорытынды профильде шығады.",
+      timerTitle: "Оқу таймері", labelQ: "Не оқып жатырсың?", placeholder: "Мысалы: қытай тілі, SAT, эссе",
+      start: "Бастау", pause: "Кідірту", resume: "Жалғастыру", save: "Нәтижені сақтау", reset: "Таймерді тастау", resetQ: "Сақтамай тастау керек пе?", yes: "Иә, тастау", no: "Жоқ",
+      stIdle: "Бастауға дайын", stRun: "Оқу жүріп жатыр", stPause: "Кідіріс — демалып, жалғастыруға болады",
+      autosave: "Аяқталмаған таймер автоматты түрде сақталады: бетті жауып, кейін қайта оралуға болады.",
+      tPauseB: "Таймер кідіртілді", tPause: "Аяқталмаған таймер автоматты түрде сақталады. Демал да, «Жалғастыру» бас — уақыт сол жерден жалғасады.",
+      tRestoredB: "Таймер қалпына келді", tRestored: "{t} · {l}. «Жалғастыру» немесе «Нәтижені сақтау» бас.", tRestoredRun: "{t} · {l}. Сен жоқта таймер жүріп тұрды.",
+      tNeedLabel: "Не оқып жатқаныңды жаз — сонда профильде нәтиже түсінікті болады.", tTooShort: "Бір минуттан аз уақыт сақталмайды. Тағы аздап оқы 🙂",
+      tSavedB: "Сақталды", tSaved: "{d} — {l}", tQueued: "Сервер оянып жатыр — ол жауап бере салысымен нәтиже автоматты түрде сақталады.",
+      tError: "Сақтау мүмкін болмады: {e}", tCap: "Бір таймер — ең көбі 12 сағат. Таймер кідіртілді, нәтижені сақта.",
+      quoteOfDay: "Күн дәйексөзі", quoteNext: "Күн сайын жаңа дәйексөз", quoteSavedLink: "Менің дәйексөздерім →",
+      qSave: "Дәйексөзді сақтау", qSaved: "Дәйексөз сақталды — ол профильде", qRemoved: "Дәйексөз сақталғандардан алынды", qSavedTitle: "Профильде сақталды",
+      statsTitle: "Күндер сериясы", streakDays: ["күн қатарынан", "күн қатарынан", "күн қатарынан"], streakZero: "Серияны баста: бүгін 15 минут оқы",
+      best: "Рекорд: {n}", goalLeft: "Бүгін серияға дейін: тағы {d}", goalDone: "Бүгін серияда ✓ — барлығы {d}",
+      weekLegend: "Соңғы 7 күн. Қою бағандар — серияға кіретін күндер (15+ минут).",
+      todayTitle: "Бүгін", todayTotal: "барлығы {d}", todayEmpty: "Бүгін әзірге ештеңе сақталмады. Таймерді қос — нәтиже осында және <a href=\"profile.html#studyLog\">профильде</a> шығады.",
+      pending: "жіберуді күтуде", times: "×{n}", loading: "Жүктелуде…", loadErr: "Қорытындыны жүктеу мүмкін болмады. Сервер оянып жатыр — жарты минуттан кейін бетті жаңарт.",
+      h: "сағ", m: "мин", s: "сек", tabRun: "⏱ {t} · Фокус", tabPause: "⏸ {t} · Фокус", pageTitle: "EduPath — Фокус" },
+    ky: { eyebrow: "EduPath · Фокус", title: "Фокус", sub: "Таймерди күйгүз, эмнени окуп жатканыңды жаз жана натыйжаны сакта. Күн боюнча бардык жыйынтыктар профилде чыгат.",
+      timerTitle: "Окуу таймери", labelQ: "Эмнени окуп жатасың?", placeholder: "Мисалы: кытай тили, SAT, эссе",
+      start: "Баштоо", pause: "Тыныгуу", resume: "Улантуу", save: "Натыйжаны сактоо", reset: "Таймерди баштапкы абалга келтирүү", resetQ: "Сактабай эле тазалайлыбы?", yes: "Ооба, тазала", no: "Жок",
+      stIdle: "Баштоого даяр", stRun: "Окуу жүрүп жатат", stPause: "Тыныгууда — эс алып, уланта аласың",
+      autosave: "Бүтпөгөн таймер автоматтык түрдө сакталат: баракты жаап, кийин кайра келсең болот.",
+      tPauseB: "Таймер токтотулду", tPause: "Бүтпөгөн таймер автоматтык түрдө сакталат. Эс ал да, «Улантуу» бас — убакыт ошол жерден уланат.",
+      tRestoredB: "Таймер калыбына келди", tRestored: "{t} · {l}. «Улантуу» же «Натыйжаны сактоо» бас.", tRestoredRun: "{t} · {l}. Сен жокто таймер жүрүп турду.",
+      tNeedLabel: "Эмнени окуп жатканыңды жаз — ошондо профилде натыйжа түшүнүктүү болот.", tTooShort: "Бир мүнөттөн аз убакыт сакталбайт. Дагы бир аз окуп ал 🙂",
+      tSavedB: "Сакталды", tSaved: "{d} — {l}", tQueued: "Сервер ойгонуп жатат — ал жооп бериши менен натыйжа автоматтык түрдө сакталат.",
+      tError: "Сактоо мүмкүн болгон жок: {e}", tCap: "Бир таймер — эң көп 12 саат. Таймер токтотулду, натыйжаны сакта.",
+      quoteOfDay: "Күндүн цитатасы", quoteNext: "Күн сайын жаңы цитата", quoteSavedLink: "Менин цитаталарым →",
+      qSave: "Цитатаны сактоо", qSaved: "Цитата сакталды — ал профилде", qRemoved: "Цитата сакталгандардан алынды", qSavedTitle: "Профилде сакталды",
+      statsTitle: "Күндөр сериясы", streakDays: ["күн катары менен", "күн катары менен", "күн катары менен"], streakZero: "Серияны башта: бүгүн 15 мүнөт оку",
+      best: "Рекорд: {n}", goalLeft: "Бүгүн серияга чейин: дагы {d}", goalDone: "Бүгүн серияда ✓ — баары {d}",
+      weekLegend: "Акыркы 7 күн. Кочкул мамычалар — серияга кирген күндөр (15+ мүнөт).",
+      todayTitle: "Бүгүн", todayTotal: "баары {d}", todayEmpty: "Бүгүн азырынча эч нерсе сакталган жок. Таймерди күйгүз — натыйжа ушул жерде жана <a href=\"profile.html#studyLog\">профилде</a> чыгат.",
+      pending: "жөнөтүүнү күтүүдө", times: "×{n}", loading: "Жүктөлүүдө…", loadErr: "Жыйынтыктарды жүктөө мүмкүн болгон жок. Сервер ойгонуп жатат — жарым мүнөттөн кийин баракты жаңырт.",
+      h: "саат", m: "мүн", s: "сек", tabRun: "⏱ {t} · Фокус", tabPause: "⏸ {t} · Фокус", pageTitle: "EduPath — Фокус" }
+  };
+  const LOCALES = { ru: "ru-RU", en: "en-US", zh: "zh-CN", kk: "kk-KZ", ky: "ky-KG" };
+
+  const TIMER_KEY = "edupath_focus_timer_v1";
+  const QUEUE_KEY = "edupath_focus_queue_v1";
+  const MAX_MS = 12 * 3600 * 1000;
+  const STREAK_MIN_SEC = 15 * 60;
+
+  const $ = (id) => document.getElementById(id);
+  const Auth = () => window.EduAuth;
+
+  function lang() {
+    try { return (window.I18N && window.I18N.getLang()) || localStorage.getItem("edupath_lang") || "ru"; }
+    catch (e) { return "ru"; }
+  }
+  function ui(key) { const L = UI[lang()] || UI.ru; return L[key] != null ? L[key] : UI.ru[key]; }
+  function fmt(str, vars) { return String(str).replace(/\{(\w+)\}/g, (_, k) => (vars && vars[k] != null) ? vars[k] : ""); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function uid() {
+    const u = Auth() && Auth().getCurrentUser();
+    if (u && u.id) return u.id;
+    try { // запасной вариант: id из самого токена
+      const p = String(Auth().getToken() || "").split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+      return JSON.parse(atob(p + "=".repeat((4 - p.length % 4) % 4))).sub || "anon";
+    } catch (e) { return "anon"; }
+  }
+  function store(key, val) { try { if (val == null) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+  function load(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; } }
+  function randomId() {
+    try { const a = new Uint8Array(12); crypto.getRandomValues(a); return Array.from(a, b => b.toString(16).padStart(2, "0")).join(""); }
+    catch (e) { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+  }
+  function localDate(d) { return Auth().localDateStr(d); }
+
+  // 1 ч 05 мин / 25 мин / 40 сек
+  function human(sec) {
+    sec = Math.max(0, Math.round(sec));
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
+    if (h > 0) return h + " " + ui("h") + (m ? " " + String(m).padStart(2, "0") + " " + ui("m") : "");
+    if (m > 0) return m + " " + ui("m");
+    return sec + " " + ui("s");
+  }
+  function clock(ms) {
+    const s = Math.floor(Math.max(0, ms) / 1000);
+    return String(Math.floor(s / 3600)).padStart(2, "0") + ":" + String(Math.floor((s % 3600) / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  }
+  function plural(n, forms) {
+    if (lang() !== "ru") return n === 1 ? forms[0] : forms[1];
+    const a = n % 10, b = n % 100;
+    if (a === 1 && b !== 11) return forms[0];
+    if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return forms[1];
+    return forms[2];
+  }
+
+  // ============================================================
+  // ТОСТ СНИЗУ
+  // ============================================================
+  let toastTimer = null;
+  function toast(text, opts) {
+    opts = opts || {};
+    const el = $("fcToast");
+    el.className = "fc-toast" + (opts.kind ? " " + opts.kind : "");
+    $("fcToastText").innerHTML = (opts.title ? "<b>" + esc(opts.title) + "</b>" : "") + esc(text);
+    void el.offsetWidth; // перезапуск анимации
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), opts.ms || 6000);
+  }
+  $("fcToastClose").addEventListener("click", () => { clearTimeout(toastTimer); $("fcToast").classList.remove("show"); });
+
+  // ============================================================
+  // ТАЙМЕР
+  // state: { uid, label, status: "running"|"paused", firstStart, runStart, acc, updated }
+  // Время считается по меткам, поэтому таймер не сбивается в свёрнутой вкладке.
+  // ============================================================
+  let T = null;
+  let confirmReset = false;
+
+  function elapsed() {
+    if (!T) return 0;
+    return Math.min(MAX_MS, T.acc + (T.status === "running" && T.runStart ? Date.now() - T.runStart : 0));
+  }
+  function persist() {
+    if (T) { T.updated = Date.now(); store(TIMER_KEY, T); } else store(TIMER_KEY, null);
+  }
+  function labelValue() { return $("fcLabel").value.replace(/\s+/g, " ").trim(); }
+
+  function start() {
+    T = { uid: uid(), label: labelValue(), status: "running", firstStart: Date.now(), runStart: Date.now(), acc: 0 };
+    persist(); render();
+  }
+  function pause(silent) {
+    if (!T || T.status !== "running") return;
+    T.acc = elapsed(); T.status = "paused"; T.runStart = null;
+    persist(); render();
+    if (!silent) toast(ui("tPause"), { title: ui("tPauseB"), ms: 7000 });
+  }
+  function resume() {
+    if (!T || T.status !== "paused") return;
+    T.status = "running"; T.runStart = Date.now();
+    persist(); render();
+  }
+  function reset() {
+    T = null; confirmReset = false; persist(); render();
+  }
+
+  async function saveResult() {
+    if (!T) return;
+    const label = labelValue();
+    if (!label) {
+      $("fcLabel").classList.add("invalid"); $("fcLabel").focus();
+      toast(ui("tNeedLabel"), { kind: "err", ms: 5000 });
+      return;
+    }
+    const ms = elapsed();
+    if (ms < 60 * 1000) { toast(ui("tTooShort"), { ms: 4500 }); return; }
+    const now = new Date();
+    const session = {
+      label: label.slice(0, 60),
+      duration_sec: Math.floor(ms / 1000),
+      started_at: new Date(T.firstStart).toISOString(),
+      ended_at: now.toISOString(),
+      local_date: localDate(now),
+      client_id: randomId()
+    };
+    // сначала в очередь — тогда результат не потеряется, даже если сервер спит
+    const q = load(QUEUE_KEY) || [];
+    q.push({ uid: uid(), session });
+    store(QUEUE_KEY, q);
+    T = null; persist(); render();
+    renderToday();
+    const res = await flushQueue();
+    if (res.sent.indexOf(session.client_id) !== -1) {
+      toast(fmt(ui("tSaved"), { d: human(session.duration_sec), l: session.label }), { title: ui("tSavedB"), kind: "ok", ms: 5000 });
+    } else if (res.failed[session.client_id]) {
+      toast(fmt(ui("tError"), { e: res.failed[session.client_id] }), { kind: "err", ms: 7000 });
+    } else {
+      toast(ui("tQueued"), { ms: 7000 });
+    }
+    loadSummary();
+  }
+
+  // Отправляет всё, что лежит в очереди этого пользователя
+  let flushing = null;
+  function flushQueue() {
+    if (flushing) return flushing;
+    flushing = (async () => {
+      const result = { sent: [], failed: {} };
+      let q = load(QUEUE_KEY) || [];
+      const me = uid();
+      for (const item of q.slice()) {
+        if (item.uid !== me) continue;
+        const r = await Auth().saveStudySession(item.session);
+        if (r.ok) {
+          result.sent.push(item.session.client_id);
+        } else if (r.retryable) {
+          break; // сервер спит — попробуем позже
+        } else {
+          result.failed[item.session.client_id] = r.error || "error";
+        }
+        if (r.ok || !r.retryable) {
+          q = (load(QUEUE_KEY) || []).filter(x => x.session.client_id !== item.session.client_id);
+          store(QUEUE_KEY, q);
+        }
+      }
+      return result;
+    })().finally(() => { flushing = null; });
+    return flushing;
+  }
+  function pendingForMe() { const me = uid(); return (load(QUEUE_KEY) || []).filter(x => x.uid === me).map(x => x.session); }
+
+  function render() {
+    const status = T ? T.status : "idle";
+    const ms = elapsed();
+    $("fcDisplay").textContent = clock(ms);
+    $("fcDisplay").classList.toggle("paused", status === "paused");
+    $("fcState").className = "fc-state " + status;
+    $("fcStateText").textContent = status === "running" ? ui("stRun") : status === "paused" ? ui("stPause") : ui("stIdle");
+    $("fcAutosave").hidden = status === "idle";
+
+    const icon = {
+      play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>',
+      pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>',
+      save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+    };
+    let html = "";
+    if (status === "idle") html = `<button type="button" class="btn btn-main" data-act="start">${icon.play}${esc(ui("start"))}</button>`;
+    else if (status === "running") html = `<button type="button" class="btn btn-ghost" data-act="pause">${icon.pause}${esc(ui("pause"))}</button><button type="button" class="btn btn-save" data-act="save">${icon.save}${esc(ui("save"))}</button>`;
+    else html = `<button type="button" class="btn btn-main" data-act="resume">${icon.play}${esc(ui("resume"))}</button><button type="button" class="btn btn-save" data-act="save">${icon.save}${esc(ui("save"))}</button>`;
+    $("fcButtons").innerHTML = html;
+
+    if (status === "idle") $("fcResetRow").innerHTML = "";
+    else if (confirmReset) $("fcResetRow").innerHTML = `${esc(ui("resetQ"))} <button type="button" class="linkish danger" data-act="reset-yes">${esc(ui("yes"))}</button> · <button type="button" class="linkish" data-act="reset-no">${esc(ui("no"))}</button>`;
+    else $("fcResetRow").innerHTML = `<button type="button" class="linkish" data-act="reset">${esc(ui("reset"))}</button>`;
+
+    document.title = status === "running" ? fmt(ui("tabRun"), { t: clock(ms) }) : status === "paused" ? fmt(ui("tabPause"), { t: clock(ms) }) : ui("pageTitle");
+  }
+
+  $("fcButtons").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const a = b.dataset.act;
+    if (a === "start") start(); else if (a === "pause") pause(); else if (a === "resume") resume(); else if (a === "save") saveResult();
+  });
+  $("fcResetRow").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const a = b.dataset.act;
+    if (a === "reset") { confirmReset = true; render(); }
+    else if (a === "reset-no") { confirmReset = false; render(); }
+    else if (a === "reset-yes") reset();
+  });
+  $("fcLabel").addEventListener("input", () => {
+    $("fcLabel").classList.remove("invalid");
+    if (T) { T.label = labelValue(); persist(); }
+  });
+  $("fcLabel").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); if (!T) start(); }
+  });
+  $("fcChips").addEventListener("click", (e) => {
+    const c = e.target.closest("[data-label]"); if (!c) return;
+    $("fcLabel").value = c.dataset.label; $("fcLabel").classList.remove("invalid");
+    if (T) { T.label = c.dataset.label; persist(); }
+  });
+
+  // тик раз в 250 мс: обновляем цифры и проверяем лимит 12 часов
+  setInterval(() => {
+    if (T && T.status === "running") {
+      if (elapsed() >= MAX_MS) { pause(true); toast(ui("tCap"), { kind: "err", ms: 9000 }); }
+      render();
+    }
+  }, 250);
+
+  // другая вкладка изменила таймер — подхватываем
+  window.addEventListener("storage", (e) => {
+    if (e.key === TIMER_KEY) { const s = load(TIMER_KEY); T = (s && s.uid === uid()) ? s : null; if (T) $("fcLabel").value = T.label || ""; render(); }
+    if (e.key === QUEUE_KEY) renderToday();
+  });
+  window.addEventListener("online", () => { flushQueue().then(r => { if (r.sent.length) loadSummary(); }); });
+  // перед уходом со страницы — свежая копия состояния
+  window.addEventListener("pagehide", () => { if (T) persist(); });
+
+  function restoreTimer() {
+    const s = load(TIMER_KEY);
+    if (!s || s.uid !== uid() || typeof s.acc !== "number") { if (s) store(TIMER_KEY, null); return; }
+    T = s;
+    $("fcLabel").value = T.label || "";
+    const vars = { t: clock(elapsed()), l: T.label || "—" };
+    toast(fmt(T.status === "running" ? ui("tRestoredRun") : ui("tRestored"), vars), { title: ui("tRestoredB"), ms: 7000 });
+  }
+
+  // ============================================================
+  // ЦИТАТА ДНЯ
+  // ============================================================
+  let QUOTES = null, todayQuote = null;
+
+  // Номер дня по местной дате: у всех в один день — одна цитата, шаг 37 перемешивает темы
+  function quoteForToday() {
+    const list = QUOTES.quotes;
+    const d = new Date();
+    const dayNum = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+    return list[((dayNum * 37) % list.length + list.length) % list.length];
+  }
+  function renderQuote() {
+    if (!QUOTES || !todayQuote) return;
+    const l = lang();
+    $("quoteText").textContent = todayQuote.text[l] || todayQuote.text.ru;
+    const a = QUOTES.authors[todayQuote.author] || {};
+    $("quoteAuthor").textContent = a[l] || a.ru || "";
+    const saved = Auth().isQuoteSaved(todayQuote.id);
+    const btn = $("quoteSave");
+    btn.setAttribute("aria-pressed", saved ? "true" : "false");
+    btn.title = saved ? ui("qSavedTitle") : ui("qSave");
+    btn.setAttribute("aria-label", btn.title);
+  }
+  $("quoteSave").addEventListener("click", async () => {
+    if (!todayQuote) return;
+    const btn = $("quoteSave");
+    btn.disabled = true;
+    const r = await Auth().toggleQuote(todayQuote.id);
+    btn.disabled = false;
+    if (r.ok) {
+      btn.classList.remove("pop"); void btn.offsetWidth; btn.classList.add("pop");
+      toast(r.added ? ui("qSaved") : ui("qRemoved"), { kind: r.added ? "ok" : "", ms: 3500 });
+    } else {
+      toast(fmt(ui("tError"), { e: r.error || "" }), { kind: "err", ms: 6000 });
+    }
+    renderQuote();
+  });
+  async function loadQuotes() {
+    try {
+      const r = await fetch("quotes.json", { cache: "no-cache" });
+      QUOTES = await r.json();
+      todayQuote = quoteForToday();
+      renderQuote();
+      await Auth().getSavedQuotes();
+      renderQuote();
+    } catch (e) {
+      console.error("[focus] quotes", e);
+      $("quoteText").textContent = "—";
+    }
+  }
+
+  // ============================================================
+  // ИТОГИ: СЕРИЯ, НЕДЕЛЯ, СЕГОДНЯ
+  // ============================================================
+  let SUMMARY = null, summaryError = false;
+
+  async function loadSummary() {
+    try {
+      SUMMARY = await Auth().getStudySummary({ days: 7, strict: true });
+      summaryError = false;
+    } catch (e) {
+      summaryError = true;
+    }
+    renderStats(); renderToday(); renderChips();
+  }
+
+  function renderChips() {
+    const seen = new Set();
+    const labels = ((SUMMARY && SUMMARY.recent_labels) || []).filter(l => {
+      const k = String(l).toLocaleLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k); return true;
+    });
+    $("fcChips").innerHTML = labels.slice(0, 6).map(l => `<button type="button" class="fc-chip" data-label="${esc(l)}">${esc(l)}</button>`).join("");
+  }
+
+  function pendingTodaySec() {
+    const today = localDate();
+    return pendingForMe().filter(s => s.local_date === today).reduce((a, s) => a + s.duration_sec, 0);
+  }
+
+  function renderStats() {
+    const today = localDate();
+    const pend = pendingTodaySec();
+    const todaySec = ((SUMMARY && SUMMARY.today === today) ? SUMMARY.today_sec : 0) + pend;
+    let streak = SUMMARY ? SUMMARY.streak : 0;
+    // сегодняшний результат в очереди уже может продлить серию
+    if (SUMMARY && pend > 0 && SUMMARY.today_sec < STREAK_MIN_SEC && todaySec >= STREAK_MIN_SEC) streak += 1;
+    $("streakNum").textContent = streak;
+    $("streakLabel").textContent = streak > 0 ? plural(streak, ui("streakDays")) : ui("streakZero");
+    const best = Math.max(streak, (SUMMARY && SUMMARY.best_streak) || 0);
+    $("streakBest").textContent = best > 0 ? fmt(ui("best"), { n: best }) : "";
+    const pct = Math.min(100, Math.round(todaySec / STREAK_MIN_SEC * 100));
+    $("goalBar").querySelector("i").style.width = pct + "%";
+    $("goalBar").classList.toggle("done", todaySec >= STREAK_MIN_SEC);
+    $("goalText").textContent = todaySec >= STREAK_MIN_SEC ? fmt(ui("goalDone"), { d: human(todaySec) }) : fmt(ui("goalLeft"), { d: human(STREAK_MIN_SEC - todaySec) });
+
+    // неделя
+    const week = (SUMMARY && SUMMARY.week) || [];
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = localDate(d);
+      const w = week.find(x => x.date === key);
+      days.push({ key, d, sec: (w ? w.sec : 0) + (key === today ? pend : 0) });
+    }
+    const max = Math.max(STREAK_MIN_SEC * 2, ...days.map(x => x.sec));
+    const fmtDay = new Intl.DateTimeFormat(LOCALES[lang()] || "ru-RU", { weekday: "short" });
+    $("week").innerHTML = days.map(x => {
+      const h = Math.max(3, Math.round(x.sec / max * 92));
+      return `<div class="wk${x.key === today ? " today" : ""}" title="${esc(human(x.sec))}">
+        <div class="wk-bar${x.sec >= STREAK_MIN_SEC ? " good" : ""}" style="height:${h}px"></div>
+        <div class="wk-day">${esc(fmtDay.format(x.d).replace(".", ""))}</div></div>`;
+    }).join("");
+  }
+
+  function renderToday() {
+    const today = localDate();
+    const map = new Map();
+    const add = (label, sec, count, pending) => {
+      const k = label.toLocaleLowerCase();
+      const cur = map.get(k) || { label, sec: 0, count: 0, pending: 0 };
+      cur.sec += sec; cur.count += count; if (pending) cur.pending += 1;
+      map.set(k, cur);
+    };
+    const day = SUMMARY && (SUMMARY.days || []).find(d => d.date === today);
+    if (day) day.items.forEach(it => add(it.label, it.sec, it.count, false));
+    pendingForMe().filter(s => s.local_date === today).forEach(s => add(s.label, s.duration_sec, 1, true));
+    const items = Array.from(map.values()).sort((a, b) => b.sec - a.sec);
+    const total = items.reduce((a, x) => a + x.sec, 0);
+    $("todayTotal").textContent = total ? fmt(ui("todayTotal"), { d: human(total) }) : "";
+    if (!SUMMARY && summaryError && !items.length) { $("todayList").innerHTML = `<div class="muted-box">${esc(ui("loadErr"))}</div>`; return; }
+    if (!SUMMARY && !summaryError && !items.length) { $("todayList").innerHTML = `<div class="muted-box">${esc(ui("loading"))}</div>`; return; }
+    if (!items.length) { $("todayList").innerHTML = `<div class="muted-box">${ui("todayEmpty")}</div>`; return; }
+    $("todayList").innerHTML = items.map(x => `
+      <div class="today-item${x.pending && x.pending === x.count ? " pending" : ""}">
+        <span><b>${esc(x.label)}</b>${x.count > 1 ? `<span class="cnt">${esc(fmt(ui("times"), { n: x.count }))}</span>` : ""}${x.pending ? `<span class="pending-tag">· ${esc(ui("pending"))}</span>` : ""}</span>
+        <span class="dur">${esc(human(x.sec))}</span>
+      </div>`).join("");
+  }
+
+  // ============================================================
+  // ЯЗЫК
+  // ============================================================
+  function applyTexts() {
+    document.querySelectorAll("[data-f]").forEach(el => { el.textContent = ui(el.dataset.f); });
+    $("fcLabel").placeholder = ui("placeholder");
+    $("fcToastClose").setAttribute("aria-label", lang() === "en" ? "Close" : "×");
+    document.documentElement.lang = lang();
+    render(); renderQuote(); renderStats(); renderToday();
+  }
+  window.addEventListener("edupath-lang-change", applyTexts);
+
+  // ============================================================
+  // СТАРТ
+  // ============================================================
+  async function init() {
+    restoreTimer();
+    applyTexts();
+    loadQuotes();
+    await flushQueue().catch(() => {});
+    await loadSummary();
+    // если что-то осталось в очереди — пробуем раз в минуту
+    setInterval(() => {
+      if (pendingForMe().length) flushQueue().then(r => { if (r.sent.length) loadSummary(); });
+    }, 60000);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+</body>
+</html>
