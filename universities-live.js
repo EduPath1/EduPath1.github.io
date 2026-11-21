@@ -79,11 +79,12 @@
       sel.value = state.cit;
     });
   }
-  function setCitizenship(cc) {
+  function setCitizenship(cc, opts) {
     if (!CIT[cc] || cc === state.cit) { syncCitUI(); return; }
     const before = state.selected ? groupOf(state.selected.countryCode) : null;
     state.cit = cc;
     try { localStorage.setItem("ep6:cit", cc); } catch { /* ignore */ }
+    if (!opts?.fromSync) window.EduAuth?.saveProfilePrefs?.({ citizenship: cc });
     const u = new URL(location.href); u.searchParams.set("cit", cc); history.replaceState(null, "", u);
     syncCitUI(); refreshCardFacts();
     if (state.selected) {
@@ -98,10 +99,12 @@
     document.querySelectorAll("[data-degree-switch] button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.degree === state.degree)));
     if ($("filterDegree")) $("filterDegree").value = state.degree;
   }
-  function setDegree(deg, { silent = false } = {}) {
+  function setDegree(deg, { silent = false, fromSync = false } = {}) {
+    const opts = { fromSync };
     if (!DEGREES[deg] || (deg === state.degree && !silent)) { syncDegreeUI(); return; }
     state.degree = deg;
     try { localStorage.setItem("ep6:degree", deg); } catch { /* ignore */ }
+    if (!opts?.fromSync) window.EduAuth?.saveProfilePrefs?.({ degree: deg });
     const u = new URL(location.href); u.searchParams.set("degree", deg); history.replaceState(null, "", u);
     syncDegreeUI();
     if (silent) return;
@@ -565,6 +568,12 @@
     document.querySelectorAll("[data-cit-select]").forEach(sel => sel.addEventListener("change", e => setCitizenship(e.target.value)));
     document.querySelectorAll(".search-panel [data-degree-switch] button").forEach(b => b.addEventListener("click", () => setDegree(b.dataset.degree)));
     $("filterDegree")?.addEventListener("change", e => setDegree(e.target.value));
+    // после входа значения из аккаунта могут отличаться от сохранённых на этом устройстве
+    window.addEventListener("edupath-prefs-sync", e => {
+      const d = e.detail || {};
+      if (d.citizenship && CIT[d.citizenship] && d.citizenship !== state.cit) setCitizenship(d.citizenship, { fromSync: true });
+      if (d.degree && DEGREES[d.degree] && d.degree !== state.degree) setDegree(d.degree, { fromSync: true });
+    });
     document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
     $("searchBtn").addEventListener("click", searchByName);
     $("searchInput").addEventListener("input", onType);
