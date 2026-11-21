@@ -167,6 +167,45 @@ def email_allowed(client, email):
         return True
 
 
+# ------------------------------------------------------------
+# АНТИБОТ без капчи: ловушка (honeypot), время заполнения формы и лимит по IP.
+# Капча Cloudflare не пускала живых людей из некоторых браузеров (Samsung Internet).
+# ------------------------------------------------------------
+MIN_FORM_MS = 2000            # быстрее 2 секунд форму заполняет только бот
+REG_LIMIT_PER_IP = 5          # регистраций с одного IP...
+REG_WINDOW_SEC = 3600         # ...за час
+_reg_hits = {}
+
+
+def client_ip():
+    # Render ставит настоящий IP посетителя первым в X-Forwarded-For
+    fwd = request.headers.get("X-Forwarded-For", "")
+    return (fwd.split(",")[0].strip() or request.remote_addr or "?")[:64]
+
+
+def ip_rate_limited(ip):
+    now = datetime.now(timezone.utc).timestamp()
+    hits = [t for t in _reg_hits.get(ip, []) if now - t < REG_WINDOW_SEC]
+    if len(hits) >= REG_LIMIT_PER_IP:
+        _reg_hits[ip] = hits
+        return True
+    hits.append(now)
+    _reg_hits[ip] = hits
+    if len(_reg_hits) > 5000:          # не даём словарю расти бесконечно
+        for k in list(_reg_hits)[:2500]:
+            _reg_hits.pop(k, None)
+    return False
+
+
+def looks_like_bot(data):
+    if (data.get("website") or "").strip():
+        return True
+    ms = data.get("form_ms")
+    if isinstance(ms, (int, float)) and 0 <= ms < MIN_FORM_MS:
+        return True
+    return False
+
+
 DISPOSABLE_MSG = "Временные (одноразовые) почты не подходят. Используй свою обычную почту"
 
 
@@ -184,6 +223,14 @@ def register():
     problem = password_problem(password)
     if problem:
         return jsonify({"error": problem, "code": "weak_password"}), 400
+
+    # Боту отвечаем «успешно», чтобы он не понял, что его поймали. Аккаунт не создаётся.
+    if looks_like_bot(data):
+        print("Bot blocked at register:", client_ip())
+        return jsonify({"user": {"id": None, "email": email, "name": name},
+                        "session": None, "message": "Аккаунт создан"}), 200
+    if ip_rate_limited(client_ip()):
+        return jsonify({"error": "Слишком много регистраций с этого устройства. Попробуй через час", "code": "rate_limit"}), 429
 
     meta = {"name": name}
     if data.get("consent") is True:
