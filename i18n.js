@@ -27,6 +27,14 @@
       nav_team: "О нашей команде",
       nav_resources: "Полезное",
       nav_content: "Контент",
+      nav_focus: "Фокус",
+      profile_study_title: "⏱ Учёба по дням", profile_study_sub: "Сохранённые таймеры со страницы «Фокус»",
+      profile_study_empty: "Пока нет сохранённых таймеров.", profile_study_hint: "Запустить таймер →",
+      profile_study_total: "всего", profile_study_streak: "Серия", profile_study_best: "рекорд", profile_study_more: "Показать ещё",
+      profile_study_h: "ч", profile_study_m: "мин", profile_study_days: "дн.", profile_study_err: "Не удалось загрузить. Сервер просыпается — обнови страницу через полминуты.",
+      profile_quotes_title: "🪶 Сохранённые цитаты", profile_quotes_sub: "Цитаты дня, которые ты отметил пером",
+      profile_quotes_empty: "Ты пока не сохранил ни одной цитаты.", profile_quotes_hint: "Сохрани цитату дня пером на странице «Фокус» →",
+      profile_quotes_remove: "Убрать из сохранённых", profile_quotes_removed: "Цитата убрана из сохранённых",
       nav_login: "Войти", nav_logout: "Выйти", nav_hello: "Привет",
 
       home_eyebrow: "Тест на подбор университета",
@@ -540,6 +548,14 @@
       nav_team: "Our Team",
       nav_resources: "Resources",
       nav_content: "Content",
+      nav_focus: "Focus",
+      profile_study_title: "⏱ Study by day", profile_study_sub: "Saved timers from the Focus page",
+      profile_study_empty: "No saved timers yet.", profile_study_hint: "Start the timer →",
+      profile_study_total: "total", profile_study_streak: "Streak", profile_study_best: "best", profile_study_more: "Show more",
+      profile_study_h: "h", profile_study_m: "min", profile_study_days: "d", profile_study_err: "Couldn't load. The server is waking up — refresh in half a minute.",
+      profile_quotes_title: "🪶 Saved quotes", profile_quotes_sub: "Quotes of the day you marked with the quill",
+      profile_quotes_empty: "You haven't saved any quotes yet.", profile_quotes_hint: "Save the quote of the day with the quill on the Focus page →",
+      profile_quotes_remove: "Remove from saved", profile_quotes_removed: "Quote removed from saved",
       nav_login: "Log in", nav_logout: "Log out", nav_hello: "Hi",
 
       home_eyebrow: "University matching test",
@@ -1043,6 +1059,14 @@
       nav_team: "我们的团队",
       nav_resources: "实用网站",
       nav_content: "内容",
+      nav_focus: "专注",
+      profile_study_title: "⏱ 每日学习", profile_study_sub: "在“专注”页面保存的计时",
+      profile_study_empty: "还没有保存的计时。", profile_study_hint: "启动计时器 →",
+      profile_study_total: "共", profile_study_streak: "连续", profile_study_best: "最高", profile_study_more: "显示更多",
+      profile_study_h: "小时", profile_study_m: "分钟", profile_study_days: "天", profile_study_err: "加载失败。服务器正在唤醒——请半分钟后刷新页面。",
+      profile_quotes_title: "🪶 收藏的名言", profile_quotes_sub: "你用羽毛笔收藏的每日名言",
+      profile_quotes_empty: "你还没有收藏任何名言。", profile_quotes_hint: "在“专注”页面用羽毛笔收藏每日名言 →",
+      profile_quotes_remove: "取消收藏", profile_quotes_removed: "已取消收藏",
       nav_login: "登录", nav_logout: "退出", nav_hello: "你好",
 
       home_eyebrow: "大学匹配测试",
@@ -1530,6 +1554,14 @@
       nav_team: "Біздің команда",
       nav_resources: "Пайдалы",
       nav_content: "Контент",
+      nav_focus: "Фокус",
+      profile_study_title: "⏱ Күн бойынша оқу", profile_study_sub: "«Фокус» бетінен сақталған таймерлер",
+      profile_study_empty: "Әзірге сақталған таймер жоқ.", profile_study_hint: "Таймерді қосу →",
+      profile_study_total: "барлығы", profile_study_streak: "Серия", profile_study_best: "рекорд", profile_study_more: "Тағы көрсету",
+      profile_study_h: "сағ", profile_study_m: "мин", profile_study_days: "күн", profile_study_err: "Жүктеу мүмкін болмады. Сервер оянып жатыр — жарты минуттан кейін бетті жаңарт.",
+      profile_quotes_title: "🪶 Сақталған дәйексөздер", profile_quotes_sub: "Қауырсынмен белгілеген күн дәйексөздері",
+      profile_quotes_empty: "Сен әзірге бірде-бір дәйексөз сақтаған жоқсың.", profile_quotes_hint: "«Фокус» бетінде күн дәйексөзін қауырсынмен сақта →",
+      profile_quotes_remove: "Сақталғандардан алу", profile_quotes_removed: "Дәйексөз сақталғандардан алынды",
       nav_login: "Кіру", nav_logout: "Шығу", nav_hello: "Сәлем",
 
       home_eyebrow: "Университет таңдау тесті",
@@ -2024,6 +2056,14 @@
       nav_team: "Биздин команда",
       nav_resources: "Пайдалуу",
       nav_content: "Контент",
+      nav_focus: "Фокус",
+      profile_study_title: "⏱ Күн боюнча окуу", profile_study_sub: "«Фокус» барагынан сакталган таймерлер",
+      profile_study_empty: "Азырынча сакталган таймер жок.", profile_study_hint: "Таймерди күйгүзүү →",
+      profile_study_total: "баары", profile_study_streak: "Серия", profile_study_best: "рекорд", profile_study_more: "Дагы көрсөтүү",
+      profile_study_h: "саат", profile_study_m: "мүн", profile_study_days: "күн", profile_study_err: "Жүктөө мүмкүн болгон жок. Сервер ойгонуп жатат — жарым мүнөттөн кийин баракты жаңырт.",
+      profile_quotes_title: "🪶 Сакталган цитаталар", profile_quotes_sub: "Канат калем менен белгилеген күндүн цитаталары",
+      profile_quotes_empty: "Сен азырынча бир да цитата сактай элексиң.", profile_quotes_hint: "«Фокус» барагында күндүн цитатасын канат калем менен сакта →",
+      profile_quotes_remove: "Сакталгандардан алуу", profile_quotes_removed: "Цитата сакталгандардан алынды",
       nav_login: "Кирүү", nav_logout: "Чыгуу", nav_hello: "Салам",
 
       home_eyebrow: "Университет тандоо тести",
@@ -2576,6 +2616,7 @@
         <a href="universities.html" data-i18n="nav_universities">Университеты</a>
         <a href="resources.html" data-i18n="nav_resources">Полезное</a>
         <a href="content.html" data-i18n="nav_content">Контент</a>
+        <a href="focus.html" data-i18n="nav_focus">Фокус</a>
         <a href="profile.html" data-i18n="nav_profile">Профиль</a>
       </div>
     `;
@@ -2693,6 +2734,7 @@
     ["universities.html", "nav_universities"],
     ["resources.html", "nav_resources"],
     ["content.html", "nav_content"],
+    ["focus.html", "nav_focus"],
     ["profile.html", "nav_profile"]
   ];
   function buildNavLinks() {
