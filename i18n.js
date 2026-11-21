@@ -1,1542 +1,2118 @@
 // ============================================================
-// EduPath — auth.js (v3.2: метка устройства, капча, профиль на сервере, удаление данных)
+// EduPath — i18n.js (v8.1, full)
+// RU / EN / ZH / KK / KY
+// + Fun Zone (v2, dashboard)
+// + Auth modal
+// + University detail keys
+// + Country names
+// + Team page (fully translated — v8)
+// + Catalog loading text
 // ============================================================
 
 (function() {
   "use strict";
 
-  const API_URL = "https://edupath1-github-io.onrender.com";
-  const TOKEN_KEY = "edupath_token";
-  const USER_KEY = "edupath_user";
-  const REFRESH_KEY = "edupath_refresh";
-  // Публичный адрес проекта Supabase (нужен для входа через Discord)
-  const SUPABASE_URL = "https://upqvqqotslqubqdhvjkc.supabase.co";
-  const FLASH_KEY = "edupath_flash";
-  const DEVICE_KEY = "edupath_device";
-
-  // Cloudflare Turnstile («я не робот»). Пусто = капча выключена.
-  // Сюда вставляется Site Key из Cloudflare (он публичный, это не секрет).
-  // ВАЖНО: сначала ключ на сайт, и только потом включать капчу в Supabase (см. INSTALL.md).
-  const TURNSTILE_SITE_KEY = "0x4AAAAAAGLst_cuHSX_PzUF";
-
-  // ============================================================
-  // МЕТКА УСТРОЙСТВА
-  // Случайная строка, а не «отпечаток» браузера: лимиты ИИ-теста считаются
-  // и по ней тоже, поэтому несколько аккаунтов на одном устройстве делят один лимит.
-  // Хранится в двух местах (localStorage + cookie): если стереть одно, вернётся из другого.
-  // ============================================================
-
-  function readCookie(name) {
-    const m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([A-Za-z0-9_-]+)"));
-    return m ? m[1] : null;
-  }
-
-  function getDeviceId() {
-    const ok = v => typeof v === "string" && /^[A-Za-z0-9_-]{16,64}$/.test(v);
-    let id = null;
-    try { id = localStorage.getItem(DEVICE_KEY); } catch (e) {}
-    if (!ok(id)) id = readCookie("ep_did");
-    if (!ok(id)) {
-      try {
-        const a = new Uint8Array(18); crypto.getRandomValues(a);
-        id = btoa(String.fromCharCode.apply(null, a)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-      } catch (e) {
-        id = (Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 24);
-      }
-    }
-    try { localStorage.setItem(DEVICE_KEY, id); } catch (e) {}
-    try { document.cookie = "ep_did=" + id + "; max-age=" + (400 * 86400) + "; path=/; SameSite=Lax; Secure"; } catch (e) {}
-    return id;
-  }
-
-  // ============================================================
-  // КАПЧА (Turnstile): невидимая, окно «я не робот» появляется только при подозрении
-  // ============================================================
-
-  // Капча работает в обычном режиме: виджет создаётся, как только открылось окно входа,
-  // и сам получает токен в фоне, пока человек вводит почту и пароль.
-  // Если капча не загрузилась (блокировщик, сеть) — запрос уходит без токена:
-  // пока капча не включена в Supabase, вход работает; если включена — Supabase сам откажет.
-  const _ts = { loading: null, id: null, token: null, waiters: [], interactive: false, log: [] };
-
-  function tsLog(ev) {
-    _ts.log.push(Math.round(performance.now() / 100) / 10 + "s " + ev);
-    if (_ts.log.length > 40) _ts.log.shift();
-    try { console.info("[EduPath captcha]", ev); } catch (e) {}
-  }
-
-  function loadTurnstile() {
-    if (!TURNSTILE_SITE_KEY) return Promise.resolve(null);
-    if (window.turnstile) return Promise.resolve(window.turnstile);
-    if (_ts.loading) return _ts.loading;
-    _ts.loading = new Promise((resolve, reject) => {
-      const sc = document.createElement("script");
-      sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      sc.async = true;
-      sc.onload = () => resolve(window.turnstile);
-      sc.onerror = () => { _ts.loading = null; reject(new Error("script")); };
-      document.head.appendChild(sc);
-    });
-    return _ts.loading;
-  }
-
-  // Язык окна капчи: kk/ky Turnstile не знает — показываем по-русски
-  function captchaLang() {
-    const l = (window.I18N && window.I18N.getLang && window.I18N.getLang()) || "ru";
-    return ({ ru: "ru", en: "en", zh: "zh-cn", kk: "ru", ky: "ru" })[l] || "auto";
-  }
-
-  function tsFlush(tok) {
-    const w = _ts.waiters; _ts.waiters = [];
-    w.forEach(f => f(tok));
-  }
-
-  function initCaptcha() {
-    if (!TURNSTILE_SITE_KEY || _ts.id !== null) return;
-    const box = document.getElementById("edupathCaptcha");
-    if (!box) return;
-    loadTurnstile().then(ts => {
-      if (!ts || _ts.id !== null) return;
-      tsLog("script loaded");
-      try {
-        _ts.id = ts.render(box, {
-          sitekey: TURNSTILE_SITE_KEY,
-          appearance: "interaction-only",
-          language: captchaLang(),
-          retry: "auto",
-          "refresh-expired": "auto",
-          callback: tok => { tsLog("token ok"); _ts.token = tok; _ts.interactive = false; box.classList.remove("show"); tsFlush(tok); },
-          "error-callback": code => { tsLog("error " + code); return true; },
-          "expired-callback": () => { tsLog("token expired"); _ts.token = null; },
-          "timeout-callback": () => tsLog("interactive timeout"),
-          "unsupported-callback": () => { tsLog("browser unsupported"); tsFlush(null); },
-          // Cloudflare просит нажать «Я не робот» — показываем блок и прокручиваем к нему
-          "before-interactive-callback": () => {
-            tsLog("needs click");
-            _ts.interactive = true;
-            box.classList.add("show");
-            try { box.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
-          },
-          "after-interactive-callback": () => tsLog("click done")
-        });
-        tsLog("rendered " + _ts.id);
-      } catch (e) {
-        tsLog("render failed: " + (e && e.message));
-      }
-    }).catch(() => tsLog("script blocked or failed"));
-  }
-
-  function consumeToken() {
-    _ts.token = null;
-    try { if (window.turnstile && _ts.id !== null) window.turnstile.reset(_ts.id); } catch (e) {}
-  }
-
-  // Ждёт токен до 15 с (или до 3 минут, если Cloudflare попросил нажать галочку).
-  // Никогда не блокирует вход навсегда: без токена возвращает null.
-  async function getCaptchaToken() {
-    if (!TURNSTILE_SITE_KEY) return null;
-    initCaptcha();
-    if (_ts.token) { const tok = _ts.token; consumeToken(); return tok; }
-    const tok = await new Promise(resolve => {
-      _ts.waiters.push(resolve);
-      const start = Date.now();
-      const tick = () => {
-        if (_ts.waiters.indexOf(resolve) === -1) return;
-        if (Date.now() - start > (_ts.interactive ? 180000 : 15000)) {
-          _ts.waiters = _ts.waiters.filter(f => f !== resolve);
-          tsLog("no token — sending without it. Log: " + _ts.log.join(" | "));
-          resolve(null);
-        } else setTimeout(tick, 500);
-      };
-      setTimeout(tick, 500);
-    });
-    if (tok) consumeToken();
-    return tok;
-  }
-
-
-
-  // Лендинг = главная страница (index.html или корень сайта)
-  function isLandingPage() {
-    const p = window.location.pathname;
-    return p === "" || p === "/" || /\/index\.html$/.test(p) || /\/$/.test(p);
-  }
-
-  function goToLanding() {
-    window.location.replace("index.html");
-  }
-
-  function goToApp() {
-    window.location.href = "app.html";
-  }
-
-  function t(key, fallback) {
-    const v = window.I18N && window.I18N.t(key);
-    return (v && v !== key) ? v : (fallback || key);
-  }
-
-  // ============================================================
-  // TOKEN / USER
-  // ============================================================
-
-  function getToken() {
-    return localStorage.getItem(TOKEN_KEY);
-  }
-
-  function setToken(token) {
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-  }
-
-  function getRefreshToken() {
-    return localStorage.getItem(REFRESH_KEY);
-  }
-
-  function setSession(session) {
-    if (!session) return;
-    if (session.access_token) localStorage.setItem(TOKEN_KEY, session.access_token);
-    if (session.refresh_token) localStorage.setItem(REFRESH_KEY, session.refresh_token);
-  }
-
-  function clearToken() {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_KEY);
-    localStorage.removeItem(USER_KEY);
-  }
-
-  function tokenExpiry(token) {
-    try {
-      const part = String(token).split(".")[1];
-      const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
-      const json = atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4));
-      const exp = JSON.parse(json).exp;
-      return typeof exp === "number" ? exp * 1000 : null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // Данные пользователя из самого токена (для Google, Discord и др. имя приходит оттуда)
-  function userFromToken(token) {
-    try {
-      const part = String(token).split(".")[1];
-      const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
-      const json = decodeURIComponent(escape(atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4))));
-      const p = JSON.parse(json);
-      const meta = p.user_metadata || {};
-      const email = p.email || meta.email || "";
-      const name = meta.name || meta.full_name || (email ? email.split("@")[0] : "");
-      return { id: p.sub, email: email, name: name };
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function setCachedUser(user) {
-    if (!user) return;
-    if (!user.name) {
-      const fb = userFromToken(getToken());
-      if (fb && fb.name) user = Object.assign({}, user, { name: fb.name });
-    }
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
-  }
-
-  function getCachedUser() {
-    try {
-      const s = localStorage.getItem(USER_KEY);
-      return s ? JSON.parse(s) : null;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function isLoggedIn() {
-    return !!getToken();
-  }
-
-  function getCurrentUser() {
-    return getCachedUser();
-  }
-
-  // ============================================================
-  // NETWORK
-  // ============================================================
-
-  // Сервер на Render (бесплатный тариф) засыпает после ~15 минут простоя.
-  function isServerSleeping(status) {
-    return status === 0 || status === 502 || status === 503 || status === 504;
-  }
-
-  let _wakePromise = null;
-  function wakeServer() {
-    if (_wakePromise) return _wakePromise;
-    _wakePromise = (async () => {
-      for (let i = 0; i < 6; i++) {
-        try {
-          const ctrl = new AbortController();
-          const timer = setTimeout(() => ctrl.abort(), 20000);
-          const r = await fetch(API_URL + "/", { signal: ctrl.signal });
-          clearTimeout(timer);
-          if (r.ok) return true;
-        } catch (e) {}
-        await new Promise(r => setTimeout(r, 3000));
-      }
-      return false;
-    })();
-    return _wakePromise;
-  }
-
-  const NO_REFRESH_PATHS = ["/api/login", "/api/register", "/api/refresh", "/api/resend-confirmation"];
-
-  let _refreshPromise = null;
-  let _refreshTransientFail = false;
-  let _expiredToastAt = 0;
-
-  function expireSession() {
-    const hadSession = !!getToken() || !!getCurrentUser();
-    clearToken();
-    _savedCache = null;
-    _testsCache = null;
-    _quotesCache = null;
-    if (!hadSession) return;
-
-    updateHeaderUI();
-    if (Date.now() - _expiredToastAt > 5000) {
-      _expiredToastAt = Date.now();
-      showToast(t("modal_session_expired", "Сессия истекла. Войди снова."), "error");
-      if (!isLandingPage()) {
-        setTimeout(goToLanding, 1500);
-      }
-    }
-  }
-
-  function refreshSession() {
-    if (_refreshPromise) return _refreshPromise;
-
-    _refreshPromise = (async () => {
-      const refreshToken = getRefreshToken();
-      if (!refreshToken) return false;
-
-      _refreshTransientFail = false;
-      for (let attempt = 0; attempt < 4; attempt++) {
-        let res = null;
-        try {
-          const r = await fetch(API_URL + "/api/refresh", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refresh_token: refreshToken })
-          });
-          let data = null;
-          try { data = await r.json(); } catch (e) {}
-          res = { ok: r.ok, status: r.status, data };
-        } catch (e) {
-          res = { ok: false, status: 0, data: null };
-        }
-
-        if (res.ok && res.data && res.data.session && res.data.session.access_token) {
-          setSession(res.data.session);
-          if (res.data.user) setCachedUser(res.data.user);
-          return true;
-        }
-
-        if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404) {
-          expireSession();
-          return false;
-        }
-
-        await new Promise(r => setTimeout(r, 4000));
-      }
-      _refreshTransientFail = true;
-      return false;
-    })().finally(() => { _refreshPromise = null; });
-
-    return _refreshPromise;
-  }
-
-  async function ensureFreshSession() {
-    const token = getToken();
-    if (!token) return false;
-
-    const exp = tokenExpiry(token);
-    if (exp === null || exp - Date.now() > 60 * 1000) return true;
-
-    if (getRefreshToken()) return refreshSession();
-
-    if (exp - Date.now() <= 0) {
-      expireSession();
-      return false;
-    }
-    return true;
-  }
-
-  async function apiFetch(path, options, _retried) {
-    options = options || {};
-
-    const isAuthPath = NO_REFRESH_PATHS.indexOf(path) !== -1;
-    if (!isAuthPath && !_retried) await ensureFreshSession();
-
-    const headers = Object.assign({
-      "Content-Type": "application/json"
-    }, options.headers || {});
-
-    const token = getToken();
-    if (token && !isAuthPath) headers["Authorization"] = "Bearer " + token;
-    try { headers["X-Device-Id"] = getDeviceId(); } catch (e) {}
-
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 30000);
-
-    try {
-      const res = await fetch(API_URL + path, Object.assign({}, options, { headers, signal: ctrl.signal }));
-      clearTimeout(timer);
-
-      let data = null;
-      try { data = await res.json(); } catch (e) {}
-
-      if (res.status === 401 && token && !isAuthPath) {
-        if (!_retried && getRefreshToken() && await refreshSession()) {
-          return apiFetch(path, options, true);
-        }
-        if (!_refreshTransientFail) expireSession();
-      }
-
-      return { ok: res.ok, status: res.status, data, sessionExpired: res.status === 401 && !!token && !isAuthPath };
-    } catch (networkError) {
-      clearTimeout(timer);
-      return { ok: false, status: 0, data: null, networkError: true };
-    }
-  }
-
-  async function apiFetchWithRetry(path, options, baseDelayMs, maxAttempts) {
-    baseDelayMs = baseDelayMs || 2000;
-    maxAttempts = maxAttempts || 6;
-
-    let res = null;
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      res = await apiFetch(path, options);
-      if (res.ok || !isServerSleeping(res.status)) return res;
-      if (attempt < maxAttempts) {
-        console.warn("Server seems asleep, retry", attempt, "of", maxAttempts - 1);
-        await new Promise(r => setTimeout(r, baseDelayMs * attempt));
-      }
-    }
-    return res;
-  }
-
-  function humanError(res, fallbackKey, fallbackText) {
-    if (res && res.sessionExpired) {
-      return t("modal_session_expired", "Сессия истекла. Войди снова.");
-    }
-    if (res && isServerSleeping(res.status)) {
-      return t("modal_server_waking", "Сервер просыпается. Подожди 30 секунд и попробуй снова.");
-    }
-    if (res && res.data && res.data.error) {
-      return res.data.error;
-    }
-    return t(fallbackKey, fallbackText) || fallbackText;
-  }
-
- // ============================================================
-  // AUTH: REGISTER / LOGIN / LOGOUT
-  // ============================================================
-
-  async function register(name, email, password, consent) {
-    if (!name || !email || !password) {
-      return { ok: false, error: t("modal_fill_all", "Заполните все поля") };
-    }
-    if (password.length < 8) {
-      return { ok: false, error: t("modal_password_short", "Пароль должен быть не короче 8 символов") };
-    }
-    if (!consent) {
-      return { ok: false, error: t("modal_consent_need", "Отметь согласие, чтобы создать аккаунт") };
-    }
-
-    let captcha_token = null;
-    try { captcha_token = await getCaptchaToken(); }
-    catch (e) { return { ok: false, error: e.message }; }
-
-    const res = await apiFetchWithRetry("/api/register", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password, consent: true, captcha_token })
-    });
-
-    if (!res.ok) {
-      return { ok: false, error: humanError(res, "modal_error_register", "Ошибка регистрации") };
-    }
-
-    const session = res.data && res.data.session;
-    const user = res.data && res.data.user;
-
-    if (session && session.access_token) {
-      setSession(session);
-      setCachedUser({
-        name: (user && user.name) || name,
-        email: (user && user.email) || email,
-        id: user && user.id
-      });
-      return { ok: true, user: user, needsConfirmation: false };
-    }
-
-    return {
-      ok: true,
-      user: user,
-      needsConfirmation: true,
-      email: (user && user.email) || email
-    };
-  }
-
-  async function login(email, password) {
-    if (!email || !password) {
-      return { ok: false, error: t("modal_fill_all", "Заполните все поля") };
-    }
-
-    let captcha_token = null;
-    try { captcha_token = await getCaptchaToken(); }
-    catch (e) { return { ok: false, error: e.message }; }
-
-    const res = await apiFetchWithRetry("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password, captcha_token })
-    });
-
-    if (!res.ok) {
-      return { ok: false, error: humanError(res, "modal_error_login", "Неверный email или пароль") };
-    }
-
-    const session = res.data && res.data.session;
-    const user = res.data && res.data.user;
-
-    if (session && session.access_token) {
-      setSession(session);
-      setCachedUser({
-        name: (user && user.name) || "",
-        email: user && user.email,
-        id: user && user.id
-      });
-    }
-
-    return { ok: true, user: user };
-  }
-
-  async function resendConfirmation(email) {
-    let captcha_token = null;
-    try { captcha_token = await getCaptchaToken(); }
-    catch (e) { return { ok: false, error: e.message }; }
-
-    const res = await apiFetchWithRetry("/api/resend-confirmation", {
-      method: "POST",
-      body: JSON.stringify({ email, captcha_token })
-    });
-
-    if (!res.ok) {
-      return { ok: false, error: humanError(res, "modal_error_generic", "Что-то пошло не так") };
-    }
-
-    return { ok: true };
-  }
-
-  function logout() {
-    const tok = getToken();
-    if (tok) {
-      // завершаем сессию и на сервере (не ждём ответа)
-      try {
-        fetch(API_URL + "/api/logout", { method: "POST", keepalive: true,
-          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + tok } }).catch(() => {});
-      } catch (e) {}
-    }
-    clearToken();
-    _savedCache = null;
-    _testsCache = null;
-    _quotesCache = null;
-    if (_readyResolve) _readyResolve();
-  }
-
-  function signInWithProvider(provider) {
-    const back = window.location.origin + window.location.pathname.replace(/[^\/]*$/, "");
-    let url = SUPABASE_URL + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
-              "&redirect_to=" + encodeURIComponent(back);
-    window.location.href = url;
-  }
-
-  // ============================================================
-  // ПРОФИЛЬ: гражданство и уровень обучения — общие для всех устройств
-  // На странице «Университеты» они по-прежнему лежат в ep6:cit / ep6:degree,
-  // а здесь синхронизируются с аккаунтом.
-  // ============================================================
-
-  const PREF_KEYS = { citizenship: "ep6:cit", degree: "ep6:degree" };
-  let _prefTimer = null, _prefPending = {};
-
-  function readLocalPrefs() {
-    const out = {};
-    try {
-      const c = localStorage.getItem(PREF_KEYS.citizenship), d = localStorage.getItem(PREF_KEYS.degree);
-      if (c && /^[A-Z]{2}$/.test(c)) out.citizenship = c;
-      if (d && /^(foundation|bachelor|master|phd)$/.test(d)) out.degree = d;
-    } catch (e) {}
-    return out;
-  }
-
-  async function getProfile() {
-    await waitForAuthReady();
-    if (!isLoggedIn()) return null;
-    const res = await apiFetchWithRetry("/api/profile", { method: "GET" }, 2000, 3);
-    return res.ok && res.data ? res.data.profile : null;
-  }
-
-  // вызывается страницей «Университеты» при смене фильтра
-  function saveProfilePrefs(patch) {
-    if (!isLoggedIn() || !patch) return;
-    Object.assign(_prefPending, patch);
-    clearTimeout(_prefTimer);
-    _prefTimer = setTimeout(() => {
-      const body = _prefPending; _prefPending = {};
-      apiFetchWithRetry("/api/profile", { method: "PUT", body: JSON.stringify(body) }, 3000, 4)
-        .catch(() => {});
-    }, 800);
-  }
-
-  // после входа: значения из аккаунта важнее; если в аккаунте пусто — отправляем то, что выбрано на устройстве
-  async function syncProfilePrefs() {
-    if (!isLoggedIn()) return;
-    let prof = null;
-    try { prof = await getProfile(); } catch (e) { return; }
-    if (!prof) return;
-    const local = readLocalPrefs(), push = {}, changed = {};
-    for (const k of ["citizenship", "degree"]) {
-      if (prof[k]) {
-        if (local[k] !== prof[k]) {
-          try { localStorage.setItem(PREF_KEYS[k], prof[k]); changed[k] = prof[k]; } catch (e) {}
-        }
-      } else if (local[k]) {
-        push[k] = local[k];
-      }
-    }
-    if (Object.keys(push).length) saveProfilePrefs(push);
-    if (Object.keys(changed).length) {
-      window.dispatchEvent(new CustomEvent("edupath-prefs-sync", { detail: changed }));
-    }
-  }
-
-  // ============================================================
-  // УДАЛЕНИЕ ДАННЫХ ПО ВЫБОРУ / АККАУНТА
-  // parts: saved, tests, study, quotes, profile, account
-  // Метка устройства и язык при этом не стираются.
-  // ============================================================
-
-  function clearLocalKeys(test) {
-    try {
-      Object.keys(localStorage).filter(test).forEach(k => localStorage.removeItem(k));
-    } catch (e) {}
-  }
-
-  async function deleteMyData(parts, confirmWord) {
-    if (!isLoggedIn()) return { ok: false, error: t("modal_session_expired", "Сессия истекла. Войди снова.") };
-    const res = await apiFetchWithRetry("/api/account/delete", {
-      method: "POST",
-      body: JSON.stringify({ parts, confirm: confirmWord || "" })
-    });
-    if (!res.ok) return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось удалить") };
-
-    if (parts.indexOf("account") !== -1) {
-      clearToken();
-      clearLocalKeys(k => k.indexOf("ep6:") === 0 || k.indexOf("ep_test_draft") === 0 ||
-                          k.indexOf("edupath_focus") === 0 || k === USER_KEY);
-      try { sessionStorage.clear(); } catch (e) {}
-      _savedCache = null; _testsCache = null; _quotesCache = null;
-      return { ok: true, account: true };
-    }
-    if (parts.indexOf("saved") !== -1) _savedCache = null;
-    if (parts.indexOf("tests") !== -1) _testsCache = null;
-    if (parts.indexOf("quotes") !== -1) _quotesCache = null;
-    if (parts.indexOf("study") !== -1) clearLocalKeys(k => k.indexOf("edupath_focus") === 0);
-    if (parts.indexOf("profile") !== -1) clearLocalKeys(k => k === PREF_KEYS.citizenship || k === PREF_KEYS.degree);
-    return { ok: true, deleted: (res.data && res.data.deleted) || {} };
-  }
-
-  // ============================================================
-  // READY PROMISE
-  // ============================================================
-
-  let _readyPromise;
-  let _readyResolve;
-  
-  function initReadyPromise() {
-    if (!_readyPromise) {
-      _readyPromise = new Promise(resolve => {
-        _readyResolve = resolve;
-      });
-    }
-  }
-  initReadyPromise();
-
-  async function waitForAuthReady() {
-    if (!isLoggedIn()) return;
-    await _readyPromise;
-  }
-
-  // ============================================================
-  // SAVED UNIVERSITIES
-  // ============================================================
-
-  let _savedCache = null;
-
-  async function getSaved(opts) {
-    await waitForAuthReady();
-
-    if (!isLoggedIn()) {
-      _savedCache = [];
-      return [];
-    }
-
-    const res = await apiFetchWithRetry("/api/saved", { method: "GET" });
-    if (!res.ok) {
-      if (opts && opts.strict) {
-        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
-        err.res = res;
-        throw err;
-      }
-      return _savedCache || [];
-    }
-
-    const list = (res.data && res.data.saved) || [];
-
-    _savedCache = list.map(s => ({
-      name: s.university_name,
-      country: s.country || "",
-      city: s.city || ""
-    }));
-
-    return _savedCache;
-  }
-
-  function isSaved(name) {
-    if (!_savedCache) return false;
-    return _savedCache.some(u => u.name === name);
-  }
-
-  async function toggleSave(uni) {
-    if (!isLoggedIn()) {
-      return { ok: false, error: "Не вошёл" };
-    }
-
-    await getSaved();
-
-    const currentlySaved = isSaved(uni.name);
-
-    if (currentlySaved) {
-      const res = await apiFetchWithRetry(
-        "/api/saved/" + encodeURIComponent(uni.name),
-        { method: "DELETE" }
-      );
-
-      if (!res.ok) {
-        return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось удалить") };
-      }
-
-      if (_savedCache) {
-        _savedCache = _savedCache.filter(u => u.name !== uni.name);
-      }
-
-      return { ok: true, removed: true };
-    } else {
-      const res = await apiFetchWithRetry("/api/saved", {
-        method: "POST",
-        body: JSON.stringify({
-          name: uni.name,
-          country: uni.country || "",
-          city: uni.city || ""
-        })
-      });
-
-      if (!res.ok) {
-        return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить") };
-      }
-
-      if (!_savedCache) _savedCache = [];
-      _savedCache.unshift({
-        name: uni.name,
-        country: uni.country || "",
-        city: uni.city || ""
-      });
-
-      return { ok: true, added: true };
-    }
-  }
-
-  // ============================================================
-  // TEST RESULTS
-  // ============================================================
-
-  let _testsCache = null;
-
-  async function getTests(opts) {
-    await waitForAuthReady();
-
-    if (!isLoggedIn()) {
-      _testsCache = [];
-      return [];
-    }
-
-    const res = await apiFetchWithRetry("/api/tests", { method: "GET" });
-    if (!res.ok) {
-      if (opts && opts.strict) {
-        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
-        err.res = res;
-        throw err;
-      }
-      return _testsCache || [];
-    }
-
-    const list = (res.data && res.data.tests) || [];
-
-    _testsCache = list.map(t => ({
-      date: t.created_at,
-      categories: t.categories || {},
-      summary: t.summary || ""
-    }));
-
-    return _testsCache;
-  }
-
-  async function saveTestResult(finalData) {
-  await waitForAuthReady();
-
-  if (!isLoggedIn()) {
-    return { ok: false, error: "Не вошёл" };
-  }
-
-  const res = await apiFetchWithRetry("/api/tests", {
-    method: "POST",
-    body: JSON.stringify({
-      categories: finalData.categories || {},
-      summary: finalData.summary || ""
-    })
-  });
-
-  if (!res.ok) {
-    const serverMsg = (res.data && res.data.error) ? res.data.error : ("Код ошибки: " + res.status);
-    return { ok: false, error: serverMsg };
-  }
-
-  _testsCache = null;
-  return { ok: true };
-}
-
-  // ============================================================
-  // ФОКУС: ТАЙМЕР УЧЁБЫ И ЦИТАТЫ
-  // ============================================================
-
-  // Сегодняшняя дата по часам пользователя (YYYY-MM-DD)
-  function localDateStr(d) {
-    d = d || new Date();
-    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-  }
-
-  async function getStudySummary(opts) {
-    await waitForAuthReady();
-    if (!isLoggedIn()) return null;
-    const days = (opts && opts.days) || 30;
-    const res = await apiFetchWithRetry("/api/study/summary?today=" + localDateStr() + "&days=" + days, { method: "GET" });
-    if (!res.ok) {
-      if (opts && opts.strict) {
-        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
-        err.res = res;
-        throw err;
-      }
-      return null;
-    }
-    return res.data || null;
-  }
-
-  // session: { label, duration_sec, started_at, ended_at, local_date, client_id }
-  async function saveStudySession(session) {
-    await waitForAuthReady();
-    if (!isLoggedIn()) return { ok: false, error: "Не вошёл", offline: false };
-    const res = await apiFetchWithRetry("/api/study/sessions", {
-      method: "POST",
-      body: JSON.stringify(session)
-    }, 2000, 3);
-    if (res.ok) return { ok: true, data: res.data };
-    // сервер спит или нет сети — сессию можно отправить позже
-    const retryable = res.networkError || isServerSleeping(res.status) || res.status >= 500;
-    return { ok: false, retryable, status: res.status, error: humanError(res, "modal_error_generic", "Не удалось сохранить") };
-  }
-
-  let _quotesCache = null;
-
-  async function getSavedQuotes(opts) {
-    await waitForAuthReady();
-    if (!isLoggedIn()) { _quotesCache = []; return []; }
-    const res = await apiFetchWithRetry("/api/quotes/saved", { method: "GET" });
-    if (!res.ok) {
-      if (opts && opts.strict) {
-        const err = new Error(humanError(res, "modal_error_generic", "Не удалось загрузить"));
-        err.res = res;
-        throw err;
-      }
-      return _quotesCache || [];
-    }
-    _quotesCache = ((res.data && res.data.saved) || []).map(Number);
-    return _quotesCache;
-  }
-
-  function isQuoteSaved(id) {
-    return !!_quotesCache && _quotesCache.indexOf(Number(id)) !== -1;
-  }
-
-  async function toggleQuote(id) {
-    id = Number(id);
-    if (!isLoggedIn()) return { ok: false, error: "Не вошёл" };
-    if (!_quotesCache) await getSavedQuotes();
-    if (isQuoteSaved(id)) {
-      const res = await apiFetchWithRetry("/api/quotes/saved/" + id, { method: "DELETE" });
-      if (!res.ok) return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось удалить") };
-      _quotesCache = _quotesCache.filter(x => x !== id);
-      return { ok: true, removed: true };
-    }
-    const res = await apiFetchWithRetry("/api/quotes/saved", { method: "POST", body: JSON.stringify({ quote_id: id }) });
-    if (!res.ok) return { ok: false, error: humanError(res, "modal_error_generic", "Не удалось сохранить") };
-    _quotesCache = [id].concat(_quotesCache || []);
-    return { ok: true, added: true };
-  }
-
-  // ============================================================
-  // TOAST
-  // ============================================================
-
-  function showToast(message, type) {
-    const existing = document.querySelector(".edupath-toast");
-    if (existing) existing.remove();
-
-    const toast = document.createElement("div");
-    toast.className = "edupath-toast edupath-toast-" + (type || "success");
-    toast.textContent = message;
-
-    if (!document.getElementById("edupath-toast-style")) {
-      const style = document.createElement("style");
-      style.id = "edupath-toast-style";
-      style.textContent = `
-        .edupath-toast {
-          position: fixed;
-          bottom: 32px; left: 50%;
-          transform: translateX(-50%) translateY(20px);
-          background: #2B1B10; color: #F7EFE1;
-          padding: 14px 24px; border-radius: 10px;
-          font-family: 'Work Sans', sans-serif; font-size: 14px; font-weight: 500;
-          box-shadow: 0 12px 28px -10px rgba(43,27,16,0.5);
-          z-index: 9999; opacity: 0;
-          animation: toastIn .3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          pointer-events: none; max-width: 90vw; text-align: center; line-height: 1.4;
-        }
-        .edupath-toast-success { background: #2B1B10; color: #F7EFE1; }
-        .edupath-toast-error   { background: #B84A3A; color: #FBF6EC; }
-        .edupath-toast-info    { background: #8C5A34; color: #FBF6EC; }
-        @keyframes toastIn {
-          to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.transition = "opacity .3s ease, transform .3s ease";
-      toast.style.opacity = "0";
-      toast.style.transform = "translateX(-50%) translateY(20px)";
-      setTimeout(() => toast.remove(), 300);
-    }, 3200);
-  }
-
-  // ============================================================
-  // MODAL
-  // ============================================================
-
-  let modalEl = null;
-  let modalMode = "register";
-  let pendingEmail = "";
-
-  function buildModal() {
-    if (modalEl) return modalEl;
-
-    const overlay = document.createElement("div");
-    overlay.className = "edupath-modal-overlay";
-    overlay.id = "edupathAuthModal";
-
-    // ИЗМЕНЕНО ЗДЕСЬ: Удалена кнопка LinkedIn
-    overlay.innerHTML = `
-      <div class="edupath-modal">
-        <button class="edupath-modal-close" type="button" aria-label="Close">×</button>
-
-        <h2 class="edupath-modal-title"></h2>
-        <p class="edupath-modal-sub" id="edupathModalSub"></p>
-
-        <div id="edupathSocialBlock">
-          <div class="edupath-social-grid">
-            <button type="button" class="edupath-btn-social" data-oauth="discord">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#5865F2" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
-              <span>Войти через Discord</span>
-            </button>
-          </div>
-          <div class="edupath-divider"><span id="edupathOrLabel">или</span></div>
-        </div>
-
-        <form id="edupathAuthForm" autocomplete="off">
-          <div class="edupath-field" id="edupathNameField">
-            <label data-i18n="modal_name">Имя</label>
-            <input type="text" id="edupathName" data-i18n-placeholder="modal_name_ph" placeholder="Например, Айсана">
-          </div>
-
-          <div class="edupath-field">
-            <label data-i18n="modal_email">Email</label>
-            <input type="email" id="edupathEmail" placeholder="you@mail.com">
-          </div>
-
-          <div class="edupath-field">
-            <label data-i18n="modal_password">Пароль</label>
-            <input type="password" id="edupathPassword" data-i18n-placeholder="modal_password_ph" placeholder="Минимум 8 символов" autocomplete="new-password">
-          </div>
-
-          <label class="edupath-consent" id="edupathConsentField">
-            <input type="checkbox" id="edupathConsent">
-            <span data-i18n="modal_consent">Я согласен(на), что EduPath хранит мои данные, чтобы сайт работал</span>
-          </label>
-
-          <div class="edupath-error" id="edupathAuthError"></div>
-
-          <button type="submit" class="edupath-btn-submit" id="edupathSubmitBtn">Создать аккаунт</button>
-        </form>
-
-        <div id="edupathConfirmBlock" style="display:none;">
-          <div class="edupath-confirm-icon">📧</div>
-          <p class="edupath-confirm-sub" id="edupathConfirmSub"></p>
-          <button type="button" class="edupath-btn-submit" id="edupathResendBtn">Отправить письмо заново</button>
-          <button type="button" class="edupath-btn-ghost" id="edupathOpenMailBtn">Открыть Gmail</button>
-          <button type="button" class="edupath-btn-link" id="edupathAlreadyConfirmedBtn">Я подтвердил — войти</button>
-        </div>
-
-        <div id="edupathCaptcha" class="edupath-captcha"></div>
-
-        <div class="edupath-switch" id="edupathSwitchWrap">
-          <span id="edupathSwitchText">Уже есть аккаунт?</span>
-          <button type="button" id="edupathSwitchBtn">Войти</button>
-        </div>
-      </div>
-    `;
-
-    if (!document.getElementById("edupath-modal-style")) {
-      const style = document.createElement("style");
-      style.id = "edupath-modal-style";
-      // ИЗМЕНЕНО ЗДЕСЬ: .edupath-social-grid теперь 1fr вместо 1fr 1fr
-      style.textContent = `
-        .edupath-modal-overlay {
-          position: fixed; inset: 0;
-          background: rgba(43,27,16,0.55);
-          backdrop-filter: blur(4px);
-          display: flex; align-items: center; justify-content: center;
-          z-index: 9998; opacity: 0; visibility: hidden;
-          transition: opacity .3s cubic-bezier(0.22,1,0.36,1), visibility .3s;
-          padding: 20px;
-        }
-        .edupath-modal-overlay.open { opacity: 1; visibility: visible; }
-
-        .edupath-modal, .edupath-modal input, .edupath-modal button {
-          font-family: 'Work Sans', 'Inter', sans-serif;
-        }
-        .edupath-modal button { border: 0; cursor: pointer; }
-        .edupath-modal { max-height: 94vh; overflow-y: auto; }
-        .edupath-consent { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 13px; line-height: 1.45; color: #5B4636; cursor: pointer; }
-        .edupath-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #8C5A34; }
-        /* Контейнер капчи НЕЛЬЗЯ прятать через display:none — иначе галочка «я не робот» не видна и проверка зависает */
-        .edupath-captcha { display: flex; justify-content: center; margin: 0; min-height: 0; }
-        .edupath-captcha.show { margin: 12px 0 4px; }
-
-        .edupath-btn-social {
-          width: 100%; padding: 12px 10px;
-          display: flex; align-items: center; justify-content: center; gap: 9px;
-          background: #FBF6EC; color: #2B1B10;
-          border: 1.5px solid rgba(43,27,16,0.18) !important;
-          border-radius: 10px; font-size: 15px; font-weight: 600;
-          transition: background .2s, border-color .2s, transform .2s;
-        }
-        .edupath-btn-social:hover { background: #F7EFE1; border-color: #8C5A34 !important; transform: translateY(-1px); }
-        .edupath-social-grid {
-          display: grid; grid-template-columns: 1fr; gap: 10px;
-        }
-        .edupath-btn-social svg { flex-shrink: 0; }
-        .edupath-divider {
-          display: flex; align-items: center; gap: 12px;
-          margin: 18px 0 20px; color: #7A6552; font-size: 13px;
-        }
-        .edupath-divider::before, .edupath-divider::after {
-          content: ""; flex: 1; height: 1px; background: rgba(43,27,16,0.14);
-        }
-
-        .edupath-modal {
-          background: #FBF6EC; border-radius: 20px;
-          padding: 40px 36px 32px;
-          width: 100%; max-width: 440px; position: relative;
-          box-shadow: 0 30px 60px -20px rgba(43,27,16,0.4);
-          transform: translateY(20px);
-          transition: transform .35s cubic-bezier(0.22,1,0.36,1);
-        }
-        .edupath-modal-overlay.open .edupath-modal { transform: translateY(0); }
-
-        .edupath-modal-close {
-          position: absolute; top: 16px; right: 16px;
-          width: 36px; height: 36px; border-radius: 50%;
-          background: transparent; color: #7A6552;
-          font-size: 24px; line-height: 1;
-          display: flex; align-items: center; justify-content: center;
-          transition: background .2s;
-        }
-        .edupath-modal-close:hover { background: #EFE1C6; color: #2B1B10; }
-
-        .edupath-modal-title {
-          font-family: 'Fraunces', serif; font-size: 28px;
-          color: #2B1B10; margin-bottom: 8px;
-        }
-        .edupath-modal-sub {
-          font-size: 14px; color: #7A6552;
-          margin-bottom: 28px; line-height: 1.5;
-        }
-
-        .edupath-field { margin-bottom: 16px; }
-        .edupath-field label {
-          display: block; font-size: 13px; color: #7A6552;
-          margin-bottom: 6px; font-weight: 500;
-        }
-        .edupath-field input {
-          width: 100%; padding: 13px 16px;
-          font-family: inherit; font-size: 15px;
-          background: #F7EFE1; color: #2B1B10;
-          border: 1.5px solid rgba(43,27,16,0.14);
-          border-radius: 10px;
-          transition: border-color .2s, background .2s;
-        }
-        .edupath-field input:focus {
-          outline: none; border-color: #8C5A34; background: #FBF6EC;
-        }
-
-        .edupath-error {
-          font-size: 13px; color: #B84A3A;
-          min-height: 18px; margin-bottom: 12px; line-height: 1.4;
-        }
-
-        .edupath-btn-submit {
-          width: 100%; padding: 15px;
-          background: #2B1B10; color: #F7EFE1;
-          border-radius: 10px; font-size: 15px; font-weight: 600;
-          transition: background .2s, transform .2s;
-        }
-        .edupath-btn-submit:hover { background: #5A3B26; transform: translateY(-1px); }
-        .edupath-btn-submit:disabled { opacity: 0.6; cursor: wait; }
-
-        .edupath-btn-ghost {
-          width: 100%; padding: 13px; margin-top: 10px;
-          background: #EFE1C6; color: #2B1B10;
-          border-radius: 10px; font-size: 14px; font-weight: 600;
-          transition: background .2s;
-        }
-        .edupath-btn-ghost:hover { background: #D9BD93; }
-
-        .edupath-btn-link {
-          display: block; width: 100%; margin-top: 14px;
-          background: transparent; color: #8C5A34;
-          font-size: 14px; font-weight: 600;
-          text-decoration: underline; text-underline-offset: 3px;
-        }
-        .edupath-btn-link:hover { color: #5A3B26; }
-
-        .edupath-confirm-icon {
-          font-size: 48px; text-align: center; margin-bottom: 16px;
-        }
-        .edupath-confirm-sub {
-          font-size: 14px; color: #7A6552;
-          line-height: 1.6; margin-bottom: 24px; text-align: center;
-        }
-        .edupath-confirm-sub b { color: #2B1B10; }
-
-        .edupath-switch {
-          text-align: center; margin-top: 20px;
-          font-size: 14px; color: #7A6552;
-        }
-        .edupath-switch button {
-          color: #8C5A34; font-weight: 600;
-          text-decoration: underline; text-underline-offset: 3px;
-          padding: 0 4px;
-        }
-
-        @media (max-width: 480px) {
-          .edupath-modal { padding: 32px 24px 24px; }
-          .edupath-modal-title { font-size: 24px; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    document.body.appendChild(overlay);
-    modalEl = overlay;
-    return overlay;
-  }
-
-  function openModal(mode) {
-    mode = mode || "register";
-    modalMode = mode;
-
-    const overlay = buildModal();
-    initCaptcha();   // капча начинает проверку в фоне, пока человек заполняет форму
-    overlay.classList.add("open");
-
-    const title       = overlay.querySelector(".edupath-modal-title");
-    const sub         = document.getElementById("edupathModalSub");
-    const form        = document.getElementById("edupathAuthForm");
-    const confirmBox  = document.getElementById("edupathConfirmBlock");
-    const nameField   = document.getElementById("edupathNameField");
-    const submitBtn   = document.getElementById("edupathSubmitBtn");
-    const switchWrap  = document.getElementById("edupathSwitchWrap");
-    const switchText  = document.getElementById("edupathSwitchText");
-    const switchBtn   = document.getElementById("edupathSwitchBtn");
-    const errEl       = document.getElementById("edupathAuthError");
-
-    errEl.textContent = "";
-
-    if (window.I18N) window.I18N.applyAll();
-
-    const socialBlock = document.getElementById("edupathSocialBlock");
-    document.getElementById("edupathOrLabel").textContent     = t("modal_or", "или");
-    socialBlock.style.display = (mode === "confirm") ? "none" : "block";
-
-    if (mode === "confirm") {
-      form.style.display = "none";
-      confirmBox.style.display = "block";
-      switchWrap.style.display = "none";
-
-      title.textContent = t("modal_confirm_title", "Подтверди почту");
-      sub.textContent = "";
-
-      const confirmSub = document.getElementById("edupathConfirmSub");
-      confirmSub.innerHTML = t(
-        "modal_confirm_sub",
-        "Мы отправили письмо на {email}. Открой Gmail и нажми на ссылку подтверждения."
-      ).replace("{email}", "<b>" + (pendingEmail || "") + "</b>");
-
-      document.getElementById("edupathResendBtn").textContent       = t("modal_confirm_resend", "Отправить письмо заново");
-      document.getElementById("edupathOpenMailBtn").textContent     = t("modal_confirm_open_mail", "Открыть Gmail");
-      document.getElementById("edupathAlreadyConfirmedBtn").textContent = t("modal_confirm_already", "Я подтвердил — войти");
-      return;
-    }
-
-    form.style.display = "block";
-    confirmBox.style.display = "none";
-    switchWrap.style.display = "block";
-
-    if (mode === "register") {
-      title.textContent = t("modal_hello", "Добро пожаловать");
-      sub.textContent   = t("modal_hello_sub", "Создай аккаунт, чтобы сохранять университеты");
-      nameField.style.display = "block";
-      document.getElementById("edupathConsentField").style.display = "flex";
-      document.getElementById("edupathPassword").setAttribute("autocomplete", "new-password");
-      submitBtn.textContent = t("modal_submit_register", "Создать аккаунт");
-      switchText.textContent = t("modal_switch_register", "Уже есть аккаунт?");
-      switchBtn.textContent  = t("modal_switch_register_btn", "Войти");
-    } else {
-      title.textContent = t("modal_welcome_back", "С возвращением");
-      sub.textContent   = t("modal_welcome_back_sub", "Войди в свой аккаунт");
-      nameField.style.display = "none";
-      document.getElementById("edupathConsentField").style.display = "none";
-      document.getElementById("edupathPassword").setAttribute("autocomplete", "current-password");
-      submitBtn.textContent = t("modal_submit_login", "Войти");
-      switchText.textContent = t("modal_switch_login", "Нет аккаунта?");
-      switchBtn.textContent  = t("modal_switch_login_btn", "Создать");
-    }
-
-    setTimeout(() => {
-      const firstInput = mode === "register"
-        ? document.getElementById("edupathName")
-        : document.getElementById("edupathEmail");
-      if (firstInput) firstInput.focus();
-    }, 250);
-  }
-
-  function closeModal() {
-    if (modalEl) modalEl.classList.remove("open");
-  }
-
-  document.addEventListener("click", (e) => {
-    const oauthBtn = e.target.closest("[data-oauth]");
-    if (oauthBtn) {
-      e.preventDefault();
-      oauthBtn.disabled = true;
-      signInWithProvider(oauthBtn.dataset.oauth);
-      return;
-    }
-
-    const openBtn = e.target.closest("[data-auth-open]");
-    if (openBtn) {
-      e.preventDefault();
-      openModal(openBtn.dataset.authOpen || "register");
-      return;
-    }
-
-    if (e.target.closest(".edupath-modal-close")) {
-      closeModal();
-      return;
-    }
-
-    if (e.target.classList && e.target.classList.contains("edupath-modal-overlay")) {
-      closeModal();
-      return;
-    }
-
-    if (e.target.id === "edupathSwitchBtn") {
-      openModal(modalMode === "register" ? "login" : "register");
-      return;
-    }
-
-    if (e.target.id === "edupathResendBtn") {
-      e.preventDefault();
-      const btn = e.target;
-      const oldText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = t("modal_wait", "Подождите...");
-
-      resendConfirmation(pendingEmail).then(res => {
-        btn.disabled = false;
-        btn.textContent = oldText;
-        if (res.ok) {
-          showToast(t("modal_confirm_resent", "Письмо отправлено снова"), "success");
-        } else {
-          showToast(res.error || t("modal_error_generic", "Что-то пошло не так"), "error");
-        }
-      });
-      return;
-    }
-
-    if (e.target.id === "edupathOpenMailBtn") {
-      e.preventDefault();
-      window.open("https://mail.google.com", "_blank");
-      return;
-    }
-
-    if (e.target.id === "edupathAlreadyConfirmedBtn") {
-      e.preventDefault();
-      openModal("login");
-      return;
-    }
-
-    if (e.target.closest("[data-auth-logout]")) {
-      e.preventDefault();
-      logout();
-      try { sessionStorage.setItem(FLASH_KEY, "logout"); } catch (err) {}
-      goToLanding();
-      return;
-    }
-  });
-
-  document.addEventListener("submit", async (e) => {
-    if (e.target.id !== "edupathAuthForm") return;
-    e.preventDefault();
-
-    const errEl     = document.getElementById("edupathAuthError");
-    const submitBtn = document.getElementById("edupathSubmitBtn");
-
-    errEl.textContent = "";
-    submitBtn.disabled = true;
-
-    const oldText = submitBtn.textContent;
-    submitBtn.textContent = t("modal_wait", "Подождите...");
-
-    const name     = document.getElementById("edupathName").value.trim();
-    const email    = document.getElementById("edupathEmail").value.trim();
-    const password = document.getElementById("edupathPassword").value;
-
-    let result;
-
-    if (modalMode === "register") {
-      result = await register(name, email, password, document.getElementById("edupathConsent").checked);
-    } else {
-      result = await login(email, password);
-    }
-
-    submitBtn.disabled = false;
-    submitBtn.textContent = oldText;
-
-    if (!result.ok) {
-      errEl.textContent = result.error;
-      return;
-    }
-
-    if (result.needsConfirmation) {
-      pendingEmail = result.email || email;
-      openModal("confirm");
-      return;
-    }
-
-    closeModal();
-    showToast(
-      modalMode === "register"
-        ? t("modal_register_success", "Аккаунт создан. Привет!")
-        : t("modal_login_success", "С возвращением!"),
-      "success"
-    );
-
-    updateHeaderUI();
-    if (_readyResolve) _readyResolve();
-    syncProfilePrefs().catch(() => {});
-
-    if (isLandingPage()) {
-      setTimeout(goToApp, 700);
-      return;
-    }
-
-    if (window.location.pathname.includes("profile")) {
-      window.location.reload();
-    }
-  });
-
-  function handleAuthRedirect() {
-    const hash = window.location.hash || "";
-    const search = window.location.search || "";
-
-    const errSource = hash.includes("error") ? hash.replace(/^#/, "") : (search.includes("error") ? search.replace(/^\?/, "") : "");
-    if (errSource) {
-      const ep = new URLSearchParams(errSource);
-      const desc = ep.get("error_description");
-      if (ep.get("error") || desc) {
-        history.replaceState(null, "", window.location.pathname);
-        showToast((desc || t("modal_error_generic", "Что-то пошло не так")).replace(/\+/g, " "), "error");
-        return true;
-      }
-    }
-
-    if (hash.includes("access_token=")) {
-      const params = new URLSearchParams(hash.replace(/^#/, ""));
-      const access = params.get("access_token");
-      const refresh = params.get("refresh_token");
-
-      if (access) {
-        setSession({ access_token: access, refresh_token: refresh });
-        history.replaceState(null, "", window.location.pathname + window.location.search);
-
-        const fromToken = userFromToken(access);
-        if (fromToken) setCachedUser(fromToken);
-        updateHeaderUI();
-
-        apiFetch("/api/me", { method: "GET" }).then(res => {
-          if (res.ok && res.data && res.data.user) {
-            setCachedUser(res.data.user);
-            updateHeaderUI();
-          }
-          if (_readyResolve) _readyResolve();
-        });
-
-        if (params.get("type") === "signup") {
-          showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
-        } else {
-          showToast(t("modal_login_success", "С возвращением!"), "success");
-        }
-
-        if (isLandingPage()) {
-          setTimeout(goToApp, 900);
-        }
-        return true;
-      }
-    }
-
-    if (search.includes("code=")) {
-      history.replaceState(null, "", window.location.pathname);
-      setTimeout(() => {
-        openModal("login");
-        showToast(t("modal_after_confirm_sub", "Теперь войди со своим паролем"), "info");
-      }, 300);
-      return true;
-    }
-
-    return false;
-  }
-
- function updateHeaderUI() {
-    const user = getCurrentUser();
-    const loginBtn = document.querySelector(".btn-login");
-    if (!loginBtn) return;
-
-    if (user) {
-      loginBtn.textContent =
-        t("nav_hello", "Привет") + ", " + (user.name || "друг").split(" ")[0];
-      loginBtn.href = isLandingPage() ? "app.html" : "profile.html";
-      loginBtn.setAttribute("data-auth-user", "1");
-      loginBtn.removeAttribute("data-auth-open");
-    } else {
-      loginBtn.textContent = t("nav_login", "Войти");
-      loginBtn.href = "#";
-      loginBtn.removeAttribute("data-auth-user");
-      loginBtn.setAttribute("data-auth-open", "login");
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    handleAuthRedirect();
-    updateHeaderUI();
-
-    try {
-      if (sessionStorage.getItem(FLASH_KEY) === "logout") {
-        sessionStorage.removeItem(FLASH_KEY);
-        showToast(t("modal_logout_success", "Вы вышли из аккаунта"), "info");
-      }
-    } catch (err) {}
-    wakeServer();
-
-    if (isLoggedIn()) {
-      ensureFreshSession().then(() => {
-        if (_readyResolve) _readyResolve();
-        syncProfilePrefs().catch(() => {});
-      }).catch(e => {
-        console.warn("Auth ready failed:", e);
-        if (_readyResolve) _readyResolve();
-      });
-    } else {
-      if (_readyResolve) _readyResolve();
-    }
-  });
-
-  window.addEventListener("edupath-lang-change", () => {
-    updateHeaderUI();
-    if (modalEl && modalEl.classList.contains("open")) {
-      openModal(modalMode);
-    }
-  });
-
-  window.EduAuth = {
-    getToken,
-    getCurrentUser,
-    isLoggedIn,
-    register,
-    login,
-    logout,
-    resendConfirmation,
-    getSaved,
-    isSaved,
-    toggleSave,
-    getTests,
-    saveTestResult,
-    getStudySummary,
-    saveStudySession,
-    getSavedQuotes,
-    isQuoteSaved,
-    toggleQuote,
-    localDateStr,
-    getDeviceId,
-    captchaLog: () => _ts.log.slice(),
-    getProfile,
-    saveProfilePrefs,
-    syncProfilePrefs,
-    deleteMyData,
-    showToast,
-    openModal,
-    updateHeaderUI,
-    refreshSession,
-    signInWithProvider
-  };
-
-})();
+  const LANG_KEY = "edupath_lang";
+
+  const translations = {
+
+    // ============================================================
+    // РУССКИЙ
+    // ============================================================
+    ru: {
+      nav_home: "Главная", nav_universities: "Университеты", nav_profile: "Профиль",
+      nav_fanzone: "🤡 Fun Zone",
+      nav_team: "О нашей команде",
+      nav_login: "Войти", nav_logout: "Выйти", nav_hello: "Привет",
+
+      home_eyebrow: "Тест на подбор университета",
+      home_title_pre: "Пройди тест — и найди ", home_title_em: "свой", home_title_post: " университет",
+      home_sub: "Подбор направлений и вузов по твоим предпочтениям, результатам тестов и бюджету. Отвечай на вопросы — дальше система сама решит, что уточнить.",
+      home_cta: "Начать заполнение профиля",
+      home_note: "На основе специального ИИ поймём, какой университет может вам подойти",
+      home_quote_top: "«С нами —", home_quote_bottom: "комфортнее, практичнее, эффективнее»",
+      home_seam_desc_top: "Помимо учебных показателей нам важно, в какой среде хочет жить абитуриент.",
+      home_seam_desc_bottom: "Мы рекомендуем только те университеты, которые подходят тебе по-настоящему хорошо.",
+      home_how_title: "Как это работает", home_how_sub: "Три шага от первого вопроса до списка подходящих университетов.",
+      home_step1_title: "Личные данные", home_step1_desc: "Твои интересы, увлечения и предпочтения по стране, климату и формату обучения.",
+      home_step2_title: "Показатели", home_step2_desc: "Оценки, результаты экзаменов (SAT, IELTS и др.) и ориентировочный бюджет.",
+      home_step3_title: "Результаты теста", home_step3_desc: "Список университетов, которые подходят тебе больше всего, с пояснениями и советами.",
+      home_footer: "EduPath © 2026. Все права защищены",
+      city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
+
+      catalog_title: "Университеты", catalog_sub: "Выбери страну и университет",
+      catalog_loading: "Загрузка списка...",
+      catalog_filters: "Фильтры",
+      catalog_budget_label: "Бюджет на обучение (USD/год)",
+      catalog_budget_from: "от", catalog_budget_to: "до",
+      catalog_country_label: "Страна", catalog_country_all: "Все страны",
+      catalog_grant_label: "Финансовая помощь", catalog_grant_only: "Только с полным грантом",
+      catalog_apply: "Применить", catalog_reset: "Сбросить",
+      catalog_choose_uni: "Выбери университет",
+      catalog_choose_hint: "Кликни на страну слева, потом на университет, чтобы увидеть подробную информацию.",
+      catalog_search_placeholder: "Найти университет...",
+      catalog_search_empty: "Извините, мы пока работаем над добавлением этого университета",
+      catalog_saved_ok: "Успешно сохранили университет",
+      catalog_saved_remove: "Университет убран из избранного",
+      catalog_need_login: "Чтобы сохранять вузы, войдите в аккаунт",
+      catalog_save_btn: "Сохранить в избранное", catalog_saved_btn: "В избранном",
+
+      profile_greeting: "Привет", profile_logout: "Выйти",
+      profile_saved_title: "⭐ Понравившиеся университеты",
+      profile_saved_sub: "Те, которые ты отметил звёздочкой в каталоге",
+      profile_tests_title: "🎯 Результаты теста",
+      profile_tests_sub: "Университеты, которые ИИ подобрал по твоим ответам",
+      profile_empty_saved: "Ты пока не сохранил ни одного университета.",
+      profile_empty_saved_hint: "Зайди в каталог и нажми на звёздочку рядом с вузом.",
+      profile_empty_tests: "Ты пока не проходил тест.",
+      profile_empty_tests_hint: "Пройти тест на подбор университета →",
+      profile_need_login_title: "Сначала войди в аккаунт",
+      profile_need_login_desc: "Чтобы сохранять университеты и видеть результаты тестов — создай аккаунт или войди.",
+      profile_create_account: "Создать аккаунт",
+      profile_loading: "Загрузка профиля",
+      profile_last_test: "Последний тест", profile_test: "Тест",
+      profile_unis_found: "университетов найдено",
+
+      test_title: "Найдём твой идеальный университет",
+      test_sub: "Ответь на несколько вопросов — про учёбу, страну мечты, климат и то, как ты хочешь жить.",
+      test_start: "Начать", test_question: "Вопрос", test_of: "из",
+      test_ask: "ИИ спрашивает", test_thinking: "ИИ думает",
+      test_answer_placeholder: "Напиши свой ответ здесь...", test_send: "Отправить",
+      test_restart: "Пройти заново",
+      test_final_title: "Готово! Вот твои университеты",
+      test_final_sub: "ИИ проанализировал твои ответы и подобрал варианты по 4 категориям.",
+      test_saved_banner: "Ваш результат сохранён в профиле",
+      test_saved_hint: "Посмотреть в профиле →",
+      test_not_saved_banner: "Войдите, чтобы сохранить результат",
+      test_not_saved_hint: "Войти",
+      test_cat_academic: "Подходят по учебным показателям",
+      test_cat_lifestyle: "Подходят по желанию жить",
+      test_cat_safe: "Куда шанс поступить высокий",
+      test_cat_reach: "Куда мог бы, но не дотягиваешь",
+      test_empty_category: "Ничего не подошло в этой категории",
+      test_more: "Подробнее →",
+      test_analyzing: "ИИ анализирует 250 университетов",
+
+      modal_hello: "Добро пожаловать",
+      modal_hello_sub: "Создай аккаунт, чтобы сохранять университеты",
+      modal_google: "Продолжить с Google", modal_apple: "Продолжить с Apple", modal_or: "или",
+      modal_name: "Имя", modal_name_ph: "Например, Айсана",
+      modal_email: "Email", modal_password: "Пароль",
+      modal_password_ph: "Минимум 6 символов",
+      modal_submit_register: "Создать аккаунт", modal_submit_login: "Войти",
+      modal_switch_register: "Уже есть аккаунт?", modal_switch_login: "Нет аккаунта?",
+      modal_switch_register_btn: "Войти", modal_switch_login_btn: "Создать",
+      modal_welcome_back: "С возвращением", modal_welcome_back_sub: "Войди в свой аккаунт",
+      modal_confirm_title: "Подтверди почту",
+      modal_confirm_sub: "Мы отправили письмо на {email}. Открой Gmail и нажми на ссылку подтверждения.",
+      modal_confirm_resend: "Отправить письмо заново",
+      modal_confirm_resent: "Письмо отправлено снова",
+      modal_confirm_open_mail: "Открыть Gmail",
+      modal_confirm_already: "Я подтвердил — войти",
+      modal_after_confirm_title: "Почта подтверждена ✓",
+      modal_after_confirm_sub: "Теперь войди со своим паролем",
+      modal_login_success: "С возвращением!",
+      modal_register_success: "Аккаунт создан. Привет!",
+      modal_logout_success: "Вы вышли из аккаунта",
+      modal_fill_all: "Заполните все поля",
+      modal_wait: "Подождите...",
+      modal_server_waking: "Сервер просыпается. Подожди 30 секунд и попробуй снова.",
+      modal_session_expired: "Сессия истекла. Войди снова.",
+      test_saving_banner: "Сохраняем результат…",
+      test_save_failed_banner: "Не удалось сохранить результат",
+      test_save_failed_desc: "Результат ниже виден, но в профиле его пока нет. Попробуй ещё раз.",
+      test_save_retry: "Повторить",
+      test_err_rate: "Слишком много запросов. Подожди пару минут и попробуй снова.",
+      test_err_ai: "ИИ не смог ответить после 3 попыток.",
+      modal_error_generic: "Что-то пошло не так. Попробуй ещё раз.",
+      modal_error_register: "Ошибка регистрации",
+      modal_error_login: "Неверный email или пароль",
+      modal_close: "Закрыть",
+
+      uni_section_finance: "Финансы",
+      uni_section_deadlines: "Сроки",
+      uni_section_requirements: "Требования",
+      uni_section_ratings: "Рейтинги",
+      uni_section_majors: "Профессии",
+      uni_section_extra: "Дополнительно",
+      uni_field_tuition: "Стоимость обучения",
+      uni_field_admission: "Процент поступления",
+      uni_field_aid: "Финансовая помощь",
+      uni_field_grant: "Полный грант",
+      uni_field_early_deadline: "Дедлайн ранней подачи",
+      uni_field_main_deadline: "Дедлайн основной подачи",
+      uni_field_toefl: "TOEFL / IELTS",
+      uni_field_sat: "SAT",
+      uni_field_essay: "Эссе",
+      uni_field_recs: "Рекомендательные письма",
+      uni_field_app_fee: "Стоимость заявки",
+      uni_field_apply_link: "Ссылка на подачу",
+      uni_field_rank_country: "Рейтинг по стране",
+      uni_field_rank_world: "Рейтинг в мире",
+      uni_field_majors: "Направления",
+      uni_field_comments: "Комментарии",
+      uni_value_yes: "ДА", uni_value_no: "нет", uni_value_not_specified: "не указано",
+      uni_full_grant_badge: "✨ Полный грант",
+      uni_open_site: "🌐 Официальный сайт",
+      uni_apply: "📝 Подать заявку",
+      uni_aid_link: "💰 Финансовая помощь",
+
+      country_australia: "Австралия", country_austria: "Австрия", country_belgium: "Бельгия",
+      country_canada: "Канада", country_china: "Китай", country_czech: "Чехия",
+      country_denmark: "Дания", country_finland: "Финляндия", country_germany: "Германия",
+      country_hongkong: "Гонконг", country_hungary: "Венгрия", country_italy: "Италия",
+      country_japan: "Япония", country_latvia: "Латвия", country_netherlands: "Нидерланды",
+      country_poland: "Польша", country_qatar: "Катар", country_singapore: "Сингапур",
+      country_southkorea: "Южная Корея", country_spain: "Испания", country_sweden: "Швеция",
+      country_switzerland: "Швейцария", country_turkey: "Турция", country_uae: "ОАЭ",
+      country_uk: "Великобритания", country_usa: "США",
+
+      // ===== FUN ZONE v2 =====
+      fz2_badge: "⚠️ ОТДЕЛ БРЕЙНРОТА",
+      fz2_hero_title: "Fun Zone",
+      fz2_hero_sub: "Самая ненужная часть EduPath.",
+      fz2_hero_sub2: "Мы могли бы улучшить алгоритм поступления. Мы выбрали это.",
+      fz2_open: "Открыть",
+
+      fz2_card_aura: "Академическая аура",
+      fz2_card_aura_desc: "Сгенерируй свою абсолютно реальную ауру.",
+      fz2_card_future: "Рандомизируй будущее",
+      fz2_card_future_desc: "Пусть сайт решит твою судьбу.",
+      fz2_card_battle: "Битва университетов",
+      fz2_card_battle_desc: "Два университета входят. Один уходит.",
+      fz2_card_cooked: "Насколько я прожарен?",
+      fz2_card_cooked_desc: "Узнай, прожарен ли ты.",
+      fz2_card_npc: "Какой ты NPC?",
+      fz2_card_npc_desc: "Узнай свой университетский NPC.",
+      fz2_card_potion: "Зелье совместимости",
+      fz2_card_potion_desc: "Свари своё университетское зелье.",
+      fz2_card_stock: "Биржа GPA",
+      fz2_card_stock_desc: "Следи за своим GPA в прямом эфире.",
+      fz2_card_crash: "Обвал портфеля",
+      fz2_card_crash_desc: "Запусти академический крах.",
+      fz2_card_gacha: "Гача университетов",
+      fz2_card_gacha_desc: "Тяни университеты. Ничего не чувствуй.",
+      fz2_card_wallet: "Урон по кошельку",
+      fz2_card_wallet_desc: "Узнай, сколько забирает кошелёк.",
+      fz2_card_sleep: "Сон vs GPA",
+      fz2_card_sleep_desc: "Смоделируй вечный компромисс.",
+      fz2_card_caffeine: "Калькулятор кофеина",
+      fz2_card_caffeine_desc: "Сколько кофе — это слишком?",
+      fz2_card_brain: "Тест мозга",
+      fz2_card_brain_desc: "Проверь свою оперативку. Типа того.",
+      fz2_card_sat: "SAT-угадайка",
+      fz2_card_sat_desc: "Угадай. Каким-то образом ответь верно.",
+      fz2_card_officer: "Приёмная комиссия",
+      fz2_card_officer_desc: "Встреться с офицером. Без сожалений.",
+      fz2_card_rejection: "Письмо-отказ",
+      fz2_card_rejection_desc: "Получи письмо. К сожалению.",
+      fz2_card_career: "Случайная профессия",
+      fz2_card_career_desc: "Узнай своё истинное призвание.",
+      fz2_card_car: "Университетская тачка",
+      fz2_card_car_desc: "У твоего универа есть тачка. Очевидно.",
+      fz2_card_weather: "Погода-характер",
+      fz2_card_weather_desc: "Погода = характер. Это факт.",
+      fz2_card_npc_gen: "Фабрика NPC",
+      fz2_card_npc_gen_desc: "Создай случайного студента-NPC.",
+      fz2_card_skill: "Детектор скилл-ишью",
+      fz2_card_skill_desc: "Находит скилл-ишью. Честно.",
+      fz2_card_spell: "Университетское заклинание",
+      fz2_card_spell_desc: "Колдуй сомнительными спеллами.",
+      fz2_card_achievements: "Достижения",
+      fz2_card_achievements_desc: "Собери все. Или нет.",
+      fz2_card_nuclear: "Ядерный сброс",
+      fz2_card_nuclear_desc: "НЕ нажимай на эту кнопку.",
+      fz2_card_boss: "Финальный босс",
+      fz2_card_boss_desc: "Сразись с Дедлайном.",
+
+      fz2_unknown: "Неизвестный блок",
+
+      fz2_aura_title: "Генератор академической ауры",
+      fz2_aura_sub: "Введи данные. Получи бессмыслицу.",
+      fz2_aura_btn: "СГЕНЕРИРОВАТЬ МОЮ АУРУ",
+      fz2_aura_result_label: "ТВОЯ АКАДЕМИЧЕСКАЯ АУРА",
+
+      fz2_label_gpa: "GPA",
+      fz2_label_sat: "SAT",
+      fz2_label_ielts: "IELTS",
+      fz2_label_study: "Часов учёбы в день",
+      fz2_label_sleep: "Часов сна за ночь",
+      fz2_label_days: "Дней до дедлайна",
+      fz2_label_prep: "Подготовка (0-100)",
+
+      fz2_future_title: "Рандомизируй будущее",
+      fz2_future_sub: "Пусть сайт решит.",
+      fz2_future_btn: "🎰 ПУСТЬ САЙТ РЕШИТ МОЮ СУДЬБУ",
+      fz2_future_again: "Я НЕ ПРИНИМАЮ СУДЬБУ",
+
+      fz2_battle_title: "Битва университетов",
+      fz2_battle_sub: "Два университета входят. Один уходит.",
+      fz2_battle_pick1: "Боец 1",
+      fz2_battle_pick2: "Боец 2",
+      fz2_battle_go: "В БОЙ",
+      fz2_battle_random: "Случайная пара",
+      fz2_battle_winner: "ПОБЕДИТЕЛЬ",
+      fz2_battle_reason: "Причина",
+
+      fz2_bcat_aura: "Аура",
+      fz2_bcat_drip: "Drip",
+      fz2_bcat_parent: "Одобрение родителей",
+      fz2_bcat_suffering: "Академическое страдание",
+      fz2_bcat_sleep: "Сон",
+      fz2_bcat_mc: "Main Character Energy",
+      fz2_bcat_scholarship: "Стипендия-энергия",
+      fz2_bcat_npc: "Уровень NPC",
+      fz2_bcat_social: "Социальная жизнь",
+      fz2_bcat_coffee: "Кофеиновая зависимость",
+
+      fz2_cooked_title: "Насколько я прожарен?",
+      fz2_cooked_sub: "Реальные данные. Нереальный вердикт.",
+      fz2_cooked_btn: "НАСКОЛЬКО Я ПРОЖАРЕН",
+      fz2_cooked_result_label: "ТЫ ПРОЖАРЕН НА",
+
+      fz2_npc_title: "Какой ты университетский NPC?",
+      fz2_npc_sub: "Ответь на 7 вопросов. Получи личность.",
+      fz2_npc_q1: "Часов сна",
+      fz2_npc_q2: "Частота учёбы (0-100)",
+      fz2_npc_q3: "Балл SAT",
+      fz2_npc_q4: "Важность рейтингов (0-100)",
+      fz2_npc_q5: "Важность кампуса (0-100)",
+      fz2_npc_q6: "Мнение родителей (0-100)",
+      fz2_npc_q7: "Важность стипендии (0-100)",
+      fz2_npc_btn: "ПОКАЖИ МОЕГО NPC",
+
+      fz2_potion_title: "Зелье совместимости с университетом",
+      fz2_potion_sub: "Свари своё зелье.",
+      fz2_potion_btn: "СВАРИТЬ ЗЕЛЬЕ",
+      fz2_potion_result: "Твоё университетское зелье",
+      fz2_potion_sch: "Стипендия",
+      fz2_potion_acad: "Академика",
+      fz2_potion_soc: "Социальное",
+      fz2_potion_suf: "Страдание",
+
+      fz2_stock_title: "Биржа GPA",
+      fz2_stock_sub: "Торгуй ответственно. Или нет.",
+      fz2_stock_btn: "СЛЕДУЮЩИЙ ТОРГОВЫЙ ДЕНЬ",
+      fz2_stock_init: "Инициализация рынка...",
+
+      fz2_crash_title: "Обвал академического портфеля",
+      fz2_crash_sub: "Запусти крах.",
+      fz2_crash_btn: "ОБРУШИТЬ МОЙ ПОРТФЕЛЬ",
+      fz2_crash_ready: "Нажми кнопку.",
+
+      fz2_gacha_title: "Гача университетов",
+      fz2_gacha_sub: "Тяни. Сожалей. Повторяй.",
+      fz2_gacha_pull1: "ПУЛЛ ×1",
+      fz2_gacha_pull10: "ПУЛЛ ×10",
+      fz2_rarity_common: "Обычный",
+      fz2_rarity_rare: "Редкий",
+      fz2_rarity_epic: "Эпический",
+      fz2_rarity_legendary: "Легендарный",
+      fz2_rarity_mythic: "МИФИЧЕСКИЙ",
+
+      fz2_wallet_title: "Калькулятор урона по кошельку",
+      fz2_wallet_sub: "Сколько забирает твой кошелёк?",
+      fz2_wallet_tui: "Обучение (USD/год)",
+      fz2_wallet_acc: "Проживание",
+      fz2_wallet_food: "Еда",
+      fz2_wallet_trans: "Транспорт",
+      fz2_wallet_schol: "Стипендия (USD)",
+      fz2_wallet_btn: "ПОСЧИТАТЬ УРОН",
+      fz2_wallet_result: "ТВОЙ КОШЕЛЁК ПОЛУЧИЛ",
+      fz2_wallet_damage: "УРОНА",
+
+      fz2_sleep_title: "Симулятор: сон vs GPA",
+      fz2_sleep_sub: "Выбери свой яд.",
+      fz2_sleep_label: "СОН",
+
+      fz2_caffeine_title: "Калькулятор кофеина",
+      fz2_caffeine_sub: "Сколько кофе — это слишком?",
+      fz2_caffeine_label: "Сколько кофе сегодня?",
+      fz2_caffeine_btn: "ПРОВЕРИТЬ",
+
+      fz2_brain_title: "Тест ёмкости мозга",
+      fz2_brain_sub: "Кликни по совпадению.",
+      fz2_brain_target: "Цель",
+      fz2_brain_start: "СТАРТ",
+      fz2_brain_again: "ПРОЙТИ СНОВА",
+      fz2_brain_restart: "ПЕРЕЗАПУСК",
+      fz2_brain_score: "Счёт",
+      fz2_brain_capacity: "ЁМКОСТЬ МОЗГА",
+
+      fz2_sat_title: "Симулятор SAT-угадайки",
+      fz2_sat_sub: "Угадай. Каким-то образом ответь верно.",
+      fz2_sat_next: "СЛЕДУЮЩИЙ ВОПРОС",
+      fz2_sat_correct: "Верно. Каким-то образом.",
+      fz2_sat_wrong: "Неверно. Очевидно.",
+
+      fz2_officer_title: "Симулятор приёмной комиссии",
+      fz2_officer_sub: "Встреться с офицером.",
+      fz2_officer_extra: "Внеклассные (0-100)",
+      fz2_officer_btn: "ПОДАТЬ ЗАЯВКУ",
+      fz2_officer_accepted: "ПРИНЯТ",
+      fz2_officer_waitlist: "В ЛИСТЕ ОЖИДАНИЯ",
+      fz2_officer_rejected: "ОТКАЗАНО",
+
+      fz2_rejection_title: "Генератор письма-отказа",
+      fz2_rejection_sub: "Получи отказ. Профессионально.",
+      fz2_rejection_btn: "СГЕНЕРИРОВАТЬ МОЙ ОТКАЗ",
+
+      fz2_career_title: "Полностью случайный генератор профессии",
+      fz2_career_sub: "Найди своё истинное призвание.",
+      fz2_career_btn: "КЕМ Я СТАНУ?",
+      fz2_career_result: "ТВОЯ БУДУЩАЯ ПРОФЕССИЯ",
+      fz2_career_salary: "Зарплата",
+      fz2_career_diff: "Сложность",
+      fz2_career_aura: "Аура",
+
+      fz2_car_title: "Генератор университетской тачки",
+      fz2_car_sub: "У каждого университета есть тачка.",
+      fz2_car_pick: "Выбери университет",
+      fz2_car_random: "Случайно",
+      fz2_car_btn: "СГЕНЕРИРОВАТЬ ТАЧКУ",
+      fz2_car_result: "ТВОЯ УНИВЕРСИТЕТСКАЯ ТАЧКА",
+      fz2_car_rel: "Надёжность",
+      fz2_car_aura: "Аура",
+      fz2_car_fuel: "Расход топлива",
+      fz2_car_comp: "Академическая совместимость",
+
+      fz2_weather_title: "Погода-характер университета",
+      fz2_weather_sub: "Погода = характер.",
+      fz2_weather_btn: "КРУТИТЬ ПОГОДУ",
+
+      fz2_npc_gen_title: "Фабрика NPC",
+      fz2_npc_gen_sub: "Создай случайного студента-NPC.",
+      fz2_npc_gen_btn: "СГЕНЕРИРОВАТЬ NPC",
+      fz2_npc_gen_name: "Имя",
+      fz2_npc_gen_major: "Специальность",
+      fz2_npc_gen_sleep: "Сон",
+      fz2_npc_gen_coffee: "Кофе",
+      fz2_npc_gen_car: "Машина",
+      fz2_npc_gen_personality: "Характер",
+
+      fz2_skill_title: "Детектор скилл-ишью",
+      fz2_skill_sub: "Находит скилл-ишью. Честно.",
+      fz2_skill_btn: "ОБНАРУЖИТЬ СКИЛЛ-ИШЬЮ",
+      fz2_skill_detected: "⚠️ Обнаружена скилл-ишья.",
+      fz2_skill_none: "Скилл-ишьи нет. К сожалению, теперь придётся это поддерживать.",
+      fz2_skill_decent: "вообще-то норм",
+      fz2_skill_solid: "крепко",
+
+      fz2_spell_title: "Генератор университетских заклинаний",
+      fz2_spell_sub: "Колдуй сомнительными спеллами.",
+      fz2_spell_btn: "СКОЛДОВАТЬ ЗАКЛИНАНИЕ",
+      fz2_spell_effect: "ЭФФЕКТ",
+
+      fz2_ach_title: "Твои достижения",
+      fz2_ach_unlocked: "открыто",
+      fz2_ach_popup_title: "🏆 Достижение получено",
+      fz2_ach_popup_desc: "",
+      fz2_ach_aura_gen: "Генератор ауры",
+      fz2_ach_future: "Принять судьбу",
+      fz2_ach_battle: "Боец",
+      fz2_ach_cooked: "Прожарен",
+      fz2_ach_npc: "NPC-арка",
+      fz2_ach_potion: "Мастер зелий",
+      fz2_ach_stock: "Трейдер GPA",
+      fz2_ach_crash: "Обвал",
+      fz2_ach_gacha_1: "Гача-новичок",
+      fz2_ach_gacha_10: "Гача-аддикт",
+      fz2_ach_gacha_mythic: "Мифический пулл",
+      fz2_ach_wallet: "Финансово опустошён",
+      fz2_ach_sleep: "Симулятор сна",
+      fz2_ach_caffeine: "Химическая реакция",
+      fz2_ach_brain: "Ёмкость мозга",
+      fz2_ach_sat: "SAT-угадайка",
+      fz2_ach_officer: "Приёмная комиссия",
+      fz2_ach_rejection: "Письмо-отказ",
+      fz2_ach_career: "Профессия найдена",
+      fz2_ach_car: "Тачка получена",
+      fz2_ach_weather: "Погода-характер",
+      fz2_ach_npc_gen: "Фабрика NPC",
+      fz2_ach_skill: "Детектор скилл-ишью",
+      fz2_ach_spell: "Колдун",
+      fz2_ach_nuclear: "Ядерный выживший",
+      fz2_ach_boss_win: "Убийца дедлайнов",
+      fz2_ach_boss_lose: "Прожарен дедлайном",
+      fz2_ach_explorer: "Исследователь",
+
+      fz2_nuclear_title: "Ядерный сброс",
+      fz2_nuclear_sub: "НЕ нажимай на эту кнопку.",
+      fz2_nuclear_btn: "НЕ НАЖИМАТЬ",
+      fz2_nuclear_m1: "Ты уверен?",       fz2_nuclear_n1: "ДА, Я УВЕРЕН",
+      fz2_nuclear_m2: "СЕРЬЁЗНО?",        fz2_nuclear_n2: "СЕРЬЁЗНО",
+      fz2_nuclear_m3: "БРО, СТОП.",       fz2_nuclear_n3: "Я НЕ МОГУ ОСТАНОВИТЬСЯ",
+      fz2_nuclear_m4: "Ладно.",           fz2_nuclear_n5: "...",
+      fz2_nuclear_m5: "💀\n\nТы потратил 7 секунд своей жизни.",
+
+      fz2_boss_title: "Финальный босс: Дедлайн",
+      fz2_boss_sub: "Сразись со своим главным врагом.",
+      fz2_boss_deadline_hp: "ХП ДЕДЛАЙНА",
+      fz2_boss_player_hp: "Твоё ХП",
+      fz2_boss_study: "УЧИТЬСЯ",
+      fz2_boss_sleep: "СПАТЬ",
+      fz2_boss_proc: "ПРОКРАСТИНИРОВАТЬ",
+      fz2_boss_panic: "ПАНИКА",
+      fz2_boss_win: "ТЫ ПОБЕДИЛ ДЕДЛАЙН",
+      fz2_boss_lose: "ТЕБЯ ПРОЖАРИЛИ",
+
+      // ===== TEAM PAGE (v8) =====
+      team_hero_eyebrow: "Наша команда · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "Новый способ найти свой путь",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Почему мы это сделали",
+      team_why_title: "ЗАЧЕМ МЫ ЭТО СОЗДАЛИ",
+      team_why_quote: "Выбор будущего не должен казаться невозможным.",
+      team_why_sub: "EduPath создан, чтобы поиск университета стал более личным, структурированным и доступным.",
+      team_trans_two: "ДВА ЧЕЛОВЕКА.",
+      team_trans_one: "ОДНА ЦЕЛЬ.",
+      team_alkar_eyebrow: "Что я создаю",
+      team_alkar_role: "Соучредитель · Backend · Базы данных · Frontend",
+      team_alkar_build: "ЧТО Я СТРОЮ",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "Системы, на которых работает EduPath.",
+      team_alkar_r2_t: "БАЗЫ ДАННЫХ", team_alkar_r2_d: "Структура и управление данными.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Разработка интерфейса и взаимодействий.",
+      team_alkar_r4_t: "СИСТЕМА", team_alkar_r4_d: "Соединение всех частей в единую платформу.",
+      team_system_eyebrow: "Одна система",
+      team_system_title: "КАК ВСЁ СОЕДИНЕНО",
+      team_system_center: "EDUPATH",
+      team_system_final: "ОДНА СИСТЕМА",
+      team_arshat_eyebrow: "Создание опыта",
+      team_arshat_role: "Соучредитель · Frontend · UI · Разработка · AI",
+      team_arshat_build: "СОЗДАНИЕ ОПЫТА",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Превращение идей в интерфейсы.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Создание понятного и интуитивного опыта.",
+      team_arshat_r3_t: "ВЗАИМОДЕЙСТВИЕ", team_arshat_r3_d: "Чтобы каждое действие ощущалось естественно.",
+      team_arshat_r4_t: "КАЧЕСТВО", team_arshat_r4_d: "Поиск и устранение того, что не работает.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "Искусственный интеллект, который подбирает университеты.",
+      team_founder1: "Соучредитель 01",
+      team_founder2: "Соучредитель 02",
+      team_collab_sub: "Две роли. Один продукт.",
+      team_build_eyebrow: "Процесс",
+      team_build_title: "СОЗДАНИЕ",
+      team_build_idea: "ИДЕЯ", team_build_idea_d: "Всё началось с блокнота, ручки и проблемы, которую стоит решить.",
+      team_build_arch: "АРХИТЕКТУРА", team_build_arch_d: "Проектирование системы до написания первой строки кода.",
+      team_build_design: "ДИЗАЙН", team_build_design_d: "Цвет, шрифт, отступы — всё продумано, ничего случайного.",
+      team_build_dev: "РАЗРАБОТКА", team_build_dev_d: "Строим, ломаем, чиним, повторяем.",
+      team_build_test: "ТЕСТИРОВАНИЕ", team_build_test_d: "Каждый крайний случай, каждый fallback, каждое состояние ошибки.",
+      team_build_product: "EDUPATH", team_build_product_d: "Работающий продукт. Живой, многоязычный, интеллектуальный.",
+      team_timeline_eyebrow: "От идеи до EduPath",
+      team_timeline_title: "ОТ ИДЕИ ДО EDUPATH",
+      team_tl_1: "Идея",
+      team_tl_2: "Первый прототип",
+      team_tl_3: "Backend и база данных",
+      team_tl_4: "Frontend",
+      team_tl_5: "Тестирование",
+      team_tl_6: "EduPath",
+      team_product_eyebrow: "Продукт",
+      team_show_title: "РАБОТАЮЩИЙ ПРОДУКТ",
+      team_show_home: "Главная",
+      team_show_home_sub: "Лендинг · Знакомство",
+      team_show_explorer: "Проводник по университетам",
+      team_show_explorer_sub: "Просмотр · Фильтры · Сравнение",
+      team_show_profile: "Профиль",
+      team_show_profile_sub: "Сохранённое · Результаты",
+      team_show_reco: "Рекомендации",
+      team_show_reco_sub: "Результат работы ИИ",
+      team_show_fz: "Fun Zone",
+      team_show_fz_sub: "Где правила не действуют",
+      team_final_h1: "БУДУЩЕЕ — НЕ ПУНКТ НАЗНАЧЕНИЯ.",
+      team_final_h2: "Это путь.",
+      team_final_cta: "Исследовать EduPath",
+      team_contact_title: "Связаться с нами",
+      team_contact_sub: "По вопросам сотрудничества и любым другим — пишите на почты:",
+      team_footer: "EduPath © 2026 · Сделано с заботой Alkar & Arshat",
+
+      footer_note: "Fun Zone — шутка. Реальные рекомендации — в тесте."
+    },
+
+    // ============================================================
+    // ENGLISH
+    // ============================================================
+    en: {
+      nav_home: "Home", nav_universities: "Universities", nav_profile: "Profile",
+      nav_fanzone: "🤡 Fun Zone",
+      nav_team: "Our Team",
+      nav_login: "Log in", nav_logout: "Log out", nav_hello: "Hi",
+
+      home_eyebrow: "University matching test",
+      home_title_pre: "Take the test — find ", home_title_em: "your", home_title_post: " university",
+      home_sub: "We match programs and universities to your preferences, test scores and budget.",
+      home_cta: "Start your profile",
+      home_note: "A dedicated AI works out which university could suit you",
+      home_quote_top: "“With us it's —", home_quote_bottom: "more comfortable, more practical, more effective”",
+      home_seam_desc_top: "Beyond academic scores, we care about the environment you want to live in.",
+      home_seam_desc_bottom: "We only recommend universities that genuinely fit you.",
+      home_how_title: "How it works", home_how_sub: "Three steps from the first question to a list of matching universities.",
+      home_step1_title: "Personal details", home_step1_desc: "Your interests, hobbies and preferences on country, climate and study format.",
+      home_step2_title: "Your scores", home_step2_desc: "Grades, test results (SAT, IELTS, etc.) and your approximate budget.",
+      home_step3_title: "Test results", home_step3_desc: "A list of universities that suit you best, with explanations and tips.",
+      home_footer: "EduPath © 2026. All rights reserved",
+      city_seoul: "Seoul", city_berlin: "Berlin", city_boston: "Boston", city_shanghai: "Shanghai",
+
+      catalog_title: "Universities", catalog_sub: "Pick a country and university",
+      catalog_loading: "Loading list...",
+      catalog_filters: "Filters", catalog_budget_label: "Tuition budget (USD/year)",
+      catalog_budget_from: "from", catalog_budget_to: "to",
+      catalog_country_label: "Country", catalog_country_all: "All countries",
+      catalog_grant_label: "Financial aid", catalog_grant_only: "Only with full scholarship",
+      catalog_apply: "Apply", catalog_reset: "Reset",
+      catalog_choose_uni: "Pick a university",
+      catalog_choose_hint: "Click on a country on the left, then a university to see details.",
+      catalog_search_placeholder: "Find a university...",
+      catalog_search_empty: "Sorry, we're still working on adding this university",
+      catalog_saved_ok: "University saved successfully",
+      catalog_saved_remove: "University removed from favorites",
+      catalog_need_login: "Log in to save universities",
+      catalog_save_btn: "Save to favorites", catalog_saved_btn: "Saved",
+
+      profile_greeting: "Hi", profile_logout: "Log out",
+      profile_saved_title: "⭐ Favorite universities", profile_saved_sub: "Those you starred in the catalog",
+      profile_tests_title: "🎯 Test results", profile_tests_sub: "Universities the AI matched to your answers",
+      profile_empty_saved: "You haven't saved any university yet.",
+      profile_empty_saved_hint: "Go to the catalog and click the star next to a university.",
+      profile_empty_tests: "You haven't taken the test yet.",
+      profile_empty_tests_hint: "Take the university matching test →",
+      profile_need_login_title: "Please log in first",
+      profile_need_login_desc: "Create an account or log in to save universities and view test results.",
+      profile_create_account: "Create account", profile_loading: "Loading profile",
+      profile_last_test: "Last test", profile_test: "Test",
+      profile_unis_found: "universities found",
+
+      test_title: "Let's find your perfect university",
+      test_sub: "Answer a few questions about study, dream country, climate, and how you want to live.",
+      test_start: "Start", test_question: "Question", test_of: "of",
+      test_ask: "AI asks", test_thinking: "AI is thinking",
+      test_answer_placeholder: "Type your answer here...", test_send: "Send",
+      test_restart: "Take again",
+      test_final_title: "Done! Here are your universities",
+      test_final_sub: "The AI analyzed your answers and picked options in 4 categories.",
+      test_saved_banner: "Your result has been saved to profile",
+      test_saved_hint: "See in profile →", test_not_saved_banner: "Log in to save the result",
+      test_not_saved_hint: "Log in",
+      test_cat_academic: "Fit by academics", test_cat_lifestyle: "Fit by lifestyle",
+      test_cat_safe: "High admission chances", test_cat_reach: "Could get in, but need to step up",
+      test_empty_category: "Nothing matched in this category",
+      test_more: "More →", test_analyzing: "AI is analyzing 250 universities",
+
+      modal_hello: "Welcome", modal_hello_sub: "Create an account to save universities",
+      modal_google: "Continue with Google", modal_apple: "Continue with Apple", modal_or: "or",
+      modal_name: "Name", modal_name_ph: "e.g. Aisana", modal_email: "Email",
+      modal_password: "Password", modal_password_ph: "At least 6 characters",
+      modal_submit_register: "Create account", modal_submit_login: "Log in",
+      modal_switch_register: "Already have an account?", modal_switch_login: "No account?",
+      modal_switch_register_btn: "Log in", modal_switch_login_btn: "Create",
+      modal_welcome_back: "Welcome back", modal_welcome_back_sub: "Log in to your account",
+      modal_confirm_title: "Confirm your email",
+      modal_confirm_sub: "We sent an email to {email}. Open Gmail and click the confirmation link.",
+      modal_confirm_resend: "Resend email",
+      modal_confirm_resent: "Email sent again",
+      modal_confirm_open_mail: "Open Gmail",
+      modal_confirm_already: "I confirmed — log in",
+      modal_after_confirm_title: "Email confirmed ✓",
+      modal_after_confirm_sub: "Now log in with your password",
+      modal_login_success: "Welcome back!",
+      modal_register_success: "Account created. Hi!",
+      modal_logout_success: "You have logged out",
+      modal_fill_all: "Fill in all fields",
+      modal_wait: "Please wait...",
+      modal_server_waking: "Server is waking up. Wait 30 seconds and try again.",
+      modal_session_expired: "Session expired. Please log in again.",
+      test_saving_banner: "Saving your result…",
+      test_save_failed_banner: "Couldn't save your result",
+      test_save_failed_desc: "Your result is shown below but isn't in your profile yet. Try again.",
+      test_save_retry: "Try again",
+      test_err_rate: "Too many requests. Wait a couple of minutes and try again.",
+      test_err_ai: "The AI couldn't respond after 3 attempts.",
+      modal_error_generic: "Something went wrong. Try again.",
+      modal_error_register: "Registration error",
+      modal_error_login: "Wrong email or password",
+      modal_close: "Close",
+
+      uni_section_finance: "Finance",
+      uni_section_deadlines: "Deadlines",
+      uni_section_requirements: "Requirements",
+      uni_section_ratings: "Rankings",
+      uni_section_majors: "Majors",
+      uni_section_extra: "Additional",
+      uni_field_tuition: "Tuition",
+      uni_field_admission: "Admission rate",
+      uni_field_aid: "Financial aid",
+      uni_field_grant: "Full scholarship",
+      uni_field_early_deadline: "Early deadline",
+      uni_field_main_deadline: "Regular deadline",
+      uni_field_toefl: "TOEFL / IELTS",
+      uni_field_sat: "SAT",
+      uni_field_essay: "Essay",
+      uni_field_recs: "Recommendation letters",
+      uni_field_app_fee: "Application fee",
+      uni_field_apply_link: "Application link",
+      uni_field_rank_country: "Country rank",
+      uni_field_rank_world: "World rank",
+      uni_field_majors: "Majors",
+      uni_field_comments: "Comments",
+      uni_value_yes: "YES", uni_value_no: "no", uni_value_not_specified: "not specified",
+      uni_full_grant_badge: "✨ Full scholarship",
+      uni_open_site: "🌐 Official website",
+      uni_apply: "📝 Apply",
+      uni_aid_link: "💰 Financial aid",
+
+      country_australia: "Australia", country_austria: "Austria", country_belgium: "Belgium",
+      country_canada: "Canada", country_china: "China", country_czech: "Czech Republic",
+      country_denmark: "Denmark", country_finland: "Finland", country_germany: "Germany",
+      country_hongkong: "Hong Kong", country_hungary: "Hungary", country_italy: "Italy",
+      country_japan: "Japan", country_latvia: "Latvia", country_netherlands: "Netherlands",
+      country_poland: "Poland", country_qatar: "Qatar", country_singapore: "Singapore",
+      country_southkorea: "South Korea", country_spain: "Spain", country_sweden: "Sweden",
+      country_switzerland: "Switzerland", country_turkey: "Turkey", country_uae: "UAE",
+      country_uk: "United Kingdom", country_usa: "USA",
+
+      // ===== FUN ZONE v2 =====
+      fz2_badge: "⚠️ BRAINROT DEPARTMENT",
+      fz2_hero_title: "Fun Zone",
+      fz2_hero_sub: "The most unnecessary part of EduPath.",
+      fz2_hero_sub2: "We could have improved the admission algorithm. We chose this instead.",
+      fz2_open: "Open",
+
+      fz2_card_aura: "Academic Aura",
+      fz2_card_aura_desc: "Generate your totally real academic aura.",
+      fz2_card_future: "Randomize My Future",
+      fz2_card_future_desc: "Let the website decide your fate.",
+      fz2_card_battle: "University Battle",
+      fz2_card_battle_desc: "Two universities enter. One leaves.",
+      fz2_card_cooked: "How Cooked Am I?",
+      fz2_card_cooked_desc: "Find out if you're cooked.",
+      fz2_card_npc: "Which NPC Are You?",
+      fz2_card_npc_desc: "Discover your university NPC.",
+      fz2_card_potion: "Compatibility Potion",
+      fz2_card_potion_desc: "Brew your university potion.",
+      fz2_card_stock: "GPA Stock Market",
+      fz2_card_stock_desc: "Watch your GPA trade live.",
+      fz2_card_crash: "Portfolio Crash",
+      fz2_card_crash_desc: "Trigger the academic crash.",
+      fz2_card_gacha: "University Gacha",
+      fz2_card_gacha_desc: "Pull universities. Feel nothing.",
+      fz2_card_wallet: "Tuition Damage",
+      fz2_card_wallet_desc: "See how much your wallet takes.",
+      fz2_card_sleep: "Sleep vs GPA",
+      fz2_card_sleep_desc: "Simulate the eternal tradeoff.",
+      fz2_card_caffeine: "Caffeine Calculator",
+      fz2_card_caffeine_desc: "How much coffee is too much?",
+      fz2_card_brain: "Brain Capacity Test",
+      fz2_card_brain_desc: "Test your RAM. Sort of.",
+      fz2_card_sat: "SAT Guessing",
+      fz2_card_sat_desc: "Guess. Somehow get it right.",
+      fz2_card_officer: "Admissions Officer",
+      fz2_card_officer_desc: "Face the officer. No regrets.",
+      fz2_card_rejection: "Rejection Letter",
+      fz2_card_rejection_desc: "Receive a letter. Unfortunately.",
+      fz2_card_career: "Random Career",
+      fz2_card_career_desc: "Find out your true calling.",
+      fz2_card_car: "University Car",
+      fz2_card_car_desc: "Your university has a car. Obviously.",
+      fz2_card_weather: "Weather Personality",
+      fz2_card_weather_desc: "Weather = personality. Real.",
+      fz2_card_npc_gen: "NPC Factory",
+      fz2_card_npc_gen_desc: "Create a random NPC student.",
+      fz2_card_skill: "Skill Issue Detector",
+      fz2_card_skill_desc: "Detects skill issues. Honest.",
+      fz2_card_spell: "University Spell",
+      fz2_card_spell_desc: "Cast questionable spells.",
+      fz2_card_achievements: "Achievements",
+      fz2_card_achievements_desc: "Collect them all. Or don't.",
+      fz2_card_nuclear: "Nuclear Reset",
+      fz2_card_nuclear_desc: "Do NOT press this button.",
+      fz2_card_boss: "Final Boss",
+      fz2_card_boss_desc: "Face the Application Deadline.",
+
+      fz2_unknown: "Unknown block",
+
+      fz2_aura_title: "Academic Aura Generator",
+      fz2_aura_sub: "Enter stats. Receive nonsense.",
+      fz2_aura_btn: "GENERATE MY AURA",
+      fz2_aura_result_label: "YOUR ACADEMIC AURA",
+
+      fz2_label_gpa: "GPA",
+      fz2_label_sat: "SAT",
+      fz2_label_ielts: "IELTS",
+      fz2_label_study: "Study hours/day",
+      fz2_label_sleep: "Sleep hours/night",
+      fz2_label_days: "Days until deadline",
+      fz2_label_prep: "Preparation (0-100)",
+
+      fz2_future_title: "Randomize My Future",
+      fz2_future_sub: "Let the website decide.",
+      fz2_future_btn: "🎰 LET THE WEBSITE DECIDE MY FUTURE",
+      fz2_future_again: "I DON'T ACCEPT MY FATE",
+
+      fz2_battle_title: "University Battle",
+      fz2_battle_sub: "Two universities enter. One leaves.",
+      fz2_battle_pick1: "Fighter 1",
+      fz2_battle_pick2: "Fighter 2",
+      fz2_battle_go: "FIGHT",
+      fz2_battle_random: "Random pair",
+      fz2_battle_winner: "WINNER",
+      fz2_battle_reason: "Reason",
+
+      fz2_bcat_aura: "Aura",
+      fz2_bcat_drip: "Drip",
+      fz2_bcat_parent: "Parent Approval",
+      fz2_bcat_suffering: "Academic Suffering",
+      fz2_bcat_sleep: "Sleep",
+      fz2_bcat_mc: "Main Character Energy",
+      fz2_bcat_scholarship: "Scholarship Energy",
+      fz2_bcat_npc: "NPC Level",
+      fz2_bcat_social: "Social Life",
+      fz2_bcat_coffee: "Coffee Dependency",
+
+      fz2_cooked_title: "How Cooked Am I?",
+      fz2_cooked_sub: "Real data. Unreal verdict.",
+      fz2_cooked_btn: "HOW COOKED AM I",
+      fz2_cooked_result_label: "YOU ARE",
+
+      fz2_npc_title: "Which University NPC Are You?",
+      fz2_npc_sub: "Answer 7 questions. Get a personality.",
+      fz2_npc_q1: "Sleep hours",
+      fz2_npc_q2: "Study frequency (0-100)",
+      fz2_npc_q3: "SAT score",
+      fz2_npc_q4: "Care about rankings (0-100)",
+      fz2_npc_q5: "Care about campus life (0-100)",
+      fz2_npc_q6: "Parents' opinion (0-100)",
+      fz2_npc_q7: "Scholarship importance (0-100)",
+      fz2_npc_btn: "REVEAL MY NPC",
+
+      fz2_potion_title: "University Compatibility Potion",
+      fz2_potion_sub: "Brew your potion.",
+      fz2_potion_btn: "BREW MY POTION",
+      fz2_potion_result: "Your University Potion",
+      fz2_potion_sch: "Scholarship",
+      fz2_potion_acad: "Academic",
+      fz2_potion_soc: "Social",
+      fz2_potion_suf: "Suffering",
+
+      fz2_stock_title: "GPA Stock Market",
+      fz2_stock_sub: "Trade responsibly. Or not.",
+      fz2_stock_btn: "NEXT TRADING DAY",
+      fz2_stock_init: "Initializing market...",
+
+      fz2_crash_title: "Academic Portfolio Crash",
+      fz2_crash_sub: "Trigger the crash.",
+      fz2_crash_btn: "CRASH MY PORTFOLIO",
+      fz2_crash_ready: "Press the button.",
+
+      fz2_gacha_title: "University Gacha",
+      fz2_gacha_sub: "Pull. Regret. Repeat.",
+      fz2_gacha_pull1: "PULL ×1",
+      fz2_gacha_pull10: "PULL ×10",
+      fz2_rarity_common: "Common",
+      fz2_rarity_rare: "Rare",
+      fz2_rarity_epic: "Epic",
+      fz2_rarity_legendary: "Legendary",
+      fz2_rarity_mythic: "MYTHIC",
+
+      fz2_wallet_title: "Tuition Damage Calculator",
+      fz2_wallet_sub: "How much is your wallet taking?",
+      fz2_wallet_tui: "Tuition (USD/year)",
+      fz2_wallet_acc: "Accommodation",
+      fz2_wallet_food: "Food",
+      fz2_wallet_trans: "Transportation",
+      fz2_wallet_schol: "Scholarship (USD)",
+      fz2_wallet_btn: "CALCULATE DAMAGE",
+      fz2_wallet_result: "YOUR WALLET HAS TAKEN",
+      fz2_wallet_damage: "DAMAGE",
+
+      fz2_sleep_title: "Sleep vs GPA Simulator",
+      fz2_sleep_sub: "Pick your poison.",
+      fz2_sleep_label: "SLEEP",
+
+      fz2_caffeine_title: "Caffeine Calculator",
+      fz2_caffeine_sub: "How much coffee is too much?",
+      fz2_caffeine_label: "How many coffees today?",
+      fz2_caffeine_btn: "CHECK",
+
+      fz2_brain_title: "Brain Capacity Test",
+      fz2_brain_sub: "Click the matching target.",
+      fz2_brain_target: "Target",
+      fz2_brain_start: "START",
+      fz2_brain_again: "TEST AGAIN",
+      fz2_brain_restart: "RESTART",
+      fz2_brain_score: "Score",
+      fz2_brain_capacity: "BRAIN CAPACITY",
+
+      fz2_sat_title: "SAT Guessing Simulator",
+      fz2_sat_sub: "Guess. Somehow get it right.",
+      fz2_sat_next: "NEXT QUESTION",
+      fz2_sat_correct: "Correct. Somehow.",
+      fz2_sat_wrong: "Wrong. Obviously.",
+
+      fz2_officer_title: "Admissions Officer Simulator",
+      fz2_officer_sub: "Face the officer.",
+      fz2_officer_extra: "Extracurriculars (0-100)",
+      fz2_officer_btn: "SUBMIT APPLICATION",
+      fz2_officer_accepted: "ACCEPTED",
+      fz2_officer_waitlist: "WAITLISTED",
+      fz2_officer_rejected: "REJECTED",
+
+      fz2_rejection_title: "Rejection Letter Generator",
+      fz2_rejection_sub: "Get rejected. Professionally.",
+      fz2_rejection_btn: "GENERATE MY REJECTION LETTER",
+
+      fz2_career_title: "Completely Random Career Generator",
+      fz2_career_sub: "Find your true calling.",
+      fz2_career_btn: "WHAT AM I GOING TO BECOME?",
+      fz2_career_result: "YOUR FUTURE JOB",
+      fz2_career_salary: "Salary",
+      fz2_career_diff: "Difficulty",
+      fz2_career_aura: "Aura",
+
+      fz2_car_title: "University Car Generator",
+      fz2_car_sub: "Every university has a car.",
+      fz2_car_pick: "Pick university",
+      fz2_car_random: "Random",
+      fz2_car_btn: "GENERATE MY CAR",
+      fz2_car_result: "YOUR UNIVERSITY CAR",
+      fz2_car_rel: "Reliability",
+      fz2_car_aura: "Aura",
+      fz2_car_fuel: "Fuel consumption",
+      fz2_car_comp: "Academic compatibility",
+
+      fz2_weather_title: "University Weather Personality",
+      fz2_weather_sub: "Weather = personality.",
+      fz2_weather_btn: "ROLL THE WEATHER",
+
+      fz2_npc_gen_title: "NPC Generator",
+      fz2_npc_gen_sub: "Create a random NPC student.",
+      fz2_npc_gen_btn: "GENERATE NPC",
+      fz2_npc_gen_name: "Name",
+      fz2_npc_gen_major: "Major",
+      fz2_npc_gen_sleep: "Sleep",
+      fz2_npc_gen_coffee: "Coffee",
+      fz2_npc_gen_car: "Car",
+      fz2_npc_gen_personality: "Personality",
+
+      fz2_skill_title: "Skill Issue Detector",
+      fz2_skill_sub: "Detects skill issues. Honestly.",
+      fz2_skill_btn: "DETECT SKILL ISSUE",
+      fz2_skill_detected: "⚠️ Skill issue detected.",
+      fz2_skill_none: "No skill issue detected. Unfortunately, you now have to maintain it.",
+      fz2_skill_decent: "actually decent",
+      fz2_skill_solid: "solid",
+
+      fz2_spell_title: "University Spell Generator",
+      fz2_spell_sub: "Cast questionable spells.",
+      fz2_spell_btn: "CAST A SPELL",
+      fz2_spell_effect: "EFFECT",
+
+      fz2_ach_title: "Your Achievements",
+      fz2_ach_unlocked: "unlocked",
+      fz2_ach_popup_title: "🏆 Achievement unlocked",
+      fz2_ach_popup_desc: "",
+      fz2_ach_aura_gen: "Aura Generator",
+      fz2_ach_future: "Accept Your Fate",
+      fz2_ach_battle: "Fighter",
+      fz2_ach_cooked: "Bro Is Cooked",
+      fz2_ach_npc: "NPC Arc",
+      fz2_ach_potion: "Potion Master",
+      fz2_ach_stock: "GPA Trader",
+      fz2_ach_crash: "Portfolio Crash",
+      fz2_ach_gacha_1: "Gacha Rookie",
+      fz2_ach_gacha_10: "Gacha Addict",
+      fz2_ach_gacha_mythic: "Mythic Pull",
+      fz2_ach_wallet: "Financially Devastated",
+      fz2_ach_sleep: "Sleep Simulator",
+      fz2_ach_caffeine: "Chemical Reaction",
+      fz2_ach_brain: "Brain Capacity",
+      fz2_ach_sat: "SAT Guesser",
+      fz2_ach_officer: "Admissions Officer",
+      fz2_ach_rejection: "Rejection Letter",
+      fz2_ach_career: "Career Found",
+      fz2_ach_car: "Car Generated",
+      fz2_ach_weather: "Weather Personality",
+      fz2_ach_npc_gen: "NPC Factory",
+      fz2_ach_skill: "Skill Issue Detector",
+      fz2_ach_spell: "Spellcaster",
+      fz2_ach_nuclear: "Nuclear Survivor",
+      fz2_ach_boss_win: "Deadline Slayer",
+      fz2_ach_boss_lose: "Cooked By Deadline",
+      fz2_ach_explorer: "Explorer",
+
+      fz2_nuclear_title: "Nuclear Reset",
+      fz2_nuclear_sub: "Do NOT press this button.",
+      fz2_nuclear_btn: "DO NOT PRESS",
+      fz2_nuclear_m1: "Are you sure?",        fz2_nuclear_n1: "YES I'M SURE",
+      fz2_nuclear_m2: "REALLY?",              fz2_nuclear_n2: "REALLY",
+      fz2_nuclear_m3: "BRO STOP.",            fz2_nuclear_n3: "I CAN'T STOP",
+      fz2_nuclear_m4: "Fine.",                fz2_nuclear_n5: "...",
+      fz2_nuclear_m5: "💀\n\nYou have wasted 7 seconds of your life.",
+
+      fz2_boss_title: "Final Boss: The Application Deadline",
+      fz2_boss_sub: "Face your greatest enemy.",
+      fz2_boss_deadline_hp: "DEADLINE HP",
+      fz2_boss_player_hp: "Your HP",
+      fz2_boss_study: "STUDY",
+      fz2_boss_sleep: "SLEEP",
+      fz2_boss_proc: "PROCRASTINATE",
+      fz2_boss_panic: "PANIC",
+      fz2_boss_win: "YOU DEFEATED THE APPLICATION DEADLINE",
+      fz2_boss_lose: "YOU GOT COOKED",
+
+      // ===== TEAM PAGE (v8) =====
+      team_hero_eyebrow: "Our Team · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "A new way to find your path",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Why we built it",
+      team_why_title: "WHY WE BUILT IT",
+      team_why_quote: "Choosing your future shouldn't feel impossible.",
+      team_why_sub: "EduPath was created to make university discovery more personal, structured and accessible.",
+      team_trans_two: "TWO PEOPLE.",
+      team_trans_one: "ONE VISION.",
+      team_alkar_eyebrow: "What I build",
+      team_alkar_role: "Co-Founder · Backend · Database · Frontend",
+      team_alkar_build: "WHAT I BUILD",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "The systems behind EduPath.",
+      team_alkar_r2_t: "DATABASE", team_alkar_r2_d: "Data structure & management.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Interface & interaction development.",
+      team_alkar_r4_t: "SYSTEM", team_alkar_r4_d: "Connecting the pieces into one platform.",
+      team_system_eyebrow: "One system",
+      team_system_title: "HOW IT ALL FITS",
+      team_system_center: "EDUPATH",
+      team_system_final: "ONE SYSTEM",
+      team_arshat_eyebrow: "Crafting the experience",
+      team_arshat_role: "Co-Founder · Frontend · UI · Development · AI",
+      team_arshat_build: "CRAFTING THE EXPERIENCE",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Turning ideas into interfaces.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Designing a clear and intuitive experience.",
+      team_arshat_r3_t: "INTERACTION", team_arshat_r3_d: "Making every interaction feel natural.",
+      team_arshat_r4_t: "QUALITY", team_arshat_r4_d: "Finding and eliminating what doesn't work.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "The AI that recommends universities.",
+      team_founder1: "Founder 01",
+      team_founder2: "Founder 02",
+      team_collab_sub: "Two roles. One product.",
+      team_build_eyebrow: "The build",
+      team_build_title: "THE BUILD",
+      team_build_idea: "IDEA", team_build_idea_d: "Where it all began — a notebook, a pen, and a problem worth solving.",
+      team_build_arch: "ARCHITECTURE", team_build_arch_d: "Mapping the system before writing a single line of code.",
+      team_build_design: "DESIGN", team_build_design_d: "Colour, type, spacing — everything deliberate, nothing accidental.",
+      team_build_dev: "DEVELOPMENT", team_build_dev_d: "Building, breaking, fixing, repeating.",
+      team_build_test: "TESTING", team_build_test_d: "Every edge case, every fallback, every fail state — covered.",
+      team_build_product: "EDUPATH", team_build_product_d: "A working product. Live, multilingual, intelligent.",
+      team_timeline_eyebrow: "From idea to EduPath",
+      team_timeline_title: "FROM IDEA TO EDUPATH",
+      team_tl_1: "The idea",
+      team_tl_2: "First prototype",
+      team_tl_3: "Backend & Database",
+      team_tl_4: "Frontend",
+      team_tl_5: "Testing",
+      team_tl_6: "EduPath",
+      team_product_eyebrow: "The product",
+      team_show_title: "A WORKING PRODUCT",
+      team_show_home: "Homepage",
+      team_show_home_sub: "Landing · Introduction",
+      team_show_explorer: "University Explorer",
+      team_show_explorer_sub: "Browse · Filter · Compare",
+      team_show_profile: "Profile",
+      team_show_profile_sub: "Saved · Results",
+      team_show_reco: "Recommendation",
+      team_show_reco_sub: "The output of the AI",
+      team_show_fz: "Fun Zone",
+      team_show_fz_sub: "Where the rules don't apply",
+      team_final_h1: "THE FUTURE ISN'T A DESTINATION.",
+      team_final_h2: "It's a path.",
+      team_final_cta: "Explore EduPath",
+      team_contact_title: "Get in touch",
+      team_contact_sub: "For collaboration or any questions — write to:",
+      team_footer: "EduPath © 2026 · Made with care by Alkar & Arshat",
+
+      footer_note: "Fun Zone is a joke. Real recommendations — in the test."
+    },
+
+    // ============================================================
+    // 中文
+    // ============================================================
+    zh: {
+      nav_home: "首页", nav_universities: "大学", nav_profile: "个人主页",
+      nav_fanzone: "🤡 Fun Zone",
+      nav_team: "我们的团队",
+      nav_login: "登录", nav_logout: "退出", nav_hello: "你好",
+
+      home_eyebrow: "大学匹配测试",
+      home_title_pre: "参加测试，找到", home_title_em: "属于你的", home_title_post: "大学",
+      home_sub: "根据你的偏好、考试成绩和预算，为你匹配专业和大学。",
+      home_cta: "开始填写资料", home_note: "专属人工智能将判断哪所大学适合你",
+      home_quote_top: "「有我们，", home_quote_bottom: "更舒适、更务实、更高效」",
+      home_seam_desc_top: "除了学习成绩，我们同样关心你想生活在怎样的环境中。",
+      home_seam_desc_bottom: "我们只推荐真正适合你的大学。",
+      home_how_title: "工作原理", home_how_sub: "从第一个问题到匹配大学列表，只需三步。",
+      home_step1_title: "个人信息", home_step1_desc: "你的兴趣、爱好以及对国家、气候和学习方式的偏好。",
+      home_step2_title: "成绩指标", home_step2_desc: "成绩、考试结果（SAT、雅思等）和大致预算。",
+      home_step3_title: "测试结果", home_step3_desc: "最适合你的大学清单，并附有说明和建议。",
+      home_footer: "EduPath © 2026 版权所有",
+      city_seoul: "首尔", city_berlin: "柏林", city_boston: "波士顿", city_shanghai: "上海",
+
+      catalog_title: "大学", catalog_sub: "选择国家和大学",
+      catalog_loading: "正在加载列表...",
+      catalog_filters: "筛选", catalog_budget_label: "学费预算（美元/年）",
+      catalog_budget_from: "从", catalog_budget_to: "到",
+      catalog_country_label: "国家", catalog_country_all: "所有国家",
+      catalog_grant_label: "经济援助", catalog_grant_only: "仅显示全额奖学金",
+      catalog_apply: "应用", catalog_reset: "重置",
+      catalog_choose_uni: "选择一所大学", catalog_choose_hint: "点击左侧的国家，然后点击大学查看详细信息。",
+      catalog_search_placeholder: "查找大学...", catalog_search_empty: "抱歉，我们正在努力添加这所大学",
+      catalog_saved_ok: "大学已成功保存", catalog_saved_remove: "大学已从收藏中移除",
+      catalog_need_login: "登录后才能保存大学",
+      catalog_save_btn: "保存到收藏", catalog_saved_btn: "已收藏",
+
+      profile_greeting: "你好", profile_logout: "退出",
+      profile_saved_title: "⭐ 收藏的大学", profile_saved_sub: "你在目录中加星标的大学",
+      profile_tests_title: "🎯 测试结果", profile_tests_sub: "人工智能根据你的回答匹配的大学",
+      profile_empty_saved: "你还没有保存任何大学。",
+      profile_empty_saved_hint: "进入目录，点击大学旁边的星星。",
+      profile_empty_tests: "你还没有参加过测试。",
+      profile_empty_tests_hint: "参加大学匹配测试 →",
+      profile_need_login_title: "请先登录",
+      profile_need_login_desc: "创建账号或登录以保存大学并查看测试结果。",
+      profile_create_account: "创建账号", profile_loading: "正在加载个人资料",
+      profile_last_test: "最近测试", profile_test: "测试",
+      profile_unis_found: "所大学找到",
+
+      test_title: "让我们找到你理想的大学",
+      test_sub: "回答几个关于学习、梦想国家、气候和生活方式的问题。",
+      test_start: "开始", test_question: "问题", test_of: "/",
+      test_ask: "AI 提问", test_thinking: "AI 正在思考",
+      test_answer_placeholder: "在这里输入你的答案...", test_send: "发送",
+      test_restart: "重新测试",
+      test_final_title: "完成！这是你的大学",
+      test_final_sub: "AI 分析了你的回答，并按 4 个类别推荐了选项。",
+      test_saved_banner: "你的结果已保存到个人资料", test_saved_hint: "在个人资料中查看 →",
+      test_not_saved_banner: "登录以保存结果", test_not_saved_hint: "登录",
+      test_cat_academic: "学业上适合", test_cat_lifestyle: "生活方式上适合",
+      test_cat_safe: "录取机会高", test_cat_reach: "有机会，但需要提升",
+      test_empty_category: "此类别中没有匹配项",
+      test_more: "更多 →", test_analyzing: "AI 正在分析 250 所大学",
+
+      modal_hello: "欢迎", modal_hello_sub: "创建账号以保存大学",
+      modal_google: "使用 Google 继续", modal_apple: "使用 Apple 继续", modal_or: "或",
+      modal_name: "姓名", modal_name_ph: "例如：Aisana", modal_email: "邮箱",
+      modal_password: "密码", modal_password_ph: "至少 6 个字符",
+      modal_submit_register: "创建账号", modal_submit_login: "登录",
+      modal_switch_register: "已有账号？", modal_switch_login: "没有账号？",
+      modal_switch_register_btn: "登录", modal_switch_login_btn: "创建",
+      modal_welcome_back: "欢迎回来", modal_welcome_back_sub: "登录你的账号",
+      modal_confirm_title: "确认你的邮箱",
+      modal_confirm_sub: "我们已发送邮件到 {email}。打开 Gmail 并点击确认链接。",
+      modal_confirm_resend: "重新发送邮件",
+      modal_confirm_resent: "邮件已重新发送",
+      modal_confirm_open_mail: "打开 Gmail",
+      modal_confirm_already: "我已确认 — 去登录",
+      modal_after_confirm_title: "邮箱已确认 ✓",
+      modal_after_confirm_sub: "现在用你的密码登录",
+      modal_login_success: "欢迎回来！",
+      modal_register_success: "账号已创建。你好！",
+      modal_logout_success: "你已退出登录",
+      modal_fill_all: "请填写所有字段",
+      modal_wait: "请稍候...",
+      modal_server_waking: "服务器正在唤醒。等待 30 秒后重试。",
+      modal_session_expired: "会话已过期，请重新登录。",
+      test_saving_banner: "正在保存你的结果…",
+      test_save_failed_banner: "无法保存你的结果",
+      test_save_failed_desc: "结果显示在下方，但还没有保存到个人资料。请重试。",
+      test_save_retry: "重试",
+      test_err_rate: "请求过多，请等几分钟后再试。",
+      test_err_ai: "AI 尝试 3 次后仍无法回答。",
+      modal_error_generic: "出了点问题。请重试。",
+      modal_error_register: "注册错误",
+      modal_error_login: "邮箱或密码错误",
+      modal_close: "关闭",
+
+      uni_section_finance: "财务", uni_section_deadlines: "截止日期",
+      uni_section_requirements: "要求", uni_section_ratings: "排名",
+      uni_section_majors: "专业", uni_section_extra: "其他",
+      uni_field_tuition: "学费", uni_field_admission: "录取率",
+      uni_field_aid: "经济援助", uni_field_grant: "全额奖学金",
+      uni_field_early_deadline: "提前批截止", uni_field_main_deadline: "常规批截止",
+      uni_field_toefl: "TOEFL / IELTS", uni_field_sat: "SAT",
+      uni_field_essay: "文书", uni_field_recs: "推荐信",
+      uni_field_app_fee: "申请费", uni_field_apply_link: "申请链接",
+      uni_field_rank_country: "国内排名", uni_field_rank_world: "世界排名",
+      uni_field_majors: "专业方向", uni_field_comments: "备注",
+      uni_value_yes: "是", uni_value_no: "否", uni_value_not_specified: "未指定",
+      uni_full_grant_badge: "✨ 全额奖学金",
+      uni_open_site: "🌐 官方网站",
+      uni_apply: "📝 申请",
+      uni_aid_link: "💰 经济援助",
+
+      country_australia: "澳大利亚", country_austria: "奥地利", country_belgium: "比利时",
+      country_canada: "加拿大", country_china: "中国", country_czech: "捷克",
+      country_denmark: "丹麦", country_finland: "芬兰", country_germany: "德国",
+      country_hongkong: "香港", country_hungary: "匈牙利", country_italy: "意大利",
+      country_japan: "日本", country_latvia: "拉脱维亚", country_netherlands: "荷兰",
+      country_poland: "波兰", country_qatar: "卡塔尔", country_singapore: "新加坡",
+      country_southkorea: "韩国", country_spain: "西班牙", country_sweden: "瑞典",
+      country_switzerland: "瑞士", country_turkey: "土耳其", country_uae: "阿联酋",
+      country_uk: "英国", country_usa: "美国",
+
+      // ===== FUN ZONE v2 =====
+      fz2_badge: "⚠️ 脑腐部门",
+      fz2_hero_title: "Fun Zone",
+      fz2_hero_sub: "EduPath 最没必要的部分。",
+      fz2_hero_sub2: "我们本可以改进录取算法。但我们选择了这个。",
+      fz2_open: "打开",
+
+      fz2_card_aura: "学术气场",
+      fz2_card_aura_desc: "生成你完全真实的学术气场。",
+      fz2_card_future: "随机化我的未来",
+      fz2_card_future_desc: "让网站决定你的命运。",
+      fz2_card_battle: "大学对战",
+      fz2_card_battle_desc: "两所大学进入，一所离开。",
+      fz2_card_cooked: "我有多惨？",
+      fz2_card_cooked_desc: "看看你是不是完蛋了。",
+      fz2_card_npc: "你是哪个 NPC？",
+      fz2_card_npc_desc: "发现你的大学 NPC。",
+      fz2_card_potion: "兼容性药水",
+      fz2_card_potion_desc: "调配你的大学药水。",
+      fz2_card_stock: "GPA 股市",
+      fz2_card_stock_desc: "实时观看你的 GPA。",
+      fz2_card_crash: "投资组合崩盘",
+      fz2_card_crash_desc: "触发学术崩溃。",
+      fz2_card_gacha: "大学抽卡",
+      fz2_card_gacha_desc: "抽大学。什么都别感受。",
+      fz2_card_wallet: "学费伤害",
+      fz2_card_wallet_desc: "看看钱包被拿走多少。",
+      fz2_card_sleep: "睡眠 vs GPA",
+      fz2_card_sleep_desc: "模拟永恒的取舍。",
+      fz2_card_caffeine: "咖啡因计算器",
+      fz2_card_caffeine_desc: "多少咖啡才算太多？",
+      fz2_card_brain: "脑容量测试",
+      fz2_card_brain_desc: "测试你的内存。差不多吧。",
+      fz2_card_sat: "SAT 猜题",
+      fz2_card_sat_desc: "猜。莫名其妙答对。",
+      fz2_card_officer: "招生官",
+      fz2_card_officer_desc: "面对招生官。无怨无悔。",
+      fz2_card_rejection: "拒信",
+      fz2_card_rejection_desc: "收到一封信。很遗憾。",
+      fz2_card_career: "随机职业",
+      fz2_card_career_desc: "找到你真正的使命。",
+      fz2_card_car: "大学专属车",
+      fz2_card_car_desc: "你的大学有辆车。显然。",
+      fz2_card_weather: "天气性格",
+      fz2_card_weather_desc: "天气 = 性格。真的。",
+      fz2_card_npc_gen: "NPC 工厂",
+      fz2_card_npc_gen_desc: "创建一个随机 NPC 学生。",
+      fz2_card_skill: "菜鸟检测器",
+      fz2_card_skill_desc: "检测菜鸟问题。诚实。",
+      fz2_card_spell: "大学咒语",
+      fz2_card_spell_desc: "施展可疑的咒语。",
+      fz2_card_achievements: "成就",
+      fz2_card_achievements_desc: "全部收集。或者不要。",
+      fz2_card_nuclear: "核弹重置",
+      fz2_card_nuclear_desc: "不要按这个按钮。",
+      fz2_card_boss: "最终 Boss",
+      fz2_card_boss_desc: "面对申请截止日期。",
+
+      fz2_unknown: "未知模块",
+
+      fz2_aura_title: "学术气场生成器",
+      fz2_aura_sub: "输入数据。获得废话。",
+      fz2_aura_btn: "生成我的气场",
+      fz2_aura_result_label: "你的学术气场",
+
+      fz2_label_gpa: "GPA",
+      fz2_label_sat: "SAT",
+      fz2_label_ielts: "IELTS",
+      fz2_label_study: "每天学习小时数",
+      fz2_label_sleep: "每晚睡眠小时数",
+      fz2_label_days: "距截止日期还有几天",
+      fz2_label_prep: "准备程度（0-100）",
+
+      fz2_future_title: "随机化我的未来",
+      fz2_future_sub: "让网站决定。",
+      fz2_future_btn: "🎰 让网站决定我的未来",
+      fz2_future_again: "我不接受我的命运",
+
+      fz2_battle_title: "大学对战",
+      fz2_battle_sub: "两所大学进入，一所离开。",
+      fz2_battle_pick1: "战士 1",
+      fz2_battle_pick2: "战士 2",
+      fz2_battle_go: "开战",
+      fz2_battle_random: "随机组合",
+      fz2_battle_winner: "获胜者",
+      fz2_battle_reason: "原因",
+
+      fz2_bcat_aura: "气场",
+      fz2_bcat_drip: "潮度",
+      fz2_bcat_parent: "家长认可度",
+      fz2_bcat_suffering: "学业痛苦",
+      fz2_bcat_sleep: "睡眠",
+      fz2_bcat_mc: "主角能量",
+      fz2_bcat_scholarship: "奖学金能量",
+      fz2_bcat_npc: "NPC 等级",
+      fz2_bcat_social: "社交生活",
+      fz2_bcat_coffee: "咖啡因依赖",
+
+      fz2_cooked_title: "我有多惨？",
+      fz2_cooked_sub: "真实数据。离谱判决。",
+      fz2_cooked_btn: "我有多惨",
+      fz2_cooked_result_label: "你是",
+
+      fz2_npc_title: "你是哪个大学 NPC？",
+      fz2_npc_sub: "回答 7 个问题。获得一个人格。",
+      fz2_npc_q1: "睡眠小时数",
+      fz2_npc_q2: "学习频率（0-100）",
+      fz2_npc_q3: "SAT 分数",
+      fz2_npc_q4: "在意排名程度（0-100）",
+      fz2_npc_q5: "在意校园生活程度（0-100）",
+      fz2_npc_q6: "父母意见（0-100）",
+      fz2_npc_q7: "奖学金重要程度（0-100）",
+      fz2_npc_btn: "显示我的 NPC",
+
+      fz2_potion_title: "大学兼容性药水",
+      fz2_potion_sub: "调配你的药水。",
+      fz2_potion_btn: "调配药水",
+      fz2_potion_result: "你的大学药水",
+      fz2_potion_sch: "奖学金",
+      fz2_potion_acad: "学业",
+      fz2_potion_soc: "社交",
+      fz2_potion_suf: "痛苦",
+
+      fz2_stock_title: "GPA 股市",
+      fz2_stock_sub: "负责任地交易。或者不要。",
+      fz2_stock_btn: "下一个交易日",
+      fz2_stock_init: "初始化市场...",
+
+      fz2_crash_title: "学术投资组合崩盘",
+      fz2_crash_sub: "触发崩盘。",
+      fz2_crash_btn: "让我的投资组合崩盘",
+      fz2_crash_ready: "按一下按钮。",
+
+      fz2_gacha_title: "大学抽卡",
+      fz2_gacha_sub: "抽。后悔。重复。",
+      fz2_gacha_pull1: "抽 ×1",
+      fz2_gacha_pull10: "抽 ×10",
+      fz2_rarity_common: "普通",
+      fz2_rarity_rare: "稀有",
+      fz2_rarity_epic: "史诗",
+      fz2_rarity_legendary: "传说",
+      fz2_rarity_mythic: "神话",
+
+      fz2_wallet_title: "学费伤害计算器",
+      fz2_wallet_sub: "你的钱包被拿走多少？",
+      fz2_wallet_tui: "学费（美元/年）",
+      fz2_wallet_acc: "住宿",
+      fz2_wallet_food: "餐饮",
+      fz2_wallet_trans: "交通",
+      fz2_wallet_schol: "奖学金（美元）",
+      fz2_wallet_btn: "计算伤害",
+      fz2_wallet_result: "你的钱包已经承受",
+      fz2_wallet_damage: "点伤害",
+
+      fz2_sleep_title: "睡眠 vs GPA 模拟器",
+      fz2_sleep_sub: "选择你的毒药。",
+      fz2_sleep_label: "睡眠",
+
+      fz2_caffeine_title: "咖啡因计算器",
+      fz2_caffeine_sub: "多少咖啡才算太多？",
+      fz2_caffeine_label: "今天喝了几杯咖啡？",
+      fz2_caffeine_btn: "检查",
+
+      fz2_brain_title: "脑容量测试",
+      fz2_brain_sub: "点击匹配的目标。",
+      fz2_brain_target: "目标",
+      fz2_brain_start: "开始",
+      fz2_brain_again: "再测一次",
+      fz2_brain_restart: "重新开始",
+      fz2_brain_score: "分数",
+      fz2_brain_capacity: "脑容量",
+
+      fz2_sat_title: "SAT 猜题模拟器",
+      fz2_sat_sub: "猜。莫名其妙答对。",
+      fz2_sat_next: "下一题",
+      fz2_sat_correct: "正确。莫名其妙。",
+      fz2_sat_wrong: "错误。理所当然。",
+
+      fz2_officer_title: "招生官模拟器",
+      fz2_officer_sub: "面对招生官。",
+      fz2_officer_extra: "课外活动（0-100）",
+      fz2_officer_btn: "提交申请",
+      fz2_officer_accepted: "录取",
+      fz2_officer_waitlist: "候补",
+      fz2_officer_rejected: "拒绝",
+
+      fz2_rejection_title: "拒信生成器",
+      fz2_rejection_sub: "收到拒绝。专业地。",
+      fz2_rejection_btn: "生成我的拒信",
+
+      fz2_career_title: "完全随机职业生成器",
+      fz2_career_sub: "找到你真正的使命。",
+      fz2_career_btn: "我会成为什么？",
+      fz2_career_result: "你未来的工作",
+      fz2_career_salary: "薪资",
+      fz2_career_diff: "难度",
+      fz2_career_aura: "气场",
+
+      fz2_car_title: "大学专属车生成器",
+      fz2_car_sub: "每所大学都有一辆车。",
+      fz2_car_pick: "选择大学",
+      fz2_car_random: "随机",
+      fz2_car_btn: "生成我的车",
+      fz2_car_result: "你的大学专属车",
+      fz2_car_rel: "可靠性",
+      fz2_car_aura: "气场",
+      fz2_car_fuel: "油耗",
+      fz2_car_comp: "学业兼容性",
+
+      fz2_weather_title: "大学天气性格",
+      fz2_weather_sub: "天气 = 性格。",
+      fz2_weather_btn: "滚动天气",
+
+      fz2_npc_gen_title: "NPC 生成器",
+      fz2_npc_gen_sub: "创建一个随机 NPC 学生。",
+      fz2_npc_gen_btn: "生成 NPC",
+      fz2_npc_gen_name: "名字",
+      fz2_npc_gen_major: "专业",
+      fz2_npc_gen_sleep: "睡眠",
+      fz2_npc_gen_coffee: "咖啡",
+      fz2_npc_gen_car: "车",
+      fz2_npc_gen_personality: "性格",
+
+      fz2_skill_title: "菜鸟检测器",
+      fz2_skill_sub: "检测菜鸟问题。诚实。",
+      fz2_skill_btn: "检测菜鸟问题",
+      fz2_skill_detected: "⚠️ 检测到菜鸟问题。",
+      fz2_skill_none: "没有检测到菜鸟问题。可惜，你现在得保持住。",
+      fz2_skill_decent: "其实还行",
+      fz2_skill_solid: "扎实",
+
+      fz2_spell_title: "大学咒语生成器",
+      fz2_spell_sub: "施展可疑的咒语。",
+      fz2_spell_btn: "施展咒语",
+      fz2_spell_effect: "效果",
+
+      fz2_ach_title: "你的成就",
+      fz2_ach_unlocked: "已解锁",
+      fz2_ach_popup_title: "🏆 成就解锁",
+      fz2_ach_popup_desc: "",
+      fz2_ach_aura_gen: "气场生成器",
+      fz2_ach_future: "接受命运",
+      fz2_ach_battle: "战士",
+      fz2_ach_cooked: "兄弟完蛋了",
+      fz2_ach_npc: "NPC 剧情",
+      fz2_ach_potion: "药水大师",
+      fz2_ach_stock: "GPA 交易员",
+      fz2_ach_crash: "投资组合崩盘",
+      fz2_ach_gacha_1: "抽卡新手",
+      fz2_ach_gacha_10: "抽卡上瘾",
+      fz2_ach_gacha_mythic: "神话抽出",
+      fz2_ach_wallet: "财务崩溃",
+      fz2_ach_sleep: "睡眠模拟器",
+      fz2_ach_caffeine: "化学反应",
+      fz2_ach_brain: "脑容量",
+      fz2_ach_sat: "SAT 猜题",
+      fz2_ach_officer: "招生官",
+      fz2_ach_rejection: "拒信",
+      fz2_ach_career: "找到职业",
+      fz2_ach_car: "生成车",
+      fz2_ach_weather: "天气性格",
+      fz2_ach_npc_gen: "NPC 工厂",
+      fz2_ach_skill: "菜鸟检测器",
+      fz2_ach_spell: "咒语师",
+      fz2_ach_nuclear: "核弹幸存者",
+      fz2_ach_boss_win: "截止日屠夫",
+      fz2_ach_boss_lose: "被截止日烤熟",
+      fz2_ach_explorer: "探索者",
+
+      fz2_nuclear_title: "核弹重置",
+      fz2_nuclear_sub: "不要按这个按钮。",
+      fz2_nuclear_btn: "不要按",
+      fz2_nuclear_m1: "你确定吗？",       fz2_nuclear_n1: "是的我确定",
+      fz2_nuclear_m2: "真的吗？",         fz2_nuclear_n2: "真的",
+      fz2_nuclear_m3: "兄弟停手。",       fz2_nuclear_n3: "我停不下来",
+      fz2_nuclear_m4: "好吧。",           fz2_nuclear_n5: "...",
+      fz2_nuclear_m5: "💀\n\n你浪费了生命中的 7 秒钟。",
+
+      fz2_boss_title: "最终 Boss：申请截止日期",
+      fz2_boss_sub: "面对你最大的敌人。",
+      fz2_boss_deadline_hp: "截止日期 HP",
+      fz2_boss_player_hp: "你的 HP",
+      fz2_boss_study: "学习",
+      fz2_boss_sleep: "睡觉",
+      fz2_boss_proc: "拖延",
+      fz2_boss_panic: "惊慌",
+      fz2_boss_win: "你击败了申请截止日期",
+      fz2_boss_lose: "你完蛋了",
+
+      // ===== TEAM PAGE (v8) =====
+      team_hero_eyebrow: "我们的团队 · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "寻找属于你的道路的新方式",
+      team_hero_year: "2026",
+      team_why_eyebrow: "为何打造",
+      team_why_title: "我们为什么创建了它",
+      team_why_quote: "选择未来不该如此艰难。",
+      team_why_sub: "EduPath 旨在让大学探索变得更个性化、更有条理、更易获得。",
+      team_trans_two: "两个人。",
+      team_trans_one: "一个愿景。",
+      team_alkar_eyebrow: "我构建什么",
+      team_alkar_role: "联合创始人 · 后端 · 数据库 · 前端",
+      team_alkar_build: "我构建什么",
+      team_alkar_r1_t: "后端", team_alkar_r1_d: "EduPath 背后的系统。",
+      team_alkar_r2_t: "数据库", team_alkar_r2_d: "数据结构与管理。",
+      team_alkar_r3_t: "前端", team_alkar_r3_d: "界面与交互开发。",
+      team_alkar_r4_t: "系统", team_alkar_r4_d: "将各部分连接成一个平台。",
+      team_system_eyebrow: "一个系统",
+      team_system_title: "它们如何连接",
+      team_system_center: "EDUPATH",
+      team_system_final: "一个系统",
+      team_arshat_eyebrow: "打造体验",
+      team_arshat_role: "联合创始人 · 前端 · UI · 开发 · AI",
+      team_arshat_build: "打造体验",
+      team_arshat_r1_t: "前端", team_arshat_r1_d: "将想法转化为界面。",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "设计清晰直观的体验。",
+      team_arshat_r3_t: "交互", team_arshat_r3_d: "让每一次交互自然流畅。",
+      team_arshat_r4_t: "质量", team_arshat_r4_d: "发现并消除不起作用的东西。",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "负责推荐大学的 AI。",
+      team_founder1: "创始人 01",
+      team_founder2: "创始人 02",
+      team_collab_sub: "两个角色，一个产品。",
+      team_build_eyebrow: "构建过程",
+      team_build_title: "构建过程",
+      team_build_idea: "想法", team_build_idea_d: "一切始于一个笔记本、一支笔和一个值得解决的问题。",
+      team_build_arch: "架构", team_build_arch_d: "在写第一行代码之前规划系统。",
+      team_build_design: "设计", team_build_design_d: "颜色、字体、间距——一切都有意为之，毫无偶然。",
+      team_build_dev: "开发", team_build_dev_d: "构建、破坏、修复、重复。",
+      team_build_test: "测试", team_build_test_d: "每个边界情况、每个回退方案、每个失败状态——都已覆盖。",
+      team_build_product: "EDUPATH", team_build_product_d: "一个可用的产品。实时、多语言、智能。",
+      team_timeline_eyebrow: "从想法到 EduPath",
+      team_timeline_title: "从想法到 EduPath",
+      team_tl_1: "想法",
+      team_tl_2: "第一个原型",
+      team_tl_3: "后端与数据库",
+      team_tl_4: "前端",
+      team_tl_5: "测试",
+      team_tl_6: "EduPath",
+      team_product_eyebrow: "产品",
+      team_show_title: "一个可用的产品",
+      team_show_home: "首页",
+      team_show_home_sub: "落地页 · 介绍",
+      team_show_explorer: "大学浏览器",
+      team_show_explorer_sub: "浏览 · 筛选 · 对比",
+      team_show_profile: "个人主页",
+      team_show_profile_sub: "收藏 · 结果",
+      team_show_reco: "推荐结果",
+      team_show_reco_sub: "AI 的输出",
+      team_show_fz: "Fun Zone",
+      team_show_fz_sub: "规则不适用之处",
+      team_final_h1: "未来不是一个终点。",
+      team_final_h2: "它是一条路。",
+      team_final_cta: "探索 EduPath",
+      team_contact_title: "联系我们",
+      team_contact_sub: "合作或任何问题——请发邮件至：",
+      team_footer: "EduPath © 2026 · Alkar & Arshat 用心制作",
+
+      footer_note: "Fun Zone 是玩笑。真正的推荐在测试里。"
+    },
+
+    // ============================================================
+    // ҚАЗАҚША
+    // ============================================================
+    kk: {
+      nav_home: "Басты бет", nav_universities: "Университеттер", nav_profile: "Профиль",
+      nav_fanzone: "🤡 Fun Zone",
+      nav_team: "Біздің команда",
+      nav_login: "Кіру", nav_logout: "Шығу", nav_hello: "Сәлем",
+
+      home_eyebrow: "Университет таңдау тесті",
+      home_title_pre: "Тестен өт — ", home_title_em: "өзіңе сай", home_title_post: " университетті тап",
+      home_sub: "Қалауларыңа, тест нәтижелеріне және бюджетіңе сай мамандықтар мен университеттерді іріктейміз.",
+      home_cta: "Профильді толтыруды бастау",
+      home_note: "Арнайы ЖИ саған қандай университет сәйкес келетінін анықтайды",
+      home_quote_top: "«Бізбен —", home_quote_bottom: "ыңғайлырақ, тиімдірек, нәтижелірек»",
+      home_seam_desc_top: "Оқу көрсеткіштерінен бөлек, абитуриенттің қандай ортада өмір сүргісі келетіні де маңызды.",
+      home_seam_desc_bottom: "Біз тек саған шынымен сәйкес келетін университеттерді ұсынамыз.",
+      home_how_title: "Бұл қалай жұмыс істейді",
+      home_how_sub: "Бірінші сұрақтан сәйкес университеттер тізіміне дейін үш қадам.",
+      home_step1_title: "Жеке деректер", home_step1_desc: "Сенің қызығушылықтарың, хоббиің, ел және оқу форматына қатысты қалауларың.",
+      home_step2_title: "Көрсеткіштер", home_step2_desc: "Бағалар, тест нәтижелері (SAT, IELTS және т.б.) және шамамен бюджет.",
+      home_step3_title: "Тест нәтижелері", home_step3_desc: "Саған ең сәйкес келетін университеттер тізімі, түсіндірмелермен.",
+      home_footer: "EduPath © 2026. Барлық құқықтар қорғалған",
+      city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
+
+      catalog_title: "Университеттер", catalog_sub: "Ел мен университет таңда",
+      catalog_loading: "Тізім жүктелуде...",
+      catalog_filters: "Сүзгілер", catalog_budget_label: "Оқу бюджеті (USD/жыл)",
+      catalog_budget_from: "бастап", catalog_budget_to: "дейін",
+      catalog_country_label: "Ел", catalog_country_all: "Барлық елдер",
+      catalog_grant_label: "Қаржылық көмек", catalog_grant_only: "Тек толық грантпен",
+      catalog_apply: "Қолдану", catalog_reset: "Тазарту",
+      catalog_choose_uni: "Университет таңда",
+      catalog_choose_hint: "Сол жақтағы елді басып, содан кейін университетті басып, толық ақпаратты көріңіз.",
+      catalog_search_placeholder: "Университет іздеу...", catalog_search_empty: "Кешіріңіз, біз бұл университетті қосып жатырмыз",
+      catalog_saved_ok: "Университет сәтті сақталды", catalog_saved_remove: "Университет таңдаулылардан алынды",
+      catalog_need_login: "Университеттерді сақтау үшін аккаунтқа кіріңіз",
+      catalog_save_btn: "Таңдаулыларға сақтау", catalog_saved_btn: "Таңдаулыларда",
+
+      profile_greeting: "Сәлем", profile_logout: "Шығу",
+      profile_saved_title: "⭐ Ұнаған университеттер",
+      profile_saved_sub: "Каталогта жұлдызшамен белгілегендеріңіз",
+      profile_tests_title: "🎯 Тест нәтижелері",
+      profile_tests_sub: "ЖИ сенің жауаптарыңа сай таңдаған университеттер",
+      profile_empty_saved: "Сен әзірге бірде-бір университетті сақтамадың.",
+      profile_empty_saved_hint: "Каталогқа кіріп, университет жанындағы жұлдызшаны басыңыз.",
+      profile_empty_tests: "Сен әзірге тест тапсырмадың.",
+      profile_empty_tests_hint: "Университет таңдау тестінен өту →",
+      profile_need_login_title: "Алдымен аккаунтқа кіріңіз",
+      profile_need_login_desc: "Университеттерді сақтау және тест нәтижелерін көру үшін аккаунт жасаңыз немесе кіріңіз.",
+      profile_create_account: "Аккаунт жасау", profile_loading: "Профиль жүктелуде",
+      profile_last_test: "Соңғы тест", profile_test: "Тест",
+      profile_unis_found: "университет табылды",
+
+      test_title: "Өзіңе сай университетті табайық",
+      test_sub: "Оқу, армандаған ел, климат және өмір салты туралы бірнеше сұраққа жауап бер.",
+      test_start: "Бастау", test_question: "Сұрақ", test_of: "/",
+      test_ask: "ЖИ сұрайды", test_thinking: "ЖИ ойланып жатыр",
+      test_answer_placeholder: "Жауабыңды осында жаз...", test_send: "Жіберу",
+      test_restart: "Қайта өту",
+      test_final_title: "Дайын! Міне сенің университеттерің",
+      test_final_sub: "ЖИ жауаптарыңды талдап, 4 санат бойынша нұсқаларды таңдады.",
+      test_saved_banner: "Нәтижең профильде сақталды", test_saved_hint: "Профильде көру →",
+      test_not_saved_banner: "Нәтижені сақтау үшін кіріңіз", test_not_saved_hint: "Кіру",
+      test_cat_academic: "Оқу көрсеткіштері бойынша сәйкес",
+      test_cat_lifestyle: "Өмір салты бойынша сәйкес",
+      test_cat_safe: "Түсу мүмкіндігі жоғары",
+      test_cat_reach: "Мүмкіндік бар, бірақ күшейту керек",
+      test_empty_category: "Бұл санатта ештеңе сәйкес келмеді",
+      test_more: "Толығырақ →", test_analyzing: "ЖИ 250 университетті талдап жатыр",
+
+      modal_hello: "Қош келдің", modal_hello_sub: "Университеттерді сақтау үшін аккаунт жаса",
+      modal_google: "Google арқылы жалғастыру", modal_apple: "Apple арқылы жалғастыру", modal_or: "немесе",
+      modal_name: "Аты", modal_name_ph: "Мысалы, Айсана", modal_email: "Email",
+      modal_password: "Құпия сөз", modal_password_ph: "Кемінде 6 таңба",
+      modal_submit_register: "Аккаунт жасау", modal_submit_login: "Кіру",
+      modal_switch_register: "Аккаунтың бар ма?", modal_switch_login: "Аккаунтың жоқ па?",
+      modal_switch_register_btn: "Кіру", modal_switch_login_btn: "Жасау",
+      modal_welcome_back: "Қайта келдің", modal_welcome_back_sub: "Аккаунтыңа кір",
+      modal_confirm_title: "Поштаңды раста",
+      modal_confirm_sub: "Біз {email} мекенжайына хат жібердік. Gmail-ды ашып, растау сілтемесін бас.",
+      modal_confirm_resend: "Хатты қайта жіберу",
+      modal_confirm_resent: "Хат қайта жіберілді",
+      modal_confirm_open_mail: "Gmail-ды ашу",
+      modal_confirm_already: "Мен растадым — кіру",
+      modal_after_confirm_title: "Пошта расталды ✓",
+      modal_after_confirm_sub: "Енді құпия сөзіңмен кір",
+      modal_login_success: "Қайта келдің!",
+      modal_register_success: "Аккаунт жасалды. Сәлем!",
+      modal_logout_success: "Аккаунттан шықтың",
+      modal_fill_all: "Барлық өрісті толтыр",
+      modal_wait: "Күте тұр...",
+      modal_server_waking: "Сервер оянып жатыр. 30 секунд күтіп, қайта көр.",
+      modal_session_expired: "Сессия аяқталды. Қайта кір.",
+      test_saving_banner: "Нәтиже сақталып жатыр…",
+      test_save_failed_banner: "Нәтижені сақтау мүмкін болмады",
+      test_save_failed_desc: "Нәтиже төменде көрінеді, бірақ профильде әлі жоқ. Қайта көр.",
+      test_save_retry: "Қайталау",
+      test_err_rate: "Тым көп сұрау. Бірнеше минут күтіп, қайта көр.",
+      test_err_ai: "ЖИ 3 әрекеттен кейін де жауап бере алмады.",
+      modal_error_generic: "Бірдеңе дұрыс болмады. Қайта көр.",
+      modal_error_register: "Тіркелу қатесі",
+      modal_error_login: "Email немесе құпия сөз қате",
+      modal_close: "Жабу",
+
+      uni_section_finance: "Қаржы", uni_section_deadlines: "Мерзімдер",
+      uni_section_requirements: "Талаптар", uni_section_ratings: "Рейтингтер",
+      uni_section_majors: "Мамандықтар", uni_section_extra: "Қосымша",
+      uni_field_tuition: "Оқу құны", uni_field_admission: "Түсу пайызы",
+      uni_field_aid: "Қаржылық көмек", uni_field_grant: "Толық грант",
+      uni_field_early_deadline: "Ерте дедлайн", uni_field_main_deadline: "Негізгі дедлайн",
+      uni_field_toefl: "TOEFL / IELTS", uni_field_sat: "SAT",
+      uni_field_essay: "Эссе", uni_field_recs: "Ұсыныс хаттар",
+      uni_field_app_fee: "Өтінім құны", uni_field_apply_link: "Өтінім сілтемесі",
+      uni_field_rank_country: "Елдегі рейтинг", uni_field_rank_world: "Әлемдік рейтинг",
+      uni_field_majors: "Бағыттар", uni_field_comments: "Түсініктемелер",
+      uni_value_yes: "ИӘ", uni_value_no: "жоқ", uni_value_not_specified: "көрсетілмеген",
+      uni_full_grant_badge: "✨ Толық грант",
+      uni_open_site: "🌐 Ресми сайт",
+      uni_apply: "📝 Өтінім беру",
+      uni_aid_link: "💰 Қаржылық көмек",
+
+      country_australia: "Австралия", country_austria: "Австрия", country_belgium: "Бельгия",
+      country_canada: "Канада", country_china: "Қытай", country_czech: "Чехия",
+      country_denmark: "Дания", country_finland: "Финляндия", country_germany: "Германия",
+      country_hongkong: "Гонконг", country_hungary: "Венгрия", country_italy: "Италия",
+      country_japan: "Жапония", country_latvia: "Латвия", country_netherlands: "Нидерланд",
+      country_poland: "Польша", country_qatar: "Катар", country_singapore: "Сингапур",
+      country_southkorea: "Оңтүстік Корея", country_spain: "Испания", country_sweden: "Швеция",
+      country_switzerland: "Швейцария", country_turkey: "Түркия", country_uae: "БАӘ",
+      country_uk: "Ұлыбритания", country_usa: "АҚШ",
+
+      // ===== FUN ZONE v2 =====
+      fz2_badge: "⚠️ BRAINROT БӨЛІМІ",
+      fz2_hero_title: "Fun Zone",
+      fz2_hero_sub: "EduPath-тың ең қажетсіз бөлігі.",
+      fz2_hero_sub2: "Біз қабылдау алгоритмін жақсарта алар едік. Біз мұны таңдадық.",
+      fz2_open: "Ашу",
+
+      fz2_card_aura: "Академиялық аура",
+      fz2_card_aura_desc: "Өзіңнің толық шынайы аураңды жаса.",
+      fz2_card_future: "Болашағымды рандомдау",
+      fz2_card_future_desc: "Сайт тағдырыңды шешсін.",
+      fz2_card_battle: "Университет шайқасы",
+      fz2_card_battle_desc: "Екі университет кіреді. Біреуі шығады.",
+      fz2_card_cooked: "Мен қаншалықты күйіп тұрмын?",
+      fz2_card_cooked_desc: "Күйіп тұрсың ба, біл.",
+      fz2_card_npc: "Қандай NPC-сың?",
+      fz2_card_npc_desc: "Университет NPC-ыңды біл.",
+      fz2_card_potion: "Сәйкестік сусыны",
+      fz2_card_potion_desc: "Университет сусыныңды қайнат.",
+      fz2_card_stock: "GPA биржасы",
+      fz2_card_stock_desc: "GPA-ңды тікелей эфирде көр.",
+      fz2_card_crash: "Портфельдің құлауы",
+      fz2_card_crash_desc: "Академиялық крахты іске қос.",
+      fz2_card_gacha: "Университет гачасы",
+      fz2_card_gacha_desc: "Университеттерді тарт. Ештеңе сезінбе.",
+      fz2_card_wallet: "Әмиянға залал",
+      fz2_card_wallet_desc: "Әмиян қанша алатынын біл.",
+      fz2_card_sleep: "Ұйқы vs GPA",
+      fz2_card_sleep_desc: "Мәңгілік компромиссті модельде.",
+      fz2_card_caffeine: "Кофеин калькуляторы",
+      fz2_card_caffeine_desc: "Қанша кофе — тым көп?",
+      fz2_card_brain: "Ми сыйымдылығы",
+      fz2_card_brain_desc: "Жедел жадыңды тексер. Тәрізді.",
+      fz2_card_sat: "SAT-болжам",
+      fz2_card_sat_desc: "Болжа. Қалай да дұрыс тап.",
+      fz2_card_officer: "Қабылдау комиссиясы",
+      fz2_card_officer_desc: "Офицермен кездес. Өкінбей.",
+      fz2_card_rejection: "Бас тарту хаты",
+      fz2_card_rejection_desc: "Хат ал. Өкінішке орай.",
+      fz2_card_career: "Кездейсоқ мамандық",
+      fz2_card_career_desc: "Өзіңнің шынайы шақыруыңды тап.",
+      fz2_card_car: "Университет көлігі",
+      fz2_card_car_desc: "Университетіңнің көлігі бар. Әрине.",
+      fz2_card_weather: "Ауа райы-мінез",
+      fz2_card_weather_desc: "Ауа райы = мінез. Нақты.",
+      fz2_card_npc_gen: "NPC фабрикасы",
+      fz2_card_npc_gen_desc: "Кездейсоқ NPC студент жаса.",
+      fz2_card_skill: "Скилл-ишью детекторы",
+      fz2_card_skill_desc: "Скилл-ишью табады. Шынайы.",
+      fz2_card_spell: "Университет сиқыры",
+      fz2_card_spell_desc: "Күдікті сиқырлар жаса.",
+      fz2_card_achievements: "Жетістіктер",
+      fz2_card_achievements_desc: "Барлығын жина. Немесе жоқ.",
+      fz2_card_nuclear: "Ядролық сброс",
+      fz2_card_nuclear_desc: "Бұл батырманы БАСПА.",
+      fz2_card_boss: "Финалдық босс",
+      fz2_card_boss_desc: "Дедлайнмен шайқас.",
+
+      fz2_unknown: "Белгісіз блок",
+
+      fz2_aura_title: "Академиялық аура генераторы",
+      fz2_aura_sub: "Деректерді енгіз. Бос сөз ал.",
+      fz2_aura_btn: "АУРАМДЫ ЖАСА",
+      fz2_aura_result_label: "СЕНІҢ АКАДЕМИЯЛЫҚ АУРАҢ",
+
+      fz2_label_gpa: "GPA",
+      fz2_label_sat: "SAT",
+      fz2_label_ielts: "IELTS",
+      fz2_label_study: "Күніне оқу сағаттары",
+      fz2_label_sleep: "Түнгі ұйқы сағаттары",
+      fz2_label_days: "Дедлайнға дейінгі күндер",
+      fz2_label_prep: "Дайындық (0-100)",
+
+      fz2_future_title: "Болашағымды рандомдау",
+      fz2_future_sub: "Сайт шешсін.",
+      fz2_future_btn: "🎰 САЙТ ТАҒДЫРЫМДЫ ШЕШСІН",
+      fz2_future_again: "ТАҒДЫРЫМДЫ ҚАБЫЛДАМАЙМЫН",
+
+      fz2_battle_title: "Университет шайқасы",
+      fz2_battle_sub: "Екі университет кіреді. Біреуі шығады.",
+      fz2_battle_pick1: "Жауынгер 1",
+      fz2_battle_pick2: "Жауынгер 2",
+      fz2_battle_go: "ШАЙҚАС",
+      fz2_battle_random: "Кездейсоқ жұп",
+      fz2_battle_winner: "ЖЕҢІМПАЗ",
+      fz2_battle_reason: "Себебі",
+
+      fz2_bcat_aura: "Аура",
+      fz2_bcat_drip: "Drip",
+      fz2_bcat_parent: "Ата-ана мақұлдауы",
+      fz2_bcat_suffering: "Академиялық азап",
+      fz2_bcat_sleep: "Ұйқы",
+      fz2_bcat_mc: "Басты кейіпкер энергиясы",
+      fz2_bcat_scholarship: "Стипендия энергиясы",
+      fz2_bcat_npc: "NPC деңгейі",
+      fz2_bcat_social: "Әлеуметтік өмір",
+      fz2_bcat_coffee: "Кофеинге тәуелділік",
+
+      fz2_cooked_title: "Мен қаншалықты күйіп тұрмын?",
+      fz2_cooked_sub: "Нақты деректер. Нақты емес үкім.",
+      fz2_cooked_btn: "ҚАНШАЛЫҚ КҮЙІП ТҰРМЫН",
+      fz2_cooked_result_label: "СЕН КҮЙІП ТҰРСЫҢ",
+
+      fz2_npc_title: "Қандай университет NPC-сың?",
+      fz2_npc_sub: "7 сұраққа жауап бер. Мінез ал.",
+      fz2_npc_q1: "Ұйқы сағаттары",
+      fz2_npc_q2: "Оқу жиілігі (0-100)",
+      fz2_npc_q3: "SAT балы",
+      fz2_npc_q4: "Рейтинг маңыздылығы (0-100)",
+      fz2_npc_q5: "Кампус маңыздылығы (0-100)",
+      fz2_npc_q6: "Ата-ана пікірі (0-100)",
+      fz2_npc_q7: "Стипендия маңыздылығы (0-100)",
+      fz2_npc_btn: "NPC-ымды көрсет",
+
+      fz2_potion_title: "Университет сәйкестік сусыны",
+      fz2_potion_sub: "Сусыныңды қайнат.",
+      fz2_potion_btn: "СУСЫНДЫ ҚАЙНАТУ",
+      fz2_potion_result: "Сенің университет сусының",
+      fz2_potion_sch: "Стипендия",
+      fz2_potion_acad: "Академия",
+      fz2_potion_soc: "Әлеуметтік",
+      fz2_potion_suf: "Азап",
+
+      fz2_stock_title: "GPA биржасы",
+      fz2_stock_sub: "Жауапкершілікпен сауда жаса. Немесе жоқ.",
+      fz2_stock_btn: "КЕЛЕСІ САУДА КҮНІ",
+      fz2_stock_init: "Нарықты инициализациялау...",
+
+      fz2_crash_title: "Академиялық портфельдің құлауы",
+      fz2_crash_sub: "Крахты іске қос.",
+      fz2_crash_btn: "ПОРТФЕЛІМДІ ҚҰЛАТУ",
+      fz2_crash_ready: "Батырманы бас.",
+
+      fz2_gacha_title: "Университет гачасы",
+      fz2_gacha_sub: "Тарт. Өкін. Қайтала.",
+      fz2_gacha_pull1: "ТАРТУ ×1",
+      fz2_gacha_pull10: "ТАРТУ ×10",
+      fz2_rarity_common: "Қарапайым",
+      fz2_rarity_rare: "Сирек",
+      fz2_rarity_epic: "Эпикалық",
+      fz2_rarity_legendary: "Аңыздық",
+      fz2_rarity_mythic: "МИФТІК",
+
+      fz2_wallet_title: "Әмиянға залал калькуляторы",
+      fz2_wallet_sub: "Әмияның қанша алады?",
+      fz2_wallet_tui: "Оқу (USD/жыл)",
+      fz2_wallet_acc: "Тұрғын үй",
+      fz2_wallet_food: "Тамақ",
+      fz2_wallet_trans: "Көлік",
+      fz2_wallet_schol: "Стипендия (USD)",
+      fz2_wallet_btn: "ЗАЛАЛДЫ ЕСЕПТЕУ",
+      fz2_wallet_result: "ӘМИЯНЫҢ АЛДЫ",
+      fz2_wallet_damage: "ЗАЛАЛ",
+
+      fz2_sleep_title: "Ұйқы vs GPA симуляторы",
+      fz2_sleep_sub: "Уыңды таңда.",
+      fz2_sleep_label: "ҰЙҚЫ",
+
+      fz2_caffeine_title: "Кофеин калькуляторы",
+      fz2_caffeine_sub: "Қанша кофе — тым көп?",
+      fz2_caffeine_label: "Бүгін қанша кофе іштің?",
+      fz2_caffeine_btn: "ТЕКСЕРУ",
+
+      fz2_brain_title: "Ми сыйымдылығы тесті",
+      fz2_brain_sub: "Сәйкес мақсатты бас.",
+      fz2_brain_target: "Мақсат",
+      fz2_brain_start: "БАСТАУ",
+      fz2_brain_again: "ҚАЙТА ТЕСТ",
+      fz2_brain_restart: "ҚАЙТА БАСТАУ",
+      fz2_brain_score: "Ұпай",
+      fz2_brain_capacity: "МИ СЫЙЫМДЫЛЫҒЫ",
+
+      fz2_sat_title: "SAT-болжам симуляторы",
+      fz2_sat_sub: "Болжа. Қалай да дұрыс тап.",
+      fz2_sat_next: "КЕЛЕСІ СҰРАҚ",
+      fz2_sat_correct: "Дұрыс. Қалай да.",
+      fz2_sat_wrong: "Қате. Әрине.",
+
+      fz2_officer_title: "Қабылдау комиссиясы симуляторы",
+      fz2_officer_sub: "Офицермен кездес.",
+      fz2_officer_extra: "Сыныптан тыс (0-100)",
+      fz2_officer_btn: "ӨТІНІМ БЕРУ",
+      fz2_officer_accepted: "ҚАБЫЛДАНДЫ",
+      fz2_officer_waitlist: "КҮТУ ТІЗІМІНДЕ",
+      fz2_officer_rejected: "БАС ТАРТЫЛДЫ",
+
+      fz2_rejection_title: "Бас тарту хаты генераторы",
+      fz2_rejection_sub: "Бас тарту ал. Кәсіби.",
+      fz2_rejection_btn: "БАС ТАРТУЫМДЫ ЖАСА",
+
+      fz2_career_title: "Толық кездейсоқ мамандық генераторы",
+      fz2_career_sub: "Шынайы шақыруыңды тап.",
+      fz2_career_btn: "КІМ БОЛАМЫН?",
+      fz2_career_result: "СЕНІҢ БОЛАШАҚ МАМАНДЫҒЫҢ",
+      fz2_career_salary: "Жалақы",
+      fz2_career_diff: "Қиындық",
+      fz2_career_aura: "Аура",
+
+      fz2_car_title: "Университет көлігінің генераторы",
+      fz2_car_sub: "Әр университеттің көлігі бар.",
+      fz2_car_pick: "Университетті таңда",
+      fz2_car_random: "Кездейсоқ",
+      fz2_car_btn: "КӨЛІГІМДІ ЖАСА",
+      fz2_car_result: "СЕНІҢ УНИВЕРСИТЕТ КӨЛІГІҢ",
+      fz2_car_rel: "Сенімділік",
+      fz2_car_aura: "Аура",
+      fz2_car_fuel: "Отын шығыны",
+      fz2_car_comp: "Академиялық сәйкестік",
+
+      fz2_weather_title: "Университет ауа райы-мінезі",
+      fz2_weather_sub: "Ауа райы = мінез.",
+      fz2_weather_btn: "АУА РАЙЫН АЙНАЛДЫРУ",
+
+      fz2_npc_gen_title: "NPC фабрикасы",
+      fz2_npc_gen_sub: "Кездейсоқ NPC студент жаса.",
+      fz2_npc_gen_btn: "NPC ЖАСАУ",
+      fz2_npc_gen_name: "Аты",
+      fz2_npc_gen_major: "Мамандығы",
+      fz2_npc_gen_sleep: "Ұйқы",
+      fz2_npc_gen_coffee: "Кофе",
+      fz2_npc_gen_car: "Көлік",
+      fz2_npc_gen_personality: "Мінез",
+
+      fz2_skill_title: "Скилл-ишью детекторы",
+      fz2_skill_sub: "Скилл-ишью табады. Шынайы.",
+      fz2_skill_btn: "СКИЛЛ-ИШЬЮ ТАБУ",
+      fz2_skill_detected: "⚠️ Скилл-ишью табылды.",
+      fz2_skill_none: "Скилл-ишью жоқ. Өкінішке орай, енді ұстау керек.",
+      fz2_skill_decent: "жалпы жақсы",
+      fz2_skill_solid: "мықты",
+
+      fz2_spell_title: "Университет сиқыр генераторы",
+      fz2_spell_sub: "Күдікті сиқырлар жаса.",
+      fz2_spell_btn: "СИҚЫР ЖАСАУ",
+      fz2_spell_effect: "ӘСЕРІ",
+
+      fz2_ach_title: "Сенің жетістіктерің",
+      fz2_ach_unlocked: "ашылды",
+      fz2_ach_popup_title: "🏆 Жетістік ашылды",
+      fz2_ach_popup_desc: "",
+      fz2_ach_aura_gen: "Аура генераторы",
+      fz2_ach_future: "Тағдырды қабылдау",
+      fz2_ach_battle: "Жауынгер",
+      fz2_ach_cooked: "Күйіп тұр",
+      fz2_ach_npc: "NPC доғасы",
+      fz2_ach_potion: "Сусын шебері",
+      fz2_ach_stock: "GPA трейдері",
+      fz2_ach_crash: "Портфель құлауы",
+      fz2_ach_gacha_1: "Гача-жаңадан",
+      fz2_ach_gacha_10: "Гача-тәуелді",
+      fz2_ach_gacha_mythic: "Мифтік тарту",
+      fz2_ach_wallet: "Қаржылық күйреу",
+      fz2_ach_sleep: "Ұйқы симуляторы",
+      fz2_ach_caffeine: "Химиялық реакция",
+      fz2_ach_brain: "Ми сыйымдылығы",
+      fz2_ach_sat: "SAT-болжам",
+      fz2_ach_officer: "Қабылдау комиссиясы",
+      fz2_ach_rejection: "Бас тарту хаты",
+      fz2_ach_career: "Мамандық табылды",
+      fz2_ach_car: "Көлік жасалды",
+      fz2_ach_weather: "Ауа райы-мінез",
+      fz2_ach_npc_gen: "NPC фабрикасы",
+      fz2_ach_skill: "Скилл-ишью детекторы",
+      fz2_ach_spell: "Сиқыршы",
+      fz2_ach_nuclear: "Ядролық аман қалған",
+      fz2_ach_boss_win: "Дедлайн өлтіруші",
+      fz2_ach_boss_lose: "Дедлайнда күйіп кеткен",
+      fz2_ach_explorer: "Зерттеуші",
+
+      fz2_nuclear_title: "Ядролық сброс",
+      fz2_nuclear_sub: "Бұл батырманы БАСПА.",
+      fz2_nuclear_btn: "БАСПАУ",
+      fz2_nuclear_m1: "Сенімдісің бе?",        fz2_nuclear_n1: "ИӘ, СЕНІМДІМІН",
+      fz2_nuclear_m2: "ШЫНЫМЕН БА?",           fz2_nuclear_n2: "ШЫНЫМЕН",
+      fz2_nuclear_m3: "БАУЫРЫМ, ТОҚТА.",       fz2_nuclear_n3: "ТОҚТАТА АЛМАЙМЫН",
+      fz2_nuclear_m4: "Жарайды.",              fz2_nuclear_n5: "...",
+      fz2_nuclear_m5: "💀\n\nСен өміріңнің 7 секундын жоғалттың.",
+
+      fz2_boss_title: "Финалдық босс: Дедлайн",
+      fz2_boss_sub: "Ең үлкен жауыңмен шайқас.",
+      fz2_boss_deadline_hp: "ДЕДЛАЙН HP",
+      fz2_boss_player_hp: "Сенің HP",
+      fz2_boss_study: "ОҚУ",
+      fz2_boss_sleep: "ҰЙЫҚТАУ",
+      fz2_boss_proc: "КЕЙІНГЕ ҚАЛДЫРУ",
+      fz2_boss_panic: "ПАНИКА",
+      fz2_boss_win: "СЕН ДЕДЛАЙНДЫ ЖЕҢДІҢ",
+      fz2_boss_lose: "СЕН КҮЙІП КЕТТІҢ",
+
+      // ===== TEAM PAGE (v8) =====
+      team_hero_eyebrow: "Біздің команда · EduPath",
+      team_hero_title: "EDUPATH",
+      team_hero_sub: "Өз жолыңды табудың жаңа тәсілі",
+      team_hero_year: "2026",
+      team_why_eyebrow: "Неге біз мұны жасадық",
+      team_why_title: "НЕГЕ БІЗ МҰНЫ ЖАСАДЫҚ",
+      team_why_quote: "Болашақты таңдау мүмкін емес болып көрінбеуі керек.",
+      team_why_sub: "EduPath университетті іздеуді жеке, құрылымды және қолжетімді ету үшін жасалды.",
+      team_trans_two: "ЕКІ АДАМ.",
+      team_trans_one: "БІР МАҚСАТ.",
+      team_alkar_eyebrow: "Мен не құрамын",
+      team_alkar_role: "Қос құрылтайшы · Backend · Дерекқор · Frontend",
+      team_alkar_build: "МЕН НЕ ҚҰРАМЫН",
+      team_alkar_r1_t: "BACKEND", team_alkar_r1_d: "EduPath-тың артындағы жүйелер.",
+      team_alkar_r2_t: "ДЕРЕКҚОР", team_alkar_r2_d: "Деректер құрылымы және басқару.",
+      team_alkar_r3_t: "FRONTEND", team_alkar_r3_d: "Интерфейс және өзара әрекеттесуді әзірлеу.",
+      team_alkar_r4_t: "ЖҮЙЕ", team_alkar_r4_d: "Барлық бөліктерді бір платформаға біріктіру.",
+      team_system_eyebrow: "Бір жүйе",
+      team_system_title: "БАРЛЫҒЫ ҚАЛАЙ БАЙЛАНЫСҚАН",
+      team_system_center: "EDUPATH",
+      team_system_final: "БІР ЖҮЙЕ",
+      team_arshat_eyebrow: "Тәжірибені жасау",
+      team_arshat_role: "Қос құрылтайшы · Frontend · UI · Әзірлеу · AI",
+      team_arshat_build: "ТӘЖІРИБЕНІ ЖАСАУ",
+      team_arshat_r1_t: "FRONTEND", team_arshat_r1_d: "Идеяларды интерфейстерге айналдыру.",
+      team_arshat_r2_t: "UI", team_arshat_r2_d: "Нақты және интуитивті тәжірибені жобалау.",
+      team_arshat_r3_t: "ӨЗАРА ӘРЕКЕТ", team_arshat_r3_d: "Әр әрекет табиғи болуы үшін.",
+      team_arshat_r4_t: "САПА", team_arshat_r4_d: "Жұмыс істемейтінді табу және жою.",
+      team_arshat_r5_t: "AI", team_arshat_r5_d: "Университеттерді ұсынатын жасанды интеллект.",
+      team_founder1: "Қос құрылтайшы 01",
+      team_founder2: "Қос құрылтайшы 02",
+      team_collab_sub: "Екі рөл. Бір өнім.",
+      team_build_eyebrow: "Құру",
+      team_build_title: "ҚҰРУ",
+      team_build_idea: "ИДЕЯ", team_build_idea_d: "Барлығы дәптерден, қаламнан және шешуге тұрарлық мәселеден басталды.",
+      team_build_arch: "АРХИТЕКТУРА", team_build_arch_d: "Кодтың бірінші жолын жазбас бұрын жүйені жобалау.",
+      team_build_design: "ДИЗАЙН", team_build_design_d: "Түс, қаріп, аралық — бәрі әдейі, кездейсоқ ештеңе жоқ.",
+      team_build_dev: "ӘЗІРЛЕУ", team_build_dev_d: "Құрамыз, сындырамыз, жөндейміз, қайталаймыз.",
+      team_build_test: "ТЕСТІЛЕУ", team_build_test_d: "Әр шекаралық жағдай, әр қосалқы жоспар, әр қате күйі.",
+      team_build_product: "EDUPATH", team_build_product_d: "Жұмыс істейтін өнім. Тірі, көптілді, интеллектуалды.",
+      team_timeline_eyebrow: "Идеядан EduPath-қа дейін",
+      team_timeline_title: "ИДЕЯДАН EDUPATH-ҚА ДЕЙІН",
+      team_tl_1: "Идея",
+      team_tl_2: "Бірінші прототип",
+      team_tl_3: "Backend және дерекқор",
+      team_tl_4: "Frontend",
+      team_tl_5: "Тестілеу",
+      team_tl_6: "EduPath",
+      team_product_eyebrow: "Өнім",
+      team_show_title: "ЖҰМЫС ІСТЕЙТІН ӨНІМ",
+      team_show_home: "Басты бет",
+      team_show_home_sub: "Лендинг · Танысу",
+      team_show_explorer: "Университеттер шолғышы",
+      team_show_explorer_sub: "Шолу · Сүзгі · Салыстыру",
+      team_show_profile: "Профиль",
+      team_show_profile_sub: "Сақталған · Нәтижелер",
+      team_show_reco: "Ұсыныстар",
+      team_show_reco_sub: "ЖИ нәтижесі",
+      team_show_fz: "Fun Zone",
+      team_show_fz_sub: "Ережелер қолданылмайтын жер",
+      team_final_h1: "БОЛАШАҚ — БАРЫЛАТЫН ЖЕР ЕМЕС.",
+      team_final_h2: "Бұл — жол.",
+      team_final_cta: "EduPath-ты зерттеу",
+      team_contact_title: "Бізбен байланысу",
+      team_contact_sub: "Ынтымақтастық немесе кез келген сұрақтар бойынша — пошталарға жазыңыз:",
+      team_footer: "EduPath © 2026 · Alkar & Arshat қамқорлықпен жасалды",
+
+      footer_note: "Fun Zone — әзіл. Нақты ұсыныстар — тестте."
+    },
+
+    // ============================================================
+    // КЫРГЫЗЧА
+    // ============================================================
+    ky: {
+      nav_home: "Башкы бет", nav_universities: "Университеттер", nav_profile: "Профиль",
+      nav_fanzone: "🤡 Fun Zone",
+      nav_team: "Биздин команда",
+      nav_login: "Кирүү", nav_logout: "Чыгуу", nav_hello: "Салам",
+
+      home_eyebrow: "Университет тандоо тести",
+      home_title_pre: "Тесттен өт — ", home_title_em: "өзүңө ылайык", home_title_post: " университет тап",
+      home_sub: "Каалоолоруңа, тест жыйынтыктарыңа жана бюджетіңе ылайык багыттар мен университеттерди тандайбыз.",
+      home_cta: "Профилди толтурууну баштоо",
+      home_note: "Атайын ЖИ сага кайсы университет ылайыктуу экенин аныктайт",
+      home_quote_top: "«Биз менен —", home_quote_bottom: "ыңгайлуураак, практикалык, натыйжалуу»",
+      home_seam_desc_top: "Окуу көрсөткүчтөрүнөн тышкары, абитуриенттин кандай чөйрөдө жашагысы келгени да маанилүү.",
+      home_seam_desc_bottom: "Биз сага чындап ылайыктуу университеттерди гана сунуштайбыз.",
+      home_how_title: "Бул кантип иштейт",
+      home_how_sub: "Биринчи суроодон ылайыктуу университеттердин тизмесине чейин үч кадам.",
+      home_step1_title: "Жеке маалыматтар", home_step1_desc: "Сенин кызыгууларың, хоббииң, өлкө жана окуу форматы боюнча каалоолоруң.",
+      home_step2_title: "Көрсөткүчтөр", home_step2_desc: "Баалар, тест жыйынтыктары (SAT, IELTS ж.б.) жана болжолдуу бюджет.",
+      home_step3_title: "Тест жыйынтыктары", home_step3_desc: "Сага эң ылайыктуу университеттердин тизмеси, түшүндүрмөлөр менен.",
+      home_footer: "EduPath © 2026. Бардык укуктар корголгон",
+      city_seoul: "Сеул", city_berlin: "Берлин", city_boston: "Бостон", city_shanghai: "Шанхай",
+
+      catalog_title: "Университеттер", catalog_sub: "Өлкө жана университет танда",
+      catalog_loading: "Тизме жүктөлүүдө...",
+      catalog_filters: "Фильтрлер", catalog_budget_label: "Окуу бюджети (USD/жыл)",
+      catalog_budget_from: "баштап", catalog_budget_to: "чейин",
+      catalog_country_label: "Өлкө", catalog_country_all: "Бардык өлкөлөр",
+      catalog_grant_label: "Каржылык жардам", catalog_grant_only: "Толук грант менен гана",
+      catalog_apply: "Колдонуу", catalog_reset: "Тазалоо",
+      catalog_choose_uni: "Университет танда",
+      catalog_choose_hint: "Сол жактагы өлкөнү басып, анан университетти басып, толук маалыматты көрүңүз.",
+      catalog_search_placeholder: "Университет издөө...", catalog_search_empty: "Кечиресиз, биз бул университетти кошуп жатабыз",
+      catalog_saved_ok: "Университет ийгиликтүү сакталды", catalog_saved_remove: "Университет тандалмалардан алынды",
+      catalog_need_login: "Университеттерди сактоо үчүн аккаунтка кириңиз",
+      catalog_save_btn: "Тандалмаларга сактоо", catalog_saved_btn: "Тандалмаларда",
+
+      profile_greeting: "Салам", profile_logout: "Чыгуу",
+      profile_saved_title: "⭐ Жаккан университеттер",
+      profile_saved_sub: "Каталогдо жылдызча менен белгилегендериңиз",
+      profile_tests_title: "🎯 Тест жыйынтыктары",
+      profile_tests_sub: "ЖИ сенин жоопторуңа ылайык тандаган университеттер",
+      profile_empty_saved: "Сен азырынча бир да университет сактаган жоксуң.",
+      profile_empty_saved_hint: "Каталогго кирип, университеттин жанындагы жылдызчаны басыңыз.",
+      profile_empty_tests: "Сен азырынча тест тапшырган жоксуң.",
+      profile_empty_tests_hint: "Университет тандоо тестинен өтүү →",
+      profile_need_login_title: "Адеги аккаунтка кириңиз",
+      profile_need_login_desc: "Университеттерди сактоо жана тест жыйынтыктарын көрүү үчүн аккаунт түзүңүз же кириңиз.",
+      profile_create_account: "Аккаунт түзүү", profile_loading: "Профиль жүктөлүүдө",
+      profile_last_test: "Акыркы тест", profile_test: "Тест",
+      profile_unis_found: "университет табылды",
+
+      test_title: "Өзүңө ылайыктуу университетти табабыз",
+      test_sub: "Окуу, кыялдагы өлкө, климат жана жашоо образы тууралуу бир нече суроого жооп бер.",
+      test_start: "Баштоо", test_question: "Суроо", test_of: "/",
+      test_ask: "ЖИ сурайт", test_thinking: "ЖИ ойлонуп жатат",
+      test_answer_placeholder: "Жообуңду ушул жерге жаз...", test_send: "Жөнөтүү",
+      test_restart: "Кайра өтүү",
+      test_final_title: "Даяр! Мына сенин университеттериң",
+      test_final_sub: "ЖИ жоопторуңду талдап, 4 категория боюнча варианттарды тандады.",
+      test_saved_banner: "Жыйынтыгың профилде сакталды", test_saved_hint: "Профилде көрүү →",
+      test_not_saved_banner: "Жыйынтыкты сактоо үчүн кириңиз", test_not_saved_hint: "Кирүү",
+      test_cat_academic: "Окуу көрсөткүчтөрү боюнча ылайыктуу",
+      test_cat_lifestyle: "Жашоо образы боюнча ылайыктуу",
+      test_cat_safe: "Тапшыруу мүмкүнчүлүгү жогору",
+      test_cat_reach: "Мүмкүнчүлүк бар, бирок күчөтүү керек",
+      test_empty_category: "Бул категорияда эч нерсе ылайыктуу болгон жок",
+      test_more: "Кененирээк →", test_analyzing: "ЖИ 250 университетти талдап жатат",
+
+      modal_hello: "Кош келиңиз", modal_hello_sub: "Университеттерди сактоо үчүн аккаунт түзүңүз",
+      modal_google: "Google менен улантуу", modal_apple: "Apple менен улантуу", modal_or: "же",
+      modal_name: "Аты", modal_name_ph: "Мисалы, Айсана", modal_email: "Email",
+      modal_password: "Сырсөз", modal_password_ph: "Жок дегенде 6 белги",
+      modal_submit_register: "Аккаунт түзүү", modal_submit_login: "Кирүү",
+      modal_switch_register: "Аккаунтуңуз барбы?", modal_switch_login: "Аккаунтуңуз жокпу?",
+      modal_switch_register_btn: "Кирүү", modal_switch_login_btn: "Түзүү",
+      modal_welcome_back: "Кайра кош келиңиз", modal_welcome_back_sub: "Аккаунтуңузга кириңиз",
+      modal_confirm_title: "Почтаңызды ырастаңыз",
+      modal_confirm_sub: "Биз {email} дарегине кат жөнөттүк. Gmail ачып, ырастоо шилтемесин басыңыз.",
+      modal_confirm_resend: "Катты кайра жөнөтүү",
+      modal_confirm_resent: "Кат кайра жөнөтүлдү",
+      modal_confirm_open_mail: "Gmail ачуу",
+      modal_confirm_already: "Мен ырастадым — кирүү",
+      modal_after_confirm_title: "Почта ырасталды ✓",
+      modal_after_confirm_sub: "Эми сырсөзүңүз менен кириңиз",
+      modal_login_success: "Кайра кош келиңиз!",
+      modal_register_success: "Аккаунт түзүлдү. Салам!",
+      modal_logout_success: "Аккаунттан чыктыңыз",
+      modal_fill_all: "Бардык талааларды толтуруңуз",
+      modal_wait: "Күтө туруңуз...",
+      modal_server_waking: "Сервер ойгонуп жатат. 30 секунд күтүп, кайра аракет кылыңыз.",
+      modal_session_expired: "Сессия аяктады. Кайра кириңиз.",
+      test_saving_banner: "Жыйынтык сакталып жатат…",
+      test_save_failed_banner: "Жыйынтыкты сактоо мүмкүн болгон жок",
+      test_save_failed_desc: "Жыйынтык төмөндө көрүнөт, бирок профилде азырынча жок. Кайра аракет кылыңыз.",
+      test_save_retry: "Кайталоо",
+      test_err_rate: "Өтүнүчтөр өтө көп. Бир нече мүнөт күтүп, кайра аракет кылыңыз.",
+      test_err_ai: "ЖИ 3 аракеттен кийин да жооп бере алган жок.",
+      modal_error_generic: "Бир нерсе туура болбоду. Кайра аракет кылыңыз.",
+      modal_error_register: "Каттоо катасы",
+      modal_error_login: "Email же сырсөз туура эмес",
+      modal_close: "Жабуу",
+
+      uni_section_finance: "Каржы", uni_section_deadlines: "Мөөнөттөр",
+      uni_section_requirements: "Талаптар", uni_section_ratings: "Рейтингдер",
+      uni_section_majors: "Адистиктер", uni_section_extra: "Кошумча",
+      uni_field_tuition: "Окуу акысы", uni_field_admission: "Кабыл алуу пайызы",
+      uni_field_aid: "Каржылык жардам", uni_field_grant: "Толук грант",
+      uni_field_early_de
