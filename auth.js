@@ -53,21 +53,31 @@
   // КАПЧА (Turnstile): невидимая, окно «я не робот» появляется только при подозрении
   // ============================================================
 
-  let _tsLoading = null, _tsWidget = null, _tsWaiter = null;
+  // Капча работает в обычном режиме: виджет создаётся, как только открылось окно входа,
+  // и сам получает токен в фоне, пока человек вводит почту и пароль.
+  // Если капча не загрузилась (блокировщик, сеть) — запрос уходит без токена:
+  // пока капча не включена в Supabase, вход работает; если включена — Supabase сам откажет.
+  const _ts = { loading: null, id: null, token: null, waiters: [], interactive: false, log: [] };
+
+  function tsLog(ev) {
+    _ts.log.push(Math.round(performance.now() / 100) / 10 + "s " + ev);
+    if (_ts.log.length > 40) _ts.log.shift();
+    try { console.info("[EduPath captcha]", ev); } catch (e) {}
+  }
 
   function loadTurnstile() {
     if (!TURNSTILE_SITE_KEY) return Promise.resolve(null);
     if (window.turnstile) return Promise.resolve(window.turnstile);
-    if (_tsLoading) return _tsLoading;
-    _tsLoading = new Promise((resolve, reject) => {
+    if (_ts.loading) return _ts.loading;
+    _ts.loading = new Promise((resolve, reject) => {
       const sc = document.createElement("script");
       sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
       sc.async = true;
       sc.onload = () => resolve(window.turnstile);
-      sc.onerror = () => { _tsLoading = null; reject(new Error("captcha script")); };
+      sc.onerror = () => { _ts.loading = null; reject(new Error("script")); };
       document.head.appendChild(sc);
     });
-    return _tsLoading;
+    return _ts.loading;
   }
 
   // Язык окна капчи: kk/ky Turnstile не знает — показываем по-русски
@@ -76,53 +86,74 @@
     return ({ ru: "ru", en: "en", zh: "zh-cn", kk: "ru", ky: "ru" })[l] || "auto";
   }
 
-  function captchaError(code) {
-    const base = t("modal_captcha_fail", "Проверка «я не робот» не прошла. Обнови страницу.");
-    return new Error(code ? base + " (" + code + ")" : base);
+  function tsFlush(tok) {
+    const w = _ts.waiters; _ts.waiters = [];
+    w.forEach(f => f(tok));
   }
 
+  function initCaptcha() {
+    if (!TURNSTILE_SITE_KEY || _ts.id !== null) return;
+    const box = document.getElementById("edupathCaptcha");
+    if (!box) return;
+    loadTurnstile().then(ts => {
+      if (!ts || _ts.id !== null) return;
+      tsLog("script loaded");
+      try {
+        _ts.id = ts.render(box, {
+          sitekey: TURNSTILE_SITE_KEY,
+          appearance: "interaction-only",
+          language: captchaLang(),
+          retry: "auto",
+          "refresh-expired": "auto",
+          callback: tok => { tsLog("token ok"); _ts.token = tok; _ts.interactive = false; box.classList.remove("show"); tsFlush(tok); },
+          "error-callback": code => { tsLog("error " + code); return true; },
+          "expired-callback": () => { tsLog("token expired"); _ts.token = null; },
+          "timeout-callback": () => tsLog("interactive timeout"),
+          "unsupported-callback": () => { tsLog("browser unsupported"); tsFlush(null); },
+          // Cloudflare просит нажать «Я не робот» — показываем блок и прокручиваем к нему
+          "before-interactive-callback": () => {
+            tsLog("needs click");
+            _ts.interactive = true;
+            box.classList.add("show");
+            try { box.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+          },
+          "after-interactive-callback": () => tsLog("click done")
+        });
+        tsLog("rendered " + _ts.id);
+      } catch (e) {
+        tsLog("render failed: " + (e && e.message));
+      }
+    }).catch(() => tsLog("script blocked or failed"));
+  }
+
+  function consumeToken() {
+    _ts.token = null;
+    try { if (window.turnstile && _ts.id !== null) window.turnstile.reset(_ts.id); } catch (e) {}
+  }
+
+  // Ждёт токен до 15 с (или до 3 минут, если Cloudflare попросил нажать галочку).
+  // Никогда не блокирует вход навсегда: без токена возвращает null.
   async function getCaptchaToken() {
     if (!TURNSTILE_SITE_KEY) return null;
-    const ts = await loadTurnstile();
-    const box = document.getElementById("edupathCaptcha");
-    if (!ts || !box) return null;
-    return new Promise((resolve, reject) => {
-      // 30 с на невидимую проверку; если Cloudflare попросил нажать галочку — ждём человека до 3 минут
-      let timer = setTimeout(() => _tsWaiter && _tsWaiter.fail("timeout"), 30000);
-      _tsWaiter = {
-        ok: tok => { clearTimeout(timer); _tsWaiter = null; box.classList.remove("show"); resolve(tok); },
-        fail: code => { clearTimeout(timer); _tsWaiter = null; reject(captchaError(code)); },
-        interactive: () => { clearTimeout(timer); timer = setTimeout(() => _tsWaiter && _tsWaiter.fail("timeout"), 180000); }
+    initCaptcha();
+    if (_ts.token) { const tok = _ts.token; consumeToken(); return tok; }
+    const tok = await new Promise(resolve => {
+      _ts.waiters.push(resolve);
+      const start = Date.now();
+      const tick = () => {
+        if (_ts.waiters.indexOf(resolve) === -1) return;
+        if (Date.now() - start > (_ts.interactive ? 180000 : 15000)) {
+          _ts.waiters = _ts.waiters.filter(f => f !== resolve);
+          tsLog("no token — sending without it. Log: " + _ts.log.join(" | "));
+          resolve(null);
+        } else setTimeout(tick, 500);
       };
-      try {
-        if (_tsWidget === null) {
-          _tsWidget = ts.render(box, {
-            sitekey: TURNSTILE_SITE_KEY,
-            execution: "execute",
-            appearance: "interaction-only",
-            language: captchaLang(),
-            callback: tok => _tsWaiter && _tsWaiter.ok(tok),
-            "error-callback": code => { if (_tsWaiter) _tsWaiter.fail(code || "error"); return true; },
-            "timeout-callback": () => _tsWaiter && _tsWaiter.fail("timeout"),
-            "unsupported-callback": () => _tsWaiter && _tsWaiter.fail("unsupported"),
-            // Cloudflare просит нажать «Я не робот» — показываем блок и прокручиваем к нему
-            "before-interactive-callback": () => {
-              box.classList.add("show");
-              try { box.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
-              if (_tsWaiter) _tsWaiter.interactive();
-            },
-            "after-interactive-callback": () => {},
-            "expired-callback": () => {}
-          });
-        } else {
-          ts.reset(_tsWidget);
-        }
-        ts.execute(_tsWidget);
-      } catch (e) {
-        if (_tsWaiter) _tsWaiter.fail("render");
-      }
+      setTimeout(tick, 500);
     });
+    if (tok) consumeToken();
+    return tok;
   }
+
 
 
   // Лендинг = главная страница (index.html или корень сайта)
@@ -1154,6 +1185,7 @@
     modalMode = mode;
 
     const overlay = buildModal();
+    initCaptcha();   // капча начинает проверку в фоне, пока человек заполняет форму
     overlay.classList.add("open");
 
     const title       = overlay.querySelector(".edupath-modal-title");
@@ -1495,6 +1527,7 @@
     toggleQuote,
     localDateStr,
     getDeviceId,
+    captchaLog: () => _ts.log.slice(),
     getProfile,
     saveProfilePrefs,
     syncProfilePrefs,
