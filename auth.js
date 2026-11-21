@@ -17,7 +17,7 @@
   // Cloudflare Turnstile («я не робот»). Пусто = капча выключена.
   // Сюда вставляется Site Key из Cloudflare (он публичный, это не секрет).
   // ВАЖНО: сначала ключ на сайт, и только потом включать капчу в Supabase (см. INSTALL.md).
-  const TURNSTILE_SITE_KEY = "0x4AAAAAAGLst_cuHSX_PzUF";
+  const TURNSTILE_SITE_KEY = "0x4AAAAAAGMHlKH4YyzY4bk-";
 
   // ============================================================
   // МЕТКА УСТРОЙСТВА
