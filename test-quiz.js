@@ -279,7 +279,8 @@
     const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 150000);
     try {
       const res = await fetch(SEARCH_API + "/match", { method: "POST", signal: ctl.signal,
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + (token || "") }, body: JSON.stringify(body) });
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + (token || ""),
+          "X-Device-Id": (window.EduAuth && window.EduAuth.getDeviceId && window.EduAuth.getDeviceId()) || "" }, body: JSON.stringify(body) });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401 && !retried) return callMatch(body, true);
       if (!res.ok) { const e = new Error(data.error || "HTTP " + res.status); e.status = res.status; e.code = data.code || ""; throw e; }
