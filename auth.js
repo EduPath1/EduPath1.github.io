@@ -181,6 +181,109 @@
     window.location.href = "app.html";
   }
 
+
+  // ============================================================
+  // ТЕКСТЫ ДЛЯ ВОССТАНОВЛЕНИЯ ПАРОЛЯ И ПОДСКАЗОК (5 языков).
+  // Лежат здесь, а не в i18n.js: на главной странице i18n.js не подключён.
+  // ============================================================
+  const TX = {
+    ru: {
+      forgot_link: "Забыли пароль?",
+      forgot_title: "Восстановление пароля",
+      forgot_sub: "Введи почту — пришлём ссылку для нового пароля",
+      forgot_btn: "Отправить ссылку",
+      forgot_sent: "Если аккаунт с почтой {email} есть, мы отправили на неё ссылку. Письмо может прийти через минуту — проверь папку «Спам».",
+      back_q: "Вспомнил(а) пароль?",
+      back_btn: "Войти",
+      newpass_title: "Новый пароль",
+      newpass_sub: "Придумай новый пароль для своего аккаунта",
+      newpass_btn: "Сохранить пароль",
+      newpass_done: "Пароль изменён. Ты в аккаунте ✓",
+      pw_hint: "Минимум 8 символов, буквы и цифры",
+      spam_hint: "Письмо может прийти через минуту. Не видишь его — проверь папку «Спам».",
+      link_expired: "Ссылка устарела или уже использована. Запроси новую.",
+      need_email: "Введи почту"
+    },
+    en: {
+      forgot_link: "Forgot password?",
+      forgot_title: "Reset password",
+      forgot_sub: "Enter your email and we'll send you a link to set a new password",
+      forgot_btn: "Send link",
+      forgot_sent: "If an account with {email} exists, we've sent a link to it. It may take a minute — check your Spam folder too.",
+      back_q: "Remembered it?",
+      back_btn: "Sign in",
+      newpass_title: "New password",
+      newpass_sub: "Choose a new password for your account",
+      newpass_btn: "Save password",
+      newpass_done: "Password changed. You're signed in ✓",
+      pw_hint: "At least 8 characters, letters and numbers",
+      spam_hint: "The email may take a minute. Can't find it? Check your Spam folder.",
+      link_expired: "This link has expired or was already used. Request a new one.",
+      need_email: "Enter your email"
+    },
+    zh: {
+      forgot_link: "忘记密码？",
+      forgot_title: "找回密码",
+      forgot_sub: "输入邮箱，我们会发送设置新密码的链接",
+      forgot_btn: "发送链接",
+      forgot_sent: "如果 {email} 已注册，我们已向其发送链接。邮件可能需要一分钟，也请检查垃圾邮件文件夹。",
+      back_q: "想起密码了？",
+      back_btn: "登录",
+      newpass_title: "新密码",
+      newpass_sub: "为你的账号设置新密码",
+      newpass_btn: "保存密码",
+      newpass_done: "密码已修改，你已登录 ✓",
+      pw_hint: "至少 8 个字符，包含字母和数字",
+      spam_hint: "邮件可能需要一分钟。找不到？请检查垃圾邮件文件夹。",
+      link_expired: "链接已过期或已被使用，请重新申请。",
+      need_email: "请输入邮箱"
+    },
+    kk: {
+      forgot_link: "Құпия сөзді ұмыттың ба?",
+      forgot_title: "Құпия сөзді қалпына келтіру",
+      forgot_sub: "Поштаңды жаз — жаңа құпия сөз үшін сілтеме жібереміз",
+      forgot_btn: "Сілтеме жіберу",
+      forgot_sent: "Егер {email} поштасымен аккаунт болса, оған сілтеме жібердік. Хат бір минуттан кейін келуі мүмкін — «Спам» бумасын да тексер.",
+      back_q: "Есіңе түсті ме?",
+      back_btn: "Кіру",
+      newpass_title: "Жаңа құпия сөз",
+      newpass_sub: "Аккаунтыңа жаңа құпия сөз ойлап тап",
+      newpass_btn: "Құпия сөзді сақтау",
+      newpass_done: "Құпия сөз өзгертілді. Сен аккаунттасың ✓",
+      pw_hint: "Кемінде 8 таңба, әріптер мен сандар",
+      spam_hint: "Хат бір минуттан кейін келуі мүмкін. Көрмесең — «Спам» бумасын тексер.",
+      link_expired: "Сілтеме ескірген немесе қолданылған. Жаңасын сұра.",
+      need_email: "Поштаңды жаз"
+    },
+    ky: {
+      forgot_link: "Сырсөздү унуттуңбу?",
+      forgot_title: "Сырсөздү калыбына келтирүү",
+      forgot_sub: "Почтаңды жаз — жаңы сырсөз үчүн шилтеме жөнөтөбүз",
+      forgot_btn: "Шилтеме жөнөтүү",
+      forgot_sent: "Эгер {email} почтасы менен аккаунт болсо, ага шилтеме жөнөттүк. Кат бир мүнөттөн кийин келиши мүмкүн — «Спам» папкасын да текшер.",
+      back_q: "Эсиңе түштүбү?",
+      back_btn: "Кирүү",
+      newpass_title: "Жаңы сырсөз",
+      newpass_sub: "Аккаунтуңа жаңы сырсөз ойлоп тап",
+      newpass_btn: "Сырсөздү сактоо",
+      newpass_done: "Сырсөз өзгөртүлдү. Сен аккаунттасың ✓",
+      pw_hint: "Кеминде 8 белги, тамгалар жана сандар",
+      spam_hint: "Кат бир мүнөттөн кийин келиши мүмкүн. Көрбөсөң — «Спам» папкасын текшер.",
+      link_expired: "Шилтеме эскирген же колдонулган. Жаңысын сура.",
+      need_email: "Почтаңды жаз"
+    }
+  };
+
+  function uiLang() {
+    let l = null;
+    try { l = (window.I18N && window.I18N.getLang && window.I18N.getLang()) || localStorage.getItem("edupath_lang"); } catch (e) {}
+    return TX[l] ? l : "ru";
+  }
+
+  function tx(key) {
+    return (TX[uiLang()] || TX.ru)[key] || TX.ru[key] || key;
+  }
+
   function t(key, fallback) {
     const v = window.I18N && window.I18N.t(key);
     return (v && v !== key) ? v : (fallback || key);
@@ -296,7 +399,7 @@
     return _wakePromise;
   }
 
-  const NO_REFRESH_PATHS = ["/api/login", "/api/register", "/api/refresh", "/api/resend-confirmation"];
+  const NO_REFRESH_PATHS = ["/api/login", "/api/register", "/api/refresh", "/api/resend-confirmation", "/api/forgot"];
 
   let _refreshPromise = null;
   let _refreshTransientFail = false;
@@ -459,6 +562,9 @@
     if (password.length < 8) {
       return { ok: false, error: t("modal_password_short", "Пароль должен быть не короче 8 символов") };
     }
+    if (!/\d/.test(password) || !/\p{L}/u.test(password)) {
+      return { ok: false, error: tx("pw_hint") };
+    }
     if (!consent) {
       return { ok: false, error: t("modal_consent_need", "Отметь согласие, чтобы создать аккаунт") };
     }
@@ -471,6 +577,7 @@
       method: "POST",
       body: JSON.stringify({
         name, email, password, consent: true, captcha_token,
+        lang: uiLang(),   // на этом языке Supabase будет присылать письма
         // Ловушка: поле невидимо для людей, боты заполняют его сами
         website: ((document.getElementById("edupathWebsite") || {}).value || ""),
         // Сколько миллисекунд форма была открыта (боты отправляют мгновенно)
@@ -550,6 +657,29 @@
       return { ok: false, error: humanError(res, "modal_error_generic", "Что-то пошло не так") };
     }
 
+    return { ok: true };
+  }
+
+  async function requestPasswordReset(email) {
+    if (!email) return { ok: false, error: tx("need_email") };
+    const res = await apiFetchWithRetry("/api/forgot", {
+      method: "POST",
+      body: JSON.stringify({ email, website: ((document.getElementById("edupathWebsite") || {}).value || "") })
+    });
+    if (!res.ok) return { ok: false, error: humanError(res, "modal_error_generic", "Что-то пошло не так") };
+    return { ok: true };
+  }
+
+  async function updatePassword(password) {
+    if (!password || password.length < 8 || !/\d/.test(password) || !/\p{L}/u.test(password)) return { ok: false, error: tx("pw_hint") };
+    const res = await apiFetch("/api/update-password", {
+      method: "POST",
+      body: JSON.stringify({ password })
+    });
+    if (!res.ok) {
+      if (res.sessionExpired) return { ok: false, error: tx("link_expired") };
+      return { ok: false, error: humanError(res, "modal_error_generic", "Что-то пошло не так") };
+    }
     return { ok: true };
   }
 
@@ -1006,14 +1136,16 @@
             <input type="text" id="edupathName" data-i18n-placeholder="modal_name_ph" placeholder="Например, Айсана">
           </div>
 
-          <div class="edupath-field">
+          <div class="edupath-field" id="edupathEmailField">
             <label data-i18n="modal_email">Email</label>
             <input type="email" id="edupathEmail" placeholder="you@mail.com">
           </div>
 
-          <div class="edupath-field">
+          <div class="edupath-field" id="edupathPasswordField">
             <label data-i18n="modal_password">Пароль</label>
             <input type="password" id="edupathPassword" data-i18n-placeholder="modal_password_ph" placeholder="Минимум 8 символов" autocomplete="new-password">
+            <div class="edupath-hint" id="edupathPwHint"></div>
+            <button type="button" class="edupath-forgot" id="edupathForgotBtn"></button>
           </div>
 
           <!-- Ловушка для ботов: человек это поле не видит и не заполняет -->
@@ -1035,6 +1167,7 @@
         <div id="edupathConfirmBlock" style="display:none;">
           <div class="edupath-confirm-icon">📧</div>
           <p class="edupath-confirm-sub" id="edupathConfirmSub"></p>
+          <p class="edupath-hint edupath-hint-center" id="edupathSpamHint"></p>
           <button type="button" class="edupath-btn-submit" id="edupathResendBtn">Отправить письмо заново</button>
           <button type="button" class="edupath-btn-ghost" id="edupathOpenMailBtn">Открыть Gmail</button>
           <button type="button" class="edupath-btn-link" id="edupathAlreadyConfirmedBtn">Я подтвердил — войти</button>
@@ -1073,6 +1206,10 @@
         .edupath-consent { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 13px; line-height: 1.45; color: #5B4636; cursor: pointer; }
         .edupath-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #8C5A34; }
         /* Контейнер капчи НЕЛЬЗЯ прятать через display:none — иначе галочка «я не робот» не видна и проверка зависает */
+        .edupath-hint { font-size: 12.5px; line-height: 1.4; color: #7A6553; margin-top: 6px; }
+        .edupath-hint-center { text-align: center; margin: -4px 0 14px; }
+        .edupath-forgot { display: block; margin: 8px 0 0 auto; padding: 0; background: none !important; color: #8C5A34; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+        .edupath-sent { font-size: 14.5px; line-height: 1.55; color: #3D2A1C; background: #F7EFE1; border-radius: 10px; padding: 14px 16px; margin: 6px 0 4px; }
         .edupath-hp { position: absolute !important; left: -10000px !important; top: auto; width: 1px; height: 1px; overflow: hidden; }
         .edupath-captcha { display: flex; justify-content: center; margin: 0; min-height: 0; }
         .edupath-captcha.show { margin: 12px 0 4px; }
@@ -1248,6 +1385,7 @@
         "Мы отправили письмо на {email}. Открой Gmail и нажми на ссылку подтверждения."
       ).replace("{email}", "<b>" + (pendingEmail || "") + "</b>");
 
+      document.getElementById("edupathSpamHint").textContent = tx("spam_hint");
       document.getElementById("edupathResendBtn").textContent       = t("modal_confirm_resend", "Отправить письмо заново");
       document.getElementById("edupathOpenMailBtn").textContent     = t("modal_confirm_open_mail", "Открыть Gmail");
       document.getElementById("edupathAlreadyConfirmedBtn").textContent = t("modal_confirm_already", "Я подтвердил — войти");
@@ -1258,20 +1396,60 @@
     confirmBox.style.display = "none";
     switchWrap.style.display = "block";
 
+    const emailField = document.getElementById("edupathEmailField");
+    const passField  = document.getElementById("edupathPasswordField");
+    const pwHint     = document.getElementById("edupathPwHint");
+    const forgotBtn  = document.getElementById("edupathForgotBtn");
+    const consentFld = document.getElementById("edupathConsentField");
+    const sentEl     = document.getElementById("edupathSentMsg");
+    if (sentEl) sentEl.remove();
+
+    emailField.style.display = "block";
+    passField.style.display  = "block";
+    pwHint.textContent = tx("pw_hint");
+    forgotBtn.textContent = tx("forgot_link");
+
     if (mode === "register") {
       title.textContent = t("modal_hello", "Добро пожаловать");
       sub.textContent   = t("modal_hello_sub", "Создай аккаунт, чтобы сохранять университеты");
       nameField.style.display = "block";
-      document.getElementById("edupathConsentField").style.display = "flex";
+      consentFld.style.display = "flex";
+      pwHint.style.display = "block";
+      forgotBtn.style.display = "none";
       document.getElementById("edupathPassword").setAttribute("autocomplete", "new-password");
       submitBtn.textContent = t("modal_submit_register", "Создать аккаунт");
       switchText.textContent = t("modal_switch_register", "Уже есть аккаунт?");
       switchBtn.textContent  = t("modal_switch_register_btn", "Войти");
+    } else if (mode === "forgot") {
+      socialBlock.style.display = "none";
+      title.textContent = tx("forgot_title");
+      sub.textContent   = tx("forgot_sub");
+      nameField.style.display = "none";
+      consentFld.style.display = "none";
+      passField.style.display = "none";
+      submitBtn.textContent = tx("forgot_btn");
+      switchText.textContent = tx("back_q");
+      switchBtn.textContent  = tx("back_btn");
+    } else if (mode === "newpass") {
+      socialBlock.style.display = "none";
+      switchWrap.style.display = "none";
+      title.textContent = tx("newpass_title");
+      sub.textContent   = tx("newpass_sub");
+      nameField.style.display = "none";
+      consentFld.style.display = "none";
+      emailField.style.display = "none";
+      pwHint.style.display = "block";
+      forgotBtn.style.display = "none";
+      document.getElementById("edupathPassword").value = "";
+      document.getElementById("edupathPassword").setAttribute("autocomplete", "new-password");
+      submitBtn.textContent = tx("newpass_btn");
     } else {
       title.textContent = t("modal_welcome_back", "С возвращением");
       sub.textContent   = t("modal_welcome_back_sub", "Войди в свой аккаунт");
       nameField.style.display = "none";
-      document.getElementById("edupathConsentField").style.display = "none";
+      consentFld.style.display = "none";
+      pwHint.style.display = "none";
+      forgotBtn.style.display = "block";
       document.getElementById("edupathPassword").setAttribute("autocomplete", "current-password");
       submitBtn.textContent = t("modal_submit_login", "Войти");
       switchText.textContent = t("modal_switch_login", "Нет аккаунта?");
@@ -1281,7 +1459,7 @@
     setTimeout(() => {
       const firstInput = mode === "register"
         ? document.getElementById("edupathName")
-        : document.getElementById("edupathEmail");
+        : (mode === "newpass" ? document.getElementById("edupathPassword") : document.getElementById("edupathEmail"));
       if (firstInput) firstInput.focus();
     }, 250);
   }
@@ -1317,7 +1495,13 @@
     }
 
     if (e.target.id === "edupathSwitchBtn") {
-      openModal(modalMode === "register" ? "login" : "register");
+      openModal(modalMode === "login" ? "register" : "login");
+      return;
+    }
+
+    if (e.target.id === "edupathForgotBtn") {
+      e.preventDefault();
+      openModal("forgot");
       return;
     }
 
@@ -1380,8 +1564,13 @@
 
     let result;
 
-    if (modalMode === "register") {
+    const mode = modalMode;
+    if (mode === "register") {
       result = await register(name, email, password, document.getElementById("edupathConsent").checked);
+    } else if (mode === "forgot") {
+      result = await requestPasswordReset(email);
+    } else if (mode === "newpass") {
+      result = await updatePassword(password);
     } else {
       result = await login(email, password);
     }
@@ -1391,6 +1580,28 @@
 
     if (!result.ok) {
       errEl.textContent = result.error;
+      return;
+    }
+
+    if (mode === "forgot") {
+      // Показываем одинаковый ответ — существует аккаунт или нет
+      const form = document.getElementById("edupathAuthForm");
+      form.style.display = "none";
+      const msg = document.createElement("p");
+      msg.className = "edupath-sent";
+      msg.id = "edupathSentMsg";
+      msg.textContent = tx("forgot_sent").replace("{email}", email);
+      form.parentNode.insertBefore(msg, form);
+      return;
+    }
+
+    if (mode === "newpass") {
+      document.getElementById("edupathPassword").value = "";
+      closeModal();
+      showToast(tx("newpass_done"), "success");
+      updateHeaderUI();
+      if (_readyResolve) _readyResolve();
+      if (isLandingPage()) setTimeout(goToApp, 1200);
       return;
     }
 
@@ -1432,6 +1643,11 @@
       const desc = ep.get("error_description");
       if (ep.get("error") || desc) {
         history.replaceState(null, "", window.location.pathname);
+        if (ep.get("error_code") === "otp_expired") {
+          showToast(tx("link_expired"), "error");
+          setTimeout(() => openModal("forgot"), 300);
+          return true;
+        }
         showToast((desc || t("modal_error_generic", "Что-то пошло не так")).replace(/\+/g, " "), "error");
         return true;
       }
@@ -1457,6 +1673,12 @@
           }
           if (_readyResolve) _readyResolve();
         });
+
+        if (params.get("type") === "recovery") {
+          // Ссылка из письма «Сброс пароля»: человек уже вошёл, просим новый пароль
+          setTimeout(() => openModal("newpass"), 300);
+          return true;
+        }
 
         if (params.get("type") === "signup") {
           showToast(t("modal_after_confirm_title", "Почта подтверждена ✓"), "success");
