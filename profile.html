@@ -151,6 +151,33 @@
   .quote-mini .qx:hover{ transform:scale(1.08); }
   .quote-mini .qx svg{ width:17px; height:17px; }
 
+  /* ---------- Управление данными ---------- */
+  .data-list{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:10px; margin-bottom:16px; }
+  .data-opt{ display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--paper); border:1.5px solid var(--line); border-radius:12px; cursor:pointer; transition:border-color .2s, background .2s; font-size:14px; color:var(--text-main); }
+  .data-opt:hover{ border-color:var(--sand); }
+  .data-opt input{ width:18px; height:18px; accent-color:var(--clay); flex-shrink:0; margin:0; }
+  .data-opt:has(input:checked){ border-color:var(--clay); background:var(--cream); }
+  .btn-danger-soft, .btn-danger{ display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:10px; font-weight:600; font-size:14px; border:0; cursor:pointer; font-family:inherit; transition:transform .2s var(--ease), background .2s, opacity .2s; }
+  .btn-danger-soft{ background:var(--cream-deep); color:#9B2C1F; }
+  .btn-danger-soft:hover{ background:#F3D9CF; transform:translateY(-2px); }
+  .btn-danger{ background:#B3362A; color:#fff; }
+  .btn-danger:hover{ background:#962B20; transform:translateY(-2px); }
+  .btn-danger:disabled, .btn-danger-soft:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+  .danger-box{ margin-top:22px; padding:18px 20px; border:1.5px dashed rgba(179,54,42,.45); border-radius:14px; display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .danger-box h3{ margin:0 0 4px; font-size:16px; color:#9B2C1F; }
+  .danger-box p{ margin:0; font-size:13px; color:var(--text-muted); max-width:520px; line-height:1.5; }
+  .dm-overlay{ position:fixed; inset:0; background:rgba(43,27,16,.55); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:20px; z-index:9990; }
+  .dm-overlay[hidden]{ display:none; }
+  .dm{ background:var(--paper); border-radius:16px; max-width:440px; width:100%; padding:26px 24px 22px; box-shadow:0 20px 60px rgba(0,0,0,.25); max-height:92vh; overflow-y:auto; }
+  .dm h3{ margin:0 0 12px; font-size:20px; }
+  .dm ul{ margin:6px 0 12px; padding-left:20px; font-size:14px; line-height:1.6; }
+  .dm .dm-note{ font-size:12.5px; color:var(--text-muted); margin:0 0 14px; }
+  .dm label{ display:block; font-size:13px; margin-bottom:6px; color:var(--bark); }
+  .dm input[type=text]{ width:100%; box-sizing:border-box; padding:11px 12px; border:1.5px solid var(--line); border-radius:10px; font-size:15px; font-family:inherit; background:#fff; letter-spacing:.04em; }
+  .dm input[type=text]:focus{ outline:none; border-color:var(--clay); }
+  .dm .dm-err{ color:#B3362A; font-size:13px; min-height:18px; margin:8px 0 0; }
+  .dm .dm-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
+
   @media (max-width: 900px){
     .nav-links{ display:none !important; }
   }
@@ -534,6 +561,8 @@ async function renderProfile() {
       <p class="section-sub">${t("profile_quotes_sub", "Цитаты дня, которые ты отметил пером")}</p>
       <div id="quotesBox"><div class="empty-mini">${t("profile_loading", "Загрузка профиля")}…</div></div>
     </section>
+
+    ${renderDataControls()}
   `;
 
   const [summary, quoteIds, qdata] = await focusPromise;
@@ -635,6 +664,149 @@ window.addEventListener("edupath-lang-change", () => {
 });
 
 renderProfile();
+
+// ============================================================
+// УПРАВЛЕНИЕ ДАННЫМИ: удалить выбранное или аккаунт целиком
+// ============================================================
+
+const DATA_PARTS = [
+  ["saved",   "data_saved",   "Понравившиеся университеты"],
+  ["tests",   "data_tests",   "Результаты тестов"],
+  ["study",   "data_study",   "История таймеров и серия"],
+  ["quotes",  "data_quotes",  "Сохранённые цитаты"],
+  ["profile", "data_profile", "Данные профиля (гражданство, уровень обучения)"]
+];
+let pendingDelete = null;
+
+function renderDataControls() {
+  return `
+    <section class="section anim-item anim-delay-3" id="dataControls">
+      <h2 class="section-title">${t("data_title", "🗂 Управление данными")}</h2>
+      <p class="section-sub">${t("data_sub", "Отметь, что стереть. Всё остальное останется.")}</p>
+      <div class="data-list">
+        ${DATA_PARTS.map(([id, key, fb]) => `
+          <label class="data-opt"><input type="checkbox" data-del-part="${id}"><span>${t(key, fb)}</span></label>`).join("")}
+      </div>
+      <button type="button" class="btn-danger-soft" data-del-selected disabled>${t("data_delete_sel", "Удалить выбранное")}</button>
+
+      <div class="danger-box">
+        <div>
+          <h3>${t("data_account_title", "Удалить аккаунт целиком")}</h3>
+          <p>${t("data_account_sub", "Сотрётся всё: аккаунт, университеты, тесты, таймеры и цитаты. Вернуть будет нельзя.")}</p>
+        </div>
+        <button type="button" class="btn-danger" data-del-account>${t("data_account_btn", "Удалить аккаунт")}</button>
+      </div>
+    </section>
+
+    <div class="dm-overlay" id="delModal" hidden>
+      <div class="dm" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+        <h3 id="delTitle"></h3>
+        <div style="font-size:14px;">${t("data_confirm_will", "Будет удалено:")}</div>
+        <ul id="delList"></ul>
+        <p class="dm-note">${t("data_confirm_note", "Дневные лимиты ИИ-теста при удалении не обнуляются.")}</p>
+        <div id="delWordBox">
+          <label for="delWord" id="delWordLabel"></label>
+          <input type="text" id="delWord" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        </div>
+        <p class="dm-err" id="delErr"></p>
+        <div class="dm-actions">
+          <button type="button" class="btn-logout" data-del-cancel>${t("data_cancel", "Отмена")}</button>
+          <button type="button" class="btn-danger" data-del-confirm>${t("data_confirm_btn", "Удалить")}</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function confirmWord() { return t("data_confirm_word", "УДАЛИТЬ"); }
+
+function openDeleteModal(parts) {
+  pendingDelete = parts;
+  const acc = parts.indexOf("account") !== -1;
+  const modal = document.getElementById("delModal");
+  document.getElementById("delTitle").textContent = acc
+    ? t("data_confirm_title_acc", "Удалить аккаунт навсегда?")
+    : t("data_confirm_title_sel", "Удалить выбранное?");
+  const items = acc
+    ? [t("data_item_account", "Аккаунт и вход")].concat(DATA_PARTS.map(([, key, fb]) => t(key, fb)))
+    : DATA_PARTS.filter(([id]) => parts.indexOf(id) !== -1).map(([, key, fb]) => t(key, fb));
+  document.getElementById("delList").innerHTML = items.map(x => `<li>${escapeHtml(x)}</li>`).join("");
+  // слово-подтверждение нужно только для удаления аккаунта
+  document.getElementById("delWordBox").style.display = acc ? "block" : "none";
+  document.getElementById("delWordLabel").innerHTML = escapeHtml(t("data_confirm_type", "Чтобы подтвердить, впиши слово {word}")).replace("{word}", "<b>" + escapeHtml(confirmWord()) + "</b>");
+  document.getElementById("delWord").value = "";
+  document.getElementById("delErr").textContent = "";
+  document.querySelector("[data-del-confirm]").disabled = acc;
+  modal.hidden = false;
+  setTimeout(() => (acc ? document.getElementById("delWord") : document.querySelector("[data-del-cancel]")).focus(), 50);
+}
+
+function closeDeleteModal() {
+  const m = document.getElementById("delModal");
+  if (m) m.hidden = true;
+  pendingDelete = null;
+}
+
+async function runDelete() {
+  if (!pendingDelete) return;
+  const parts = pendingDelete.slice();
+  const acc = parts.indexOf("account") !== -1;
+  const word = document.getElementById("delWord").value.trim();
+  if (acc && word.toUpperCase() !== confirmWord().toUpperCase()) {
+    document.getElementById("delErr").textContent = t("data_confirm_wrong", "Слово не совпадает");
+    return;
+  }
+  const btn = document.querySelector("[data-del-confirm]");
+  const old = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = t("modal_wait", "Подождите...");
+  const res = await window.EduAuth.deleteMyData(parts, acc ? confirmWord() : "");
+  btn.textContent = old;
+  btn.disabled = false;
+  if (!res.ok) {
+    document.getElementById("delErr").textContent = res.error || t("modal_error_generic", "Что-то пошло не так");
+    return;
+  }
+  closeDeleteModal();
+  if (res.account) {
+    window.EduAuth.showToast(t("data_acc_done", "Аккаунт удалён. Нам жаль, что ты уходишь."), "info");
+    setTimeout(() => location.replace("index.html"), 1600);
+    return;
+  }
+  window.EduAuth.showToast(t("data_done", "Готово, выбранное удалено."), "success");
+  renderProfile();
+}
+
+document.addEventListener("change", (e) => {
+  if (!e.target.matches("[data-del-part]")) return;
+  const any = document.querySelectorAll("[data-del-part]:checked").length > 0;
+  const b = document.querySelector("[data-del-selected]");
+  if (b) b.disabled = !any;
+});
+
+document.addEventListener("input", (e) => {
+  if (e.target.id !== "delWord") return;
+  document.getElementById("delErr").textContent = "";
+  document.querySelector("[data-del-confirm]").disabled = e.target.value.trim().toUpperCase() !== confirmWord().toUpperCase();
+});
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-del-selected]")) {
+    const parts = Array.from(document.querySelectorAll("[data-del-part]:checked")).map(x => x.dataset.delPart);
+    if (!parts.length) { window.EduAuth.showToast(t("data_pick", "Отметь хотя бы один пункт"), "info"); return; }
+    openDeleteModal(parts);
+    return;
+  }
+  if (e.target.closest("[data-del-account]")) { openDeleteModal(["account"]); return; }
+  if (e.target.closest("[data-del-cancel]") || e.target.id === "delModal") { closeDeleteModal(); return; }
+  if (e.target.closest("[data-del-confirm]")) { runDelete(); return; }
+});
+
+document.addEventListener("keydown", (e) => {
+  const m = document.getElementById("delModal");
+  if (!m || m.hidden) return;
+  if (e.key === "Escape") closeDeleteModal();
+  if (e.key === "Enter" && e.target.id === "delWord" && !document.querySelector("[data-del-confirm]").disabled) runDelete();
+});
 </script>
 </body>
 </html>
