@@ -17,7 +17,10 @@
   // Cloudflare Turnstile («я не робот»). Пусто = капча выключена.
   // Сюда вставляется Site Key из Cloudflare (он публичный, это не секрет).
   // ВАЖНО: сначала ключ на сайт, и только потом включать капчу в Supabase (см. INSTALL.md).
-  const TURNSTILE_SITE_KEY = "0x4AAAAAAGMHlKH4YyzY4bk-";
+  // Капча выключена (2026-11-22): Cloudflare не пускал живых людей из Samsung Internet.
+  // Вместо неё: подтверждение почты + невидимая ловушка для ботов + проверка времени заполнения.
+  // Чтобы вернуть капчу — вставь ключ "0x4AAAAAAGMHlKH4YyzY4bk-" и включи CAPTCHA в Supabase.
+  const TURNSTILE_SITE_KEY = "";
 
   // ============================================================
   // МЕТКА УСТРОЙСТВА
@@ -157,6 +160,7 @@
     let why = "Проверка «я не робот» не загрузилась.";
     if (code.startsWith("1102")) why = "Капча не настроена для этого сайта (домен не добавлен в Cloudflare Turnstile).";
     else if (code.startsWith("1101") || code.startsWith("1100")) why = "Неверный ключ капчи (Site Key).";
+    else if (code.startsWith("300") || code.startsWith("600")) why = "Cloudflare не смог проверить этот браузер. Открой сайт в Chrome или войди через Discord.";
     else if (!window.turnstile) why = "Скрипт капчи Cloudflare заблокирован браузером или сетью. Отключи блокировщик рекламы / VPN.";
     throw new Error(why + (code ? " Код: " + code : "") + " Обнови страницу и попробуй ещё раз");
   }
@@ -446,6 +450,8 @@
   // AUTH: REGISTER / LOGIN / LOGOUT
   // ============================================================
 
+  let formOpenedAt = 0;
+
   async function register(name, email, password, consent) {
     if (!name || !email || !password) {
       return { ok: false, error: t("modal_fill_all", "Заполните все поля") };
@@ -463,7 +469,13 @@
 
     const res = await apiFetchWithRetry("/api/register", {
       method: "POST",
-      body: JSON.stringify({ name, email, password, consent: true, captcha_token })
+      body: JSON.stringify({
+        name, email, password, consent: true, captcha_token,
+        // Ловушка: поле невидимо для людей, боты заполняют его сами
+        website: ((document.getElementById("edupathWebsite") || {}).value || ""),
+        // Сколько миллисекунд форма была открыта (боты отправляют мгновенно)
+        form_ms: formOpenedAt ? Date.now() - formOpenedAt : null
+      })
     });
 
     if (!res.ok) {
@@ -1004,6 +1016,12 @@
             <input type="password" id="edupathPassword" data-i18n-placeholder="modal_password_ph" placeholder="Минимум 8 символов" autocomplete="new-password">
           </div>
 
+          <!-- Ловушка для ботов: человек это поле не видит и не заполняет -->
+          <div class="edupath-hp" aria-hidden="true">
+            <label for="edupathWebsite">Website</label>
+            <input type="text" id="edupathWebsite" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
           <label class="edupath-consent" id="edupathConsentField">
             <input type="checkbox" id="edupathConsent">
             <span data-i18n="modal_consent">Я согласен(на), что EduPath хранит мои данные, чтобы сайт работал</span>
@@ -1055,6 +1073,7 @@
         .edupath-consent { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 13px; line-height: 1.45; color: #5B4636; cursor: pointer; }
         .edupath-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #8C5A34; }
         /* Контейнер капчи НЕЛЬЗЯ прятать через display:none — иначе галочка «я не робот» не видна и проверка зависает */
+        .edupath-hp { position: absolute !important; left: -10000px !important; top: auto; width: 1px; height: 1px; overflow: hidden; }
         .edupath-captcha { display: flex; justify-content: center; margin: 0; min-height: 0; }
         .edupath-captcha.show { margin: 12px 0 4px; }
 
@@ -1192,6 +1211,7 @@
     modalMode = mode;
 
     const overlay = buildModal();
+    if (mode === "register" || mode === "login") formOpenedAt = Date.now();
     initCaptcha();   // капча начинает проверку в фоне, пока человек заполняет форму
     overlay.classList.add("open");
 
