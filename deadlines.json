@@ -1,0 +1,734 @@
+{
+ "updated": "2026-11-22",
+ "level": "bachelor",
+ "note": "Первый курс (бакалавриат), иностранные абитуриенты. Даты повторяются ежегодно; approx = ориентир, уточнить на сайте.",
+ "universities": {
+  "Massachusetts Institute of Technology": {
+   "url": "https://mitadmissions.org/apply/firstyear/deadlines-requirements/",
+   "d": [
+    {
+     "k": "ea",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-05"
+    }
+   ],
+   "aliases": [
+    "MIT"
+   ]
+  },
+  "Stanford University": {
+   "url": "https://admission.stanford.edu/apply/",
+   "d": [
+    {
+     "k": "rea",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-05"
+    }
+   ],
+   "aliases": [
+    "Stanford"
+   ]
+  },
+  "Harvard University": {
+   "url": "https://college.harvard.edu/admissions/apply",
+   "d": [
+    {
+     "k": "rea",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-01"
+    }
+   ],
+   "aliases": [
+    "Harvard",
+    "Harvard College"
+   ]
+  },
+  "California Institute of Technology": {
+   "url": "https://admissions.caltech.edu/apply/first-year-applicants/deadlines",
+   "d": [
+    {
+     "k": "rea",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-05"
+    }
+   ],
+   "aliases": [
+    "Caltech"
+   ]
+  },
+  "University of California, Berkeley": {
+   "url": "https://admission.universityofcalifornia.edu/how-to-apply/applying-as-a-first-year/dates-and-deadlines.html",
+   "d": [
+    {
+     "k": "uc",
+     "md": "11-30"
+    }
+   ],
+   "aliases": [
+    "UC Berkeley",
+    "Berkeley",
+    "University of California Berkeley"
+   ]
+  },
+  "Princeton University": {
+   "url": "https://admission.princeton.edu/apply",
+   "d": [
+    {
+     "k": "scea",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-01"
+    }
+   ],
+   "aliases": [
+    "Princeton"
+   ]
+  },
+  "Yale University": {
+   "url": "https://admissions.yale.edu/application-deadlines",
+   "d": [
+    {
+     "k": "scea",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-02"
+    }
+   ],
+   "aliases": [
+    "Yale"
+   ]
+  },
+  "Columbia University": {
+   "url": "https://undergrad.admissions.columbia.edu/apply",
+   "d": [
+    {
+     "k": "ed",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-01"
+    }
+   ],
+   "aliases": [
+    "Columbia",
+    "Columbia University in the City of New York"
+   ]
+  },
+  "University of Chicago": {
+   "url": "https://collegeadmissions.uchicago.edu/apply/first-year-applicants",
+   "d": [
+    {
+     "k": "ea",
+     "md": "11-01",
+     "date": "2026-11-02"
+    },
+    {
+     "k": "rd",
+     "md": "01-05",
+     "date": "2027-01-04"
+    }
+   ],
+   "aliases": [
+    "UChicago"
+   ]
+  },
+  "University of Pennsylvania": {
+   "url": "https://admissions.upenn.edu/how-to-apply",
+   "d": [
+    {
+     "k": "ed",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-05"
+    }
+   ],
+   "aliases": [
+    "UPenn",
+    "Penn"
+   ]
+  },
+  "Cornell University": {
+   "url": "https://admissions.cornell.edu/how-to-apply/first-year-applicants",
+   "d": [
+    {
+     "k": "ed",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-02"
+    }
+   ],
+   "aliases": [
+    "Cornell"
+   ]
+  },
+  "Johns Hopkins University": {
+   "url": "https://apply.jhu.edu/apply/process/",
+   "d": [
+    {
+     "k": "ed",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-02"
+    }
+   ],
+   "aliases": [
+    "JHU",
+    "Johns Hopkins"
+   ]
+  },
+  "Carnegie Mellon University": {
+   "url": "https://www.cmu.edu/admission/admission/application-plans-deadlines",
+   "d": [
+    {
+     "k": "ed",
+     "md": "11-03"
+    },
+    {
+     "k": "rd",
+     "md": "01-05"
+    }
+   ],
+   "aliases": [
+    "CMU",
+    "Carnegie Mellon"
+   ]
+  },
+  "University of Oxford": {
+   "url": "https://www.ox.ac.uk/admissions/undergraduate/applying-to-oxford",
+   "d": [
+    {
+     "k": "oxbridge",
+     "md": "10-15"
+    }
+   ],
+   "aliases": [
+    "Oxford"
+   ]
+  },
+  "University of Cambridge": {
+   "url": "https://www.undergraduate.study.cam.ac.uk/applying",
+   "d": [
+    {
+     "k": "oxbridge",
+     "md": "10-15"
+    }
+   ],
+   "aliases": [
+    "Cambridge"
+   ]
+  },
+  "Imperial College London": {
+   "url": "https://www.imperial.ac.uk/study/apply/undergraduate/process/deadlines/",
+   "d": [
+    {
+     "k": "ucas",
+     "md": "01-13",
+     "date": "2027-01-13"
+    }
+   ],
+   "aliases": [
+    "Imperial College",
+    "Imperial"
+   ]
+  },
+  "University College London": {
+   "url": "https://www.ucl.ac.uk/prospective-students/undergraduate/application-and-offer/applying",
+   "d": [
+    {
+     "k": "ucas",
+     "md": "01-13",
+     "date": "2027-01-13"
+    }
+   ],
+   "aliases": [
+    "UCL"
+   ]
+  },
+  "London School of Economics and Political Science": {
+   "url": "https://www.lse.ac.uk/study-at-lse/undergraduate/how-to-apply",
+   "d": [
+    {
+     "k": "ucas",
+     "md": "01-13",
+     "date": "2027-01-13"
+    }
+   ],
+   "aliases": [
+    "LSE",
+    "London School of Economics"
+   ]
+  },
+  "King's College London": {
+   "url": "https://www.kcl.ac.uk/study/undergraduate/how-to-apply",
+   "d": [
+    {
+     "k": "ucas",
+     "md": "01-13",
+     "date": "2027-01-13"
+    }
+   ],
+   "aliases": [
+    "KCL",
+    "Kings College London"
+   ]
+  },
+  "University of Edinburgh": {
+   "url": "https://study.ed.ac.uk/undergraduate/applying/making-an-application/when-to-apply",
+   "d": [
+    {
+     "k": "ucas",
+     "md": "01-13",
+     "date": "2027-01-13"
+    }
+   ],
+   "aliases": [
+    "Edinburgh"
+   ]
+  },
+  "University of Manchester": {
+   "url": "https://www.manchester.ac.uk/study/undergraduate/applications/",
+   "d": [
+    {
+     "k": "ucas",
+     "md": "01-13",
+     "date": "2027-01-13"
+    }
+   ],
+   "aliases": [
+    "Manchester"
+   ]
+  },
+  "ETH Zurich": {
+   "url": "https://ethz.ch/en/studies/registration-application/bachelor/other-certificates/application.html",
+   "d": [
+    {
+     "k": "main",
+     "md": "03-31"
+    }
+   ],
+   "aliases": [
+    "ETH Zürich",
+    "Swiss Federal Institute of Technology Zurich",
+    "ETH"
+   ]
+  },
+  "École Polytechnique Fédérale de Lausanne": {
+   "url": "https://www.epfl.ch/education/admission/bachelor-admission-criteria-and-application/how-to-apply/",
+   "d": [
+    {
+     "k": "main",
+     "md": "04-30"
+    }
+   ],
+   "aliases": [
+    "EPFL",
+    "Ecole Polytechnique Federale de Lausanne",
+    "Swiss Federal Institute of Technology Lausanne"
+   ]
+  },
+  "Technical University of Munich": {
+   "url": "https://www.tum.de/en/studies/application/bachelor/application-bachelor",
+   "d": [
+    {
+     "k": "main",
+     "md": "07-15"
+    }
+   ],
+   "aliases": [
+    "TUM",
+    "Technische Universität München",
+    "TU Munich"
+   ]
+  },
+  "Ludwig-Maximilians-Universität München": {
+   "url": "https://www.lmu.de/en/study/degree-students/applications-for-admission/",
+   "d": [
+    {
+     "k": "main",
+     "md": "07-15"
+    }
+   ],
+   "aliases": [
+    "LMU Munich",
+    "LMU",
+    "Ludwig Maximilian University of Munich"
+   ]
+  },
+  "Heidelberg University": {
+   "url": "https://www.uni-heidelberg.de/en/study/management-of-studies/key-dates-deadlines/application-deadlines",
+   "d": [
+    {
+     "k": "main",
+     "md": "07-15"
+    }
+   ],
+   "aliases": [
+    "Universität Heidelberg",
+    "Ruprecht-Karls-Universität Heidelberg",
+    "University of Heidelberg"
+   ]
+  },
+  "Delft University of Technology": {
+   "url": "https://www.tudelft.nl/en/education/admission-and-application/bsc-international-diploma/application-procedure",
+   "d": [
+    {
+     "k": "nf",
+     "md": "01-15"
+    },
+    {
+     "k": "main",
+     "md": "04-01"
+    }
+   ],
+   "aliases": [
+    "TU Delft",
+    "Delft"
+   ]
+  },
+  "University of Amsterdam": {
+   "url": "https://www.uva.nl/en/education/admissions/bachelors/applying-for-a-degree-programme.html",
+   "d": [
+    {
+     "k": "nf",
+     "md": "01-15"
+    },
+    {
+     "k": "visa",
+     "md": "04-01"
+    }
+   ],
+   "aliases": [
+    "UvA",
+    "Universiteit van Amsterdam"
+   ]
+  },
+  "KU Leuven": {
+   "url": "https://feb.kuleuven.be/eng/prospective-students/",
+   "d": [
+    {
+     "k": "main",
+     "md": "03-01"
+    }
+   ],
+   "aliases": [
+    "Katholieke Universiteit Leuven"
+   ]
+  },
+  "University of Copenhagen": {
+   "url": "https://studies.ku.dk/bachelor/admission-requirements/non-eu-eea",
+   "d": [
+    {
+     "k": "main",
+     "md": "03-15"
+    }
+   ],
+   "aliases": [
+    "Københavns Universitet",
+    "UCPH"
+   ]
+  },
+  "KTH Royal Institute of Technology": {
+   "url": "https://www.kth.se/en/studies/bachelor/how-to-apply-1.450312",
+   "d": [
+    {
+     "k": "main",
+     "md": "01-15"
+    }
+   ],
+   "aliases": [
+    "KTH"
+   ]
+  },
+  "Politecnico di Milano": {
+   "url": "https://www.polimi.it/en/prospective-students/how-to-apply/admission-to-laurea-programmes/students-with-a-foreign-degree",
+   "d": [],
+   "aliases": [
+    "PoliMi",
+    "Polytechnic University of Milan"
+   ]
+  },
+  "National University of Singapore": {
+   "url": "https://www.nus.edu.sg/oam/admissions/international-qualifications-for-foreigners",
+   "d": [
+    {
+     "k": "main",
+     "md": "02-23"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "NUS"
+   ]
+  },
+  "Nanyang Technological University": {
+   "url": "https://www.ntu.edu.sg/admissions/undergraduate/important-dates",
+   "d": [
+    {
+     "k": "main",
+     "md": "01-20"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "NTU",
+    "NTU Singapore"
+   ]
+  },
+  "Tsinghua University": {
+   "url": "https://international.join-tsinghua.edu.cn/Admission1/Schedule.htm",
+   "d": [
+    {
+     "k": "round1",
+     "md": "11-20"
+    },
+    {
+     "k": "round2",
+     "md": "02-28"
+    }
+   ],
+   "aliases": [
+    "Tsinghua"
+   ]
+  },
+  "Peking University": {
+   "url": "https://isd.pku.edu.cn/en/",
+   "d": [
+    {
+     "k": "main",
+     "md": "02-28"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "PKU",
+    "Peking"
+   ]
+  },
+  "University of Tokyo": {
+   "url": "https://design.adm.u-tokyo.ac.jp/",
+   "d": [
+    {
+     "k": "main",
+     "md": "11-05"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "UTokyo",
+    "The University of Tokyo",
+    "Todai"
+   ]
+  },
+  "Kyoto University": {
+   "url": "https://www.iup.kyoto-u.ac.jp/apply/",
+   "d": [
+    {
+     "k": "main",
+     "md": "12-03",
+     "date": "2026-12-03"
+    }
+   ],
+   "aliases": [
+    "Kyoto iUP"
+   ]
+  },
+  "Korea Advanced Institute of Science and Technology": {
+   "url": "https://admission.kaist.ac.kr/intl-undergraduate/application",
+   "d": [
+    {
+     "k": "early",
+     "md": "10-22"
+    },
+    {
+     "k": "regular",
+     "md": "01-14"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "KAIST"
+   ]
+  },
+  "Seoul National University": {
+   "url": "https://admission.snu.ac.kr/",
+   "d": [
+    {
+     "k": "spring",
+     "md": "07-09"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "SNU"
+   ]
+  },
+  "University of Hong Kong": {
+   "url": "https://admissions.hku.hk/apply/international-qualifications",
+   "d": [
+    {
+     "k": "round1",
+     "md": "11-25"
+    }
+   ],
+   "aliases": [
+    "HKU",
+    "The University of Hong Kong"
+   ]
+  },
+  "Hong Kong University of Science and Technology": {
+   "url": "https://join.hkust.edu.hk/admissions/international-qualifications",
+   "d": [
+    {
+     "k": "main",
+     "md": "01-08"
+    },
+    {
+     "k": "final",
+     "md": "06-30",
+     "date": "2027-06-30"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "HKUST",
+    "The Hong Kong University of Science and Technology"
+   ]
+  },
+  "University of Toronto": {
+   "url": "https://future.utoronto.ca/apply/important-application-dates",
+   "d": [
+    {
+     "k": "early",
+     "md": "11-07"
+    },
+    {
+     "k": "main",
+     "md": "01-15"
+    }
+   ],
+   "aliases": [
+    "U of T",
+    "UofT",
+    "Toronto"
+   ]
+  },
+  "McGill University": {
+   "url": "https://www.mcgill.ca/undergraduate-admissions/apply",
+   "d": [
+    {
+     "k": "main",
+     "md": "01-15"
+    }
+   ],
+   "aliases": [
+    "McGill"
+   ]
+  },
+  "University of British Columbia": {
+   "url": "https://you.ubc.ca/applying-ubc/applications/dates-deadlines/",
+   "d": [
+    {
+     "k": "main",
+     "md": "01-15"
+    }
+   ],
+   "aliases": [
+    "UBC"
+   ]
+  },
+  "University of Melbourne": {
+   "url": "https://study.unimelb.edu.au/how-to-apply/undergraduate-study/international-applications/entry-requirements/important-dates",
+   "d": [
+    {
+     "k": "s1",
+     "md": "11-30"
+    },
+    {
+     "k": "s2",
+     "md": "05-31"
+    }
+   ],
+   "aliases": [
+    "Melbourne",
+    "The University of Melbourne"
+   ]
+  },
+  "University of Sydney": {
+   "url": "https://www.sydney.edu.au/study/admissions/apply/admissions-timeline.html",
+   "d": [
+    {
+     "k": "s1",
+     "md": "12-01"
+    }
+   ],
+   "aliases": [
+    "USyd",
+    "The University of Sydney"
+   ]
+  },
+  "Australian National University": {
+   "url": "https://study.anu.edu.au/apply/international-applications",
+   "d": [
+    {
+     "k": "s1",
+     "md": "12-15"
+    }
+   ],
+   "aliases": [
+    "ANU",
+    "The Australian National University"
+   ]
+  },
+  "Nazarbayev University": {
+   "url": "https://nu.edu.kz/admissions/announcements/",
+   "d": [
+    {
+     "k": "main",
+     "md": "02-10"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "NU",
+    "Назарбаев Университет"
+   ]
+  },
+  "Middle East Technical University": {
+   "url": "https://iso.metu.edu.tr/en/node/46",
+   "d": [
+    {
+     "k": "main",
+     "md": "07-12"
+    }
+   ],
+   "approx": true,
+   "aliases": [
+    "METU",
+    "ODTÜ"
+   ]
+  }
+ }
+}

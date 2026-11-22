@@ -11,120 +11,137 @@
 <style>
   :root{
     --cream:#FFFFFF; --cream-deep:#F3F4F6; --paper:#FFFFFF;
-    --espresso:#0A0A0B; --bark:#0A0A0B; --clay:#1F4FE0;
-    --caramel:#1F4FE0; --sand:#D9DBE0;
-    --text-main:#0A0A0B; --text-muted:#5F636B;
-    --line:rgba(10,10,11,0.14);
+    --espresso:#0A0A0B; --bark:#0A0A0B; --clay:#1F4FE0; --caramel:#1F4FE0; --sand:#D9DBE0;
+    --text-main:#0A0A0B; --text-muted:#5F636B; --line:#E6E8EC; --blue-soft:#D9E2FB; --blue-mid:#8FA8F0;
     --ease:cubic-bezier(0.22, 1, 0.36, 1);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
-  body{ font-family:'Inter', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:'Inter Tight', serif; font-weight:600; letter-spacing:-0.01em; }
+  body{ font-family:'Inter', sans-serif; background:#fff; color:var(--text-main); line-height:1.45; min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Inter Tight', sans-serif; letter-spacing:-0.02em; }
   a{ text-decoration:none; color:inherit; }
-  button{ font-family:inherit; cursor:pointer; border:none; background:none; }
-
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
   @keyframes pulse { 0%,80%,100%{ opacity:0.3; transform:scale(0.8);} 40%{ opacity:1; transform:scale(1.1);} }
 
-  header{ background:var(--paper); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; max-width:1200px; margin:0 auto; padding:0 32px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Inter Tight', serif; font-weight:600; font-size:26px; color:var(--espresso); transition:transform .3s var(--ease); }
-  .logo:hover{ transform: scale(1.02); }
-  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
-  .logo:hover svg{ transform: rotate(90deg); }
-  .nav-links{ display:flex; align-items:center; gap:8px; }
-  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .25s var(--ease), color .25s var(--ease); }
-  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
-  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
-  .nav-right{ display:flex; align-items:center; gap:14px; }
-  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .25s var(--ease), transform .25s var(--ease); }
-  .btn-login:hover{ background:var(--bark); transform: translateY(-1px); }
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .2s var(--ease), color .2s var(--ease); }
-  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
-
-  .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(10,10,11,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
-  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; transition:background .15s; }
-  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
-  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
-
-  main{ max-width:1000px; margin:0 auto; padding:48px 32px 96px; }
-
-  /* Исправленная загрузка: занимает всю доступную высоту и центрирует текст */
-  .loading { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    min-height: calc(100vh - 200px); 
-    color: var(--text-muted); 
-    font-size: 15px; 
-  }
-  .loading-inner { display: flex; align-items: center; gap: 8px; }
-  .loading-dots{ display:inline-flex; gap:6px; vertical-align:middle; }
+  .loading{ display:flex; align-items:center; justify-content:center; min-height:calc(100vh - 200px); color:var(--text-muted); font-size:15px; gap:8px; }
+  .loading-dots{ display:inline-flex; gap:6px; }
   .loading-dot{ width:8px; height:8px; border-radius:50%; background:var(--clay); animation:pulse 1.4s ease-in-out infinite; }
-  .loading-dot:nth-child(2){ animation-delay: 0.2s; }
-  .loading-dot:nth-child(3){ animation-delay: 0.4s; }
-
-  .auth-required{ text-align:center; padding:80px 20px; background:var(--paper); border-radius:24px; border:1px solid var(--line); animation: fadeUp .6s var(--ease) both; }
-  .auth-required svg{ width:60px; height:60px; color:var(--clay); margin-bottom:20px; }
+  .loading-dot:nth-child(2){ animation-delay:.2s; } .loading-dot:nth-child(3){ animation-delay:.4s; }
+  .auth-required{ text-align:center; padding:80px 20px; max-width:560px; margin:60px auto; border:1px solid var(--line); border-radius:24px; }
   .auth-required h2{ font-size:28px; margin-bottom:12px; }
-  .auth-required p{ font-size:15px; color:var(--text-muted); margin-bottom:28px; max-width:400px; margin-left:auto; margin-right:auto; }
-  .btn-primary{ display:inline-flex; align-items:center; gap:10px; background:var(--espresso); color:var(--paper); padding:15px 30px; border-radius:10px; font-size:15px; font-weight:500; transition:background .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease); }
-  .btn-primary:hover{ background:var(--bark); transform:translateY(-3px); box-shadow: 0 8px 20px -10px rgba(10,10,11,0.4); }
+  .auth-required p{ color:var(--text-muted); margin-bottom:24px; }
 
-  .profile-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:20px; }
-  .profile-greeting h1{ font-size:38px; color:var(--espresso); margin-bottom:6px; }
-  .profile-greeting h1 em{ font-style:italic; color:var(--clay); }
-  .profile-email{ font-size:14px; color:var(--text-muted); }
-  .btn-logout{ display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:10px; background:var(--cream-deep); color:var(--espresso); font-size:14px; font-weight:500; transition:background .25s var(--ease), transform .25s var(--ease); }
-  .btn-logout:hover{ background:var(--sand); transform: translateY(-2px); }
-  .btn-logout svg{ transition: transform .2s var(--ease); }
-  .btn-logout:hover svg{ transform: translateX(2px); }
+  /* ---------- каркас: панель слева + содержимое ---------- */
+  .pf{ display:grid; grid-template-columns:268px minmax(0,1fr); min-height:calc(100vh - 72px); background:linear-gradient(90deg,#0A0A0B 268px,#fff 268px); }
+  .pf-side{ background:var(--espresso); color:#fff; padding:24px 18px; display:flex; flex-direction:column; gap:20px; position:sticky; top:0; height:100vh; overflow-y:auto; }
+  .pf-me{ display:flex; gap:12px; align-items:center; padding:14px; border-radius:16px; background:#17171A; }
+  .ava{ width:48px; height:48px; border-radius:50%; background:var(--clay); color:#fff; display:grid; place-items:center; font:700 20px 'Inter Tight',sans-serif; flex:none; }
+  .pf-me b{ display:block; font-size:16px; } .pf-me small{ color:#9EA3AC; font-size:12px; word-break:break-all; }
+  .pf-nav{ display:flex; flex-direction:column; gap:4px; }
+  .pf-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; color:#C9CCD2; font-weight:500; font-size:14px; transition:background .2s; }
+  .pf-nav a:hover{ background:#1C1C20; color:#fff; }
+  .pf-nav a svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; flex:none; }
+  .pf-nav a em{ margin-left:auto; font-style:normal; font-size:12px; background:#24242A; color:#fff; border-radius:999px; padding:1px 8px; }
+  .pf-nav a.on{ background:var(--clay); color:#fff; } .pf-nav a.on em{ background:rgba(255,255,255,.22); }
+  .pf-mini{ margin-top:auto; padding:16px; border-radius:16px; background:#17171A; }
+  .pf-mini small{ color:#9EA3AC; font-size:12px; display:block; }
+  .pf-mini b{ display:block; font-size:15px; margin:4px 0; }
+  .pf-mini .bar{ height:8px; border-radius:9px; background:#2A2A30; margin:10px 0 4px; overflow:hidden; } .pf-mini .bar i{ display:block; height:100%; background:var(--clay); border-radius:9px; }
+  .pf-out{ color:#9EA3AC; font-size:13px; display:flex; gap:8px; align-items:center; padding:4px 2px; }
+  .pf-out:hover{ color:#fff; }
 
-  .section{ margin-bottom:48px; }
-  .section-title{ font-family:'Inter Tight', serif; font-size:24px; color:var(--espresso); margin-bottom:8px; display:flex; align-items:center; gap:12px; }
-  .section-sub{ font-size:14px; color:var(--text-muted); margin-bottom:20px; }
+  .pf-main{ padding:28px 36px 64px; display:flex; flex-direction:column; gap:22px; min-width:0; max-width:1240px; }
+  .anchor{ scroll-margin-top:80px; }
 
-  .empty-state{ background:var(--paper); border:1px dashed var(--line); border-radius:16px; padding:40px 24px; text-align:center; font-size:14px; color:var(--text-muted); line-height:1.6; transition: border-color .3s var(--ease); }
-  .empty-state:hover{ border-color: var(--sand); }
-  .empty-state a{ color:var(--clay); text-decoration:underline; font-weight:500; transition: color .2s; }
-  .empty-state a:hover{ color: var(--espresso); }
+  /* баннер */
+  .hero{ position:relative; border-radius:24px; overflow:hidden; color:#fff; min-height:270px; display:flex; align-items:flex-end; background:#000; }
+  .hero > img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(1) brightness(.8); }
+  .hero::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(10,10,11,.92) 0%,rgba(10,10,11,.55) 55%,rgba(10,10,11,.15) 100%); }
+  .hero-in{ position:relative; z-index:1; padding:30px 32px; width:100%; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; }
+  .pill{ display:inline-block; background:var(--clay); color:#fff; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:6px 11px; border-radius:999px; }
+  .hero h1{ font-size:44px; line-height:1.05; margin:14px 0 8px; }
+  .hero p{ color:#D5D8DE; max-width:460px; }
+  .hero-me{ display:none; gap:12px; align-items:center; margin-bottom:16px; } .hero-me small{ color:#C9CCD2; font-size:12px; }
+  .next{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-radius:18px; padding:16px 18px; width:310px; flex:none; }
+  .next small{ color:#C9CCD2; font-size:12px; } .next b{ display:block; font-size:17px; margin:4px 0 2px; }
+  .count{ display:flex; gap:6px; margin:12px 0 14px; } .count span{ flex:1; background:rgba(255,255,255,.12); border-radius:10px; text-align:center; padding:6px 0; font-size:11px; color:#C9CCD2; } .count span b{ font-size:20px; color:#fff; margin:0; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--clay); color:#fff; border-radius:12px; padding:12px 18px; font-weight:600; font-size:14px; transition:background .2s, transform .2s; }
+  .btn:hover{ background:#3A66F0; transform:translateY(-1px); }
+  .btn.ghost{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.35); }
+  .btn.light{ background:#fff; color:var(--clay); }
+  .btn.gray{ background:var(--cream-deep); color:var(--espresso); } .btn.gray:hover{ background:var(--sand); }
+  .btn.w{ width:100%; }
 
-  .saved-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; }
-  .saved-card{ background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; cursor:pointer; transition:transform .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease); }
-  .saved-card:hover{ transform:translateY(-3px); border-color:var(--sand); box-shadow:0 12px 24px -14px rgba(10,10,11,0.25); }
-  .saved-info{ flex:1; min-width:0; }
-  .saved-name{ font-weight:600; font-size:16px; color:var(--espresso); margin-bottom:4px; }
-  .saved-location{ font-size:13px; color:var(--text-muted); }
-  .saved-remove{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-muted); background:transparent; transition:background .2s, color .2s; flex-shrink:0; }
-  .saved-remove:hover{ background:var(--cream); color:#B84A3A; transform: scale(1.1); }
+  /* вкладки на телефоне */
+  .tabs{ display:none; gap:8px; overflow-x:auto; scrollbar-width:none; position:sticky; top:0; z-index:5; background:#fff; padding:10px 16px; margin:0 -16px; }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tabs a{ padding:9px 14px; border-radius:999px; border:1px solid var(--line); font-size:13px; font-weight:600; white-space:nowrap; }
+  .tabs a.on{ background:var(--espresso); color:#fff; border-color:var(--espresso); }
 
-  .test-block{ background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:32px; margin-bottom:16px; transition:box-shadow .3s var(--ease), border-color .3s var(--ease); }
-  .test-block:hover{ border-color:var(--sand); box-shadow:0 12px 32px -18px rgba(10,10,11,0.25); }
-  .test-current{ border-color:var(--caramel); border-width:1.5px; }
-  .test-header{ display:flex; align-items:center; justify-content:space-between; gap:16px; cursor:pointer; user-select:none; }
-  .test-header-left{ display:flex; flex-direction:column; gap:4px; }
-  .test-date{ font-family:'Inter Tight', serif; font-size:18px; color:var(--espresso); font-weight:600; }
-  .test-summary-line{ font-size:13px; color:var(--text-muted); }
-  .test-toggle{ font-size:20px; color:var(--text-muted); transition:transform .4s var(--ease); flex-shrink:0; }
-  .test-block.open .test-toggle{ transform:rotate(180deg); }
-  .test-body{ max-height:0; overflow:hidden; opacity:0; transition:max-height .6s var(--ease), opacity .4s var(--ease), padding .4s var(--ease); }
-  .test-block.open .test-body{ max-height:8000px; opacity:1; padding-top:24px; }
+  /* цифры */
+  .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .stat{ border:1px solid var(--line); border-radius:18px; padding:16px 18px; display:flex; flex-direction:column; gap:4px; }
+  .stat small{ color:var(--text-muted); font-size:13px; } .stat .num{ font:700 32px 'Inter Tight',sans-serif; letter-spacing:-.02em; }
+  .stat.k{ background:var(--espresso); color:#fff; border-color:var(--espresso); } .stat.k small{ color:#9EA3AC; }
+  .spark{ display:flex; gap:5px; align-items:flex-end; height:30px; margin-top:auto; } .spark i{ flex:1; background:var(--clay); border-radius:4px; min-height:3px; } .spark i.z{ background:var(--line); }
+  .flames{ display:flex; gap:5px; margin-top:auto; } .flames i{ width:18px; height:18px; border-radius:6px; background:var(--clay); } .flames i.o{ background:var(--line); }
 
-  .category-mini{ margin-bottom:24px; }
-  .category-mini:last-child{ margin-bottom:0; }
-  .category-title-mini{ display:flex; align-items:center; gap:10px; font-family:'Inter Tight', serif; font-size:18px; color:var(--espresso); margin-bottom:12px; }
-  .uni-list-mini{ display:flex; flex-direction:column; gap:8px; }
-  .uni-mini{ background:var(--cream); border:1px solid transparent; border-radius:10px; padding:12px 16px; cursor:pointer; transition:border-color .2s var(--ease), transform .2s var(--ease), background .2s var(--ease); }
-  .uni-mini:hover{ border-color:var(--sand); transform:translateX(4px); background: var(--paper); }
-  .uni-mini-name{ font-weight:600; font-size:14px; color:var(--espresso); margin-bottom:2px; }
-  .uni-mini-country{ font-size:12px; color:var(--text-muted); margin-bottom:6px; }
-  .uni-mini-reason{ font-size:13px; color:var(--text-main); opacity:0.85; line-height:1.55; }
-  .uni-mini-arrow{ display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--clay); font-weight:600; margin-top:8px; opacity:0; transform:translateX(-4px); transition:opacity .2s var(--ease), transform .2s var(--ease); }
-  .uni-mini:hover .uni-mini-arrow{ opacity:1; transform:translateX(0); }
+  .sec-h{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .sec-h h2{ font-size:24px; } .sec-h a, .sec-h button{ color:var(--clay); font-weight:600; font-size:14px; }
 
-  .empty-mini{ padding:14px; background:var(--cream); border-radius:8px; font-size:13px; color:var(--text-muted); text-align:center; font-style:italic; }
+  /* вузы */
+  .unis{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .uni{ border-radius:20px; overflow:hidden; border:1px solid var(--line); background:#fff; cursor:pointer; transition:transform .25s var(--ease), box-shadow .25s; }
+  .uni:hover{ transform:translateY(-3px); box-shadow:0 14px 28px -18px rgba(10,10,11,.35); }
+  .uni .ph{ height:130px; position:relative; background:#222; }
+  .uni .ph img{ width:100%; height:100%; object-fit:cover; filter:grayscale(1); }
+  .uni .star{ position:absolute; right:12px; top:12px; width:34px; height:34px; border-radius:50%; background:#fff; display:grid; place-items:center; color:var(--clay); font-size:17px; }
+  .uni .star:hover{ background:var(--espresso); color:#fff; }
+  .uni .cc{ position:absolute; left:12px; top:12px; background:var(--espresso); color:#fff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:999px; max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .uni .bd{ padding:14px 16px 16px; } .uni h3{ font-size:17px; margin-bottom:2px; } .uni small{ color:var(--text-muted); font-size:12px; }
+  .dl{ margin-top:12px; display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--text-muted); } .dl b{ color:var(--espresso); white-space:nowrap; }
+  .dbar{ height:6px; border-radius:9px; background:var(--cream-deep); margin-top:6px; overflow:hidden; } .dbar i{ display:block; height:100%; background:var(--clay); } .dbar.hot i{ background:var(--espresso); }
+
+  .two{ display:grid; grid-template-columns:1.25fr 1fr; gap:16px; align-items:start; }
+  .card{ border:1px solid var(--line); border-radius:20px; padding:20px 22px; min-width:0; }
+  .card h3{ font-size:19px; margin-bottom:4px; } .card > small, .card .sub{ color:var(--text-muted); font-size:13px; }
+  .seg{ display:flex; height:14px; border-radius:9px; overflow:hidden; margin:16px 0 10px; background:var(--cream-deep); }
+  .leg{ display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; font-size:12px; color:var(--text-muted); }
+  .leg span::before{ content:""; display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:6px; background:var(--c); }
+  .rec-cat{ margin-top:14px; } .rec-cat > b{ font-size:13px; display:flex; align-items:center; gap:8px; } .rec-cat > b::before{ content:""; width:9px; height:9px; border-radius:3px; background:var(--c); }
+  .rec{ display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-top:1px solid var(--line); cursor:pointer; margin-top:8px; }
+  .rec:hover b{ color:var(--clay); }
+  .rec .ic{ width:38px; height:38px; border-radius:10px; background:var(--cream-deep); display:grid; place-items:center; font:700 13px 'Inter Tight',sans-serif; color:var(--espresso); flex:none; }
+  .rec small{ display:block; color:var(--text-muted); font-size:12px; } .rec p{ font-size:12px; color:var(--text-main); opacity:.85; margin-top:3px; }
+  .rec .go{ margin-left:auto; color:var(--clay); font-weight:700; flex:none; }
+  .more-btn{ margin-top:10px; color:var(--clay); font-weight:600; font-size:13px; }
+  .old-tests{ margin-top:14px; border-top:1px solid var(--line); padding-top:10px; font-size:13px; color:var(--text-muted); }
+
+  .chart{ display:flex; gap:10px; align-items:flex-end; height:150px; margin-top:18px; }
+  .chart div{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; font-size:11px; color:var(--text-muted); height:100%; justify-content:flex-end; }
+  .chart div i{ width:100%; border-radius:8px 8px 4px 4px; background:var(--blue-soft); min-height:4px; } .chart div.t i{ background:var(--clay); }
+  .chart-sum{ display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-top:12px; } .chart-sum b{ color:var(--espresso); }
+
+  .quote{ background:var(--clay); color:#fff; border-radius:20px; padding:24px 26px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; gap:18px; }
+  .quote::before{ content:"\201C"; position:absolute; right:18px; top:-30px; font-size:180px; font-family:Georgia,serif; opacity:.18; }
+  .quote p{ font:600 21px/1.35 'Inter Tight',sans-serif; max-width:90%; } .quote small{ display:block; margin-top:12px; color:#D9E2FB; }
+  .quote .acts{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tl{ display:flex; flex-direction:column; margin-top:12px; }
+  .tl div{ display:flex; gap:14px; padding:11px 0; border-top:1px solid var(--line); align-items:center; cursor:pointer; }
+  .tl .d{ width:54px; text-align:center; border-radius:10px; background:var(--cream-deep); padding:5px 0; font-size:11px; color:var(--text-muted); flex:none; } .tl .d b{ display:block; font-size:18px; color:var(--espresso); }
+  .tl .d.h{ background:var(--espresso); color:#C9CCD2; } .tl .d.h b{ color:#fff; }
+  .tl small{ display:block; color:var(--text-muted); font-size:12px; }
+  .tl .src{ margin-left:auto; font-size:11px; color:var(--text-muted); background:var(--cream-deep); border-radius:999px; padding:3px 8px; white-space:nowrap; }
+
+  .empty{ border:1px dashed var(--sand); border-radius:16px; padding:28px 20px; text-align:center; font-size:14px; color:var(--text-muted); line-height:1.6; }
+  .empty a{ color:var(--clay); font-weight:600; }
+  .empty-mini{ padding:14px; background:var(--cream-deep); border-radius:10px; font-size:13px; color:var(--text-muted); text-align:center; }
+  details.log{ margin-top:14px; } details.log summary{ cursor:pointer; color:var(--clay); font-weight:600; font-size:14px; list-style:none; } details.log summary::-webkit-details-marker{ display:none; }
+  details.log[open] summary{ margin-bottom:12px; }
+  .settings{ display:flex; flex-direction:column; gap:16px; }
+  .section-title{ font-size:20px; margin-bottom:6px; } .section-sub{ font-size:14px; color:var(--text-muted); margin-bottom:16px; }
+  .btn-logout{ display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:10px; background:var(--cream-deep); color:var(--espresso); font-size:14px; font-weight:500; }
+  .btn-logout:hover{ background:var(--sand); }
+  .empty-state{ border:1px dashed var(--sand); border-radius:16px; padding:28px 20px; text-align:center; font-size:14px; color:var(--text-muted); } .empty-state a{ color:var(--clay); font-weight:600; }
 
   /* Учёба по дням (страница «Фокус») */
   .study-streak{ display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--bark); background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:6px 14px; margin-bottom:16px; }
@@ -179,18 +196,20 @@
   .dm .dm-err{ color:#B3362A; font-size:13px; min-height:18px; margin:8px 0 0; }
   .dm .dm-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
 
-  @media (max-width: 900px){
-    .nav-links{ display:none !important; }
-  }
-  @media (max-width: 700px){
-    nav.wrap{ height:72px; padding:0 18px; }
-    .logo{ font-size:21px; gap:9px; }
-    .logo svg{ width:30px; height:30px; }
-    main{ padding:32px 18px 64px; }
-    .profile-greeting h1{ font-size:28px; }
-    .saved-grid{ grid-template-columns:1fr; }
-    .section-title{ font-size:20px; }
-    .test-block{ padding:22px; }
+
+  @media (max-width:1180px){ .stats{ grid-template-columns:repeat(2,1fr); } .unis{ grid-template-columns:repeat(2,1fr); } .two{ grid-template-columns:1fr; } .next{ width:280px; } }
+  @media (max-width:900px){
+    .pf{ display:block; background:#fff; } .pf-side{ display:none; }
+    .pf-main{ padding:0 16px 48px; gap:18px; }
+    .hero{ border-radius:0; margin:0 -16px; min-height:0; }
+    .hero-in{ flex-direction:column; align-items:stretch; padding:22px 18px 18px; }
+    .hero h1{ font-size:32px; } .next{ width:auto; }
+    .hero-me{ display:flex; }
+    .tabs{ display:flex; }
+    .unis{ display:flex; overflow-x:auto; scroll-snap-type:x mandatory; margin-right:-16px; padding-right:16px; scrollbar-width:none; } .unis::-webkit-scrollbar{ display:none; }
+    .uni{ min-width:260px; scroll-snap-align:start; }
+    .stats{ gap:10px; } .stat .num{ font-size:24px; }
+    .quote p{ font-size:18px; }
   }
 </style>
 <link rel="stylesheet" href="edupath.css?v=3">
@@ -202,439 +221,399 @@
 <script src="layout.js?v=5"></script>
 <script src="edupath-d.js?v=3"></script>
 
-<main id="mainContent">
-  <div class="loading">
-    <div class="loading-inner">
-      <span data-i18n="profile_loading">Загрузка профиля</span>
-      <span class="loading-dots">
-        <span class="loading-dot"></span>
-        <span class="loading-dot"></span>
-        <span class="loading-dot"></span>
-      </span>
-    </div>
-  </div>
-</main>
+<div id="mainContent"><div class="loading"><span>Загрузка профиля</span><span class="loading-dots"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></span></div></div>
 
 <script src="i18n.js?v=9"></script>
 <script src="auth.js"></script>
+<script src="deadlines.js?v=1"></script>
 <script>
-// ============================================================
-// ХЕЛПЕРЫ
-// ============================================================
+/* ============================================================
+   EduPath — Профиль (v2): панель слева, обзор, вузы, тест, учёба, цитаты, настройки
+   ============================================================ */
+const P = {
+  ru: { pill: "Твой путь к поступлению", hello: "Привет, {n}!", sub_dl: "До ближайшего дедлайна {d} — {u}. Сохранено вузов: {s}.", sub_nodl: "Сохраняй вузы в каталоге и проходи тест — здесь появятся твои дедлайны.", next_t: "Ближайший дедлайн", days: "дней", hours: "часов", unis_w: "вузов", open: "Открыть досье →", no_next_t: "Пока нет дедлайнов", no_next_p: "Пройди тест или отметь звёздочкой вузы в каталоге — мы найдём их сроки подачи.", take_test: "Пройти тест →", to_catalog: "В каталог →",
+    nav_over: "Обзор", nav_unis: "Мои вузы", nav_tests: "Результаты теста", nav_study: "Учёба", nav_quotes: "Цитаты", nav_set: "Настройки",
+    st_saved: "Сохранено вузов", st_tests: "Тестов пройдено", st_last: "последний — {d}", st_none: "ещё не проходил", st_week: "Учёба за неделю", st_streak: "Серия дней", st_best: "рекорд — {b}", st_from_test: "+{n} из теста",
+    my_unis: "Мои университеты", all_n: "Все {n} →", less: "Свернуть", dl: "Дедлайн {d}", in_days: "через {n} дн.", today: "сегодня", tbd: "дедлайн уточняется", remove: "Убрать из избранного", site: "Сайт ↗", approx: "≈ ориентир — проверь на сайте",
+    test_t: "Результат последнего теста", test_sub: "ИИ подобрал {n} университетов · {d}", test_more: "Показать все рекомендации", test_less: "Свернуть", old_tests: "Ещё тестов: {n} — открыть", rec_t: "Рекомендованные университеты",
+    study_t: "Учёба по дням", study_sub: "Таймеры со страницы «Фокус» · последние 7 дней", study_total: "За неделю: {t}", study_open: "Вся история по дням", focus: "Открыть «Фокус» →",
+    q_all: "Все цитаты · {n}", q_focus: "Цитата дня в «Фокусе»", q_none: "Сохраняй цитаты дня пером на странице «Фокус» — последняя появится здесь.",
+    dl_t: "Ближайшие дедлайны", dl_sub: "Из избранного и результатов теста", src_saved: "избранное", src_test: "тест", dl_none: "Дедлайны появятся, когда в избранном или в тесте будут вузы из нашего списка.", dl_note: "Даты — для первого курса (бакалавриат), иностранных абитуриентов.",
+    quotes_t: "Сохранённые цитаты", set_t: "Настройки", set_sub: "Выход из аккаунта и управление данными.", logout: "Выйти из аккаунта", mini_none: "Дедлайнов пока нет" },
+  en: { pill: "Your path to admission", hello: "Hi, {n}!", sub_dl: "Your nearest deadline is in {d} — {u}. Universities saved: {s}.", sub_nodl: "Save universities in the catalog and take the test — your deadlines will appear here.", next_t: "Nearest deadline", days: "days", hours: "hours", unis_w: "universities", open: "Open dossier →", no_next_t: "No deadlines yet", no_next_p: "Take the test or star universities in the catalog — we'll find their application deadlines.", take_test: "Take the test →", to_catalog: "Go to catalog →",
+    nav_over: "Overview", nav_unis: "My universities", nav_tests: "Test results", nav_study: "Study", nav_quotes: "Quotes", nav_set: "Settings",
+    st_saved: "Universities saved", st_tests: "Tests taken", st_last: "last — {d}", st_none: "not taken yet", st_week: "Study this week", st_streak: "Day streak", st_best: "best — {b}", st_from_test: "+{n} from the test",
+    my_unis: "My universities", all_n: "All {n} →", less: "Show less", dl: "Deadline {d}", in_days: "in {n} days", today: "today", tbd: "deadline to be confirmed", remove: "Remove from favourites", site: "Website ↗", approx: "≈ estimate — check the website",
+    test_t: "Latest test result", test_sub: "AI recommended {n} universities · {d}", test_more: "Show all recommendations", test_less: "Show less", old_tests: "More tests: {n} — open", rec_t: "Recommended universities",
+    study_t: "Study by day", study_sub: "Timers from the Focus page · last 7 days", study_total: "This week: {t}", study_open: "Full daily history", focus: "Open Focus →",
+    q_all: "All quotes · {n}", q_focus: "Quote of the day in Focus", q_none: "Save the quote of the day on the Focus page — the latest one will appear here.",
+    dl_t: "Upcoming deadlines", dl_sub: "From favourites and test results", src_saved: "favourite", src_test: "test", dl_none: "Deadlines appear once your favourites or test include universities from our list.", dl_note: "Dates are for first-year (bachelor's) international applicants.",
+    quotes_t: "Saved quotes", set_t: "Settings", set_sub: "Log out and manage your data.", logout: "Log out", mini_none: "No deadlines yet" },
+  kk: { pill: "Түсуге апаратын жолың", hello: "Сәлем, {n}!", sub_dl: "Ең жақын мерзімге дейін {d} — {u}. Сақталған университеттер: {s}.", sub_nodl: "Каталогтан университеттерді сақта және тест тапсыр — мерзімдерің осында шығады.", next_t: "Ең жақын мерзім", days: "күн", hours: "сағат", unis_w: "университет", open: "Досьені ашу →", no_next_t: "Әзірге мерзім жоқ", no_next_p: "Тест тапсыр немесе каталогта университеттерді жұлдызшамен белгіле — олардың тапсыру мерзімін табамыз.", take_test: "Тест тапсыру →", to_catalog: "Каталогқа →",
+    nav_over: "Шолу", nav_unis: "Менің университеттерім", nav_tests: "Тест нәтижелері", nav_study: "Оқу", nav_quotes: "Дәйексөздер", nav_set: "Баптаулар",
+    st_saved: "Сақталған университеттер", st_tests: "Тапсырылған тесттер", st_last: "соңғысы — {d}", st_none: "әлі тапсырылмаған", st_week: "Аптадағы оқу", st_streak: "Күндер сериясы", st_best: "рекорд — {b}", st_from_test: "+{n} тесттен",
+    my_unis: "Менің университеттерім", all_n: "Барлығы {n} →", less: "Жию", dl: "Мерзім {d}", in_days: "{n} күннен кейін", today: "бүгін", tbd: "мерзім нақтылануда", remove: "Таңдаулыдан алу", site: "Сайт ↗", approx: "≈ болжам — сайттан тексер",
+    test_t: "Соңғы тест нәтижесі", test_sub: "ЖИ {n} университет ұсынды · {d}", test_more: "Барлық ұсыныстарды көрсету", test_less: "Жию", old_tests: "Тағы тесттер: {n} — ашу", rec_t: "Ұсынылған университеттер",
+    study_t: "Күндер бойынша оқу", study_sub: "«Фокус» бетіндегі таймерлер · соңғы 7 күн", study_total: "Аптада: {t}", study_open: "Күндер бойынша толық тарих", focus: "«Фокусты» ашу →",
+    q_all: "Барлық дәйексөздер · {n}", q_focus: "«Фокустағы» күн дәйексөзі", q_none: "«Фокус» бетінде күн дәйексөзін қаламмен сақта — соңғысы осында шығады.",
+    dl_t: "Жақын мерзімдер", dl_sub: "Таңдаулыдан және тест нәтижелерінен", src_saved: "таңдаулы", src_test: "тест", dl_none: "Таңдаулыда немесе тестте біздің тізімдегі университеттер болғанда мерзімдер шығады.", dl_note: "Күндер — бірінші курсқа (бакалавриат) түсетін шетелдіктер үшін.",
+    quotes_t: "Сақталған дәйексөздер", set_t: "Баптаулар", set_sub: "Аккаунттан шығу және деректерді басқару.", logout: "Аккаунттан шығу", mini_none: "Әзірге мерзім жоқ" },
+  ky: { pill: "Тапшырууга карай жолуң", hello: "Салам, {n}!", sub_dl: "Эң жакынкы мөөнөткө чейин {d} — {u}. Сакталган университеттер: {s}.", sub_nodl: "Каталогдон университеттерди сакта жана тест тапшыр — мөөнөттөрүң ушул жерде чыгат.", next_t: "Эң жакынкы мөөнөт", days: "күн", hours: "саат", unis_w: "университет", open: "Досьени ачуу →", no_next_t: "Азырынча мөөнөт жок", no_next_p: "Тест тапшыр же каталогдо университеттерди жылдызча менен белгиле — алардын тапшыруу мөөнөтүн табабыз.", take_test: "Тест тапшыруу →", to_catalog: "Каталогго →",
+    nav_over: "Сереп", nav_unis: "Менин университеттерим", nav_tests: "Тест жыйынтыктары", nav_study: "Окуу", nav_quotes: "Цитаталар", nav_set: "Жөндөөлөр",
+    st_saved: "Сакталган университеттер", st_tests: "Тапшырылган тесттер", st_last: "акыркысы — {d}", st_none: "азырынча тапшырыла элек", st_week: "Жумадагы окуу", st_streak: "Күндөр сериясы", st_best: "рекорд — {b}", st_from_test: "+{n} тесттен",
+    my_unis: "Менин университеттерим", all_n: "Баары {n} →", less: "Жыйноо", dl: "Мөөнөт {d}", in_days: "{n} күндөн кийин", today: "бүгүн", tbd: "мөөнөт такталууда", remove: "Тандалгандардан алуу", site: "Сайт ↗", approx: "≈ болжол — сайттан текшер",
+    test_t: "Акыркы тесттин жыйынтыгы", test_sub: "ЖИ {n} университет сунуштады · {d}", test_more: "Бардык сунуштарды көрсөтүү", test_less: "Жыйноо", old_tests: "Дагы тесттер: {n} — ачуу", rec_t: "Сунушталган университеттер",
+    study_t: "Күндөр боюнча окуу", study_sub: "«Фокус» барагындагы таймерлер · акыркы 7 күн", study_total: "Жумада: {t}", study_open: "Күндөр боюнча толук тарых", focus: "«Фокусту» ачуу →",
+    q_all: "Бардык цитаталар · {n}", q_focus: "«Фокустагы» күндүн цитатасы", q_none: "«Фокус» барагында күндүн цитатасын калем менен сакта — акыркысы ушул жерде чыгат.",
+    dl_t: "Жакынкы мөөнөттөр", dl_sub: "Тандалгандардан жана тест жыйынтыктарынан", src_saved: "тандалган", src_test: "тест", dl_none: "Тандалгандарда же тестте биздин тизмедеги университеттер болгондо мөөнөттөр чыгат.", dl_note: "Даталар — биринчи курска (бакалавриат) тапшырган чет элдиктер үчүн.",
+    quotes_t: "Сакталган цитаталар", set_t: "Жөндөөлөр", set_sub: "Аккаунттан чыгуу жана маалыматтарды башкаруу.", logout: "Аккаунттан чыгуу", mini_none: "Азырынча мөөнөт жок" },
+  zh: { pill: "你的升学之路", hello: "你好，{n}！", sub_dl: "距离最近的截止日期还有 {d}——{u}。已收藏大学：{s} 所。", sub_nodl: "在目录中收藏大学并完成测试——你的截止日期会显示在这里。", next_t: "最近的截止日期", days: "天", hours: "小时", unis_w: "所大学", open: "打开档案 →", no_next_t: "暂无截止日期", no_next_p: "完成测试或在目录中给大学加星标——我们会找到它们的申请截止日期。", take_test: "参加测试 →", to_catalog: "前往目录 →",
+    nav_over: "概览", nav_unis: "我的大学", nav_tests: "测试结果", nav_study: "学习", nav_quotes: "名言", nav_set: "设置",
+    st_saved: "已收藏大学", st_tests: "已完成测试", st_last: "最近一次——{d}", st_none: "尚未参加", st_week: "本周学习", st_streak: "连续天数", st_best: "最佳——{b}", st_from_test: "+{n} 来自测试",
+    my_unis: "我的大学", all_n: "全部 {n} →", less: "收起", dl: "截止 {d}", in_days: "{n} 天后", today: "今天", tbd: "截止日期待确认", remove: "从收藏中移除", site: "官网 ↗", approx: "≈ 参考日期——请在官网核实",
+    test_t: "最近一次测试结果", test_sub: "AI 推荐了 {n} 所大学 · {d}", test_more: "显示全部推荐", test_less: "收起", old_tests: "更多测试：{n}——打开", rec_t: "推荐的大学",
+    study_t: "每日学习", study_sub: "来自「专注」页面的计时 · 最近 7 天", study_total: "本周：{t}", study_open: "完整每日记录", focus: "打开「专注」→",
+    q_all: "全部名言 · {n}", q_focus: "「专注」中的每日名言", q_none: "在「专注」页面用羽毛笔收藏每日名言——最新的一条会显示在这里。",
+    dl_t: "即将到来的截止日期", dl_sub: "来自收藏和测试结果", src_saved: "收藏", src_test: "测试", dl_none: "当收藏或测试中包含我们列表里的大学时，截止日期会显示在这里。", dl_note: "日期适用于本科一年级国际申请者。",
+    quotes_t: "已收藏的名言", set_t: "设置", set_sub: "退出账户并管理你的数据。", logout: "退出账户", mini_none: "暂无截止日期" }
+};
+const LOCALES = { ru: "ru-RU", en: "en-GB", zh: "zh-CN", kk: "kk-KZ", ky: "ky-KG" };
+const PHOTOS = ["d-students.jpg", "d-graduation.jpg", "d-study.jpg", "d-desk.jpg", "d-airport.jpg", "d-hero.jpg", "d-phone.jpg"];
+const CAT_COLORS = { academic: "#0A0A0B", lifestyle: "#1F4FE0", safe: "#8FA8F0", reach: "#C9CCD2" };
 
-function escapeHtml(s) {
-  return String(s == null ? "" : s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-function escapeAttr(s){
-  return String(s == null ? "" : s)
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-function formatDate(iso) {
-  const d = new Date(iso);
-  const months = ["января", "февраля", "марта", "апреля", "мая", "июня",
-                  "июля", "августа", "сентября", "октября", "ноября", "декабря"];
-  return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear() + ", " +
-         String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
-}
-function t(key, fallback){
-  return (window.I18N && window.I18N.t(key)) || fallback || key;
-}
-
-// ============================================================
-// РЕНДЕР
-// ============================================================
-
-function renderLoading() {
-  document.getElementById("mainContent").innerHTML = `
-    <div class="loading">
-      <div class="loading-inner">
-        <span>${t("profile_loading", "Загрузка профиля")}</span>
-        <span class="loading-dots">
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-        </span>
-      </div>
-    </div>
-  `;
-}
-
-function renderNotLoggedIn() {
-  return `
-    <div class="auth-required">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>
-      </svg>
-      <h2>${t("profile_need_login_title", "Сначала войди в аккаунт")}</h2>
-      <p>${t("profile_need_login_desc", "Чтобы сохранять университеты и видеть результаты тестов — создай аккаунт или войди.")}</p>
-      <button class="btn-primary" data-auth-open="register">
-        <span>${t("profile_create_account", "Создать аккаунт")}</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
-    </div>
-  `;
-}
-
-function renderSavedUniversities(saved) {
-  if (!saved || saved.length === 0) {
-    return `
-      <div class="empty-state">
-        ${t("profile_empty_saved", "Ты пока не сохранил ни одного университета.")}<br>
-        <a href="universities.html">${t("profile_empty_saved_hint", "Зайди в каталог и нажми на звёздочку рядом с вузом.")}</a>
-      </div>
-    `;
-  }
-  return `
-    <div class="saved-grid">
-      ${saved.map((u, i) => `
-        <div class="saved-card anim-item" style="animation-delay: ${0.05 * i}s;" data-uni-name="${escapeAttr(u.name)}" data-uni-country="${escapeAttr(u.country || "")}" data-uni-city="${escapeAttr(u.city || "")}" title="Открыть полное досье">
-          <div class="saved-info">
-            <div class="saved-name">${escapeHtml(u.name)}</div>
-            <div class="saved-location">${escapeHtml(u.country || "")}${u.city ? " · " + escapeHtml(u.city) : ""}</div>
-          </div>
-          <button class="saved-remove" type="button" data-remove-saved="${escapeAttr(u.name)}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
-
-function renderTests(tests) {
-  if (!tests || tests.length === 0) {
-    return `
-      <div class="empty-state">
-        ${t("profile_empty_tests", "Ты пока не проходил тест.")}<br>
-        <a href="test.html">${t("profile_empty_tests_hint", "Пройти тест на подбор университета →")}</a>
-      </div>
-    `;
-  }
-
-  return tests.map((tData, idx) => {
-    const isFirst = idx === 0;
-    const currentClass = isFirst ? "test-current" : "";
-    
-    const cats = tData.categories || {};
-    const meta = (cats.meta && typeof cats.meta === "object") ? cats.meta : {};
-    const catDefs = [
-      { key: "academic",  icon: "🎓", title: t("test_cat_academic", "По учебным показателям") },
-      { key: "lifestyle", icon: "🌍", title: t("test_cat_lifestyle", "По желанию жить") },
-      { key: "safe",      icon: "🎯", title: t("test_cat_safe", "Куда шанс высокий") },
-      { key: "reach",     icon: "💪", title: t("test_cat_reach", "Куда мог бы, но не дотягиваешь") }
-    ];
-    let totalUnis = 0;
-    catDefs.forEach(c => { totalUnis += (cats[c.key] || []).length; });
-
-    const bodyHtml = catDefs.map(c => {
-      const list = cats[c.key] || [];
-      let listHtml;
-      if (list.length === 0) {
-        listHtml = `<div class="empty-mini">${t("test_empty_category", "Ничего не подошло в этой категории")}</div>`;
-      } else {
-        listHtml = `<div class="uni-list-mini">` + list.map(u => `
-          <div class="uni-mini" data-uni-name="${escapeAttr(u.name || "")}" data-uni-id="${escapeAttr(u.id || "")}" data-uni-country="${escapeAttr(u.country || "")}" data-uni-city="${escapeAttr(u.city || "")}" data-degree="${escapeAttr(meta.degree || "")}" data-cit="${escapeAttr(meta.cit || "")}">
-            <div class="uni-mini-name">${escapeHtml(u.name || "—")}</div>
-            <div class="uni-mini-country">${escapeHtml([u.city, u.country].filter(Boolean).join(", "))}</div>
-            ${u.reason ? `<div class="uni-mini-reason">${escapeHtml(u.reason)}</div>` : ""}
-            <div class="uni-mini-arrow">${t("test_more", "Подробнее →")}</div>
-          </div>
-        `).join("") + `</div>`;
-      }
-      return `
-        <div class="category-mini">
-          <div class="category-title-mini">${c.icon} ${c.title}</div>
-          ${listHtml}
-        </div>
-      `;
-    }).join("");
-
-    return `
-      <div class="test-block anim-item ${currentClass}" style="animation-delay: ${0.05 * idx}s;" data-test-idx="${idx}">
-        <div class="test-header" data-toggle-test>
-          <div class="test-header-left">
-            <div class="test-date">${isFirst ? t("profile_last_test", "Последний тест") : t("profile_test", "Тест")} · ${formatDate(tData.date)}</div>
-            <div class="test-summary-line">${totalUnis} ${t("profile_unis_found", "университетов найдено")}</div>
-          </div>
-          <div class="test-toggle">▾</div>
-        </div>
-        <div class="test-body">
-          ${bodyHtml}
-          ${tData.summary ? `<div class="empty-mini" style="margin-top:20px; font-style:normal;">${escapeHtml(tData.summary)}</div>` : ""}
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-
-// ============================================================
-// ФОКУС: УЧЁБА ПО ДНЯМ И СОХРАНЁННЫЕ ЦИТАТЫ
-// ============================================================
-
-const STUDY_SHOW_STEP = 10;
-let studyShown = STUDY_SHOW_STEP;
-let QUOTES_DATA = null;
-
-function curLang() {
-  try { return (window.I18N && window.I18N.getLang()) || "ru"; } catch (e) { return "ru"; }
-}
+function escapeHtml(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+function escapeAttr(s) { return escapeHtml(s); }
+function t(key, fallback) { return (window.I18N && window.I18N.t(key) !== key && window.I18N.t(key)) || fallback || key; }
+function curLang() { try { return (window.I18N && window.I18N.getLang()) || localStorage.getItem("edupath_lang") || "ru"; } catch (e) { return "ru"; } }
+function p(key, vars) { let s = (P[curLang()] || P.ru)[key] ?? P.ru[key] ?? key; if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => vars[k] != null ? vars[k] : m); return s; }
+function fmtDay(iso, opts) { try { return new Intl.DateTimeFormat(LOCALES[curLang()] || "ru-RU", opts || { day: "numeric", month: "short" }).format(new Date(iso)); } catch (e) { return iso; } }
+function initials(name) { return (String(name || "?").trim()[0] || "?").toUpperCase(); }
+function abbr(name) { const w = String(name || "").replace(/[^A-Za-zА-Яа-яЁё ]/g, " ").split(/\s+/).filter(x => x && !/^(of|the|and|de|di|da|du|für|la|le)$/i.test(x)); return (w.length > 1 ? w.slice(0, 3).map(x => x[0]).join("") : (w[0] || "?").slice(0, 3)).toUpperCase(); }
+function hashIdx(s, n) { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h % n; }
 function humanDur(sec) {
   sec = Math.max(0, Math.round(sec || 0));
   const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
   const H = t("profile_study_h", "ч"), M = t("profile_study_m", "мин");
   if (h > 0) return h + " " + H + (m ? " " + String(m).padStart(2, "0") + " " + M : "");
-  return Math.max(1, m) + " " + M;
+  return Math.max(sec ? 1 : 0, m) + " " + M;
 }
 function dayTitle(iso) {
   const [y, m, d] = iso.split("-").map(Number);
-  const locales = { ru: "ru-RU", en: "en-US", zh: "zh-CN", kk: "kk-KZ", ky: "ky-KG" };
   const opts = { day: "numeric", month: "long", weekday: "short" };
   if (y !== new Date().getFullYear()) opts.year = "numeric";
-  try { return new Intl.DateTimeFormat(locales[curLang()] || "ru-RU", opts).format(new Date(y, m - 1, d)); }
-  catch (e) { return iso; }
+  try { return new Intl.DateTimeFormat(LOCALES[curLang()] || "ru-RU", opts).format(new Date(y, m - 1, d)); } catch (e) { return iso; }
 }
-async function loadQuotesData() {
-  if (QUOTES_DATA) return QUOTES_DATA;
-  try { const r = await fetch("quotes.json", { cache: "no-cache" }); QUOTES_DATA = await r.json(); }
-  catch (e) { QUOTES_DATA = null; }
-  return QUOTES_DATA;
+const isoLocal = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+
+/* ---------- ссылки в досье ---------- */
+function uniHref(u, meta) {
+  const q = new URLSearchParams({ uni: u.name });
+  if (u.id) q.set("id", u.id);
+  if (u.country) q.set("country", u.country);
+  if (u.city) q.set("city", u.city);
+  if (meta && meta.degree) q.set("degree", meta.degree);
+  if (meta && meta.cit && meta.cit !== "XX") q.set("cit", meta.cit);
+  return "universities.html?" + q.toString() + "#detailShell";
 }
 
+/* ---------- состояние ---------- */
+const S = { user: null, saved: [], tests: [], study: null, quoteIds: null, qdata: null, showAllUnis: false, showAllRecs: false, showOldTests: false, studyShown: 10 };
+
+/* все вузы с дедлайнами: из избранного и из последнего теста */
+function deadlineList() {
+  if (!window.EduDeadlines) return [];
+  const seen = new Set(), out = [];
+  const add = (u, src, meta) => {
+    const key = window.EduDeadlines.norm(u.name); if (!u.name || seen.has(key)) return;
+    const d = window.EduDeadlines.next(u.name); if (!d || !d.date) return;
+    seen.add(key); out.push({ u, src, meta, d });
+  };
+  S.saved.forEach(u => add(u, "saved"));
+  const last = S.tests[0], cats = (last && last.categories) || {};
+  ["academic", "lifestyle", "safe", "reach"].forEach(k => (cats[k] || []).forEach(u => add(u, "test", cats.meta)));
+  return out.sort((a, b) => a.d.date.localeCompare(b.d.date));
+}
+
+/* ---------- части страницы ---------- */
+function navHtml(counts) {
+  const ic = {
+    over: '<svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9H4z"/></svg>',
+    unis: '<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+    tests: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+    study: '<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>',
+    quotes: '<svg viewBox="0 0 24 24"><path d="M6 17h4l2-4V7H6v6h3M14 17h4l2-4V7h-6v6h3"/></svg>',
+    set: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 00-2-1.2L14 3h-4l-.5 2.6a7 7 0 00-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 002 1.2L10 21h4l.5-2.6a7 7 0 002-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
+  };
+  const items = [["over", "pOver"], ["unis", "pUnis", counts.saved], ["tests", "pTests", counts.tests], ["study", "pStudy"], ["quotes", "pQuotes", counts.quotes], ["set", "pSet"]];
+  return items.map(([k, id, n]) => `<a href="#${id}" data-nav="${id}">${ic[k]}${escapeHtml(p("nav_" + k))}${n ? `<em>${n}</em>` : ""}</a>`).join("");
+}
+function tabsHtml(counts) {
+  const items = [["over", "pOver"], ["unis", "pUnis", counts.saved], ["tests", "pTests"], ["study", "pStudy"], ["quotes", "pQuotes"], ["set", "pSet"]];
+  return items.map(([k, id, n]) => `<a href="#${id}" data-nav="${id}">${escapeHtml(p("nav_" + k))}${n ? " · " + n : ""}</a>`).join("");
+}
+
+function heroHtml(first, dls) {
+  const nx = dls[0];
+  const sub = nx ? p("sub_dl", { d: nx.d.days + " " + p("days"), u: nx.u.name, s: S.saved.length }) : p("sub_nodl");
+  let card;
+  if (nx) {
+    const hours = Math.max(0, Math.floor((new Date(nx.d.date + "T23:59:59") - new Date()) / 3600000) % 24);
+    card = `<div class="next"><small>${escapeHtml(p("next_t"))}</small><b>${escapeHtml(nx.u.name)}</b>
+      <small>${escapeHtml((nx.d.approx ? "≈ " : "") + window.EduDeadlines.fmt(nx.d.date) + " · " + nx.d.label)}</small>
+      <div class="count"><span><b>${Math.max(0, nx.d.days)}</b>${escapeHtml(p("days"))}</span><span><b>${hours}</b>${escapeHtml(p("hours"))}</span><span><b>${dls.length}</b>${escapeHtml(p("unis_w"))}</span></div>
+      <a class="btn w" href="${escapeAttr(uniHref(nx.u, nx.meta))}">${escapeHtml(p("open"))}</a></div>`;
+  } else {
+    card = `<div class="next"><small>${escapeHtml(p("no_next_t"))}</small><p style="color:#E3E5EA;font-size:14px;margin:6px 0 14px;">${escapeHtml(p("no_next_p"))}</p>
+      <a class="btn w" href="${S.tests.length ? "universities.html" : "test.html"}">${escapeHtml(S.tests.length ? p("to_catalog") : p("take_test"))}</a></div>`;
+  }
+  return `<section class="hero anchor" id="pOver"><img src="assets/d/d-hero.jpg" alt="">
+    <div class="hero-in"><div>
+      <div class="hero-me"><div class="ava">${escapeHtml(initials(first))}</div><div><b>${escapeHtml(S.user.name || first)}</b><br><small>${escapeHtml(S.user.email || "")}</small></div></div>
+      <span class="pill">${escapeHtml(p("pill"))}</span><h1>${escapeHtml(p("hello", { n: first }))}</h1><p>${escapeHtml(sub)}</p>
+    </div>${card}</div></section>`;
+}
+
+function last7() {
+  const days = (S.study && S.study.days) || [], map = {};
+  days.forEach(d => { map[d.date] = d.total_sec || 0; });
+  const out = [];
+  for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = isoLocal(d); out.push({ date: k, sec: map[k] || 0 }); }
+  return out;
+}
+
+function statsHtml() {
+  const last = S.tests[0];
+  const testCount = last ? ["academic", "lifestyle", "safe", "reach"].reduce((n, k) => n + ((last.categories || {})[k] || []).length, 0) : 0;
+  const w = last7(), wsum = w.reduce((a, x) => a + x.sec, 0), wmax = Math.max(1, ...w.map(x => x.sec));
+  const streak = (S.study && S.study.streak) || 0, best = (S.study && S.study.best_streak) || 0;
+  return `<div class="stats">
+    <div class="stat k"><small>${escapeHtml(p("st_saved"))}</small><div class="num">${S.saved.length}</div><small>${testCount ? escapeHtml(p("st_from_test", { n: testCount })) : "&nbsp;"}</small></div>
+    <div class="stat"><small>${escapeHtml(p("st_tests"))}</small><div class="num">${S.tests.length}</div><small>${last ? escapeHtml(p("st_last", { d: fmtDay(last.date) })) : escapeHtml(p("st_none"))}</small></div>
+    <div class="stat"><small>${escapeHtml(p("st_week"))}</small><div class="num">${escapeHtml(humanDur(wsum))}</div><div class="spark">${w.map(x => `<i class="${x.sec ? "" : "z"}" style="height:${x.sec ? Math.max(12, Math.round(x.sec / wmax * 100)) : 10}%"></i>`).join("")}</div></div>
+    <div class="stat"><small>${escapeHtml(p("st_streak"))}</small><div class="num">${streak}</div><div class="flames">${Array.from({ length: 7 }, (_, i) => `<i class="${i < Math.min(streak, 7) ? "" : "o"}"></i>`).join("")}</div>${best ? `<small style="margin-top:6px">${escapeHtml(p("st_best", { b: best }))}</small>` : ""}</div>
+  </div>`;
+}
+
+function uniCardHtml(u) {
+  const d = window.EduDeadlines ? window.EduDeadlines.next(u.name) : null;
+  let dl = `<div class="dl"><span>${escapeHtml(p("tbd"))}</span></div>`;
+  if (d && d.date) {
+    const pct = Math.max(4, Math.min(100, Math.round(100 - d.days / 365 * 100)));
+    dl = `<div class="dl" ${d.approx ? `title="${escapeAttr(p("approx"))}"` : ""}><span>${escapeHtml(p("dl", { d: (d.approx ? "≈ " : "") + window.EduDeadlines.fmt(d.date, { day: "numeric", month: "short" }) }))}</span><b>${escapeHtml(d.days <= 0 ? p("today") : p("in_days", { n: d.days }))}</b></div>
+      <div class="dbar ${d.days <= 30 ? "hot" : ""}"><i style="width:${pct}%"></i></div><small style="display:block;margin-top:8px">${escapeHtml(d.label)}</small>`;
+  }
+  const photo = PHOTOS[hashIdx(u.name, PHOTOS.length)];
+  return `<div class="uni" data-open="${escapeAttr(uniHref(u))}">
+    <div class="ph"><img src="assets/d/${photo}" alt="" loading="lazy">${u.country ? `<span class="cc">${escapeHtml(u.country)}</span>` : ""}
+      <button class="star" type="button" data-remove-saved="${escapeAttr(u.name)}" title="${escapeAttr(p("remove"))}" aria-label="${escapeAttr(p("remove"))}">★</button></div>
+    <div class="bd"><h3>${escapeHtml(u.name)}</h3><small>${escapeHtml([u.city, u.country].filter(Boolean).join(" · "))}</small>${dl}</div></div>`;
+}
+function unisHtml() {
+  if (!S.saved.length) return `<div class="empty">${escapeHtml(t("profile_empty_saved", "Ты пока не сохранил ни одного университета."))}<br><a href="universities.html">${escapeHtml(t("profile_empty_saved_hint", "Зайди в каталог и нажми на звёздочку рядом с вузом."))}</a></div>`;
+  const list = S.showAllUnis ? S.saved : S.saved.slice(0, 6);
+  return `<div class="unis">${list.map(uniCardHtml).join("")}</div>`;
+}
+
+function testHtml() {
+  const last = S.tests[0];
+  if (!last) return `<div class="card"><h3>${escapeHtml(p("test_t"))}</h3><div class="empty" style="margin-top:12px">${escapeHtml(t("profile_empty_tests", "Ты пока не проходил тест."))}<br><a href="test.html">${escapeHtml(t("profile_empty_tests_hint", "Пройти тест на подбор университета →"))}</a></div></div>`;
+  const cats = last.categories || {}, meta = (cats.meta && typeof cats.meta === "object") ? cats.meta : {};
+  const defs = [["academic", t("test_cat_academic", "По учебным показателям")], ["lifestyle", t("test_cat_lifestyle", "По желанию жить")], ["safe", t("test_cat_safe", "Куда шанс высокий")], ["reach", t("test_cat_reach", "Куда мог бы, но не дотягиваешь")]];
+  const total = defs.reduce((n, [k]) => n + (cats[k] || []).length, 0) || 1;
+  const seg = defs.map(([k]) => `<i style="width:${(cats[k] || []).length / total * 100}%;background:${CAT_COLORS[k]}"></i>`).join("");
+  const leg = defs.map(([k, title]) => `<span style="--c:${CAT_COLORS[k]}">${escapeHtml(title)} — ${(cats[k] || []).length}</span>`).join("");
+  const recs = defs.map(([k, title]) => {
+    const list = (cats[k] || []).slice(0, S.showAllRecs ? 99 : 2);
+    if (!list.length) return "";
+    return `<div class="rec-cat" style="--c:${CAT_COLORS[k]}"><b>${escapeHtml(title)}</b>${list.map(u => `
+      <div class="rec" data-open="${escapeAttr(uniHref(u, meta))}"><span class="ic">${escapeHtml(abbr(u.name))}</span>
+        <div><b>${escapeHtml(u.name || "—")}</b><small>${escapeHtml([u.city, u.country].filter(Boolean).join(", "))}</small>${u.reason && S.showAllRecs ? `<p>${escapeHtml(u.reason)}</p>` : ""}</div><span class="go">→</span></div>`).join("")}</div>`;
+  }).join("");
+  const older = S.tests.slice(1);
+  const olderHtml = older.length ? `<div class="old-tests"><button type="button" class="more-btn" data-old-tests>${escapeHtml(p("old_tests", { n: older.length }))}</button>
+    ${S.showOldTests ? older.map(tt => { const c = tt.categories || {}, m = (c.meta && typeof c.meta === "object") ? c.meta : {}; const all = ["academic", "lifestyle", "safe", "reach"].flatMap(k => c[k] || []);
+      return `<div style="margin-top:10px"><b style="color:var(--espresso)">${escapeHtml(fmtDay(tt.date, { day: "numeric", month: "long", year: "numeric" }))}</b>${all.slice(0, 8).map(u => `<div class="rec" data-open="${escapeAttr(uniHref(u, m))}"><span class="ic">${escapeHtml(abbr(u.name))}</span><div><b>${escapeHtml(u.name)}</b><small>${escapeHtml([u.city, u.country].filter(Boolean).join(", "))}</small></div><span class="go">→</span></div>`).join("")}</div>`; }).join("") : ""}</div>` : "";
+  return `<div class="card anchor" id="pTests"><h3>${escapeHtml(p("test_t"))}</h3><small>${escapeHtml(p("test_sub", { n: total, d: fmtDay(last.date, { day: "numeric", month: "long" }) }))}</small>
+    <div class="seg">${seg}</div><div class="leg">${leg}</div>
+    <div class="sub" style="margin-top:16px;font-weight:600;color:var(--espresso)">${escapeHtml(p("rec_t"))}</div>${recs}
+    <button type="button" class="more-btn" data-all-recs>${escapeHtml(S.showAllRecs ? p("test_less") : p("test_more"))}</button>${olderHtml}</div>`;
+}
+
+function studyHtml() {
+  const w = last7(), max = Math.max(1, ...w.map(x => x.sec)), sum = w.reduce((a, x) => a + x.sec, 0), today = isoLocal(new Date());
+  const bars = w.map(x => `<div class="${x.date === today ? "t" : ""}" title="${escapeAttr(humanDur(x.sec))}"><i style="height:${x.sec ? Math.max(6, Math.round(x.sec / max * 100)) : 3}%"></i>${escapeHtml(fmtDay(x.date + "T12:00:00", { weekday: "short" }))}</div>`).join("");
+  return `<div class="card anchor" id="pStudy"><h3>${escapeHtml(p("study_t"))}</h3><small>${escapeHtml(p("study_sub"))}</small>
+    ${S.study === false ? `<div class="empty-mini" style="margin-top:14px">${escapeHtml(t("profile_study_err", "Не удалось загрузить."))}</div>` : `<div class="chart">${bars}</div>
+    <div class="chart-sum"><span>${escapeHtml(p("study_total", { t: humanDur(sum) }))}</span><a href="focus.html" style="color:var(--clay);font-weight:600">${escapeHtml(p("focus"))}</a></div>
+    <details class="log"><summary>${escapeHtml(p("study_open"))}</summary><div id="studyBox">${renderStudy(S.study)}</div></details>`}</div>`;
+}
+
+function quoteCardHtml() {
+  const L = curLang(), ids = Array.isArray(S.quoteIds) ? S.quoteIds : [];
+  const byId = {}; ((S.qdata && S.qdata.quotes) || []).forEach(q => { byId[q.id] = q; });
+  const q = ids.map(id => byId[id]).filter(Boolean)[0];
+  if (!q) return `<div class="quote"><p style="font-size:17px">${escapeHtml(p("q_none"))}</p><div class="acts"><a class="btn light" href="focus.html">${escapeHtml(p("q_focus"))}</a></div></div>`;
+  const a = (S.qdata.authors && S.qdata.authors[q.author]) || {};
+  return `<div class="quote"><div><p>«${escapeHtml(q.text[L] || q.text.ru)}»</p><small>${escapeHtml(a[L] || a.ru || "")}</small></div>
+    <div class="acts"><a class="btn ghost" href="#pQuotes">${escapeHtml(p("q_all", { n: ids.length }))}</a><a class="btn light" href="focus.html">${escapeHtml(p("q_focus"))}</a></div></div>`;
+}
+
+function deadlinesHtml(dls) {
+  const rows = dls.slice(0, 5).map((x, i) => {
+    const [y, m, d] = x.d.date.split("-").map(Number);
+    const mon = fmtDay(x.d.date + "T12:00:00", { month: "short" });
+    return `<div data-open="${escapeAttr(uniHref(x.u, x.meta))}"><span class="d ${i === 0 ? "h" : ""}"><b>${d}</b>${escapeHtml(mon)}</span>
+      <span><b>${escapeHtml(x.u.name)}</b><small>${escapeHtml((x.d.approx ? "≈ " : "") + x.d.label)}</small></span><span class="src">${escapeHtml(p(x.src === "saved" ? "src_saved" : "src_test"))}</span></div>`;
+  }).join("");
+  return `<div class="card"><h3>${escapeHtml(p("dl_t"))}</h3><small>${escapeHtml(p("dl_sub"))}</small>
+    ${rows ? `<div class="tl">${rows}</div><p class="sub" style="margin-top:10px;font-size:12px">${escapeHtml(p("dl_note"))}</p>` : `<div class="empty-mini" style="margin-top:14px">${escapeHtml(p("dl_none"))}</div>`}</div>`;
+}
+
+function miniHtml(dls) {
+  const nx = dls[0];
+  if (!nx) return `<div class="pf-mini"><small>${escapeHtml(p("next_t"))}</small><b>${escapeHtml(p("mini_none"))}</b></div>`;
+  const pct = Math.max(4, Math.min(100, Math.round(100 - nx.d.days / 365 * 100)));
+  return `<a class="pf-mini" href="${escapeAttr(uniHref(nx.u, nx.meta))}"><small>${escapeHtml(p("next_t"))}</small><b>${escapeHtml(nx.u.name)}</b>
+    <div class="bar"><i style="width:${pct}%"></i></div><small>${escapeHtml(p("in_days", { n: Math.max(0, nx.d.days) }))} · ${escapeHtml(window.EduDeadlines.fmt(nx.d.date, { day: "numeric", month: "short" }))}</small></a>`;
+}
+
+/* ---------- старые блоки: история учёбы и цитаты ---------- */
 function renderStudy(summary) {
   if (summary === false) return `<div class="empty-state">${t("profile_study_err", "Не удалось загрузить. Сервер просыпается — обнови страницу через полминуты.")}</div>`;
   const days = (summary && summary.days) || [];
-  if (!days.length) {
-    return `
-      <div class="empty-state">
-        ${t("profile_study_empty", "Пока нет сохранённых таймеров.")}<br>
-        <a href="focus.html">${t("profile_study_hint", "Запустить таймер →")}</a>
-      </div>`;
-  }
-  const streak = summary.streak || 0, best = summary.best_streak || 0;
-  const head = `<div class="study-streak">🔥 ${t("profile_study_streak", "Серия")}: <b>${streak}</b> ${t("profile_study_days", "дн.")}${best ? ` · ${t("profile_study_best", "рекорд")} ${best}` : ""}</div>`;
-  const list = days.slice(0, studyShown).map(d => `
-    <div class="study-day">
-      <div class="study-day-head">
-        <div class="study-day-date">${escapeHtml(dayTitle(d.date))}</div>
-        <div class="study-day-total">${t("profile_study_total", "всего")} ${escapeHtml(humanDur(d.total_sec))}</div>
-      </div>
-      <div class="study-items">
-        ${(d.items || []).map(it => `<div class="study-item"><b>${escapeHtml(it.label)}</b><span class="dur">${escapeHtml(humanDur(it.sec))}</span></div>`).join("")}
-      </div>
-    </div>`).join("");
-  const more = days.length > studyShown ? `<button type="button" class="study-more" data-study-more>${t("profile_study_more", "Показать ещё")}</button>` : "";
-  return head + `<div class="study-days">${list}</div>` + more;
+  if (!days.length) return `<div class="empty-state">${t("profile_study_empty", "Пока нет сохранённых таймеров.")}<br><a href="focus.html">${t("profile_study_hint", "Запустить таймер →")}</a></div>`;
+  const list = days.slice(0, S.studyShown).map(d => `
+    <div class="study-day"><div class="study-day-head"><div class="study-day-date">${escapeHtml(dayTitle(d.date))}</div><div class="study-day-total">${t("profile_study_total", "всего")} ${escapeHtml(humanDur(d.total_sec))}</div></div>
+      <div class="study-items">${(d.items || []).map(it => `<div class="study-item"><b>${escapeHtml(it.label)}</b><span class="dur">${escapeHtml(humanDur(it.sec))}</span></div>`).join("")}</div></div>`).join("");
+  const more = days.length > S.studyShown ? `<button type="button" class="study-more" data-study-more>${t("profile_study_more", "Показать ещё")}</button>` : "";
+  return `<div class="study-days">${list}</div>` + more;
 }
-
 function renderSavedQuotes(ids, data) {
   if (ids === false) return `<div class="empty-state">${t("profile_study_err", "Не удалось загрузить.")}</div>`;
-  const L = curLang();
-  const byId = {};
+  const L = curLang(), byId = {};
   ((data && data.quotes) || []).forEach(q => { byId[q.id] = q; });
   const list = (ids || []).map(id => byId[id]).filter(Boolean);
-  if (!list.length) {
-    return `
-      <div class="empty-state">
-        ${t("profile_quotes_empty", "Ты пока не сохранил ни одной цитаты.")}<br>
-        <a href="focus.html">${t("profile_quotes_hint", "Сохрани цитату дня пером на странице «Фокус» →")}</a>
-      </div>`;
-  }
+  if (!list.length) return `<div class="empty-state">${t("profile_quotes_empty", "Ты пока не сохранил ни одной цитаты.")}<br><a href="focus.html">${t("profile_quotes_hint", "Сохрани цитату дня пером на странице «Фокус» →")}</a></div>`;
   const quill = '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M20.2 3.8c-5.6.4-10.6 3.6-13 8.6-.9 1.9-1.4 3.9-1.5 6l3.1-.5c2.2-.3 4.2-1.3 5.8-2.8l-2.4-.6 3.4-1.4c1.9-1.3 3.4-3.1 4.2-5.3.4-1.3.6-2.6.4-4z"/><path d="M16 8 4 20" fill="none" stroke-width="1.7" stroke-linecap="round"/></svg>';
   return `<div class="quotes-grid">` + list.map(q => {
-    const a = (data.authors && data.authors[q.author]) || {};
-    const title = escapeAttr(t("profile_quotes_remove", "Убрать из сохранённых"));
-    return `<div class="quote-mini">
-      <p>${escapeHtml(q.text[L] || q.text.ru)}</p>
-      <div class="qa">${escapeHtml(a[L] || a.ru || "")}</div>
-      <button type="button" class="qx" data-remove-quote="${q.id}" title="${title}" aria-label="${title}">${quill}</button>
-    </div>`;
+    const a = (data.authors && data.authors[q.author]) || {}, title = escapeAttr(t("profile_quotes_remove", "Убрать из сохранённых"));
+    return `<div class="quote-mini"><p>${escapeHtml(q.text[L] || q.text.ru)}</p><div class="qa">${escapeHtml(a[L] || a.ru || "")}</div>
+      <button type="button" class="qx" data-remove-quote="${q.id}" title="${title}" aria-label="${title}">${quill}</button></div>`;
   }).join("") + `</div>`;
+}
+async function loadQuotesData() {
+  if (S.qdata) return S.qdata;
+  try { const r = await fetch("quotes.json", { cache: "no-cache" }); return await r.json(); } catch (e) { return null; }
+}
+
+/* ---------- сборка ---------- */
+function paint() {
+  const user = S.user, first = (user.name || user.email || "").split(/[ @]/)[0] || "";
+  const dls = deadlineList();
+  const counts = { saved: S.saved.length, tests: S.tests.length, quotes: Array.isArray(S.quoteIds) ? S.quoteIds.length : 0 };
+  document.getElementById("mainContent").innerHTML = `
+  <div class="pf">
+    <aside class="pf-side">
+      <div class="pf-me"><div class="ava">${escapeHtml(initials(first))}</div><div><b>${escapeHtml(user.name || first)}</b><small>${escapeHtml(user.email || "")}</small></div></div>
+      <nav class="pf-nav">${navHtml(counts)}</nav>
+      ${miniHtml(dls)}
+      <button type="button" class="pf-out" data-auth-logout><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg>${escapeHtml(t("profile_logout", "Выйти"))}</button>
+    </aside>
+    <main class="pf-main">
+      ${heroHtml(first, dls)}
+      <nav class="tabs">${tabsHtml(counts)}</nav>
+      ${statsHtml()}
+      <div class="sec-h anchor" id="pUnis"><h2>${escapeHtml(p("my_unis"))}</h2>${S.saved.length > 6 ? `<button type="button" data-all-unis>${escapeHtml(S.showAllUnis ? p("less") : p("all_n", { n: S.saved.length }))}</button>` : `<a href="universities.html">${escapeHtml(p("to_catalog"))}</a>`}</div>
+      ${unisHtml()}
+      <div class="two">${testHtml()}${studyHtml()}</div>
+      <div class="two">${quoteCardHtml()}${deadlinesHtml(dls)}</div>
+      <section class="anchor" id="pQuotes"><h2 class="section-title">${escapeHtml(p("quotes_t"))}</h2><p class="section-sub">${escapeHtml(t("profile_quotes_sub", "Цитаты дня, которые ты отметил пером"))}</p><div id="quotesBox">${renderSavedQuotes(S.quoteIds, S.qdata)}</div></section>
+      <section class="anchor settings" id="pSet">
+        <div><h2 class="section-title">${escapeHtml(p("set_t"))}</h2><p class="section-sub">${escapeHtml(p("set_sub"))}</p>
+          <button class="btn-logout" type="button" data-auth-logout><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg><span>${escapeHtml(p("logout"))}</span></button></div>
+        ${renderDataControls()}
+      </section>
+    </main>
+  </div>`;
+  watchNav();
+}
+
+function watchNav() {
+  const links = document.querySelectorAll("[data-nav]");
+  const mark = id => links.forEach(a => a.classList.toggle("on", a.dataset.nav === id));
+  mark("pOver");
+  if (!("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) mark(e.target.id); }); }, { rootMargin: "-30% 0px -60% 0px" });
+  ["pOver", "pUnis", "pTests", "pStudy", "pQuotes", "pSet"].forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
+}
+
+function renderNotLoggedIn() {
+  return `<div class="auth-required"><h2>${t("profile_need_login_title", "Сначала войди в аккаунт")}</h2><p>${t("profile_need_login_desc", "Чтобы сохранять университеты и видеть результаты тестов — создай аккаунт или войди.")}</p>
+    <button class="btn" data-auth-open="register">${t("profile_create_account", "Создать аккаунт")}</button></div>`;
+}
+function renderLoading() {
+  document.getElementById("mainContent").innerHTML = `<div class="loading"><span>${escapeHtml(t("profile_loading", "Загрузка профиля"))}</span><span class="loading-dots"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></span></div>`;
 }
 
 async function renderProfile() {
   const user = window.EduAuth.getCurrentUser();
-
-  if (!user) {
-    document.getElementById("mainContent").innerHTML = renderNotLoggedIn();
-    return;
-  }
-
+  if (!user) { document.getElementById("mainContent").innerHTML = renderNotLoggedIn(); return; }
+  S.user = user;
   renderLoading();
-
-  let saved = [];
-  let tests = [];
-  // «Фокус» грузится отдельно: если он не ответит, остальной профиль всё равно откроется
   const focusPromise = Promise.all([
     window.EduAuth.getStudySummary({ days: 30, strict: true }).catch(() => false),
     window.EduAuth.getSavedQuotes({ strict: true }).catch(() => false),
     loadQuotesData()
   ]);
   try {
-    [saved, tests] = await Promise.all([
-      window.EduAuth.getSaved({ strict: true }),
-      window.EduAuth.getTests({ strict: true })
-    ]);
+    const [saved, tests] = await Promise.all([window.EduAuth.getSaved({ strict: true }), window.EduAuth.getTests({ strict: true }), window.EduDeadlines.load()]);
+    S.saved = saved || []; S.tests = tests || [];
   } catch (e) {
-    // Сессия умерла — показываем экран входа, а не пустой профиль
-    if (!window.EduAuth.isLoggedIn()) {
-      document.getElementById("mainContent").innerHTML = renderNotLoggedIn();
-      return;
-    }
-    // Иначе (например, сервер ещё просыпается) — честная ошибка и кнопка повтора
-    document.getElementById("mainContent").innerHTML = `
-      <div style="max-width:520px;margin:80px auto;text-align:center;padding:0 20px;">
-        <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
-        <p style="margin-bottom:20px;">${escapeHtml((e && e.message) || t("modal_server_waking", "Сервер просыпается. Подожди 30 секунд и попробуй снова."))}</p>
-        <button type="button" class="btn-logout" onclick="renderProfile()">${t("test_save_retry", "Повторить")}</button>
-      </div>
-    `;
+    if (!window.EduAuth.isLoggedIn()) { document.getElementById("mainContent").innerHTML = renderNotLoggedIn(); return; }
+    document.getElementById("mainContent").innerHTML = `<div style="max-width:520px;margin:80px auto;text-align:center;padding:0 20px;"><p style="margin-bottom:20px;">${escapeHtml((e && e.message) || t("modal_server_waking", "Сервер просыпается. Подожди 30 секунд и попробуй снова."))}</p><button type="button" class="btn-logout" onclick="renderProfile()">${t("test_save_retry", "Повторить")}</button></div>`;
     return;
   }
-
-  document.getElementById("mainContent").innerHTML = `
-    <div class="profile-head anim-item anim-delay-1">
-      <div class="profile-greeting">
-        <h1>${t("profile_greeting", "Привет")}, <em>${escapeHtml((user.name || "друг").split(" ")[0])}</em></h1>
-        <div class="profile-email">${escapeHtml(user.email || "")}</div>
-      </div>
-      <button class="btn-logout" data-auth-logout>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        <span>${t("profile_logout", "Выйти")}</span>
-      </button>
-    </div>
-
-    <section class="section anim-item anim-delay-2">
-      <h2 class="section-title">${t("profile_saved_title", "⭐ Понравившиеся университеты")}</h2>
-      <p class="section-sub">${t("profile_saved_sub", "Те, которые ты отметил звёздочкой в каталоге")}</p>
-      ${renderSavedUniversities(saved)}
-    </section>
-
-    <section class="section anim-item anim-delay-3">
-      <h2 class="section-title">${t("profile_tests_title", "🎯 Результаты теста")}</h2>
-      <p class="section-sub">${t("profile_tests_sub", "Университеты, которые ИИ подобрал по твоим ответам")}</p>
-      ${renderTests(tests)}
-    </section>
-
-    <section class="section anim-item anim-delay-3" id="studyLog">
-      <h2 class="section-title">${t("profile_study_title", "⏱ Учёба по дням")}</h2>
-      <p class="section-sub">${t("profile_study_sub", "Сохранённые таймеры со страницы «Фокус»")}</p>
-      <div id="studyBox"><div class="empty-mini">${t("profile_loading", "Загрузка профиля")}…</div></div>
-    </section>
-
-    <section class="section anim-item anim-delay-3" id="savedQuotes">
-      <h2 class="section-title">${t("profile_quotes_title", "🪶 Сохранённые цитаты")}</h2>
-      <p class="section-sub">${t("profile_quotes_sub", "Цитаты дня, которые ты отметил пером")}</p>
-      <div id="quotesBox"><div class="empty-mini">${t("profile_loading", "Загрузка профиля")}…</div></div>
-    </section>
-
-    ${renderDataControls()}
-  `;
-
+  S.study = null; S.quoteIds = null;
+  paint();
   const [summary, quoteIds, qdata] = await focusPromise;
-  LAST_FOCUS = { summary, quoteIds, qdata };
-  paintFocus();
-  // переход по ссылке «Мои цитаты →» / «профиле» с другой страницы
-  if (location.hash === "#savedQuotes" || location.hash === "#studyLog") {
-    const el = document.querySelector(location.hash);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-}
-
-let LAST_FOCUS = null;
-function paintFocus() {
-  if (!LAST_FOCUS) return;
-  const s = document.getElementById("studyBox"), q = document.getElementById("quotesBox");
-  if (s) s.innerHTML = renderStudy(LAST_FOCUS.summary);
-  if (q) q.innerHTML = renderSavedQuotes(LAST_FOCUS.quoteIds, LAST_FOCUS.qdata);
+  S.study = summary; S.quoteIds = quoteIds; S.qdata = qdata;
+  paint();
+  const h = { "#savedQuotes": "pQuotes", "#studyLog": "pStudy" }[location.hash] || (location.hash || "").slice(1);
+  const el = h && document.getElementById(h);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 document.addEventListener("click", async (e) => {
-  const moreBtn = e.target.closest("[data-study-more]");
-  if (moreBtn) {
-    studyShown += STUDY_SHOW_STEP;
-    paintFocus();
-    return;
-  }
-
+  if (e.target.closest("[data-study-more]")) { S.studyShown += 10; const b = document.getElementById("studyBox"); if (b) b.innerHTML = renderStudy(S.study); return; }
+  if (e.target.closest("[data-all-unis]")) { S.showAllUnis = !S.showAllUnis; paint(); document.getElementById("pUnis").scrollIntoView({ block: "start" }); return; }
+  if (e.target.closest("[data-all-recs]")) { S.showAllRecs = !S.showAllRecs; paint(); document.getElementById("pTests").scrollIntoView({ block: "start" }); return; }
+  if (e.target.closest("[data-old-tests]")) { S.showOldTests = !S.showOldTests; paint(); document.getElementById("pTests").scrollIntoView({ block: "start" }); return; }
   const qBtn = e.target.closest("[data-remove-quote]");
   if (qBtn) {
     qBtn.disabled = true;
-    const id = Number(qBtn.dataset.removeQuote);
-    const r = await window.EduAuth.toggleQuote(id);
-    if (r.ok && LAST_FOCUS && Array.isArray(LAST_FOCUS.quoteIds)) {
-      LAST_FOCUS.quoteIds = LAST_FOCUS.quoteIds.filter(x => x !== id);
-      window.EduAuth.showToast(t("profile_quotes_removed", "Цитата убрана из сохранённых"), "info");
-      paintFocus();
-    } else {
-      qBtn.disabled = false;
-      window.EduAuth.showToast((r && r.error) || "Error", "error");
-    }
+    const id = Number(qBtn.dataset.removeQuote), r = await window.EduAuth.toggleQuote(id);
+    if (r.ok && Array.isArray(S.quoteIds)) { S.quoteIds = S.quoteIds.filter(x => x !== id); window.EduAuth.showToast(t("profile_quotes_removed", "Цитата убрана из сохранённых"), "info"); paint(); }
+    else { qBtn.disabled = false; window.EduAuth.showToast((r && r.error) || "Error", "error"); }
     return;
   }
-
   const removeBtn = e.target.closest("[data-remove-saved]");
   if (removeBtn) {
     e.stopPropagation();
-    const name = removeBtn.dataset.removeSaved;
-    const saved = await window.EduAuth.getSaved();
-    const uni = saved.find(u => u.name === name);
+    const uni = S.saved.find(u => u.name === removeBtn.dataset.removeSaved);
     if (uni) {
+      removeBtn.disabled = true;
       await window.EduAuth.toggleSave({ name: uni.name, country: uni.country, city: uni.city });
+      S.saved = S.saved.filter(u => u !== uni);
       window.EduAuth.showToast(t("catalog_saved_remove", "Университет убран из избранного"), "info");
-      renderProfile();
+      paint();
     }
     return;
   }
-
-  const savedCard = e.target.closest(".saved-card");
-  if (savedCard) {
-    const name = savedCard.dataset.uniName;
-    if (name) {
-      // сразу открываем полное досье этого вуза (данные берутся из кэша, без нового поиска)
-      const q = new URLSearchParams({ uni: name });
-      if (savedCard.dataset.uniCountry) q.set("country", savedCard.dataset.uniCountry);
-      if (savedCard.dataset.uniCity) q.set("city", savedCard.dataset.uniCity);
-      window.location.href = "universities.html?" + q.toString() + "#detailShell";
-    }
-    return;
-  }
-
-  const testHeader = e.target.closest("[data-toggle-test]");
-  if (testHeader) {
-    const block = testHeader.closest(".test-block");
-    if (block) block.classList.toggle("open");
-    return;
-  }
-
-  const uniMini = e.target.closest(".uni-mini");
-  if (uniMini && uniMini.dataset.uniName) {
-    // открываем полную карточку вуза в «Университетах» — на том же уровне обучения и гражданстве, что в тесте
-    const d = uniMini.dataset, q = new URLSearchParams({ uni: d.uniName });
-    if (d.uniId) q.set("id", d.uniId);
-    if (d.uniCountry) q.set("country", d.uniCountry);
-    if (d.uniCity) q.set("city", d.uniCity);
-    if (d.degree) q.set("degree", d.degree);
-    if (d.cit && d.cit !== "XX") q.set("cit", d.cit);
-    window.location.href = "universities.html?" + q.toString() + "#detailShell";
-    return;
-  }
+  const open = e.target.closest("[data-open]");
+  if (open && !e.target.closest("a,button")) { location.href = open.dataset.open; return; }
 });
 
-window.addEventListener("edupath-lang-change", () => {
-  document.getElementById("mainContent").style.opacity = "0";
-  setTimeout(() => {
-    renderProfile();
-    document.getElementById("mainContent").style.opacity = "1";
-  }, 150);
-});
+window.addEventListener("edupath-lang-change", () => { if (S.user && S.saved) paint(); else renderProfile(); });
 
 renderProfile();
 
@@ -780,6 +759,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeDeleteModal();
   if (e.key === "Enter" && e.target.id === "delWord" && !document.querySelector("[data-del-confirm]").disabled) runDelete();
 });
+
 </script>
 </body>
 </html>
