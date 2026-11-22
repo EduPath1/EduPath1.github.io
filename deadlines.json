@@ -729,6 +729,22 @@
     "METU",
     "ODTÜ"
    ]
+  },
+  "Northwestern University": {
+   "url": "https://admissions.northwestern.edu/faqs/application-process",
+   "d": [
+    {
+     "k": "ed",
+     "md": "11-01"
+    },
+    {
+     "k": "rd",
+     "md": "01-02"
+    }
+   ],
+   "aliases": [
+    "Northwestern"
+   ]
   }
  }
 }
