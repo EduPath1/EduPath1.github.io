@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F6F8FC">
+<meta name="theme-color" content="#FFFFFF">
 <title>EduPath — Полезное</title>
 <meta name="description" content="Официальные сайты экзаменов, стипендий, подачи документов и подготовки к поступлению за рубеж.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#F6F8FC; --cream-deep:#E6EDF7; --paper:#FFFFFF;
-    --espresso:#17263C; --bark:#0F2A4A; --clay:#1E4E8C;
-    --caramel:#F2B233; --sand:#C9D5E6;
-    --text-main:#17263C; --text-muted:#5B6B82;
-    --line:rgba(23,38,60,0.14);
-    --shadow:0 16px 42px rgba(23,38,60,.09);
+    --cream:#FFFFFF; --cream-deep:#F3F4F6; --paper:#FFFFFF;
+    --espresso:#0A0A0B; --bark:#0A0A0B; --clay:#1F4FE0;
+    --caramel:#1F4FE0; --sand:#D9DBE0;
+    --text-main:#0A0A0B; --text-muted:#5F636B;
+    --line:rgba(10,10,11,0.14);
+    --shadow:0 16px 42px rgba(10,10,11,.09);
     --ease:cubic-bezier(0.22, 1, 0.36, 1);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   html{ scroll-behavior:smooth; }
-  body{ font-family:'Manrope', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:'Lora', serif; letter-spacing:-.02em; }
+  body{ font-family:'Inter', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Inter Tight', serif; letter-spacing:-.02em; }
   a{ text-decoration:none; color:inherit; }
   button,input{ font:inherit; }
   button{ cursor:pointer; border:none; background:none; appearance:none; }
@@ -31,7 +31,7 @@
   /* Шапка — как на остальных страницах */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Lora', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Inter Tight', serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
   .logo:hover svg{ transform:rotate(90deg); }
   .nav-links{ display:flex; align-items:center; gap:8px; }
@@ -42,7 +42,7 @@
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .15s, color .15s; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(23,38,60,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(10,10,11,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
   .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
   .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
@@ -55,10 +55,10 @@
   .res-hero p{ color:var(--text-muted); max-width:720px; }
 
   /* Панель поиска и фильтров */
-  .res-panel{ position:sticky; top:0; z-index:4; background:rgba(246,248,252,.95); backdrop-filter:blur(10px); padding:14px 0 12px; border-bottom:1px solid var(--line); }
+  .res-panel{ position:sticky; top:0; z-index:4; background:rgba(255,255,255,.95); backdrop-filter:blur(10px); padding:14px 0 12px; border-bottom:1px solid var(--line); }
   .res-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .res-search{ flex:1 1 280px; min-width:0; padding:12px 14px; border:1px solid var(--line); border-radius:11px; background:#FFFFFF; color:var(--espresso); outline:none; }
-  .res-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(30,78,140,.12); }
+  .res-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(31,79,224,.12); }
   .free-toggle{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--bark); padding:10px 12px; border:1px solid var(--line); border-radius:11px; background:var(--paper); user-select:none; cursor:pointer; }
   .free-toggle input{ accent-color:var(--clay); width:16px; height:16px; }
   .res-tabs{ display:flex; gap:6px; overflow-x:auto; padding:12px 0 2px; scrollbar-width:thin; }
@@ -75,11 +75,11 @@
   .res-card{ display:flex; gap:16px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:16px; transition:transform .2s, box-shadow .2s, border-color .2s; }
   .res-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:var(--caramel); }
   .res-logo{ flex:none; width:64px; height:64px; border-radius:14px; background:#fff; border:1px solid var(--line); display:grid; place-items:center; overflow:hidden; transition:transform .2s, box-shadow .2s; }
-  .res-logo:hover, .res-logo:focus-visible{ transform:scale(1.06); box-shadow:0 8px 18px -8px rgba(23,38,60,.35); outline:none; }
+  .res-logo:hover, .res-logo:focus-visible{ transform:scale(1.06); box-shadow:0 8px 18px -8px rgba(10,10,11,.35); outline:none; }
   .res-logo img{ width:44px; height:44px; object-fit:contain; }
-  .res-logo .letter{ font-family:'Lora',serif; font-size:28px; font-weight:600; color:var(--paper); width:100%; height:100%; display:grid; place-items:center; }
+  .res-logo .letter{ font-family:'Inter Tight',serif; font-size:28px; font-weight:600; color:var(--paper); width:100%; height:100%; display:grid; place-items:center; }
   .res-body{ min-width:0; flex:1; display:flex; flex-direction:column; gap:6px; }
-  .res-name{ font-family:'Lora',serif; font-size:19px; font-weight:600; line-height:1.2; }
+  .res-name{ font-family:'Inter Tight',serif; font-size:19px; font-weight:600; line-height:1.2; }
   .res-name:hover{ color:var(--clay); }
   .res-domain{ font-size:11px; color:var(--text-muted); }
   .res-desc{ font-size:13px; color:var(--bark); line-height:1.45; }
@@ -87,10 +87,10 @@
   .chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
   .chip{ font-size:10px; font-weight:600; padding:3px 8px; border-radius:999px; background:var(--cream); color:var(--bark); }
   .chip.free{ background:#dcebdf; color:#2f6b43; }
-  .chip.freemium{ background:#FDF1D6; color:#7a5b10; }
-  .chip.paid{ background:#E6EDF7; color:#0F2A4A; }
+  .chip.freemium{ background:#EDF2FF; color:#7a5b10; }
+  .chip.paid{ background:#F3F4F6; color:#0A0A0B; }
   .chip.official{ background:#e2e9f3; color:#2c4a73; }
-  .chip.only{ background:#FDF1D6; color:#8a4a12; }
+  .chip.only{ background:#EDF2FF; color:#8a4a12; }
   .res-go{ align-self:flex-start; font-size:12px; color:var(--clay); font-weight:600; margin-top:2px; }
   .res-go:hover{ text-decoration:underline; }
   .res-empty, .res-loading{ background:rgba(255,255,255,.7); border:1px dashed var(--sand); border-radius:18px; padding:30px; text-align:center; color:var(--text-muted); margin-top:30px; }
@@ -110,16 +110,14 @@
   }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 </style>
-<link rel="stylesheet" href="edupath.css?v=2">
-<link rel="stylesheet" href="edupath-b.css?v=1">
-<link rel="stylesheet" href="edupath-c.css?v=1">
-<link rel="stylesheet" href="edupath-d.css?v=1">
+<link rel="stylesheet" href="edupath.css?v=3">
+<link rel="stylesheet" href="edupath-d.css?v=2">
 </head>
 <body>
 
 <header class="ep-header" id="siteHeader" data-variant="app"></header>
-<script src="layout.js?v=4"></script>
-<script src="edupath-d.js?v=1"></script>
+<script src="layout.js?v=5"></script>
+<script src="edupath-d.js?v=3"></script>
 
 <section class="res-hero wrap">
   <div class="eyebrow" data-r="eyebrow">EduPath · Полезное</div>
@@ -159,7 +157,7 @@
   };
   // Описания сайтов есть на русском и английском: казахский и кыргызский берут русский, китайский — английский
   const DESC_FALLBACK = { ru: "ru", kk: "ru", ky: "ru", en: "en", zh: "en" };
-  const LOGO_COLORS = ["#1E4E8C", "#0F2A4A", "#17263C", "#F2B233", "#5B6B82", "#2A63AD"];
+  const LOGO_COLORS = ["#1F4FE0", "#0A0A0B", "#0A0A0B", "#1F4FE0", "#5F636B", "#3A66F0"];
 
   const $ = (id) => document.getElementById(id);
   let DATA = null;

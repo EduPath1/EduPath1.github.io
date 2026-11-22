@@ -4,26 +4,26 @@
 <script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F6F8FC">
+<meta name="theme-color" content="#FFFFFF">
 <title>EduPath — Контент</title>
 <meta name="description" content="Свежие видео и новости про поступление, визы, жизнь в других странах и опыт студентов.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#F6F8FC; --cream-deep:#E6EDF7; --paper:#FFFFFF;
-    --espresso:#17263C; --bark:#0F2A4A; --clay:#1E4E8C;
-    --caramel:#F2B233; --sand:#C9D5E6;
-    --text-main:#17263C; --text-muted:#5B6B82;
-    --line:rgba(23,38,60,0.14);
-    --shadow:0 16px 42px rgba(23,38,60,.09);
+    --cream:#FFFFFF; --cream-deep:#F3F4F6; --paper:#FFFFFF;
+    --espresso:#0A0A0B; --bark:#0A0A0B; --clay:#1F4FE0;
+    --caramel:#1F4FE0; --sand:#D9DBE0;
+    --text-main:#0A0A0B; --text-muted:#5F636B;
+    --line:rgba(10,10,11,0.14);
+    --shadow:0 16px 42px rgba(10,10,11,.09);
     --ease:cubic-bezier(0.22, 1, 0.36, 1);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   html{ scroll-behavior:smooth; }
-  body{ font-family:'Manrope', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:'Lora', serif; letter-spacing:-.02em; }
+  body{ font-family:'Inter', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Inter Tight', serif; letter-spacing:-.02em; }
   a{ text-decoration:none; color:inherit; }
   button,input{ font:inherit; }
   button{ cursor:pointer; border:none; background:none; appearance:none; }
@@ -32,7 +32,7 @@
   /* Шапка — как на остальных страницах */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Lora', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Inter Tight', serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
   .logo:hover svg{ transform:rotate(90deg); }
   .nav-links{ display:flex; align-items:center; gap:8px; }
@@ -43,7 +43,7 @@
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .15s, color .15s; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(23,38,60,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(10,10,11,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
   .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
   .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
@@ -56,14 +56,14 @@
   .ct-hero p{ color:var(--text-muted); max-width:720px; }
 
   /* Панель: тип, поиск, темы, язык */
-  .ct-panel{ position:sticky; top:0; z-index:4; background:rgba(246,248,252,.95); backdrop-filter:blur(10px); padding:14px 0 10px; border-bottom:1px solid var(--line); }
+  .ct-panel{ position:sticky; top:0; z-index:4; background:rgba(255,255,255,.95); backdrop-filter:blur(10px); padding:14px 0 10px; border-bottom:1px solid var(--line); }
   .ct-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .ct-kinds{ display:flex; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:4px; gap:2px; }
   .ct-kind{ padding:8px 16px; border-radius:9px; font-size:14px; color:var(--bark); white-space:nowrap; transition:background .15s, color .15s; }
   .ct-kind:hover{ background:var(--cream-deep); }
   .ct-kind[aria-pressed="true"]{ background:var(--espresso); color:var(--paper); }
   .ct-search{ flex:1 1 240px; min-width:0; padding:11px 14px; border:1px solid var(--line); border-radius:11px; background:#FFFFFF; color:var(--espresso); outline:none; }
-  .ct-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(30,78,140,.12); }
+  .ct-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(31,79,224,.12); }
   .ct-langs{ display:flex; gap:4px; }
   .ct-lang{ padding:8px 11px; border-radius:9px; font-size:12px; font-weight:600; color:var(--bark); border:1px solid var(--line); background:var(--paper); }
   .ct-lang[aria-pressed="true"]{ background:var(--bark); border-color:var(--bark); color:var(--paper); }
@@ -81,21 +81,21 @@
   .ct-thumb{ position:relative; aspect-ratio:16/9; background:var(--cream-deep); overflow:hidden; }
   .ct-thumb img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s var(--ease); }
   .ct-card:hover .ct-thumb img{ transform:scale(1.04); }
-  .ct-play{ position:absolute; left:50%; top:50%; width:54px; height:38px; margin:-19px 0 0 -27px; border-radius:11px; background:rgba(23,38,60,.78); display:grid; place-items:center; transition:background .2s; }
+  .ct-play{ position:absolute; left:50%; top:50%; width:54px; height:38px; margin:-19px 0 0 -27px; border-radius:11px; background:rgba(10,10,11,.78); display:grid; place-items:center; transition:background .2s; }
   .ct-card:hover .ct-play{ background:#c4302b; }
   .ct-play svg{ width:18px; height:18px; fill:#fff; margin-left:3px; }
   /* Обложка-заглушка, если у новости нет своей картинки */
   .ct-cover{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; padding:16px 18px; color:#fff; background:linear-gradient(135deg, var(--c1), var(--c2)); }
   .ct-cover::after{ content:""; position:absolute; right:-30px; bottom:-40px; width:170px; height:170px; border-radius:50%; background:rgba(255,255,255,.08); }
   .ct-cover-icon{ font-size:38px; line-height:1; filter:drop-shadow(0 4px 10px rgba(0,0,0,.18)); }
-  .ct-cover-src{ font-family:'Lora',serif; font-size:20px; font-weight:600; line-height:1.15; max-width:85%; text-shadow:0 2px 10px rgba(0,0,0,.18); position:relative; z-index:1; }
+  .ct-cover-src{ font-family:'Inter Tight',serif; font-size:20px; font-weight:600; line-height:1.15; max-width:85%; text-shadow:0 2px 10px rgba(0,0,0,.18); position:relative; z-index:1; }
   .ct-cover-topic{ font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.85; margin-top:4px; }
   .ct-city{ position:absolute; left:10px; top:10px; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; background:rgba(255,255,255,.94); color:var(--espresso); }
   .ct-body{ display:flex; flex-direction:column; gap:7px; padding:14px 16px 16px; flex:1; }
   .ct-meta{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:11px; color:var(--text-muted); }
   .ct-meta .src{ font-weight:700; color:var(--bark); }
   .ct-meta .dot{ opacity:.5; }
-  .ct-title{ font-family:'Lora',serif; font-size:17px; font-weight:600; line-height:1.28; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .ct-title{ font-family:'Inter Tight',serif; font-size:17px; font-weight:600; line-height:1.28; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .ct-card:hover .ct-title{ color:var(--clay); }
   .ct-teaser{ font-size:13px; color:var(--bark); line-height:1.45; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
   .chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:auto; padding-top:4px; }
@@ -123,16 +123,14 @@
   }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 </style>
-<link rel="stylesheet" href="edupath.css?v=2">
-<link rel="stylesheet" href="edupath-b.css?v=1">
-<link rel="stylesheet" href="edupath-c.css?v=1">
-<link rel="stylesheet" href="edupath-d.css?v=1">
+<link rel="stylesheet" href="edupath.css?v=3">
+<link rel="stylesheet" href="edupath-d.css?v=2">
 </head>
 <body>
 
 <header class="ep-header" id="siteHeader" data-variant="app"></header>
-<script src="layout.js?v=4"></script>
-<script src="edupath-d.js?v=1"></script>
+<script src="layout.js?v=5"></script>
+<script src="edupath-d.js?v=3"></script>
 
 <section class="ct-hero wrap">
   <div class="eyebrow" data-c="eyebrow">EduPath · Контент</div>
@@ -243,13 +241,13 @@
   }
 
   const COVER = {
-    study:      { icon: "🎓", c1: "#0F2A4A", c2: "#1E4E8C" },
+    study:      { icon: "🎓", c1: "#0A0A0B", c2: "#1F4FE0" },
     visa:       { icon: "🛂", c1: "#2c4a73", c2: "#5d7fa8" },
     life:       { icon: "🌍", c1: "#3d5c31", c2: "#7a9a5c" },
-    students:   { icon: "🧑‍🎓", c1: "#0F2A4A", c2: "#2A63AD" },
+    students:   { icon: "🧑‍🎓", c1: "#0A0A0B", c2: "#3A66F0" },
     motivation: { icon: "💡", c1: "#6B4A00", c2: "#B07A10" },
     walks:      { icon: "🚶", c1: "#4b5f6b", c2: "#8aa1ad" },
-    world:      { icon: "🗞️", c1: "#17263C", c2: "#5B6B82" }
+    world:      { icon: "🗞️", c1: "#0A0A0B", c2: "#5F636B" }
   };
   function coverHtml(it) {
     const c = COVER[it.topic] || COVER.world;

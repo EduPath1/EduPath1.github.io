@@ -4,127 +4,83 @@
 <script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0F2A4A">
+<meta name="theme-color" content="#0A0A0B">
 <title>EduPath — Главная</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="edupath.css?v=2">
-<link rel="stylesheet" href="edupath-b.css?v=1">
-<link rel="stylesheet" href="edupath-c.css?v=1">
-<link rel="stylesheet" href="edupath-d.css?v=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edupath.css?v=3">
+<link rel="stylesheet" href="edupath-d.css?v=2">
 <style>
   *{ box-sizing:border-box; margin:0; padding:0; }
   body{ line-height:1.55; -webkit-font-smoothing:antialiased; }
   a{ color:inherit; text-decoration:none; }
   .wrap{ max-width:1180px; margin:0 auto; padding:0 18px; }
-  h1,h2,h3{ color:var(--navy-deep); letter-spacing:-.015em; line-height:1.15; }
-  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font:700 12px var(--font-body); letter-spacing:.12em; text-transform:uppercase; color:var(--gold-ink); }
-  .eyebrow::before{ content:""; width:22px; height:2px; background:var(--gold); border-radius:2px; }
 
-  .hello{ padding:28px 0 18px; }
-  .hello h1{ font-size:clamp(28px, 7vw, 44px); margin-top:8px; }
-  .hello p{ color:var(--muted); margin-top:6px; font-size:16px; }
+  /* главный блок: фото на заднем фоне на всю ширину */
+  .home-hero{ position:relative; background:var(--d-black); color:#fff; overflow:hidden; min-height:min(78vh, 720px); display:flex; align-items:flex-end; }
+  .home-hero-bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:60% center; }
+  .home-hero::after{ content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(10,10,11,.95) 0%, rgba(10,10,11,.75) 50%, rgba(10,10,11,.3) 100%); }
+  .home-hero-in{ position:relative; z-index:1; width:100%; max-width:1180px; margin:0 auto; padding:96px 18px 40px; }
+  .home-kicker{ display:inline-block; font:600 13px var(--font-body); color:#fff; background:rgba(255,255,255,.14); border-radius:999px; padding:6px 12px; }
+  .home-hero h1{ font:700 clamp(36px, 9vw, 72px)/1 var(--font-head); letter-spacing:-.045em; color:#fff; margin:16px 0 18px; }
+  .home-hero h2{ font:700 clamp(22px, 5vw, 34px)/1.1 var(--font-head); letter-spacing:-.03em; color:#fff; max-width:640px; }
+  .home-hero h2 em{ font-style:normal; text-decoration:underline; text-decoration-color:var(--d-blue); text-decoration-thickness:4px; text-underline-offset:6px; }
+  .home-hero p{ color:#D6D8DC; font-size:16px; line-height:1.6; max-width:560px; margin-top:12px; }
+  .test-facts{ display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .test-facts span{ font-size:13px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:999px; padding:6px 12px; color:#fff; }
+  .home-cta{ display:inline-flex; align-items:center; gap:10px; min-height:54px; padding:0 26px; margin-top:24px; border-radius:999px; background:var(--d-blue); color:#fff; font:600 16px var(--font-body); }
+  .home-cta:hover{ background:var(--d-blue-hover); }
+  .home-cta svg{ width:18px; height:18px; }
+  .home-hero p.home-note{ font-size:13px; color:#B9BCC3; margin-top:22px; max-width:560px; }
+  .home-note a{ color:#fff; text-decoration:underline; }
+  .home-credit{ position:absolute; right:14px; bottom:10px; z-index:1; font-size:10px; color:rgba(255,255,255,.5); }
 
-  /* главная карточка — тест */
-  .test-card{ display:grid; gap:20px; background:var(--navy-deep); color:#DCE5F1; border-radius:24px; padding:26px 22px; position:relative; overflow:hidden; }
-  .test-card::after{ content:""; position:absolute; right:-70px; bottom:-90px; width:240px; height:240px; border-radius:50%; border:2px solid rgba(242,178,51,.28); pointer-events:none; }
-  .test-card h2{ color:#fff; font-size:clamp(24px, 5.6vw, 34px); }
-  .test-card h2 em{ font-style:italic; color:var(--gold); }
-  .test-card p{ color:#B9C7DA; font-size:15px; margin-top:8px; max-width:520px; }
-  .test-facts{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
-  .test-facts span{ font-size:13px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:6px 11px; color:#E6EDF7; }
-  .btn-gold{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:52px; padding:0 24px; border-radius:999px;
-             background:var(--gold); color:var(--navy-deep); font:700 16px var(--font-body); box-shadow:0 10px 24px rgba(242,178,51,.3); transition:transform .15s; position:relative; z-index:1; }
-  .btn-gold:hover{ transform:translateY(-2px); }
-  .btn-gold svg{ width:18px; height:18px; }
-  .test-card .ep-ai-note{ background:rgba(242,178,51,.1); border-color:rgba(242,178,51,.35); color:#E9D9AE !important; }
-  .test-card .ep-ai-note a{ color:var(--gold); }
-
-  /* плитки разделов */
-  .tiles-head{ margin:34px 0 14px; display:flex; align-items:end; justify-content:space-between; gap:12px; }
-  .tiles-head h2{ font-size:24px; }
-  .tiles{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .tile{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px; min-height:138px;
-         display:flex; flex-direction:column; gap:8px; transition:transform .15s, box-shadow .15s, border-color .15s; }
-  .tile:hover{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:rgba(30,78,140,.35); }
-  .tile-ico{ width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:var(--tint); color:var(--navy); }
-  .tile-ico svg{ width:21px; height:21px; }
-  .tile h3{ font-size:18px; }
-  .tile p{ font-size:13px; color:var(--muted); line-height:1.45; }
-  .tile.wide{ grid-column:1 / -1; flex-direction:row; align-items:center; min-height:auto; }
-  .tile.wide .tile-ico{ flex:none; background:var(--tint-gold); color:var(--gold-ink); }
-
-  /* как работает тест */
-  .how{ margin-top:40px; }
-  .how h2{ font-size:24px; margin-bottom:14px; }
+  .how{ margin:48px 0 8px; }
+  .how h2{ font:700 clamp(24px, 5vw, 34px)/1.1 var(--font-head); letter-spacing:-.03em; margin-bottom:18px; }
   .steps{ display:grid; gap:12px; counter-reset:s; }
-  .step{ position:relative; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px 18px 18px 70px; }
-  .step::before{ counter-increment:s; content:counter(s); position:absolute; left:18px; top:18px; width:36px; height:36px; border-radius:50%;
-         display:grid; place-items:center; background:var(--tint); color:var(--navy); font:800 16px var(--font-body); }
-  .step h3{ font-size:17px; margin-bottom:3px; }
-  .step p{ color:var(--muted); font-size:14px; }
+  .step{ position:relative; background:var(--d-gray); border-radius:20px; padding:20px 20px 20px 74px; }
+  .step::before{ counter-increment:s; content:counter(s); position:absolute; left:20px; top:20px; width:38px; height:38px; border-radius:50%;
+         display:grid; place-items:center; background:var(--d-black); color:#fff; font:700 16px var(--font-body); }
+  .step h3{ font:700 18px var(--font-head); letter-spacing:-.02em; margin-bottom:4px; }
+  .step p{ color:var(--d-muted); font-size:15px; }
 
   @media (min-width:700px){
     .wrap{ padding:0 28px; }
-    .tiles{ grid-template-columns:repeat(3,1fr); }
+    .home-hero-in{ padding:110px 28px 56px; }
     .steps{ grid-template-columns:repeat(3,1fr); }
-    .test-card{ padding:36px; }
+    .step{ padding:72px 20px 22px; }
   }
   @media (min-width:1000px){
-    .hello{ padding:44px 0 22px; }
-    .test-card{ grid-template-columns:1.4fr .6fr; align-items:end; padding:44px; }
-    .test-card .ep-ai-note{ grid-column:1 / -1; }
-    .tiles{ grid-template-columns:repeat(4,1fr); }
-    .tile.wide{ grid-column:span 2; }
+    .home-hero{ align-items:center; }
+    .home-hero::after{ background:linear-gradient(90deg, rgba(10,10,11,.93) 0%, rgba(10,10,11,.72) 45%, rgba(10,10,11,.15) 85%); }
+    .how{ margin-top:72px; }
   }
 </style>
 </head>
 <body>
 <header class="ep-header" id="siteHeader" data-variant="app"></header>
-<script src="layout.js?v=4"></script>
-<script src="edupath-d.js?v=1"></script>
+<script src="layout.js?v=5"></script>
+<script src="edupath-d.js?v=3"></script>
+
+<section class="home-hero">
+  <img class="home-hero-bg" src="assets/d/d-airport.jpg" alt="" fetchpriority="high" onerror="this.remove()">
+  <div class="home-hero-in">
+    <span class="home-kicker" data-h="eyebrow">Твой кабинет</span>
+    <h1 id="helloTitle">Привет!</h1>
+    <h2 data-h-html="t_h2">Пройди тест — и найди <em>свой</em> университет</h2>
+    <p data-h="t_p">Около 23 вопросов об оценках, бюджете, климате и целях. В конце — 12 вузов в четырёх категориях, которые сохранятся в профиле.</p>
+    <div class="test-facts">
+      <span data-h="t_f1">≈23 вопроса</span><span data-h="t_f2">4 категории × 3 вуза</span><span data-h="t_f3">до 3 тестов в день</span>
+    </div>
+    <a href="test.html" class="home-cta"><span data-h="t_cta">Начать тест</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <p class="home-note" data-h-html="ai">ИИ рекомендует, но не гарантирует поступление. Перед подачей проверяй условия на официальном сайте вуза. Подробнее — в <a href="terms.html">Условиях использования</a>.</p>
+  </div>
+  <span class="home-credit" data-dt="credit">Иллюстрация создана ИИ</span>
+</section>
 
 <main class="wrap">
-  <section class="hello">
-    <span class="eyebrow" data-h="eyebrow">Твой кабинет</span>
-    <h1 id="helloTitle">Привет!</h1>
-    <p data-h="hello_sub">С чего начнём сегодня?</p>
-  </section>
-
-  <section class="test-card">
-    <div>
-      <span class="eyebrow" style="color:var(--gold)" data-h="t_eyebrow">ИИ-подбор</span>
-      <h2 style="margin-top:10px" data-h-html="t_h2">Пройди тест — и найди <em>свой</em> университет</h2>
-      <p data-h="t_p">Около 23 вопросов об оценках, бюджете, климате и целях. В конце — 12 вузов в четырёх категориях, которые сохранятся в профиле.</p>
-      <div class="test-facts">
-        <span data-h="t_f1">📝 ≈23 вопроса</span><span data-h="t_f2">🎯 4 категории × 3 вуза</span><span data-h="t_f3">🔁 до 3 тестов в день</span>
-      </div>
-    </div>
-    <div><a href="test.html" class="btn-gold"><span data-h="t_cta">Начать тест</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-    <p class="ep-ai-note" data-h-html="ai">ИИ рекомендует, но не гарантирует поступление. Перед подачей проверяй условия на официальном сайте вуза. Подробнее — в <a href="terms.html">Условиях использования</a>.</p>
-  </section>
-
-  <div class="tiles-head"><h2 data-h="tiles">Разделы</h2></div>
-  <section class="tiles">
-    <a class="tile" href="universities.html">
-      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 5l9 5-9 5-9-5Z"/><path d="M7 12v5c3 2 7 2 10 0v-5"/></svg></span>
-      <h3 data-h="u_h">Университеты</h3><p data-h="u_p">Каталог из 50 вузов и поиск по любому другому</p></a>
-    <a class="tile" href="resources.html">
-      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
-      <h3 data-h="r_h">Полезное</h3><p data-h="r_p">Экзамены, стипендии и подача — только официальные сайты</p></a>
-    <a class="tile" href="content.html">
-      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3V9Z"/></svg></span>
-      <h3 data-h="c_h">Контент</h3><p data-h="c_p">Новости о визах и поступлении, видео и фильмы</p></a>
-    <a class="tile" href="focus.html">
-      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span>
-      <h3 data-h="f_h">Фокус</h3><p data-h="f_p">Таймер учёбы, серия дней и цитата дня</p></a>
-    <a class="tile wide" href="profile.html">
-      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
-      <div><h3 data-h="p_h">Профиль</h3><p data-h="p_p">Избранные вузы, результаты тестов, гражданство и уровень обучения</p></div></a>
-  </section>
-
   <section class="how">
     <h2 data-h="how">Как работает тест</h2>
     <div class="steps">
@@ -140,7 +96,7 @@
   const H = {
     ru:{ eyebrow:"Твой кабинет", hello:"Привет", hello_sub:"С чего начнём сегодня?", t_eyebrow:"ИИ-подбор", t_h2:"Пройди тест — и найди <em>свой</em> университет",
       t_p:"Около 23 вопросов об оценках, бюджете, климате и целях. В конце — 12 вузов в четырёх категориях, которые сохранятся в профиле.",
-      t_f1:"📝 ≈23 вопроса", t_f2:"🎯 4 категории × 3 вуза", t_f3:"🔁 до 3 тестов в день", t_cta:"Начать тест",
+      t_f1:"≈23 вопроса", t_f2:"4 категории × 3 вуза", t_f3:"до 3 тестов в день", t_cta:"Начать тест",
       ai:'ИИ рекомендует, но не гарантирует поступление. Перед подачей проверяй условия на официальном сайте вуза. Подробнее — в <a href="terms.html">Условиях использования</a>.',
       tiles:"Разделы", u_h:"Университеты", u_p:"Каталог из 50 вузов и поиск по любому другому", r_h:"Полезное", r_p:"Экзамены, стипендии и подача — только официальные сайты",
       c_h:"Контент", c_p:"Новости о визах и поступлении, видео и фильмы", f_h:"Фокус", f_p:"Таймер учёбы, серия дней и цитата дня",
@@ -149,7 +105,7 @@
       s3_h:"Получаешь 12 вузов", s3_t:"Четыре категории — от надёжных до вузов мечты. Любой открывается полной карточкой." },
     en:{ eyebrow:"Your dashboard", hello:"Hi", hello_sub:"Where shall we start today?", t_eyebrow:"AI matching", t_h2:"Take the test and find <em>your</em> university",
       t_p:"About 23 questions on grades, budget, climate and goals. At the end you get 12 universities in four categories, saved to your profile.",
-      t_f1:"📝 ~23 questions", t_f2:"🎯 4 categories × 3", t_f3:"🔁 up to 3 tests a day", t_cta:"Start the test",
+      t_f1:"~23 questions", t_f2:"4 categories × 3", t_f3:"up to 3 tests a day", t_cta:"Start the test",
       ai:'AI recommends, it does not guarantee admission. Check requirements on the official university website before applying. See the <a href="terms.html">Terms of Use</a>.',
       tiles:"Sections", u_h:"Universities", u_p:"A catalog of 50 universities plus search for any other", r_h:"Resources", r_p:"Exams, scholarships and applications — official sites only",
       c_h:"Content", c_p:"News on visas and admissions, videos and films", f_h:"Focus", f_p:"Study timer, streaks and a quote of the day",
@@ -158,7 +114,7 @@
       s3_h:"Get 12 universities", s3_t:"Four categories, from safe picks to dream schools. Each opens as a full card." },
     kk:{ eyebrow:"Сенің кабинетің", hello:"Сәлем", hello_sub:"Бүгін неден бастаймыз?", t_eyebrow:"ЖИ іріктеу", t_h2:"Тест тапсыр да, <em>өз</em> университетіңді тап",
       t_p:"Бағалар, бюджет, климат пен мақсаттар туралы 23-ке жуық сұрақ. Соңында профильде сақталатын төрт санаттағы 12 университет.",
-      t_f1:"📝 ≈23 сұрақ", t_f2:"🎯 4 санат × 3", t_f3:"🔁 күніне 3 тестке дейін", t_cta:"Тестті бастау",
+      t_f1:"≈23 сұрақ", t_f2:"4 санат × 3", t_f3:"күніне 3 тестке дейін", t_cta:"Тестті бастау",
       ai:'ЖИ ұсынады, бірақ түсуге кепілдік бермейді. Құжат тапсырмас бұрын шарттарды университеттің ресми сайтынан тексер. Толығырақ — <a href="terms.html">Пайдалану шарттарында</a>.',
       tiles:"Бөлімдер", u_h:"Университеттер", u_p:"50 университет каталогы және кез келгенін іздеу", r_h:"Пайдалы", r_p:"Емтихандар, стипендиялар, құжат тапсыру — тек ресми сайттар",
       c_h:"Контент", c_p:"Визалар мен түсу жаңалықтары, бейнелер мен фильмдер", f_h:"Фокус", f_p:"Оқу таймері, күндер сериясы, күн дәйексөзі",
@@ -167,7 +123,7 @@
       s3_h:"12 университет аласың", s3_t:"Төрт санат — сенімдіден арман университетке дейін. Әрқайсысы толық карточкамен ашылады." },
     ky:{ eyebrow:"Сенин кабинетиң", hello:"Салам", hello_sub:"Бүгүн эмнеден баштайбыз?", t_eyebrow:"ЖИ тандоо", t_h2:"Тест тапшыр жана <em>өз</em> университетиңди тап",
       t_p:"Баалар, бюджет, климат жана максаттар боюнча 23дөй суроо. Аягында профилде сакталуучу төрт категориядагы 12 университет.",
-      t_f1:"📝 ≈23 суроо", t_f2:"🎯 4 категория × 3", t_f3:"🔁 күнүнө 3 тестке чейин", t_cta:"Тестти баштоо",
+      t_f1:"≈23 суроо", t_f2:"4 категория × 3", t_f3:"күнүнө 3 тестке чейин", t_cta:"Тестти баштоо",
       ai:'ЖИ сунуштайт, бирок кабыл алууга кепилдик бербейт. Тапшыруудан мурун шарттарды университеттин расмий сайтынан текшер. Кененирээк — <a href="terms.html">Колдонуу шарттарында</a>.',
       tiles:"Бөлүмдөр", u_h:"Университеттер", u_p:"50 университеттин каталогу жана каалаганын издөө", r_h:"Пайдалуу", r_p:"Сынактар, стипендиялар, тапшыруу — расмий сайттар гана",
       c_h:"Контент", c_p:"Виза жана тапшыруу жаңылыктары, видеолор жана тасмалар", f_h:"Фокус", f_p:"Окуу таймери, күндөр сериясы, күндүн цитатасы",
@@ -176,7 +132,7 @@
       s3_h:"12 университет аласың", s3_t:"Төрт категория — ишенимдүүдөн кыялдагы университетке чейин. Ар бири толук карточка менен ачылат." },
     zh:{ eyebrow:"你的主页", hello:"你好", hello_sub:"今天从哪里开始？", t_eyebrow:"AI 匹配", t_h2:"做个测试，找到<em>你的</em>大学",
       t_p:"约 23 个关于成绩、预算、气候和目标的问题。最后得到 4 类共 12 所大学，并保存到个人资料。",
-      t_f1:"📝 约 23 题", t_f2:"🎯 4 类 × 3 所", t_f3:"🔁 每天最多 3 次", t_cta:"开始测试",
+      t_f1:"约 23 题", t_f2:"4 类 × 3 所", t_f3:"每天最多 3 次", t_cta:"开始测试",
       ai:'AI 只提供建议，不保证录取。申请前请在大学官网核实要求。详见<a href="terms.html">使用条款</a>。',
       tiles:"栏目", u_h:"大学", u_p:"50 所大学目录，并可搜索任何大学", r_h:"实用资源", r_p:"考试、奖学金和申请——仅官方网站",
       c_h:"内容", c_p:"签证与录取新闻、视频和电影", f_h:"专注", f_p:"学习计时器、连续打卡和每日名言",

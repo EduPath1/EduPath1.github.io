@@ -6,47 +6,47 @@
 
 :root{
   /* --- 4 основных цвета --- */
-  --navy:#1E4E8C;        /* главный: кнопки, ссылки, акценты */
-  --navy-deep:#0F2A4A;   /* тёмные блоки, шапка-активная, подвал */
-  --gold:#F2B233;        /* латунь: выделения, иконки, значки */
-  --bg:#F6F8FC;          /* фон страниц */
-  --text:#17263C;        /* основной текст */
+  --navy:#1F4FE0;        /* главный: кнопки, ссылки, акценты */
+  --navy-deep:#0A0A0B;   /* тёмные блоки, шапка-активная, подвал */
+  --gold:#1F4FE0;        /* латунь: выделения, иконки, значки */
+  --bg:#FFFFFF;          /* фон страниц */
+  --text:#0A0A0B;        /* основной текст */
 
   /* --- производные (оттенки тех же цветов) --- */
   --surface:#FFFFFF;
-  --tint:#E6EDF7;                 /* светлая подложка, ховеры, чипы */
-  --tint-gold:#FDF1D6;            /* светлая латунь */
-  --gold-ink:#8A5E00;             /* латунь для ТЕКСТА на светлом (контраст ≥ 4.5) */
-  --muted:#5B6B82;                /* второстепенный текст */
-  --line:rgba(23,38,60,.12);
-  --shadow:0 14px 36px rgba(15,42,74,.10);
+  --tint:#F3F4F6;                 /* светлая подложка, ховеры, чипы */
+  --tint-gold:#EDF2FF;            /* светлая латунь */
+  --gold-ink:#1F4FE0;             /* латунь для ТЕКСТА на светлом (контраст ≥ 4.5) */
+  --muted:#5F636B;                /* второстепенный текст */
+  --line:rgba(10,10,11,.12);
+  --shadow:0 14px 36px rgba(10,10,11,.10);
   --radius:14px;
 
   /* --- 2 шрифта (оба с кириллицей и казахскими буквами) --- */
-  --font-head:'Lora', Georgia, 'Times New Roman', serif;
-  --font-body:'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-head:'Inter Tight', Georgia, 'Times New Roman', serif;
+  --font-body:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   /* --- совместимость: старые имена переменных из страниц ведут на новые цвета --- */
   --cream:var(--bg); --cream-deep:var(--tint); --paper:var(--surface);
   --espresso:var(--text); --bark:var(--navy-deep); --clay:var(--navy);
-  --caramel:var(--gold); --sand:#C9D5E6;
+  --caramel:var(--gold); --sand:#D9DBE0;
   --text-main:var(--text); --text-muted:var(--muted);
   --bg-cream:var(--bg); --text-dark:var(--text); --accent-brown:var(--navy);
-  --accent-light:var(--tint); --dark-bg:var(--navy-deep); --line-color:#D5DEEA;
+  --accent-light:var(--tint); --dark-bg:var(--navy-deep); --line-color:#E3E5E9;
 }
 
 html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 body{ font-family:var(--font-body); background:var(--bg); color:var(--text); overflow-x:clip; }
 h1,h2,h3,h4{ font-family:var(--font-head); }
 ::selection{ background:var(--gold); color:var(--navy-deep); }
-:focus-visible{ outline:3px solid rgba(242,178,51,.75); outline-offset:2px; }
+:focus-visible{ outline:3px solid rgba(31,79,224,.75); outline-offset:2px; }
 
 /* ============================================================
    ШАПКА (рисует layout.js)
    ============================================================ */
 .ep-header{
   position:sticky; top:0; z-index:90;
-  background:rgba(246,248,252,.92);
+  background:rgba(255,255,255,.92);
   -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
   padding:0; margin:0; display:block; min-height:64px;
@@ -138,21 +138,21 @@ body.ep-lock{ overflow:hidden; }
    ПОДВАЛ (рисует layout.js)
    ============================================================ */
 .ep-footer{
-  background:var(--navy-deep); color:#C8D3E3; margin-top:56px;
+  background:var(--navy-deep); color:#C9CCD2; margin-top:56px;
   padding:40px 16px calc(28px + env(safe-area-inset-bottom)); font:400 14px/1.6 var(--font-body);
 }
 .ep-footer-in{ max-width:1280px; margin:0 auto; display:grid; gap:28px; }
 .ep-footer .ep-logo{ color:#fff; }
-.ep-footer-tag{ margin:10px 0 0; max-width:340px; color:#AFC0D6; }
+.ep-footer-tag{ margin:10px 0 0; max-width:340px; color:#B9BCC3; }
 .ep-footer h4{ font:700 12px var(--font-body); letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin:0 0 10px; }
 .ep-footer ul{ list-style:none; margin:0; padding:0; }
-.ep-footer li a{ display:inline-block; padding:6px 0; color:#E6EDF7; text-decoration:none; }
+.ep-footer li a{ display:inline-block; padding:6px 0; color:#F3F4F6; text-decoration:none; }
 .ep-footer li a:hover{ color:var(--gold); }
 .ep-footer-ai{
-  border-top:1px solid rgba(255,255,255,.12); padding-top:18px; font-size:13px; color:#AFC0D6; margin:0;
+  border-top:1px solid rgba(255,255,255,.12); padding-top:18px; font-size:13px; color:#B9BCC3; margin:0;
 }
 .ep-footer-ai b{ color:var(--gold); }
-.ep-footer-copy{ font-size:13px; color:#8FA3BF; }
+.ep-footer-copy{ font-size:13px; color:#9A9EA6; }
 @media (min-width:700px){
   .ep-footer{ padding-left:28px; padding-right:28px; }
   .ep-footer-in{ grid-template-columns:1.4fr 1fr 1fr 1fr; }
@@ -167,7 +167,7 @@ body > footer:not(.ep-footer){ display:none !important; }
    ============================================================ */
 .ep-ai-note, .disclaimer{
   display:block; position:relative;
-  background:var(--tint-gold); border:1px solid rgba(242,178,51,.55); color:#4A3A10 !important;
+  background:var(--tint-gold); border:1px solid rgba(31,79,224,.55); color:#4A3A10 !important;
   border-radius:12px; padding:12px 14px 12px 50px !important; font-size:13px !important; line-height:1.5;
 }
 .ep-ai-note::before, .disclaimer::before{
@@ -201,17 +201,3 @@ body > footer:not(.ep-footer){ display:none !important; }
 
 /* иконка-стрелка внутри кнопок не должна наследовать размер/цвет больших иконок */
 .btn-primary svg{ width:16px !important; height:16px !important; color:inherit !important; margin:0 !important; }
-
-/* липкие панели фильтров («Полезное», «Контент») не прячутся под шапкой */
-.ui-a .res-panel, .ui-a .ct-panel{ top:64px; }
-@media (min-width:1000px){ .ui-a .res-panel, .ui-a .ct-panel{ top:72px; } }
-
-/* кнопка «Вид A / B» — временно, пока выбираете вариант */
-.ui-switch{
-  position:fixed; right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); z-index:110;
-  display:flex; align-items:center; gap:2px; padding:4px 4px 4px 12px; border-radius:999px;
-  background:var(--navy-deep); color:#AFC0D6; font:600 12px var(--font-body); box-shadow:0 10px 24px rgba(15,42,74,.3);
-}
-.ui-switch span{ margin-right:6px; }
-.ui-switch a{ min-width:34px; height:30px; display:grid; place-items:center; border-radius:999px; color:#fff; text-decoration:none; font-weight:800; }
-.ui-switch a.on{ background:var(--gold); color:var(--navy-deep); }

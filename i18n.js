@@ -545,6 +545,7 @@
     // ENGLISH
     // ============================================================
     en: {
+
       nav_home: "Home", nav_universities: "Universities", nav_profile: "Profile",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "Our Team",
@@ -1058,6 +1059,7 @@
     // 中文
     // ============================================================
     zh: {
+
       nav_home: "首页", nav_universities: "大学", nav_profile: "个人主页",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "我们的团队",
@@ -1555,6 +1557,7 @@
     // ҚАЗАҚША
     // ============================================================
     kk: {
+
       nav_home: "Басты бет", nav_universities: "Университеттер", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "Біздің команда",
@@ -2059,6 +2062,7 @@
     // КЫРГЫЗЧА
     // ============================================================
     ky: {
+
       nav_home: "Башкы бет", nav_universities: "Университеттер", nav_profile: "Профиль",
       nav_fanzone: "🤡 Fun Zone",
       nav_team: "Биздин команда",

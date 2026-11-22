@@ -56,9 +56,9 @@
     { "id": "dele", "name": "DELE", "url": "https://examenes.cervantes.es/", "cat": "languages", "price": "paid", "official": true,
       "desc": { "ru": "Официальные дипломы по испанскому языку от Института Сервантеса.", "en": "Official Spanish language diplomas from the Instituto Cervantes." } },
 
-    { "id": "nct-kz", "name": "НЦТ (ЕНТ)", "url": "https://app.testcenter.kz/", "cat": "national", "price": "paid", "official": true, "only": "KZ",
+    { "id": "nct-kz", "name": "NCT / ENT (testcenter.kz)", "url": "https://app.testcenter.kz/", "cat": "national", "price": "paid", "official": true, "only": "KZ",
       "desc": { "ru": "Национальный центр тестирования: регистрация на ЕНТ и КАЗТЕСТ, результаты в личном кабинете.", "en": "Kazakhstan's National Testing Centre: registration for UNT and KAZTEST, results in your account." } },
-    { "id": "ort-kg", "name": "ЦООМО (ОРТ)", "url": "https://testing.kg/", "cat": "national", "price": "paid", "official": true, "only": "KG",
+    { "id": "ort-kg", "name": "ORT (testing.kg)", "url": "https://testing.kg/", "cat": "national", "price": "paid", "official": true, "only": "KG",
       "desc": { "ru": "Центр оценки в образовании: онлайн-запись на ОРТ и бесплатные пробные тесты для поступления в вузы Кыргызстана.", "en": "Kyrgyzstan's assessment centre: online registration for the ORT and free practice tests." } },
 
     { "id": "bluebook", "name": "Bluebook", "url": "https://bluebook.collegeboard.org/", "cat": "prep", "price": "free", "official": true,
@@ -75,7 +75,7 @@
     { "id": "bbc", "name": "BBC Learning English", "url": "https://www.bbc.co.uk/learningenglish", "cat": "prep", "price": "free", "official": false,
       "desc": { "ru": "Бесплатные уроки грамматики, лексики и произношения от BBC.", "en": "Free grammar, vocabulary and pronunciation lessons from the BBC." } },
 
-    { "id": "bolashak", "name": "Болашак", "url": "https://www.bolashak.gov.kz/", "cat": "grants", "price": "free", "official": true, "only": "KZ", "levels": ["bachelor", "master", "phd"],
+    { "id": "bolashak", "name": "Bolashak", "url": "https://www.bolashak.gov.kz/", "cat": "grants", "price": "free", "official": true, "only": "KZ", "levels": ["bachelor", "master", "phd"],
       "desc": { "ru": "Международная стипендия Казахстана на учёбу и стажировки в ведущих зарубежных вузах.", "en": "Kazakhstan's international scholarship for study and internships at top universities abroad." } },
     { "id": "chevening", "name": "Chevening", "url": "https://www.chevening.org/", "cat": "grants", "price": "free", "official": true, "levels": ["master"],
       "desc": { "ru": "Стипендия правительства Великобритании: полностью оплаченная годичная магистратура в UK.", "en": "UK government scholarship: a fully funded one-year master's in the UK." } },

@@ -1,13 +1,12 @@
 /* ============================================================
-   EduPath — edupath-d.js (v1)
-   Только для варианта D: добавляет на страницы фото-баннеры,
+   EduPath — edupath-d.js (v2)
+   Добавляет на страницы фото-баннеры на всю ширину (фото — фоном),
    описания разделов, подсказки и описания категорий.
    Картинки: assets/d/*.jpg (экспорт из Figma-файла «EduPath — картинки для дизайна D»).
    Если картинки ещё нет — баннер остаётся чёрным с текстом, ничего не ломается.
    ============================================================ */
 (function () {
   "use strict";
-  if (!document.documentElement.classList.contains("ui-d")) return;
 
   const IMG = (n) => `assets/d/d-${n}.jpg`;
   const lang = () => { try { return localStorage.getItem("edupath_lang") || "ru"; } catch (e) { return "ru"; } };
@@ -241,8 +240,8 @@
   function banner(img, k, h, p, asH1) {
     const tag = asH1 ? "h1" : "h2";
     return `<section class="d-banner" data-d-banner>${imgTag(img, "d-banner-img")}
-      <div class="d-banner-body"><span class="d-banner-kicker" data-dt="${k}">${esc(t(k))}</span>
-      <${tag} data-dt="${h}">${esc(t(h))}</${tag}><p data-dt="${p}">${esc(t(p))}</p></div>
+      <div class="d-banner-body"><div class="d-banner-text"><span class="d-banner-kicker" data-dt="${k}">${esc(t(k))}</span>
+      <${tag} data-dt="${h}">${esc(t(h))}</${tag}><p data-dt="${p}">${esc(t(p))}</p></div></div>
       <span class="d-banner-credit" data-dt="credit">${esc(t("credit"))}</span></section>`;
   }
   function info(prefix, n, darkFirst) {
@@ -258,11 +257,17 @@
   const hide = (el) => { if (el) el.style.display = "none"; };
 
   const file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  // баннер встаёт сразу под шапкой, на всю ширину экрана
+  const topBanner = (html) => {
+    const anchor = document.getElementById("epDrawer") || document.getElementById("siteHeader");
+    if (anchor) anchor.insertAdjacentHTML("afterend", html);
+  };
 
   function build() {
     if (file === "universities.html") {
       const hero = document.querySelector("main.page > .hero");
-      before(hero, banner("students", "uni_k", "uni_h", "uni_p", true) + info("uni_t", 3, true));
+      topBanner(banner("students", "uni_k", "uni_h", "uni_p", true));
+      before(hero, info("uni_t", 3, true));
       hide(hero);
       const track = document.getElementById("cardsTrack");
       before(track, `<div class="d-legend"><b data-dt="legend">${esc(t("legend"))}</b>
@@ -273,7 +278,7 @@
     }
     if (file === "resources.html") {
       const hero = document.querySelector(".res-hero");
-      if (hero) { hero.insertAdjacentHTML("afterbegin", banner("desk", "res_k", "res_h", "res_p", true) + info("res_i", 3, true)); hero.querySelectorAll(":scope > :not(.d-banner):not(.d-info)").forEach(hide); }
+      if (hero) { topBanner(banner("desk", "res_k", "res_h", "res_p", true)); hero.insertAdjacentHTML("afterbegin", info("res_i", 3, true)); hero.querySelectorAll(":scope > :not(.d-info)").forEach(hide); }
       const list = document.getElementById("resList");
       if (list) {
         const addDesc = () => list.querySelectorAll(".res-section[data-cat]").forEach((s) => {
@@ -287,26 +292,20 @@
     }
     if (file === "content.html") {
       const hero = document.querySelector(".ct-hero");
-      if (hero) { hero.insertAdjacentHTML("afterbegin", banner("phone", "ct_k", "ct_h", "ct_p", true) + info("ct_i", 3, true)); hero.querySelectorAll(":scope > :not(.d-banner):not(.d-info)").forEach(hide); }
+      if (hero) { topBanner(banner("phone", "ct_k", "ct_h", "ct_p", true)); hero.insertAdjacentHTML("afterbegin", info("ct_i", 3, true)); hero.querySelectorAll(":scope > :not(.d-info)").forEach(hide); }
     }
     if (file === "focus.html") {
       const hero = document.querySelector(".fc-hero");
-      if (hero) { hero.insertAdjacentHTML("afterbegin", banner("study", "fc_k", "fc_h", "fc_p", true) + info("fc_i", 3, true)); hero.querySelectorAll(":scope > :not(.d-banner):not(.d-info)").forEach(hide); }
+      if (hero) { topBanner(banner("study", "fc_k", "fc_h", "fc_p", true)); hero.insertAdjacentHTML("afterbegin", info("fc_i", 3, true)); hero.querySelectorAll(":scope > :not(.d-info)").forEach(hide); }
     }
     if (file === "test.html") {
-      const intro = document.querySelector("#screenIntro .intro");
-      before(intro, banner("graduation", "test_k", "test_h", "test_p", false));
-    }
-    if (file === "app.html") {
-      const card = document.querySelector(".test-card");
-      const tile = (href, img, k, s, big) => `<a class="d-photo-tile${big ? " big" : ""}" href="${href}">${imgTag(img, "")}<div><b data-dt="${k}">${esc(t(k))}</b><small data-dt="${s}">${esc(t(s))}</small></div></a>`;
-      after(card, `<section class="d-photo-tiles" style="margin-top:28px">
-        ${tile("universities.html", "students", "app_uni", "app_uni_s", true)}
-        ${tile("resources.html", "desk", "app_res", "app_res_s")}
-        ${tile("content.html", "phone", "app_ct", "app_ct_s")}
-        ${tile("focus.html", "study", "app_fc", "app_fc_s")}
-        ${tile("profile.html", "graduation", "app_pr", "app_pr_s")}</section>`);
-      if (card) document.documentElement.classList.add("d-has-photos");
+      topBanner(banner("graduation", "test_k", "test_h", "test_p", false));
+      // баннер виден только на первом экране теста
+      const intro = document.getElementById("screenIntro"), ban = document.querySelector("[data-d-banner]");
+      if (intro && ban) {
+        const sync = () => { ban.style.display = intro.classList.contains("active") ? "" : "none"; };
+        new MutationObserver(sync).observe(intro, { attributes: true, attributeFilter: ["class"] }); sync();
+      }
     }
   }
 
@@ -319,6 +318,7 @@
   }
   window.addEventListener("edupath-lang-change", retranslate);
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", build);
-  else build();
+  const start = () => { build(); retranslate(); };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
 })();

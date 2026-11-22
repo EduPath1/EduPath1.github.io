@@ -1069,17 +1069,17 @@
           position: fixed;
           bottom: 32px; left: 50%;
           transform: translateX(-50%) translateY(20px);
-          background: #17263C; color: #F6F8FC;
+          background: #0A0A0B; color: #FFFFFF;
           padding: 14px 24px; border-radius: 10px;
-          font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 500;
-          box-shadow: 0 12px 28px -10px rgba(23,38,60,0.5);
+          font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+          box-shadow: 0 12px 28px -10px rgba(10,10,11,0.5);
           z-index: 9999; opacity: 0;
           animation: toastIn .3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
           pointer-events: none; max-width: 90vw; text-align: center; line-height: 1.4;
         }
-        .edupath-toast-success { background: #17263C; color: #F6F8FC; }
+        .edupath-toast-success { background: #0A0A0B; color: #FFFFFF; }
         .edupath-toast-error   { background: #B84A3A; color: #FFFFFF; }
-        .edupath-toast-info    { background: #1E4E8C; color: #FFFFFF; }
+        .edupath-toast-info    { background: #1F4FE0; color: #FFFFFF; }
         @keyframes toastIn {
           to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
@@ -1189,7 +1189,7 @@
       style.textContent = `
         .edupath-modal-overlay {
           position: fixed; inset: 0;
-          background: rgba(23,38,60,0.55);
+          background: rgba(10,10,11,0.55);
           backdrop-filter: blur(4px);
           display: flex; align-items: center; justify-content: center;
           z-index: 9998; opacity: 0; visibility: hidden;
@@ -1199,18 +1199,18 @@
         .edupath-modal-overlay.open { opacity: 1; visibility: visible; }
 
         .edupath-modal, .edupath-modal input, .edupath-modal button {
-          font-family: 'Manrope', 'Inter', sans-serif;
+          font-family: 'Inter', 'Inter', sans-serif;
         }
         .edupath-modal button { border: 0; cursor: pointer; }
         .edupath-modal { max-height: 94vh; overflow-y: auto; }
-        .edupath-consent { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 13px; line-height: 1.45; color: #33445C; cursor: pointer; }
-        .edupath-consent a { color: #1E4E8C; text-decoration: underline; }
-        .edupath-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #1E4E8C; }
+        .edupath-consent { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 14px; font-size: 13px; line-height: 1.45; color: #2A2C31; cursor: pointer; }
+        .edupath-consent a { color: #1F4FE0; text-decoration: underline; }
+        .edupath-consent input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #1F4FE0; }
         /* Контейнер капчи НЕЛЬЗЯ прятать через display:none — иначе галочка «я не робот» не видна и проверка зависает */
-        .edupath-hint { font-size: 12.5px; line-height: 1.4; color: #5B6B82; margin-top: 6px; }
+        .edupath-hint { font-size: 12.5px; line-height: 1.4; color: #5F636B; margin-top: 6px; }
         .edupath-hint-center { text-align: center; margin: -4px 0 14px; }
-        .edupath-forgot { display: block; margin: 8px 0 0 auto; padding: 0; background: none !important; color: #1E4E8C; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-        .edupath-sent { font-size: 14.5px; line-height: 1.55; color: #17263C; background: #F6F8FC; border-radius: 10px; padding: 14px 16px; margin: 6px 0 4px; }
+        .edupath-forgot { display: block; margin: 8px 0 0 auto; padding: 0; background: none !important; color: #1F4FE0; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+        .edupath-sent { font-size: 14.5px; line-height: 1.55; color: #0A0A0B; background: #FFFFFF; border-radius: 10px; padding: 14px 16px; margin: 6px 0 4px; }
         .edupath-hp { position: absolute !important; left: -10000px !important; top: auto; width: 1px; height: 1px; overflow: hidden; }
         .edupath-captcha { display: flex; justify-content: center; margin: 0; min-height: 0; }
         .edupath-captcha.show { margin: 12px 0 4px; }
@@ -1218,29 +1218,29 @@
         .edupath-btn-social {
           width: 100%; padding: 12px 10px;
           display: flex; align-items: center; justify-content: center; gap: 9px;
-          background: #FFFFFF; color: #17263C;
-          border: 1.5px solid rgba(23,38,60,0.18) !important;
+          background: #FFFFFF; color: #0A0A0B;
+          border: 1.5px solid rgba(10,10,11,0.18) !important;
           border-radius: 10px; font-size: 15px; font-weight: 600;
           transition: background .2s, border-color .2s, transform .2s;
         }
-        .edupath-btn-social:hover { background: #F6F8FC; border-color: #1E4E8C !important; transform: translateY(-1px); }
+        .edupath-btn-social:hover { background: #FFFFFF; border-color: #1F4FE0 !important; transform: translateY(-1px); }
         .edupath-social-grid {
           display: grid; grid-template-columns: 1fr; gap: 10px;
         }
         .edupath-btn-social svg { flex-shrink: 0; }
         .edupath-divider {
           display: flex; align-items: center; gap: 12px;
-          margin: 18px 0 20px; color: #5B6B82; font-size: 13px;
+          margin: 18px 0 20px; color: #5F636B; font-size: 13px;
         }
         .edupath-divider::before, .edupath-divider::after {
-          content: ""; flex: 1; height: 1px; background: rgba(23,38,60,0.14);
+          content: ""; flex: 1; height: 1px; background: rgba(10,10,11,0.14);
         }
 
         .edupath-modal {
           background: #FFFFFF; border-radius: 20px;
           padding: 40px 36px 32px;
           width: 100%; max-width: 440px; position: relative;
-          box-shadow: 0 30px 60px -20px rgba(23,38,60,0.4);
+          box-shadow: 0 30px 60px -20px rgba(10,10,11,0.4);
           transform: translateY(20px);
           transition: transform .35s cubic-bezier(0.22,1,0.36,1);
         }
@@ -1249,37 +1249,37 @@
         .edupath-modal-close {
           position: absolute; top: 16px; right: 16px;
           width: 36px; height: 36px; border-radius: 50%;
-          background: transparent; color: #5B6B82;
+          background: transparent; color: #5F636B;
           font-size: 24px; line-height: 1;
           display: flex; align-items: center; justify-content: center;
           transition: background .2s;
         }
-        .edupath-modal-close:hover { background: #E6EDF7; color: #17263C; }
+        .edupath-modal-close:hover { background: #F3F4F6; color: #0A0A0B; }
 
         .edupath-modal-title {
-          font-family: 'Lora', serif; font-size: 28px;
-          color: #17263C; margin-bottom: 8px;
+          font-family: 'Inter Tight', serif; font-size: 28px;
+          color: #0A0A0B; margin-bottom: 8px;
         }
         .edupath-modal-sub {
-          font-size: 14px; color: #5B6B82;
+          font-size: 14px; color: #5F636B;
           margin-bottom: 28px; line-height: 1.5;
         }
 
         .edupath-field { margin-bottom: 16px; }
         .edupath-field label {
-          display: block; font-size: 13px; color: #5B6B82;
+          display: block; font-size: 13px; color: #5F636B;
           margin-bottom: 6px; font-weight: 500;
         }
         .edupath-field input {
           width: 100%; padding: 13px 16px;
           font-family: inherit; font-size: 15px;
-          background: #F6F8FC; color: #17263C;
-          border: 1.5px solid rgba(23,38,60,0.14);
+          background: #FFFFFF; color: #0A0A0B;
+          border: 1.5px solid rgba(10,10,11,0.14);
           border-radius: 10px;
           transition: border-color .2s, background .2s;
         }
         .edupath-field input:focus {
-          outline: none; border-color: #1E4E8C; background: #FFFFFF;
+          outline: none; border-color: #1F4FE0; background: #FFFFFF;
         }
 
         .edupath-error {
@@ -1289,44 +1289,44 @@
 
         .edupath-btn-submit {
           width: 100%; padding: 15px;
-          background: #17263C; color: #F6F8FC;
+          background: #0A0A0B; color: #FFFFFF;
           border-radius: 10px; font-size: 15px; font-weight: 600;
           transition: background .2s, transform .2s;
         }
-        .edupath-btn-submit:hover { background: #0F2A4A; transform: translateY(-1px); }
+        .edupath-btn-submit:hover { background: #0A0A0B; transform: translateY(-1px); }
         .edupath-btn-submit:disabled { opacity: 0.6; cursor: wait; }
 
         .edupath-btn-ghost {
           width: 100%; padding: 13px; margin-top: 10px;
-          background: #E6EDF7; color: #17263C;
+          background: #F3F4F6; color: #0A0A0B;
           border-radius: 10px; font-size: 14px; font-weight: 600;
           transition: background .2s;
         }
-        .edupath-btn-ghost:hover { background: #C9D5E6; }
+        .edupath-btn-ghost:hover { background: #D9DBE0; }
 
         .edupath-btn-link {
           display: block; width: 100%; margin-top: 14px;
-          background: transparent; color: #1E4E8C;
+          background: transparent; color: #1F4FE0;
           font-size: 14px; font-weight: 600;
           text-decoration: underline; text-underline-offset: 3px;
         }
-        .edupath-btn-link:hover { color: #0F2A4A; }
+        .edupath-btn-link:hover { color: #0A0A0B; }
 
         .edupath-confirm-icon {
           font-size: 48px; text-align: center; margin-bottom: 16px;
         }
         .edupath-confirm-sub {
-          font-size: 14px; color: #5B6B82;
+          font-size: 14px; color: #5F636B;
           line-height: 1.6; margin-bottom: 24px; text-align: center;
         }
-        .edupath-confirm-sub b { color: #17263C; }
+        .edupath-confirm-sub b { color: #0A0A0B; }
 
         .edupath-switch {
           text-align: center; margin-top: 20px;
-          font-size: 14px; color: #5B6B82;
+          font-size: 14px; color: #5F636B;
         }
         .edupath-switch button {
-          color: #1E4E8C; font-weight: 600;
+          color: #1F4FE0; font-weight: 600;
           text-decoration: underline; text-underline-offset: 3px;
           padding: 0 4px;
         }
@@ -1718,7 +1718,7 @@
       loginBtn.setAttribute("data-auth-user", "1");
       loginBtn.removeAttribute("data-auth-open");
     } else {
-      loginBtn.textContent = t("nav_login", "Войти");
+      loginBtn.textContent = window.I18N ? t("nav_login", "Войти") : (window.EduLayout?.t?.("login") || "Войти");
       loginBtn.href = "#";
       loginBtn.removeAttribute("data-auth-user");
       loginBtn.setAttribute("data-auth-open", "login");
