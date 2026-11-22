@@ -3,383 +3,200 @@
 <head>
 <script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduPath — Найди свой университет</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F2A4A">
+<title>EduPath — Главная</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edupath.css?v=2">
+<link rel="stylesheet" href="edupath-b.css?v=1">
+<link rel="stylesheet" href="edupath-c.css?v=1">
+<link rel="stylesheet" href="edupath-d.css?v=1">
 <style>
-  :root{
-    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
-    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
-    --caramel:#C79256; --sand:#D9BD93;
-    --text-main:#2B1B10; --text-muted:#7A6552;
-    --line:rgba(43,27,16,0.14);
-    --ease:cubic-bezier(0.22, 1, 0.36, 1);
-  }
   *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:'Fraunces', serif; }
-  a{ text-decoration:none; color:inherit; }
-  button{ font-family:inherit; cursor:pointer; border:none; background:none; appearance:none; }
-  .wrap{ max-width:1200px; margin:0 auto; padding:0 64px; }
+  body{ line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 18px; }
+  h1,h2,h3{ color:var(--navy-deep); letter-spacing:-.015em; line-height:1.15; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font:700 12px var(--font-body); letter-spacing:.12em; text-transform:uppercase; color:var(--gold-ink); }
+  .eyebrow::before{ content:""; width:22px; height:2px; background:var(--gold); border-radius:2px; }
 
-  /* NAV */
-  header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
-  nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); letter-spacing:-0.01em; transition:transform .3s var(--ease); }
-  .logo:hover{ transform: scale(1.02); }
-  .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
-  .logo:hover svg{ transform: rotate(90deg); }
-  .nav-links{ display:flex; align-items:center; gap:8px; }
-  .nav-links a{ font-size:15px; color:var(--text-muted); padding:10px 18px; border-radius:8px; transition:background .15s ease, color .15s ease; }
-  .nav-links a:hover{ color:var(--espresso); background:var(--cream-deep); }
-  .nav-links a.active{ background:var(--espresso); color:var(--paper); }
-  .nav-right{ display:flex; align-items:center; gap:14px; }
-  .btn-login{ background:var(--clay); color:var(--paper); padding:10px 22px; border-radius:20px; font-size:14px; font-weight:500; transition:background .15s ease, transform .2s var(--ease); }
-  .btn-login:hover{ background:var(--bark); transform:translateY(-1px); }
-  .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); background:transparent; border-radius:50%; transition:background .15s ease, color .15s ease; }
-  .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
+  .hello{ padding:28px 0 18px; }
+  .hello h1{ font-size:clamp(28px, 7vw, 44px); margin-top:8px; }
+  .hello p{ color:var(--muted); margin-top:6px; font-size:16px; }
 
-  .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
-  .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
-  .lang-option{ display:block; width:100%; text-align:left; background:none; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
-  .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
-  .lang-option.active{ background:var(--cream-deep); color:var(--espresso); font-weight:600; }
+  /* главная карточка — тест */
+  .test-card{ display:grid; gap:20px; background:var(--navy-deep); color:#DCE5F1; border-radius:24px; padding:26px 22px; position:relative; overflow:hidden; }
+  .test-card::after{ content:""; position:absolute; right:-70px; bottom:-90px; width:240px; height:240px; border-radius:50%; border:2px solid rgba(242,178,51,.28); pointer-events:none; }
+  .test-card h2{ color:#fff; font-size:clamp(24px, 5.6vw, 34px); }
+  .test-card h2 em{ font-style:italic; color:var(--gold); }
+  .test-card p{ color:#B9C7DA; font-size:15px; margin-top:8px; max-width:520px; }
+  .test-facts{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .test-facts span{ font-size:13px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:6px 11px; color:#E6EDF7; }
+  .btn-gold{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:52px; padding:0 24px; border-radius:999px;
+             background:var(--gold); color:var(--navy-deep); font:700 16px var(--font-body); box-shadow:0 10px 24px rgba(242,178,51,.3); transition:transform .15s; position:relative; z-index:1; }
+  .btn-gold:hover{ transform:translateY(-2px); }
+  .btn-gold svg{ width:18px; height:18px; }
+  .test-card .ep-ai-note{ background:rgba(242,178,51,.1); border-color:rgba(242,178,51,.35); color:#E9D9AE !important; }
+  .test-card .ep-ai-note a{ color:var(--gold); }
 
-  /* ======= ANIMATIONS ======= */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); filter: blur(4px); }
-    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  /* плитки разделов */
+  .tiles-head{ margin:34px 0 14px; display:flex; align-items:end; justify-content:space-between; gap:12px; }
+  .tiles-head h2{ font-size:24px; }
+  .tiles{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .tile{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px; min-height:138px;
+         display:flex; flex-direction:column; gap:8px; transition:transform .15s, box-shadow .15s, border-color .15s; }
+  .tile:hover{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:rgba(30,78,140,.35); }
+  .tile-ico{ width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:var(--tint); color:var(--navy); }
+  .tile-ico svg{ width:21px; height:21px; }
+  .tile h3{ font-size:18px; }
+  .tile p{ font-size:13px; color:var(--muted); line-height:1.45; }
+  .tile.wide{ grid-column:1 / -1; flex-direction:row; align-items:center; min-height:auto; }
+  .tile.wide .tile-ico{ flex:none; background:var(--tint-gold); color:var(--gold-ink); }
+
+  /* как работает тест */
+  .how{ margin-top:40px; }
+  .how h2{ font-size:24px; margin-bottom:14px; }
+  .steps{ display:grid; gap:12px; counter-reset:s; }
+  .step{ position:relative; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px 18px 18px 70px; }
+  .step::before{ counter-increment:s; content:counter(s); position:absolute; left:18px; top:18px; width:36px; height:36px; border-radius:50%;
+         display:grid; place-items:center; background:var(--tint); color:var(--navy); font:800 16px var(--font-body); }
+  .step h3{ font-size:17px; margin-bottom:3px; }
+  .step p{ color:var(--muted); font-size:14px; }
+
+  @media (min-width:700px){
+    .wrap{ padding:0 28px; }
+    .tiles{ grid-template-columns:repeat(3,1fr); }
+    .steps{ grid-template-columns:repeat(3,1fr); }
+    .test-card{ padding:36px; }
   }
-  @keyframes floatY {
-    0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
-    50% { transform: translateY(-12px) rotate(var(--rot, 0deg)); }
-  }
-  @keyframes radarPing {
-    0% { transform: scale(0.8); opacity: 0.8; }
-    100% { transform: scale(2.5); opacity: 0; }
-  }
-  @keyframes lineDraw {
-    from { stroke-dashoffset: 1000; }
-    to { stroke-dashoffset: 0; }
-  }
-  @keyframes arrowNudge {
-    0% { transform: translateX(0); }
-    50% { transform: translateX(4px); }
-    100% { transform: translateX(0); }
-  }
-
-  /* Apply entry animation */
-  .fade-item { animation: fadeUp .9s var(--ease) both; }
-  .delay-1 { animation-delay: .1s; }
-  .delay-2 { animation-delay: .2s; }
-  .delay-3 { animation-delay: .3s; }
-  .delay-4 { animation-delay: .4s; }
-
-  /* HERO */
-  .hero{ position:relative; overflow:hidden; background:var(--cream); }
-  .decor-icon{ position:absolute; pointer-events:none; stroke:var(--sand); fill:none; z-index:0; animation: floatY 7s ease-in-out infinite; }
-  .how .decor-icon{ stroke:rgba(247,239,225,0.5); }
-  
-  .hero-grid{ position:relative; display:grid; grid-template-columns:1.05fr 0.95fr; align-items:center; gap:64px; padding:104px 0 56px; }
-  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:14px; color:var(--clay); font-weight:600; margin-bottom:22px; }
-  .eyebrow::before{ content:""; width:22px; height:1.5px; background:var(--clay); display:inline-block; }
-  .hero-title{ font-size:52px; line-height:1.08; font-weight:600; color:var(--espresso); letter-spacing:-0.01em; max-width:600px; }
-  .hero-title em{ font-style:italic; color:var(--clay); }
-  .hero-sub{ margin-top:26px; font-size:17px; color:var(--text-muted); max-width:460px; line-height:1.65; }
-  .cta{ margin-top:38px; display:inline-flex; align-items:center; gap:12px; background:var(--espresso); color:var(--paper); padding:17px 30px; border-radius:10px; font-size:15px; font-weight:500; box-shadow:0 10px 24px -10px rgba(43,27,16,0.45); transition:transform .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease); }
-  .cta:hover{ background:var(--bark); transform:translateY(-3px); box-shadow:0 14px 28px -10px rgba(43,27,16,0.5); }
-  .cta:hover svg{ animation: arrowNudge 1s infinite; }
-  .cta svg{ width:16px; height:16px; transition: transform .2s; }
-  
-  .hero-note{ margin-top:20px; font-size:13.5px; color:var(--text-muted); }
-  .hero-art{ display:flex; align-items:center; justify-content:center; position:relative; }
-  .hero-art svg{ width:100%; max-width:460px; height:auto; }
-  
-  /* Radar Animations */
-  .radar-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: lineDraw 2s var(--ease) forwards 0.5s; }
-  .pulse-center { animation: pulseCenter 3s ease-in-out infinite; transform-origin: center; }
-  @keyframes pulseCenter {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.3); opacity: 0.6; }
-  }
-  .ping-circle { transform-origin: center; animation: radarPing 3s cubic-bezier(0, 0.2, 0.8, 1) infinite; }
-  .ping-delay-1 { animation-delay: 0.5s; }
-  .ping-delay-2 { animation-delay: 1.2s; }
-  .ping-delay-3 { animation-delay: 1.8s; }
-  .ping-delay-4 { animation-delay: 2.4s; }
-  
-  .compass-needle { transform-origin: 240px 240px; animation: needleWobble 6s ease-in-out infinite; }
-  @keyframes needleWobble {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(4deg); }
-    75% { transform: rotate(-4deg); }
-  }
-
-  .seam-grid{ display:grid; grid-template-columns:0.42fr 0.58fr; gap:28px; align-items:start; }
-  .seam-top{ padding:0 0 18px; }
-  .seam-bottom{ padding:16px 0 0; }
-  .seam-quote{ font-family:'Fraunces', serif; font-size:30px; font-weight:600; line-height:1.3; letter-spacing:-0.01em; }
-  .seam-top .seam-quote{ color:var(--espresso); }
-  .seam-bottom .seam-quote{ color:var(--paper); }
-  .seam-desc{ font-size:15px; line-height:1.75; max-width:540px; padding-top:6px; }
-  .seam-top .seam-desc{ color:var(--text-muted); }
-  .seam-bottom .seam-desc{ color:var(--sand); }
-
-  /* HOW */
-  .how{ background:var(--espresso); color:var(--paper); padding:0 0 84px; position:relative; overflow:hidden; }
-  .how-head{ display:flex; align-items:baseline; justify-content:space-between; margin-top:56px; margin-bottom:52px; flex-wrap:wrap; gap:16px; }
-  .how-head h2{ font-size:32px; font-weight:600; letter-spacing:-0.01em; }
-  .how-head p{ color:var(--sand); font-size:15px; max-width:320px; }
-  .steps{ display:grid; grid-template-columns:repeat(3, 1fr); gap:0; }
-  .step{ padding:0 40px; border-left:1px solid rgba(247,239,225,0.14); transition: transform .3s var(--ease); }
-  .step:hover{ transform: translateY(-4px); }
-  .step:first-child{ padding-left:0; border-left:none; }
-  .step-num{ font-family:'Fraunces', serif; font-size:15px; color:var(--caramel); display:flex; align-items:center; gap:10px; margin-bottom:18px; }
-  .step-num::before{ content:""; width:28px; height:1px; background:var(--caramel); transition: width .3s var(--ease); }
-  .step:hover .step-num::before{ width:40px; }
-  .step h3{ font-size:19px; font-weight:500; margin-bottom:10px; }
-  .step p{ font-size:14.5px; color:var(--sand); line-height:1.6; }
-
-  footer{ background:var(--cream-deep); padding:22px 0; text-align:center; font-size:13px; color:var(--text-muted); }
-
-  /* Scroll reveal utility class added via JS */
-  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
-  .reveal.active { opacity: 1; transform: translateY(0); }
-
-  @media (max-width: 1120px){
-    .wrap{ padding:0 40px; }
-    .hero-grid{ gap:44px; padding:84px 0 76px; }
-    .hero-title{ font-size:44px; }
-    .decor-icon{ opacity:.7; }
-  }
-  @media (max-width: 900px){
-    .decor-icon{ display:none; }
-    .hero-grid{ grid-template-columns:1fr; gap:36px; padding:56px 0 48px; }
-    .hero-title{ font-size:36px; max-width:100%; }
-    .hero-sub{ max-width:100%; }
-    .hero-art{ order:-1; margin-bottom:4px; }
-    .hero-art svg{ max-width:320px; }
-    .steps{ grid-template-columns:1fr; gap:32px; }
-    .step{ padding-left:0; border-left:none; }
-    .wrap{ padding:0 26px; }
-    .how-head{ flex-direction:column; align-items:flex-start; }
-    .how{ padding:0 0 64px; }
-    .how-head{ margin-top:44px; }
-    .seam-grid{ grid-template-columns:1fr; gap:14px; }
-    .seam-quote{ font-size:25px; }
-    .seam-top{ padding:0 0 16px; }
-    .seam-bottom{ padding:16px 0 0; }
-  }
-  @media (max-width: 480px){
-    .wrap{ padding:0 18px; }
-    nav.wrap{ height:72px; }
-    .nav-right{ gap:8px; }
-    .logo{ font-size:21px; gap:9px; }
-    .logo svg{ width:30px; height:30px; }
-    .eyebrow{ font-size:13px; }
-    .hero-title{ font-size:29px; }
-    .hero-sub{ font-size:15px; }
-    .hero-note{ font-size:13px; }
-    .cta{ width:100%; justify-content:center; padding:15px 22px; }
-    .btn-login{ padding:9px 15px; font-size:13px; }
-    .hero-art svg{ max-width:250px; }
-    .lang-menu{ right:-14px; min-width:140px; }
-    .how-head h2{ font-size:25px; }
-    .step h3{ font-size:18px; }
+  @media (min-width:1000px){
+    .hello{ padding:44px 0 22px; }
+    .test-card{ grid-template-columns:1.4fr .6fr; align-items:end; padding:44px; }
+    .test-card .ep-ai-note{ grid-column:1 / -1; }
+    .tiles{ grid-template-columns:repeat(4,1fr); }
+    .tile.wide{ grid-column:span 2; }
   }
 </style>
 </head>
 <body>
+<header class="ep-header" id="siteHeader" data-variant="app"></header>
+<script src="layout.js?v=4"></script>
+<script src="edupath-d.js?v=1"></script>
 
-<header>
-  <nav class="wrap">
-    <a href="index.html" class="logo">
-      <svg viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
-        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
-        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
-      </svg>
-      EduPath
-    </a>
-    <div class="nav-links">
-      <a href="index.html" class="active" data-i18n="nav_home">Главная</a>
-      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
-      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
-      <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
-      <a href="team.html" data-i18n="nav_team">О нашей команде</a>
-    </div>
-    <div class="nav-right">
-      <div class="lang-dropdown">
-        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Сменить язык">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
-        </button>
-        <div class="lang-menu" id="langMenu" role="menu">
-          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
-          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
-          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
-          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
-          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
-        </div>
-      </div>
-    </div>
-  </nav>
-</header>
+<main class="wrap">
+  <section class="hello">
+    <span class="eyebrow" data-h="eyebrow">Твой кабинет</span>
+    <h1 id="helloTitle">Привет!</h1>
+    <p data-h="hello_sub">С чего начнём сегодня?</p>
+  </section>
 
-<section class="hero">
-  <!-- 背景浮动图标，通过 style 里的 --rot 设置基础旋转角，加 floatY 动画 -->
-  <svg class="decor-icon" style="top:8%; left:4.5%; width:30px; height:30px; opacity:.5; --rot: -8deg; animation-delay: 0s;" viewBox="0 0 24 24" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-  <svg class="decor-icon" style="top:36%; left:2%; width:26px; height:26px; opacity:.4; --rot: 6deg; animation-delay: 0.5s;" viewBox="0 0 24 24" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M9 4v16M15 4v16"/></svg>
-  <svg class="decor-icon" style="top:80%; left:15%; width:28px; height:28px; opacity:.45; --rot: -4deg; animation-delay: 1.2s;" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
-  <svg class="decor-icon" style="top:6%; left:47%; width:24px; height:24px; opacity:.35; --rot: 10deg; animation-delay: 1.8s;" viewBox="0 0 24 24" stroke-width="1.4"><path d="M4 19V6a2 2 0 012-2h9l5 5v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M15 4v5h5"/></svg>
-  <svg class="decor-icon" style="top:10%; right:6%; width:32px; height:32px; opacity:.4; --rot: -10deg; animation-delay: 2.4s;" viewBox="0 0 24 24" stroke-width="1.4"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-  <svg class="decor-icon" style="top:58%; right:3%; width:26px; height:26px; opacity:.4; --rot: 5deg; animation-delay: 0.8s;" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 4L3 8l9 4 9-4-9-4z"/><path d="M6 10v6c0 1.5 2.7 3 6 3s6-1.5 6-3v-6"/></svg>
-  <svg class="decor-icon" style="bottom:6%; right:18%; width:26px; height:26px; opacity:.4; --rot: -6deg; animation-delay: 1.5s;" viewBox="0 0 24 24" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M9 4v16M15 4v16"/></svg>
-  <svg class="decor-icon" style="bottom:4%; left:44%; width:22px; height:22px; opacity:.35; --rot: 4deg; animation-delay: 2.1s;" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
-
-  <div class="wrap hero-grid">
+  <section class="test-card">
     <div>
-      <div class="eyebrow fade-item delay-1" data-i18n="home_eyebrow">Тест на подбор университета</div>
-      <h1 class="hero-title fade-item delay-2"><span data-i18n="home_title_pre">Пройди тест — и найди </span><em data-i18n="home_title_em">свой</em><span data-i18n="home_title_post"> университет</span></h1>
-      <p class="hero-sub fade-item delay-3" data-i18n="home_sub">Подбор направлений и вузов по твоим предпочтениям, результатам тестов и бюджету.</p>
-      <a href="test.html" class="cta fade-item delay-4">
-        <span data-i18n="home_cta">Начать поиск университетов</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-      <p class="hero-note fade-item delay-4" data-i18n="home_note">На основе специального ИИ поймём, какой университет может вам подойти</p>
+      <span class="eyebrow" style="color:var(--gold)" data-h="t_eyebrow">ИИ-подбор</span>
+      <h2 style="margin-top:10px" data-h-html="t_h2">Пройди тест — и найди <em>свой</em> университет</h2>
+      <p data-h="t_p">Около 23 вопросов об оценках, бюджете, климате и целях. В конце — 12 вузов в четырёх категориях, которые сохранятся в профиле.</p>
+      <div class="test-facts">
+        <span data-h="t_f1">📝 ≈23 вопроса</span><span data-h="t_f2">🎯 4 категории × 3 вуза</span><span data-h="t_f3">🔁 до 3 тестов в день</span>
+      </div>
     </div>
+    <div><a href="test.html" class="btn-gold"><span data-h="t_cta">Начать тест</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    <p class="ep-ai-note" data-h-html="ai">ИИ рекомендует, но не гарантирует поступление. Перед подачей проверяй условия на официальном сайте вуза. Подробнее — в <a href="terms.html">Условиях использования</a>.</p>
+  </section>
 
-    <div class="hero-art fade-item delay-2">
-      <svg viewBox="0 0 480 480" fill="none">
-        <!-- 外圈虚线 -->
-        <circle cx="240" cy="240" r="178" stroke="#D9BD93" stroke-width="1.4" stroke-dasharray="2 7" class="radar-line"/>
-        <!-- 内圈实线 -->
-        <circle cx="240" cy="240" r="140" stroke="#8C5A34" stroke-width="1.6" class="radar-line" style="animation-delay: 0.7s;"/>
-        
-        <g stroke="#5A3B26" stroke-width="1.4">
-          <line x1="240" y1="70" x2="240" y2="94"/>
-          <line x1="240" y1="386" x2="240" y2="410"/>
-          <line x1="70" y1="240" x2="94" y2="240"/>
-          <line x1="386" y1="240" x2="410" y2="240"/>
-        </g>
-        
-        <text x="240" y="60" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">N</text>
-        <text x="240" y="430" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">S</text>
-        <text x="52" y="245" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">W</text>
-        <text x="428" y="245" text-anchor="middle" font-family="Work Sans" font-size="13" fill="#5A3B26" font-weight="600">E</text>
-        
-        <!-- 指针摇晃 -->
-        <g class="compass-needle">
-          <path d="M240 240 L280 165 L255 240 Z" fill="#2B1B10"/>
-          <path d="M240 240 L200 315 L225 240 Z" fill="#C79256"/>
-        </g>
-        
-        <!-- 中心脉冲 -->
-        <circle cx="240" cy="240" r="7" fill="#FBF6EC" stroke="#2B1B10" stroke-width="2" class="pulse-center"/>
-        
-        <!-- 雷达射线与城市点的波浪 -->
-        <g stroke="#8C5A34" stroke-width="1.2" stroke-dasharray="3 5" class="radar-line" style="animation-delay: 1s;">
-          <path d="M240 240 L120 120"/>
-          <path d="M240 240 L370 130"/>
-          <path d="M240 240 L340 360"/>
-          <path d="M240 240 L130 345"/>
-        </g>
-        
-        <!-- 城市点 + 扩散波纹 -->
-        <!-- Seoul -->
-        <circle cx="120" cy="120" r="5" fill="#5A3B26"/>
-        <circle cx="120" cy="120" r="5" fill="none" stroke="#5A3B26" stroke-width="1.5" class="ping-circle ping-delay-1"/>
-        
-        <!-- Berlin -->
-        <circle cx="370" cy="130" r="5" fill="#5A3B26"/>
-        <circle cx="370" cy="130" r="5" fill="none" stroke="#5A3B26" stroke-width="1.5" class="ping-circle ping-delay-2"/>
-        
-        <!-- Boston -->
-        <circle cx="340" cy="360" r="5" fill="#5A3B26"/>
-        <circle cx="340" cy="360" r="5" fill="none" stroke="#5A3B26" stroke-width="1.5" class="ping-circle ping-delay-3"/>
-        
-        <!-- Shanghai -->
-        <circle cx="130" cy="345" r="5" fill="#5A3B26"/>
-        <circle cx="130" cy="345" r="5" fill="none" stroke="#5A3B26" stroke-width="1.5" class="ping-circle ping-delay-4"/>
+  <div class="tiles-head"><h2 data-h="tiles">Разделы</h2></div>
+  <section class="tiles">
+    <a class="tile" href="universities.html">
+      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 5l9 5-9 5-9-5Z"/><path d="M7 12v5c3 2 7 2 10 0v-5"/></svg></span>
+      <h3 data-h="u_h">Университеты</h3><p data-h="u_p">Каталог из 50 вузов и поиск по любому другому</p></a>
+    <a class="tile" href="resources.html">
+      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
+      <h3 data-h="r_h">Полезное</h3><p data-h="r_p">Экзамены, стипендии и подача — только официальные сайты</p></a>
+    <a class="tile" href="content.html">
+      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3V9Z"/></svg></span>
+      <h3 data-h="c_h">Контент</h3><p data-h="c_p">Новости о визах и поступлении, видео и фильмы</p></a>
+    <a class="tile" href="focus.html">
+      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span>
+      <h3 data-h="f_h">Фокус</h3><p data-h="f_p">Таймер учёбы, серия дней и цитата дня</p></a>
+    <a class="tile wide" href="profile.html">
+      <span class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
+      <div><h3 data-h="p_h">Профиль</h3><p data-h="p_p">Избранные вузы, результаты тестов, гражданство и уровень обучения</p></div></a>
+  </section>
 
-        <text x="120" y="104" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_seoul">Сеул</text>
-        <text x="370" y="114" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_berlin">Берлин</text>
-        <text x="340" y="382" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_boston">Бостон</text>
-        <text x="130" y="367" text-anchor="middle" font-family="Work Sans" font-size="12" fill="#7A6552" data-i18n="city_shanghai">Шанхай</text>
-      </svg>
-    </div>
-  </div>
-
-  <div class="wrap seam-top reveal">
-    <div class="seam-grid">
-      <p class="seam-quote" data-i18n="home_quote_top">«С нами —</p>
-      <p class="seam-desc" data-i18n="home_seam_desc_top">Помимо учебных показателей нам важно, в какой среде хочет жить абитуриент.</p>
-    </div>
-  </div>
-</section>
-
-<section class="how">
-  <svg class="decor-icon" style="top:10%; right:8%; width:30px; height:30px; opacity:.5; --rot: 8deg; animation-delay: 0.3s;" viewBox="0 0 24 24" stroke-width="1.4"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
-  <svg class="decor-icon" style="bottom:12%; left:4%; width:34px; height:34px; opacity:.5; --rot: -6deg; animation-delay: 1s;" viewBox="0 0 24 24" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-  <svg class="decor-icon" style="top:14%; left:36%; width:22px; height:22px; opacity:.4; --rot: 10deg; animation-delay: 1.8s;" viewBox="0 0 24 24" stroke-width="1.4"><path d="M4 19V6a2 2 0 012-2h9l5 5v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M15 4v5h5"/></svg>
-  
-  <div class="wrap seam-bottom reveal">
-    <div class="seam-grid">
-      <p class="seam-quote" data-i18n="home_quote_bottom">комфортнее, практичнее, эффективнее»</p>
-      <p class="seam-desc" data-i18n="home_seam_desc_bottom">Мы рекомендуем только те университеты, которые подходят тебе по-настоящему хорошо.</p>
-    </div>
-  </div>
-  
-  <div class="wrap">
-    <div class="how-head reveal">
-      <h2 data-i18n="home_how_title">Как это работает</h2>
-      <p data-i18n="home_how_sub">Три шага от первого вопроса до списка подходящих университетов.</p>
-    </div>
+  <section class="how">
+    <h2 data-h="how">Как работает тест</h2>
     <div class="steps">
-      <div class="step reveal delay-1">
-        <div class="step-num">01</div>
-        <h3 data-i18n="home_step1_title">Личные данные</h3>
-        <p data-i18n="home_step1_desc">Твои интересы, увлечения и предпочтения по стране, климату и формату обучения.</p>
-      </div>
-      <div class="step reveal delay-2">
-        <div class="step-num">02</div>
-        <h3 data-i18n="home_step2_title">Показатели</h3>
-        <p data-i18n="home_step2_desc">Оценки, результаты экзаменов (SAT, IELTS и др.) и ориентировочный бюджет.</p>
-      </div>
-      <div class="step reveal delay-3">
-        <div class="step-num">03</div>
-        <h3 data-i18n="home_step3_title">Результаты теста</h3>
-        <p data-i18n="home_step3_desc">Список университетов, которые подходят тебе больше всего, с пояснениями и советами.</p>
-      </div>
+      <div class="step"><h3 data-h="s1_h">Отвечаешь на вопросы</h3><p data-h="s1_t">Оценки, экзамены, бюджет, страна и климат, формат обучения.</p></div>
+      <div class="step"><h3 data-h="s2_h">ИИ ищет варианты</h3><p data-h="s2_t">Подбирает вузы под твоё гражданство и уровень обучения.</p></div>
+      <div class="step"><h3 data-h="s3_h">Получаешь 12 вузов</h3><p data-h="s3_t">Четыре категории — от надёжных до вузов мечты. Любой открывается полной карточкой.</p></div>
     </div>
-  </div>
-</section>
+  </section>
+</main>
 
-<footer data-i18n="home_footer">
-  EduPath © 2026. Все права защищены
-</footer>
-
-<script src="i18n.js"></script>
-<script src="auth.js"></script>
 <script>
-  // 监听滚动，实现元素进场动画 (Intersection Observer)
-  document.addEventListener("DOMContentLoaded", () => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("active");
-          // 一旦进场就可以停止观察
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-
-    document.querySelectorAll(".reveal").forEach(el => {
-      observer.observe(el);
-    });
-  });
+(function(){
+  const H = {
+    ru:{ eyebrow:"Твой кабинет", hello:"Привет", hello_sub:"С чего начнём сегодня?", t_eyebrow:"ИИ-подбор", t_h2:"Пройди тест — и найди <em>свой</em> университет",
+      t_p:"Около 23 вопросов об оценках, бюджете, климате и целях. В конце — 12 вузов в четырёх категориях, которые сохранятся в профиле.",
+      t_f1:"📝 ≈23 вопроса", t_f2:"🎯 4 категории × 3 вуза", t_f3:"🔁 до 3 тестов в день", t_cta:"Начать тест",
+      ai:'ИИ рекомендует, но не гарантирует поступление. Перед подачей проверяй условия на официальном сайте вуза. Подробнее — в <a href="terms.html">Условиях использования</a>.',
+      tiles:"Разделы", u_h:"Университеты", u_p:"Каталог из 50 вузов и поиск по любому другому", r_h:"Полезное", r_p:"Экзамены, стипендии и подача — только официальные сайты",
+      c_h:"Контент", c_p:"Новости о визах и поступлении, видео и фильмы", f_h:"Фокус", f_p:"Таймер учёбы, серия дней и цитата дня",
+      p_h:"Профиль", p_p:"Избранные вузы, результаты тестов, гражданство и уровень обучения", how:"Как работает тест",
+      s1_h:"Отвечаешь на вопросы", s1_t:"Оценки, экзамены, бюджет, страна и климат, формат обучения.", s2_h:"ИИ ищет варианты", s2_t:"Подбирает вузы под твоё гражданство и уровень обучения.",
+      s3_h:"Получаешь 12 вузов", s3_t:"Четыре категории — от надёжных до вузов мечты. Любой открывается полной карточкой." },
+    en:{ eyebrow:"Your dashboard", hello:"Hi", hello_sub:"Where shall we start today?", t_eyebrow:"AI matching", t_h2:"Take the test and find <em>your</em> university",
+      t_p:"About 23 questions on grades, budget, climate and goals. At the end you get 12 universities in four categories, saved to your profile.",
+      t_f1:"📝 ~23 questions", t_f2:"🎯 4 categories × 3", t_f3:"🔁 up to 3 tests a day", t_cta:"Start the test",
+      ai:'AI recommends, it does not guarantee admission. Check requirements on the official university website before applying. See the <a href="terms.html">Terms of Use</a>.',
+      tiles:"Sections", u_h:"Universities", u_p:"A catalog of 50 universities plus search for any other", r_h:"Resources", r_p:"Exams, scholarships and applications — official sites only",
+      c_h:"Content", c_p:"News on visas and admissions, videos and films", f_h:"Focus", f_p:"Study timer, streaks and a quote of the day",
+      p_h:"Profile", p_p:"Saved universities, test results, citizenship and degree level", how:"How the test works",
+      s1_h:"Answer the questions", s1_t:"Grades, exams, budget, country and climate, study format.", s2_h:"AI looks for options", s2_t:"Finds universities for your citizenship and degree level.",
+      s3_h:"Get 12 universities", s3_t:"Four categories, from safe picks to dream schools. Each opens as a full card." },
+    kk:{ eyebrow:"Сенің кабинетің", hello:"Сәлем", hello_sub:"Бүгін неден бастаймыз?", t_eyebrow:"ЖИ іріктеу", t_h2:"Тест тапсыр да, <em>өз</em> университетіңді тап",
+      t_p:"Бағалар, бюджет, климат пен мақсаттар туралы 23-ке жуық сұрақ. Соңында профильде сақталатын төрт санаттағы 12 университет.",
+      t_f1:"📝 ≈23 сұрақ", t_f2:"🎯 4 санат × 3", t_f3:"🔁 күніне 3 тестке дейін", t_cta:"Тестті бастау",
+      ai:'ЖИ ұсынады, бірақ түсуге кепілдік бермейді. Құжат тапсырмас бұрын шарттарды университеттің ресми сайтынан тексер. Толығырақ — <a href="terms.html">Пайдалану шарттарында</a>.',
+      tiles:"Бөлімдер", u_h:"Университеттер", u_p:"50 университет каталогы және кез келгенін іздеу", r_h:"Пайдалы", r_p:"Емтихандар, стипендиялар, құжат тапсыру — тек ресми сайттар",
+      c_h:"Контент", c_p:"Визалар мен түсу жаңалықтары, бейнелер мен фильмдер", f_h:"Фокус", f_p:"Оқу таймері, күндер сериясы, күн дәйексөзі",
+      p_h:"Профиль", p_p:"Таңдаулы университеттер, тест нәтижелері, азаматтық пен оқу деңгейі", how:"Тест қалай жұмыс істейді",
+      s1_h:"Сұрақтарға жауап бересің", s1_t:"Бағалар, емтихандар, бюджет, ел мен климат, оқу форматы.", s2_h:"ЖИ нұсқаларды іздейді", s2_t:"Азаматтығың мен оқу деңгейіңе сай университеттерді таңдайды.",
+      s3_h:"12 университет аласың", s3_t:"Төрт санат — сенімдіден арман университетке дейін. Әрқайсысы толық карточкамен ашылады." },
+    ky:{ eyebrow:"Сенин кабинетиң", hello:"Салам", hello_sub:"Бүгүн эмнеден баштайбыз?", t_eyebrow:"ЖИ тандоо", t_h2:"Тест тапшыр жана <em>өз</em> университетиңди тап",
+      t_p:"Баалар, бюджет, климат жана максаттар боюнча 23дөй суроо. Аягында профилде сакталуучу төрт категориядагы 12 университет.",
+      t_f1:"📝 ≈23 суроо", t_f2:"🎯 4 категория × 3", t_f3:"🔁 күнүнө 3 тестке чейин", t_cta:"Тестти баштоо",
+      ai:'ЖИ сунуштайт, бирок кабыл алууга кепилдик бербейт. Тапшыруудан мурун шарттарды университеттин расмий сайтынан текшер. Кененирээк — <a href="terms.html">Колдонуу шарттарында</a>.',
+      tiles:"Бөлүмдөр", u_h:"Университеттер", u_p:"50 университеттин каталогу жана каалаганын издөө", r_h:"Пайдалуу", r_p:"Сынактар, стипендиялар, тапшыруу — расмий сайттар гана",
+      c_h:"Контент", c_p:"Виза жана тапшыруу жаңылыктары, видеолор жана тасмалар", f_h:"Фокус", f_p:"Окуу таймери, күндөр сериясы, күндүн цитатасы",
+      p_h:"Профиль", p_p:"Тандалган университеттер, тест жыйынтыктары, жарандык жана окуу деңгээли", how:"Тест кантип иштейт",
+      s1_h:"Суроолорго жооп бересиң", s1_t:"Баалар, сынактар, бюджет, өлкө жана климат, окуу формасы.", s2_h:"ЖИ варианттарды издейт", s2_t:"Жарандыгыңа жана окуу деңгээлиңе ылайык университеттерди тандайт.",
+      s3_h:"12 университет аласың", s3_t:"Төрт категория — ишенимдүүдөн кыялдагы университетке чейин. Ар бири толук карточка менен ачылат." },
+    zh:{ eyebrow:"你的主页", hello:"你好", hello_sub:"今天从哪里开始？", t_eyebrow:"AI 匹配", t_h2:"做个测试，找到<em>你的</em>大学",
+      t_p:"约 23 个关于成绩、预算、气候和目标的问题。最后得到 4 类共 12 所大学，并保存到个人资料。",
+      t_f1:"📝 约 23 题", t_f2:"🎯 4 类 × 3 所", t_f3:"🔁 每天最多 3 次", t_cta:"开始测试",
+      ai:'AI 只提供建议，不保证录取。申请前请在大学官网核实要求。详见<a href="terms.html">使用条款</a>。',
+      tiles:"栏目", u_h:"大学", u_p:"50 所大学目录，并可搜索任何大学", r_h:"实用资源", r_p:"考试、奖学金和申请——仅官方网站",
+      c_h:"内容", c_p:"签证与录取新闻、视频和电影", f_h:"专注", f_p:"学习计时器、连续打卡和每日名言",
+      p_h:"个人资料", p_p:"收藏的大学、测试结果、国籍和学历层次", how:"测试如何进行",
+      s1_h:"回答问题", s1_t:"成绩、考试、预算、国家和气候、学习形式。", s2_h:"AI 寻找选项", s2_t:"根据你的国籍和学历层次挑选大学。",
+      s3_h:"得到 12 所大学", s3_t:"四个类别，从稳妥选择到梦想学校，每所都能打开完整卡片。" }
+  };
+  function apply(){
+    let lang="ru"; try{ lang=localStorage.getItem("edupath_lang")||"ru"; }catch(e){}
+    const d=H[lang]||H.ru;
+    document.querySelectorAll("[data-h]").forEach(el=>{ if(d[el.dataset.h]) el.textContent=d[el.dataset.h]; });
+    document.querySelectorAll("[data-h-html]").forEach(el=>{ if(d[el.dataset.hHtml]) el.innerHTML=d[el.dataset.hHtml]; });
+    let name=""; try{ const u=window.EduAuth && EduAuth.getCurrentUser(); name=u && u.name ? String(u.name).split(" ")[0] : ""; }catch(e){}
+    const t=document.getElementById("helloTitle"); t.textContent = d.hello + (name ? ", " + name : "") + "!";
+  }
+  window.addEventListener("edupath-lang-change", apply);
+  document.addEventListener("DOMContentLoaded", apply);
+})();
 </script>
+<script src="i18n.js?v=9"></script>
+<script src="auth.js"></script>
 </body>
 </html>

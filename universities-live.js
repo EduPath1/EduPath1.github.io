@@ -113,6 +113,9 @@
     if (!$("similarSection").hidden && state.selected) loadSimilar(state.selected);
   }
 
+  /* вариант B на широком экране: досье открыто справа от каталога — страницу не прокручиваем */
+  const sideDetail = () => document.documentElement.classList.contains("ui-b") && window.matchMedia("(min-width: 1280px)").matches;
+
   /* ---------- дедлайны и карточки ---------- */
   function dotClass(date) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date || "")) return "";
@@ -313,7 +316,7 @@
         <section class="detail-section"><h3>8. Изображения</h3><div id="dPhotos">${loadingHtml("Ищем фотографии кампуса…")}</div></section>
         <section class="detail-section"><h3>9. Источники</h3><div id="dSources" class="sources">${loadingHtml("…")}</div></section>
       </aside></div>
-      <div class="disclaimer">Справка собрана автоматически. Требования и дедлайны зависят от программы, гражданства и года набора. «Нет подтверждённых данных» значит «не нашли», а не «не требуется». Перед подачей проверь на официальном сайте.</div></article>`;
+      <div class="disclaimer">Справка собрана автоматически, в том числе с помощью ИИ: он рекомендует, но не гарантирует. Требования и дедлайны зависят от программы, гражданства и года набора. «Нет подтверждённых данных» значит «не нашли», а не «не требуется». Перед подачей проверь на официальном сайте.</div></article>`;
     syncDegreeUI(); paintGroup();
     document.querySelectorAll(".dDegreeName").forEach(el => el.textContent = DEGREES[state.degree]);
     $("detailContent").querySelectorAll("[data-degree-switch] button").forEach(b => b.addEventListener("click", () => setDegree(b.dataset.degree)));
@@ -486,7 +489,7 @@
     highlightSelected();
     if (!keepSimilar) { $("similarSection").hidden = true; $("similarTrack").innerHTML = ""; }
     renderShell(state.selected);
-    $("detailShell").scrollIntoView({ behavior: instant ? "instant" : "smooth", block: "start" });
+    if (sideDetail()) $("detailShell").scrollTo({ top: 0 }); else $("detailShell").scrollIntoView({ behavior: instant ? "instant" : "smooth", block: "start" });
     // если id из реестра уже известен — всё грузим параллельно; иначе сначала узнаём id (так быстрее и экономнее)
     const basePromise = loadBase(state.selected, refresh);
     if (!state.selected.id) await basePromise;
@@ -592,7 +595,7 @@
     const wanted = params.get("uni"), wantedId = params.get("id");
     if (wanted || wantedId) {
       openUniversity({ id: wantedId || null, name: wanted || "", country: params.get("country") || "", city: params.get("city") || "" }, { instant: true });
-      loadCatalog().then(() => requestAnimationFrame(() => $("detailShell").scrollIntoView({ behavior: "instant", block: "start" })));
+      loadCatalog().then(() => requestAnimationFrame(() => { if (!sideDetail()) $("detailShell").scrollIntoView({ behavior: "instant", block: "start" }); }));
     } else loadCatalog();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true }); else init();

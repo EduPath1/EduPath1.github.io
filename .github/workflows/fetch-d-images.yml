@@ -1,0 +1,53 @@
+# Разовая задача: скачать 7 картинок для дизайна D из Figma,
+# сжать их в JPG и положить в assets/d/. Запускается сама после слияния
+# (или вручную: Actions → «Картинки для дизайна D» → Run workflow).
+# После успешного запуска этот файл можно удалить.
+name: Картинки для дизайна D
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/fetch-d-images.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Скачать и сжать картинки
+        run: |
+          command -v convert >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick)
+          mkdir -p assets/d "$RUNNER_TEMP/raw"
+          while read -r name url; do
+            [ -z "$name" ] && continue
+            curl -fsSL --retry 3 -o "$RUNNER_TEMP/raw/$name.png" "$url"
+            convert "$RUNNER_TEMP/raw/$name.png" -strip -resize '1600x1600>' -quality 78 -interlace Plane "assets/d/$name.jpg"
+            ls -la "assets/d/$name.jpg"
+          done <<'LIST'
+          d-hero https://www.figma.com/api/mcp/asset/1c01496b-68d6-4b7b-b0d0-2beba961b9f2.png
+          d-students https://www.figma.com/api/mcp/asset/1f04d031-194e-45fd-adbe-898d4222993d.png
+          d-study https://www.figma.com/api/mcp/asset/e99eadea-638d-4eae-aae6-a749b2675de2.png
+          d-airport https://www.figma.com/api/mcp/asset/47a0aad3-611b-4672-b7e8-cf68604d088e.png
+          d-desk https://www.figma.com/api/mcp/asset/cb877a9a-c7bb-4bdb-8400-2c20e2c9c044.png
+          d-graduation https://www.figma.com/api/mcp/asset/c0d8aa2f-fdd7-4b32-9d07-b89e149052b2.png
+          d-phone https://www.figma.com/api/mcp/asset/05918d6c-949c-4c9c-805e-8c41a3aaf023.png
+          LIST
+
+      - name: Сохранить в репозиторий
+        run: |
+          git config user.name "edupath-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/d
+          if git diff --cached --quiet; then echo "Картинки уже на месте"; exit 0; fi
+          git commit -m "Картинки для дизайна D (из Figma)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep 5
+          done
+          exit 1

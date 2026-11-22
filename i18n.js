@@ -1,5 +1,5 @@
 // ============================================================
-// EduPath — i18n.js (v8.2, full)
+// EduPath — i18n.js (v9: шапка и бургер вынесены в layout.js)
 // + «Полезное» (resources.html) в меню
 // + «Контент» (content.html) в меню; Fun Zone и «О нашей команде» скрыты из меню (v8.3)
 // RU / EN / ZH / KK / KY
@@ -70,7 +70,7 @@
       catalog_save_btn: "Сохранить в избранное", catalog_saved_btn: "В избранном",
 
       profile_greeting: "Привет", profile_logout: "Выйти",
-      data_title: "🗂 Управление данными", data_sub: "Отметь, что стереть. Всё остальное останется.", data_saved: "Понравившиеся университеты", data_tests: "Результаты тестов", data_study: "История таймеров и серия", data_quotes: "Сохранённые цитаты", data_profile: "Данные профиля (гражданство, уровень обучения)", data_delete_sel: "Удалить выбранное", data_pick: "Отметь хотя бы один пункт", data_account_title: "Удалить аккаунт целиком", data_account_sub: "Сотрётся всё: аккаунт, университеты, тесты, таймеры и цитаты. Вернуть будет нельзя.", data_account_btn: "Удалить аккаунт", data_confirm_title_sel: "Удалить выбранное?", data_confirm_title_acc: "Удалить аккаунт навсегда?", data_confirm_will: "Будет удалено:", data_item_account: "Аккаунт и вход", data_confirm_note: "Дневные лимиты ИИ-теста при удалении не обнуляются.", data_confirm_type: "Чтобы подтвердить, впиши слово {word}", data_confirm_word: "УДАЛИТЬ", data_confirm_wrong: "Слово не совпадает", data_cancel: "Отмена", data_confirm_btn: "Удалить", data_done: "Готово, выбранное удалено.", data_acc_done: "Аккаунт удалён. Нам жаль, что ты уходишь.", modal_consent: "Я согласен(на), что EduPath хранит мои данные, чтобы сайт работал", modal_consent_need: "Отметь согласие, чтобы создать аккаунт", modal_password_short: "Пароль должен быть не короче 8 символов", modal_captcha_fail: "Проверка «я не робот» не прошла. Обнови страницу.",
+      data_title: "🗂 Управление данными", data_sub: "Отметь, что стереть. Всё остальное останется.", data_saved: "Понравившиеся университеты", data_tests: "Результаты тестов", data_study: "История таймеров и серия", data_quotes: "Сохранённые цитаты", data_profile: "Данные профиля (гражданство, уровень обучения)", data_delete_sel: "Удалить выбранное", data_pick: "Отметь хотя бы один пункт", data_account_title: "Удалить аккаунт целиком", data_account_sub: "Сотрётся всё: аккаунт, университеты, тесты, таймеры и цитаты. Вернуть будет нельзя.", data_account_btn: "Удалить аккаунт", data_confirm_title_sel: "Удалить выбранное?", data_confirm_title_acc: "Удалить аккаунт навсегда?", data_confirm_will: "Будет удалено:", data_item_account: "Аккаунт и вход", data_confirm_note: "Дневные лимиты ИИ-теста при удалении не обнуляются.", data_confirm_type: "Чтобы подтвердить, впиши слово {word}", data_confirm_word: "УДАЛИТЬ", data_confirm_wrong: "Слово не совпадает", data_cancel: "Отмена", data_confirm_btn: "Удалить", data_done: "Готово, выбранное удалено.", data_acc_done: "Аккаунт удалён. Нам жаль, что ты уходишь.", modal_consent: "Принимаю условия и даю согласие на обработку моих данных:", modal_privacy_link: "Политика конфиденциальности", modal_terms_link: "Условия использования", modal_consent_need: "Отметь согласие, чтобы создать аккаунт", modal_password_short: "Пароль должен быть не короче 8 символов", modal_captcha_fail: "Проверка «я не робот» не прошла. Обнови страницу.",
       profile_saved_title: "⭐ Понравившиеся университеты",
       profile_saved_sub: "Те, которые ты отметил звёздочкой в каталоге",
       profile_tests_title: "🎯 Результаты теста",
@@ -535,6 +535,7 @@
       team_final_cta: "Исследовать EduPath",
       team_contact_title: "Связаться с нами",
       team_contact_sub: "По вопросам сотрудничества и любым другим — пишите на почты:",
+      team_contact_team: "Общая почта команды", team_write: "Написать",
       team_footer: "EduPath © 2026 · Сделано с заботой Alkar & Arshat",
 
       footer_note: "Fun Zone — шутка. Реальные рекомендации — в тесте."
@@ -591,7 +592,7 @@
       catalog_save_btn: "Save to favorites", catalog_saved_btn: "Saved",
 
       profile_greeting: "Hi", profile_logout: "Log out",
-      data_title: "🗂 Manage your data", data_sub: "Tick what to erase. Everything else stays.", data_saved: "Liked universities", data_tests: "Test results", data_study: "Timer history and streak", data_quotes: "Saved quotes", data_profile: "Profile data (citizenship, study level)", data_delete_sel: "Delete selected", data_pick: "Tick at least one item", data_account_title: "Delete the whole account", data_account_sub: "Everything will be erased: account, universities, tests, timers and quotes. This can't be undone.", data_account_btn: "Delete account", data_confirm_title_sel: "Delete selected data?", data_confirm_title_acc: "Delete your account forever?", data_confirm_will: "This will be deleted:", data_item_account: "Account and sign-in", data_confirm_note: "Daily AI test limits are not reset by deleting.", data_confirm_type: "To confirm, type {word}", data_confirm_word: "DELETE", data_confirm_wrong: "The word doesn't match", data_cancel: "Cancel", data_confirm_btn: "Delete", data_done: "Done, the selected data is deleted.", data_acc_done: "Account deleted. Sorry to see you go.", modal_consent: "I agree that EduPath stores my data so the site can work", modal_consent_need: "Tick the consent box to create an account", modal_password_short: "The password must be at least 8 characters", modal_captcha_fail: "The “I'm not a robot” check failed. Reload the page.",
+      data_title: "🗂 Manage your data", data_sub: "Tick what to erase. Everything else stays.", data_saved: "Liked universities", data_tests: "Test results", data_study: "Timer history and streak", data_quotes: "Saved quotes", data_profile: "Profile data (citizenship, study level)", data_delete_sel: "Delete selected", data_pick: "Tick at least one item", data_account_title: "Delete the whole account", data_account_sub: "Everything will be erased: account, universities, tests, timers and quotes. This can't be undone.", data_account_btn: "Delete account", data_confirm_title_sel: "Delete selected data?", data_confirm_title_acc: "Delete your account forever?", data_confirm_will: "This will be deleted:", data_item_account: "Account and sign-in", data_confirm_note: "Daily AI test limits are not reset by deleting.", data_confirm_type: "To confirm, type {word}", data_confirm_word: "DELETE", data_confirm_wrong: "The word doesn't match", data_cancel: "Cancel", data_confirm_btn: "Delete", data_done: "Done, the selected data is deleted.", data_acc_done: "Account deleted. Sorry to see you go.", modal_consent: "I accept the terms and consent to the processing of my data:", modal_privacy_link: "Privacy Policy", modal_terms_link: "Terms of Use", modal_consent_need: "Tick the consent box to create an account", modal_password_short: "The password must be at least 8 characters", modal_captcha_fail: "The “I'm not a robot” check failed. Reload the page.",
       profile_saved_title: "⭐ Favorite universities", profile_saved_sub: "Those you starred in the catalog",
       profile_tests_title: "🎯 Test results", profile_tests_sub: "Universities the AI matched to your answers",
       profile_empty_saved: "You haven't saved any university yet.",
@@ -1047,6 +1048,7 @@
       team_final_cta: "Explore EduPath",
       team_contact_title: "Get in touch",
       team_contact_sub: "For collaboration or any questions — write to:",
+      team_contact_team: "Team email", team_write: "Write",
       team_footer: "EduPath © 2026 · Made with care by Alkar & Arshat",
 
       footer_note: "Fun Zone is a joke. Real recommendations — in the test."
@@ -1099,7 +1101,7 @@
       catalog_save_btn: "保存到收藏", catalog_saved_btn: "已收藏",
 
       profile_greeting: "你好", profile_logout: "退出",
-      data_title: "🗂 数据管理", data_sub: "勾选要删除的内容，其余内容会保留。", data_saved: "收藏的大学", data_tests: "测试结果", data_study: "计时记录和连续天数", data_quotes: "收藏的名言", data_profile: "个人资料（国籍、学历层次）", data_delete_sel: "删除所选内容", data_pick: "请至少勾选一项", data_account_title: "彻底删除账号", data_account_sub: "所有内容都会被删除：账号、大学、测试、计时和名言。删除后无法恢复。", data_account_btn: "删除账号", data_confirm_title_sel: "删除所选内容？", data_confirm_title_acc: "永久删除账号？", data_confirm_will: "将被删除：", data_item_account: "账号和登录", data_confirm_note: "删除不会重置 AI 测试的每日次数。", data_confirm_type: "请输入 {word} 以确认", data_confirm_word: "删除", data_confirm_wrong: "输入的词不一致", data_cancel: "取消", data_confirm_btn: "删除", data_done: "完成，所选内容已删除。", data_acc_done: "账号已删除。很遗憾你要离开。", modal_consent: "我同意 EduPath 为网站正常运行保存我的数据", modal_consent_need: "请勾选同意后再创建账号", modal_password_short: "密码至少需要 8 个字符", modal_captcha_fail: "“我不是机器人”验证未通过，请刷新页面。",
+      data_title: "🗂 数据管理", data_sub: "勾选要删除的内容，其余内容会保留。", data_saved: "收藏的大学", data_tests: "测试结果", data_study: "计时记录和连续天数", data_quotes: "收藏的名言", data_profile: "个人资料（国籍、学历层次）", data_delete_sel: "删除所选内容", data_pick: "请至少勾选一项", data_account_title: "彻底删除账号", data_account_sub: "所有内容都会被删除：账号、大学、测试、计时和名言。删除后无法恢复。", data_account_btn: "删除账号", data_confirm_title_sel: "删除所选内容？", data_confirm_title_acc: "永久删除账号？", data_confirm_will: "将被删除：", data_item_account: "账号和登录", data_confirm_note: "删除不会重置 AI 测试的每日次数。", data_confirm_type: "请输入 {word} 以确认", data_confirm_word: "删除", data_confirm_wrong: "输入的词不一致", data_cancel: "取消", data_confirm_btn: "删除", data_done: "完成，所选内容已删除。", data_acc_done: "账号已删除。很遗憾你要离开。", modal_consent: "我接受条款并同意处理我的数据：", modal_privacy_link: "隐私政策", modal_terms_link: "使用条款", modal_consent_need: "请勾选同意后再创建账号", modal_password_short: "密码至少需要 8 个字符", modal_captcha_fail: "“我不是机器人”验证未通过，请刷新页面。",
       profile_saved_title: "⭐ 收藏的大学", profile_saved_sub: "你在目录中加星标的大学",
       profile_tests_title: "🎯 测试结果", profile_tests_sub: "人工智能根据你的回答匹配的大学",
       profile_empty_saved: "你还没有保存任何大学。",
@@ -1543,6 +1545,7 @@
       team_final_cta: "探索 EduPath",
       team_contact_title: "联系我们",
       team_contact_sub: "合作或任何问题——请发邮件至：",
+      team_contact_team: "团队邮箱", team_write: "写信",
       team_footer: "EduPath © 2026 · Alkar & Arshat 用心制作",
 
       footer_note: "Fun Zone 是玩笑。真正的推荐在测试里。"
@@ -1598,7 +1601,7 @@
       catalog_save_btn: "Таңдаулыларға сақтау", catalog_saved_btn: "Таңдаулыларда",
 
       profile_greeting: "Сәлем", profile_logout: "Шығу",
-      data_title: "🗂 Деректерді басқару", data_sub: "Не өшіретініңді белгіле. Қалғаны сақталады.", data_saved: "Ұнаған университеттер", data_tests: "Тест нәтижелері", data_study: "Таймер тарихы және сериясы", data_quotes: "Сақталған дәйексөздер", data_profile: "Профиль деректері (азаматтық, оқу деңгейі)", data_delete_sel: "Таңдалғанды өшіру", data_pick: "Кемінде бір тармақты белгіле", data_account_title: "Аккаунтты толық өшіру", data_account_sub: "Бәрі өшеді: аккаунт, университеттер, тесттер, таймерлер және дәйексөздер. Қайтару мүмкін емес.", data_account_btn: "Аккаунтты өшіру", data_confirm_title_sel: "Таңдалғанды өшіру керек пе?", data_confirm_title_acc: "Аккаунтты біржола өшіру керек пе?", data_confirm_will: "Өшірілетіні:", data_item_account: "Аккаунт және кіру", data_confirm_note: "Өшіргенде ЖИ-тесттің күндік лимиті қайта басталмайды.", data_confirm_type: "Растау үшін {word} сөзін жаз", data_confirm_word: "ЖОЮ", data_confirm_wrong: "Сөз сәйкес емес", data_cancel: "Болдырмау", data_confirm_btn: "Өшіру", data_done: "Дайын, таңдалғаны өшірілді.", data_acc_done: "Аккаунт өшірілді. Кетіп бара жатқаның өкінішті.", modal_consent: "EduPath сайт жұмыс істеуі үшін деректерімді сақтауына келісемін", modal_consent_need: "Аккаунт ашу үшін келісімді белгіле", modal_password_short: "Құпия сөз кемінде 8 таңбадан тұруы керек", modal_captcha_fail: "«Мен робот емеспін» тексерісі өтпеді. Бетті жаңарт.",
+      data_title: "🗂 Деректерді басқару", data_sub: "Не өшіретініңді белгіле. Қалғаны сақталады.", data_saved: "Ұнаған университеттер", data_tests: "Тест нәтижелері", data_study: "Таймер тарихы және сериясы", data_quotes: "Сақталған дәйексөздер", data_profile: "Профиль деректері (азаматтық, оқу деңгейі)", data_delete_sel: "Таңдалғанды өшіру", data_pick: "Кемінде бір тармақты белгіле", data_account_title: "Аккаунтты толық өшіру", data_account_sub: "Бәрі өшеді: аккаунт, университеттер, тесттер, таймерлер және дәйексөздер. Қайтару мүмкін емес.", data_account_btn: "Аккаунтты өшіру", data_confirm_title_sel: "Таңдалғанды өшіру керек пе?", data_confirm_title_acc: "Аккаунтты біржола өшіру керек пе?", data_confirm_will: "Өшірілетіні:", data_item_account: "Аккаунт және кіру", data_confirm_note: "Өшіргенде ЖИ-тесттің күндік лимиті қайта басталмайды.", data_confirm_type: "Растау үшін {word} сөзін жаз", data_confirm_word: "ЖОЮ", data_confirm_wrong: "Сөз сәйкес емес", data_cancel: "Болдырмау", data_confirm_btn: "Өшіру", data_done: "Дайын, таңдалғаны өшірілді.", data_acc_done: "Аккаунт өшірілді. Кетіп бара жатқаның өкінішті.", modal_consent: "Шарттарды қабылдаймын және деректерімді өңдеуге келісім беремін:", modal_privacy_link: "Құпиялылық саясаты", modal_terms_link: "Пайдалану шарттары", modal_consent_need: "Аккаунт ашу үшін келісімді белгіле", modal_password_short: "Құпия сөз кемінде 8 таңбадан тұруы керек", modal_captcha_fail: "«Мен робот емеспін» тексерісі өтпеді. Бетті жаңарт.",
       profile_saved_title: "⭐ Ұнаған университеттер",
       profile_saved_sub: "Каталогта жұлдызшамен белгілегендеріңіз",
       profile_tests_title: "🎯 Тест нәтижелері",
@@ -2046,6 +2049,7 @@
       team_final_cta: "EduPath-ты зерттеу",
       team_contact_title: "Бізбен байланысу",
       team_contact_sub: "Ынтымақтастық немесе кез келген сұрақтар бойынша — пошталарға жазыңыз:",
+      team_contact_team: "Команданың ортақ поштасы", team_write: "Жазу",
       team_footer: "EduPath © 2026 · Alkar & Arshat қамқорлықпен жасалды",
 
       footer_note: "Fun Zone — әзіл. Нақты ұсыныстар — тестте."
@@ -2101,7 +2105,7 @@
       catalog_save_btn: "Тандалмаларга сактоо", catalog_saved_btn: "Тандалмаларда",
 
       profile_greeting: "Салам", profile_logout: "Чыгуу",
-      data_title: "🗂 Маалыматтарды башкаруу", data_sub: "Эмнени өчүрөрүңдү белгиле. Калганы сакталат.", data_saved: "Жаккан университеттер", data_tests: "Тест жыйынтыктары", data_study: "Таймер тарыхы жана сериясы", data_quotes: "Сакталган цитаталар", data_profile: "Профиль маалыматы (жарандык, окуу деңгээли)", data_delete_sel: "Тандалганды өчүрүү", data_pick: "Жок дегенде бир пунктту белгиле", data_account_title: "Аккаунтту толугу менен өчүрүү", data_account_sub: "Баары өчөт: аккаунт, университеттер, тесттер, таймерлер жана цитаталар. Кайра калыбына келтирүүгө болбойт.", data_account_btn: "Аккаунтту өчүрүү", data_confirm_title_sel: "Тандалганды өчүрөсүңбү?", data_confirm_title_acc: "Аккаунтту биротоло өчүрөсүңбү?", data_confirm_will: "Өчүрүлөт:", data_item_account: "Аккаунт жана кирүү", data_confirm_note: "Өчүргөндө ЖИ-тесттин күнүмдүк лимити жаңыланбайт.", data_confirm_type: "Ырастоо үчүн {word} сөзүн жаз", data_confirm_word: "ӨЧҮРҮҮ", data_confirm_wrong: "Сөз дал келбейт", data_cancel: "Жокко чыгаруу", data_confirm_btn: "Өчүрүү", data_done: "Даяр, тандалганы өчүрүлдү.", data_acc_done: "Аккаунт өчүрүлдү. Кетип жатканыңа өкүнөбүз.", modal_consent: "EduPath сайт иштеши үчүн маалыматтарымды сакташына макулмун", modal_consent_need: "Аккаунт ачуу үчүн макулдукту белгиле", modal_password_short: "Сырсөз жок дегенде 8 белгиден турушу керек", modal_captcha_fail: "«Мен робот эмесмин» текшерүүсү өтпөдү. Баракты жаңырт.",
+      data_title: "🗂 Маалыматтарды башкаруу", data_sub: "Эмнени өчүрөрүңдү белгиле. Калганы сакталат.", data_saved: "Жаккан университеттер", data_tests: "Тест жыйынтыктары", data_study: "Таймер тарыхы жана сериясы", data_quotes: "Сакталган цитаталар", data_profile: "Профиль маалыматы (жарандык, окуу деңгээли)", data_delete_sel: "Тандалганды өчүрүү", data_pick: "Жок дегенде бир пунктту белгиле", data_account_title: "Аккаунтту толугу менен өчүрүү", data_account_sub: "Баары өчөт: аккаунт, университеттер, тесттер, таймерлер жана цитаталар. Кайра калыбына келтирүүгө болбойт.", data_account_btn: "Аккаунтту өчүрүү", data_confirm_title_sel: "Тандалганды өчүрөсүңбү?", data_confirm_title_acc: "Аккаунтту биротоло өчүрөсүңбү?", data_confirm_will: "Өчүрүлөт:", data_item_account: "Аккаунт жана кирүү", data_confirm_note: "Өчүргөндө ЖИ-тесттин күнүмдүк лимити жаңыланбайт.", data_confirm_type: "Ырастоо үчүн {word} сөзүн жаз", data_confirm_word: "ӨЧҮРҮҮ", data_confirm_wrong: "Сөз дал келбейт", data_cancel: "Жокко чыгаруу", data_confirm_btn: "Өчүрүү", data_done: "Даяр, тандалганы өчүрүлдү.", data_acc_done: "Аккаунт өчүрүлдү. Кетип жатканыңа өкүнөбүз.", modal_consent: "Шарттарды кабыл алам жана маалыматтарымды иштетүүгө макулдук берем:", modal_privacy_link: "Купуялык саясаты", modal_terms_link: "Колдонуу шарттары", modal_consent_need: "Аккаунт ачуу үчүн макулдукту белгиле", modal_password_short: "Сырсөз жок дегенде 8 белгиден турушу керек", modal_captcha_fail: "«Мен робот эмесмин» текшерүүсү өтпөдү. Баракты жаңырт.",
       profile_saved_title: "⭐ Жаккан университеттер",
       profile_saved_sub: "Каталогдо жылдызча менен белгилегендериңиз",
       profile_tests_title: "🎯 Тест жыйынтыктары",
@@ -2549,6 +2553,7 @@
       team_final_cta: "EduPath-ты изилдөө",
       team_contact_title: "Байланышуу",
       team_contact_sub: "Кызматташуу же ар кандай суроолор боюнча — почталарга жазыңыз:",
+      team_contact_team: "Команданын жалпы почтасы", team_write: "Жазуу",
       team_footer: "EduPath © 2026 · Alkar & Arshat камкордук менен жасалды",
 
       footer_note: "Fun Zone — тамаша. Чыныгы сунуштар — тестте."
@@ -2601,111 +2606,7 @@
     });
   }
 
-  function buildBurgerMenu() {
-    const nav = document.querySelector("nav.wrap");
-    if (!nav) return;
-    if (nav.querySelector(".burger-btn")) return;
-
-    const burger = document.createElement("button");
-    burger.type = "button";
-    burger.className = "burger-btn";
-    burger.setAttribute("aria-label", "Меню");
-    burger.innerHTML = `<span></span><span></span><span></span>`;
-
-    const panel = document.createElement("div");
-    panel.className = "burger-panel";
-    panel.id = "burgerPanel";
-    panel.innerHTML = `
-      <div class="burger-panel-inner">
-        <a href="index.html" data-i18n="nav_home">Главная</a>
-        <a href="universities.html" data-i18n="nav_universities">Университеты</a>
-        <a href="resources.html" data-i18n="nav_resources">Полезное</a>
-        <a href="content.html" data-i18n="nav_content">Контент</a>
-        <a href="focus.html" data-i18n="nav_focus">Фокус</a>
-        <a href="profile.html" data-i18n="nav_profile">Профиль</a>
-      </div>
-    `;
-
-    nav.appendChild(burger);
-    document.body.appendChild(panel);
-
-    burger.addEventListener("click", (e) => {
-      e.stopPropagation();
-      panel.classList.toggle("open");
-      burger.classList.toggle("open");
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!panel.contains(e.target) && !burger.contains(e.target)) {
-        panel.classList.remove("open");
-        burger.classList.remove("open");
-      }
-    });
-
-    panel.querySelectorAll("a").forEach(a => {
-      a.addEventListener("click", () => {
-        panel.classList.remove("open");
-        burger.classList.remove("open");
-      });
-    });
-  }
-
-  function injectStyles() {
-    if (document.getElementById("burger-styles")) return;
-    const style = document.createElement("style");
-    style.id = "burger-styles";
-    style.textContent = `
-      .burger-btn {
-        display: none;
-        width: 38px; height: 38px;
-        border-radius: 8px; padding: 0;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        background: transparent;
-        transition: background .2s;
-      }
-      .burger-btn:hover { background: var(--cream-deep, #EFE1C6); }
-      .burger-btn span {
-        display: block; width: 20px; height: 2px;
-        background: #2B1B10; border-radius: 2px;
-        transition: transform .3s, opacity .3s;
-      }
-      .burger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-      .burger-btn.open span:nth-child(2) { opacity: 0; }
-      .burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-      .burger-panel {
-        position: fixed; top: 84px; left: 0; right: 0;
-        background: #FBF6EC;
-        border-bottom: 1px solid rgba(43,27,16,0.14);
-        box-shadow: 0 20px 40px -20px rgba(43,27,16,0.25);
-        z-index: 99;
-        max-height: 0; overflow: hidden; opacity: 0;
-        transform: translateY(-10px);
-        transition: max-height .35s cubic-bezier(0.22,1,0.36,1), opacity .25s, transform .25s;
-      }
-      .burger-panel.open { max-height: 420px; opacity: 1; transform: translateY(0); }
-      .burger-panel-inner { display: flex; flex-direction: column; padding: 16px 24px; }
-      .burger-panel-inner a {
-        font-family: 'Work Sans', sans-serif; font-size: 17px;
-        color: #2B1B10; padding: 14px 0;
-        border-bottom: 1px solid rgba(43,27,16,0.08);
-      }
-      .burger-panel-inner a:last-child { border-bottom: none; }
-      .burger-panel-inner a:hover { color: #8C5A34; }
-
-      @media (max-width: 900px) {
-        .burger-btn { display: flex; }
-        .nav-links { display: none !important; }
-      }
-      @media (min-width: 901px) {
-        .burger-panel { display: none; }
-      }
-    `;
-    document.head.appendChild(style);
-  }
+  // Бургер-меню и верхнее меню теперь рисует layout.js (одна шапка на все страницы).
 
   function bindLangSwitcher() {
     const langBtn = document.getElementById("langBtn");
@@ -2732,35 +2633,7 @@
     });
   }
 
-  // Единое верхнее меню на всех страницах (чтобы не править каждую HTML-страницу).
-  // Fun Zone и «О нашей команде» скрыты из меню, но сами страницы остаются и открываются по прямой ссылке.
-  const NAV_ITEMS = [
-    ["index.html", "nav_home"],
-    ["universities.html", "nav_universities"],
-    ["resources.html", "nav_resources"],
-    ["content.html", "nav_content"],
-    ["focus.html", "nav_focus"],
-    ["profile.html", "nav_profile"]
-  ];
-  function buildNavLinks() {
-    const file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
-    document.querySelectorAll(".nav-links").forEach(links => {
-      links.innerHTML = "";
-      NAV_ITEMS.forEach(([href, key]) => {
-        const a = document.createElement("a");
-        a.href = href;
-        a.setAttribute("data-i18n", key);
-        a.textContent = t(key);
-        if (href === file || (file === "app.html" && href === "index.html")) a.className = "active";
-        links.appendChild(a);
-      });
-    });
-  }
-
   function init() {
-    buildNavLinks();
-    injectStyles();
-    buildBurgerMenu();
     bindLangSwitcher();
     applyAll();
     document.documentElement.lang = getLang();
