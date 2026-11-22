@@ -20,7 +20,7 @@
   function load() {
     if (DATA) return Promise.resolve(DATA);
     if (loading) return loading;
-    loading = fetch("deadlines.json?v=1").then(r => r.json()).then(d => {
+    loading = fetch("deadlines.json?v=2").then(r => r.json()).then(d => {
       DATA = d; INDEX = {};
       Object.entries(d.universities || {}).forEach(([name, u]) => {
         const rec = Object.assign({ name }, u);
@@ -41,7 +41,14 @@
     }
     return null;
   }
-  function find(name) { return INDEX ? INDEX[norm(name)] || null : null; }
+  // ищем по полному названию, затем без пояснений: «ANU (…)», «Nazarbayev University - Leading …»
+  function find(name) {
+    if (!INDEX) return null;
+    const raw = String(name || "");
+    const tries = [raw, raw.replace(/\s*\([^)]*\)/g, ""), raw.split(/\s+[-–—|:]\s+/)[0], (raw.match(/\(([^)]+)\)/) || [])[1]];
+    for (const t of tries) { const r = t && INDEX[norm(t)]; if (r) return r; }
+    return null;
+  }
   /* ближайший дедлайн вуза: { date, kind, label, display, approx, url, days } */
   function next(name, from) {
     const rec = find(name);
