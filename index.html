@@ -1,377 +1,1324 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduPath — Твой путь в университет</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-cream: #faf6ef;
-            --text-dark: #2e231b;
-            --text-muted: #6a5a4e;
-            --accent-brown: #7a4e2d;
-            --accent-light: #f0e6d8;
-            --dark-bg: #2a211b;
-            --line-color: #dcd1c4;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F2A4A">
+<title>EduPath — выбери университет за рубежом</title>
+<meta name="description" content="EduPath помогает выбрать университет за рубежом: условия поступления для твоего гражданства, дедлайны, стоимость жизни и ИИ-подбор вузов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="edupath.css?v=2">
+<link rel="stylesheet" href="edupath-b.css?v=1">
+<link rel="stylesheet" href="edupath-c.css?v=1">
+<link rel="stylesheet" href="edupath-d.css?v=1">
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 18px; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font:700 12px var(--font-body); letter-spacing:.12em; text-transform:uppercase; color:var(--gold-ink); }
+  .eyebrow::before{ content:""; width:22px; height:2px; background:var(--gold); border-radius:2px; }
+  h1,h2,h3{ color:var(--navy-deep); letter-spacing:-.015em; line-height:1.15; }
+  .lead{ color:var(--muted); font-size:17px; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* кнопки */
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:52px; padding:0 24px;
+        border-radius:999px; font:700 16px var(--font-body); border:0; cursor:pointer; transition:transform .15s, background .15s, box-shadow .15s; }
+  .btn-gold{ background:var(--gold); color:var(--navy-deep); box-shadow:0 10px 24px rgba(242,178,51,.35); }
+  .btn-gold:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(242,178,51,.45); }
+  .btn-ghost{ background:transparent; color:var(--navy); border:1.5px solid rgba(30,78,140,.35); }
+  .btn-ghost:hover{ background:var(--tint); }
+  .btn svg{ width:18px; height:18px; }
 
-        body {
-            background-color: var(--bg-cream);
-            color: var(--text-dark);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+  /* HERO */
+  .hero{ padding:36px 0 48px; position:relative; overflow:hidden; }
+  .hero::before{ content:""; position:absolute; inset:-200px -200px auto auto; width:520px; height:520px; border-radius:50%;
+        background:radial-gradient(closest-side, rgba(30,78,140,.12), transparent); pointer-events:none; }
+  .hero-grid{ display:grid; gap:36px; position:relative; }
+  .hero h1{ font-size:clamp(34px, 9vw, 60px); margin:14px 0 16px; }
+  .hero h1 em{ font-style:italic; color:var(--navy); position:relative; white-space:nowrap; }
+  .hero h1 em::after{ content:""; position:absolute; left:0; right:0; bottom:.04em; height:.16em; background:var(--gold); opacity:.55; z-index:-1; border-radius:4px; }
+  .cta-row{ display:flex; flex-direction:column; gap:10px; margin-top:26px; }
+  .facts{ display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
+  .fact{ font-size:13px; color:var(--navy-deep); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:7px 12px; }
 
-        h1, h2, h3, .serif {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            line-height: 1.15;
-        }
+  /* макет интерфейса справа */
+  .mock{ position:relative; max-width:440px; width:100%; margin:0 auto; }
+  .mock-panel{ background:var(--navy-deep); border-radius:24px; padding:18px; color:#fff; box-shadow:0 30px 60px rgba(15,42,74,.28); }
+  .mock-top{ display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#AFC0D6; margin-bottom:12px; }
+  .mock-chip{ background:rgba(242,178,51,.16); color:var(--gold); border-radius:999px; padding:4px 10px; font-weight:700; font-size:11px; }
+  .mock-search{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:12px 14px; font-size:14px; color:#C8D3E3; display:flex; gap:10px; align-items:center; }
+  .mock-search svg{ width:16px; height:16px; flex:none; }
+  .mock-card{ background:var(--surface); color:var(--text); border-radius:16px; padding:16px; margin-top:12px; }
+  .mock-card h4{ font:700 18px var(--font-head); color:var(--navy-deep); margin:6px 0 2px; }
+  .mock-row{ display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--muted); }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; background:#4C9667; }
+  .mock-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .mock-box{ background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:9px 10px; }
+  .mock-box small{ display:block; font-size:11px; color:var(--muted); }
+  .mock-box b{ font-size:13px; color:var(--navy-deep); }
+  .mock-bar{ height:6px; border-radius:6px; background:var(--tint); margin-top:6px; overflow:hidden; }
+  .mock-bar i{ display:block; height:100%; width:62%; background:var(--navy); border-radius:6px; }
+  .mock-float{ position:absolute; right:-6px; bottom:-18px; background:var(--gold); color:var(--navy-deep); border-radius:14px; padding:10px 14px; font:700 13px var(--font-body); box-shadow:0 12px 26px rgba(15,42,74,.25); }
+  .mock-note{ text-align:center; font-size:12px; color:var(--muted); margin-top:30px; }
 
-        /* --- Шапка (Только Лого и Войти) --- */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 6%;
-            border-bottom: 1px solid var(--line-color);
-            position: sticky;
-            top: 0;
-            background-color: rgba(250, 246, 239, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 100;
-        }
+  /* секции */
+  section.block{ padding:56px 0; }
+  .block-head{ max-width:680px; margin-bottom:28px; }
+  .block-head h2{ font-size:clamp(28px, 6vw, 42px); margin:10px 0 10px; }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
+  .pains{ display:grid; gap:14px; }
+  .pain{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px; }
+  .pain-ico{ width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--tint); color:var(--navy); margin-bottom:14px; }
+  .pain-ico svg{ width:22px; height:22px; }
+  .pain h3{ font-size:20px; margin-bottom:6px; }
+  .pain p{ color:var(--muted); font-size:15px; }
 
-        .btn-login {
-            background-color: var(--accent-brown);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .btn-login:hover { 
-            background-color: #5c3720; 
-            transform: translateY(-1px);
-        }
+  .solution{ background:var(--navy-deep); color:#DCE5F1; border-radius:28px; padding:34px 22px; position:relative; overflow:hidden; }
+  .solution::after{ content:""; position:absolute; right:-80px; top:-80px; width:260px; height:260px; border-radius:50%; border:2px solid rgba(242,178,51,.25); }
+  .solution h2{ color:#fff; }
+  .solution .eyebrow{ color:var(--gold); }
+  .solution .lead{ color:#AFC0D6; }
+  .features{ display:grid; gap:12px; margin-top:26px; position:relative; z-index:1; }
+  .feature{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:20px; display:flex; gap:16px; align-items:flex-start; }
+  .feature-ico{ flex:none; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:var(--gold); color:var(--navy-deep); }
+  .feature-ico svg{ width:22px; height:22px; }
+  .feature h3{ color:#fff; font-size:19px; margin-bottom:4px; }
+  .feature p{ font-size:15px; color:#C8D3E3; }
 
-        /* --- Главный экран (Hero) --- */
-        .hero {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 40px;
-            padding: 100px 6% 80px;
-            max-width: 1400px;
-            margin: 0 auto;
-            align-items: center;
-        }
+  .steps{ display:grid; gap:14px; counter-reset:s; }
+  .step{ position:relative; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px 22px 22px 76px; }
+  .step::before{ counter-increment:s; content:counter(s); position:absolute; left:20px; top:20px; width:40px; height:40px; border-radius:50%;
+        display:grid; place-items:center; background:var(--tint); color:var(--navy); font:800 17px var(--font-body); }
+  .step h3{ font-size:19px; margin-bottom:4px; }
+  .step p{ color:var(--muted); font-size:15px; }
 
-        .hero-text h1 {
-            font-size: 4.5rem;
-            margin-bottom: 30px;
-            color: var(--text-dark);
-        }
-        .hero-text h1 em {
-            font-style: italic;
-            color: var(--accent-brown);
-            font-weight: 400;
-        }
+  .final{ text-align:center; background:linear-gradient(180deg, var(--surface), var(--tint)); border:1px solid var(--line); border-radius:28px; padding:40px 20px; }
+  .final h2{ font-size:clamp(28px, 6vw, 40px); margin-bottom:10px; }
+  .final .cta-row{ align-items:center; }
+  .final .ep-ai-note{ max-width:620px; margin:26px auto 0; text-align:left; }
 
-        .hero-text p {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            margin-bottom: 40px;
-            max-width: 90%;
-        }
+  @media (min-width:700px){
+    .wrap{ padding:0 28px; }
+    .cta-row{ flex-direction:row; }
+    .pains{ grid-template-columns:repeat(3,1fr); }
+    .features{ grid-template-columns:1fr 1fr; }
+    .steps{ grid-template-columns:repeat(3,1fr); }
+    .step{ padding:76px 22px 24px; }
+    .solution{ padding:48px 44px; }
+  }
+  @media (min-width:1000px){
+    .hero{ padding:72px 0 80px; }
+    .hero-grid{ grid-template-columns:1.1fr .9fr; align-items:center; gap:56px; }
+    .lead{ font-size:18px; }
+    section.block{ padding:72px 0; }
+  }
+  /* ===================== ЛЕНДИНГ B ===================== */
+  .ui-a .land-b, .ui-b .land-a{ display:none; }
+  .ui-b.is-landing .ep-header{ background:rgba(15,42,74,.96); border-bottom-color:rgba(255,255,255,.08); }
+  .ui-b.is-landing .ep-header .ep-logo{ color:#fff; }
+  .ui-b.is-landing .ep-header .ep-icon-btn{ color:#E6EDF7; }
+  .ui-b.is-landing .ep-header .ep-icon-btn:hover{ background:rgba(255,255,255,.08); }
+  .ui-b.is-landing .ep-header .btn-login{ background:var(--gold); color:var(--navy-deep); }
+  .ui-b.is-landing .ep-header .btn-login:hover{ background:#FFC54D; }
 
-        .btn-main {
-            background-color: var(--text-dark);
-            color: var(--bg-cream);
-            padding: 18px 45px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(46, 35, 27, 0.15);
-        }
-        .btn-main:hover {
-            background-color: var(--accent-brown);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(122, 78, 45, 0.2);
-        }
+  .lb-wrap{ max-width:1200px; margin:0 auto; padding:0 18px; }
+  .lb-eyebrow{ display:inline-block; font:700 12px var(--font-body); letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
+  .lb-eyebrow.dark{ color:var(--gold-ink); }
 
-        /* Визуальная часть справа */
-        .hero-visual {
-            position: relative;
-            height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .visual-circle-big {
-            width: 400px;
-            height: 400px;
-            border: 1px solid var(--line-color);
-            border-radius: 50%;
-            position: absolute;
-        }
-        .visual-circle-small {
-            width: 250px;
-            height: 250px;
-            border: 1px dashed var(--accent-brown);
-            border-radius: 50%;
-            position: absolute;
-            animation: spin 30s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .visual-compass {
-            width: 120px;
-            height: 120px;
-            background-color: var(--bg-cream);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            z-index: 2;
-            color: var(--accent-brown);
-        }
+  .lb-hero{ background:var(--navy-deep); color:#DCE5F1; padding:34px 0 56px; position:relative; overflow:hidden; }
+  .lb-hero::before{ content:""; position:absolute; width:620px; height:620px; right:-260px; top:-220px; border-radius:50%;
+    border:1px solid rgba(242,178,51,.22); box-shadow:0 0 0 60px rgba(255,255,255,.02), 0 0 0 120px rgba(255,255,255,.015); }
+  .lb-hero-grid{ display:grid; gap:40px; position:relative; }
+  .lb-h1{ color:#fff; font-size:clamp(44px, 12vw, 84px); line-height:1.02; margin:14px 0 14px; letter-spacing:-.02em; }
+  .lb-h1 em{ font-style:italic; color:var(--gold); }
+  .lb-lead{ font-size:17px; color:#B9C7DA; max-width:540px; }
 
-        /* --- Блок Проблема и Решение --- */
-        .problem-solution {
-            background-color: white;
-            padding: 100px 6%;
-        }
-        .ps-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .ps-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .ps-header h2 {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-        }
-        .ps-header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+  .lb-quick{ margin-top:26px; background:#fff; border-radius:20px; padding:8px; display:grid; gap:6px; box-shadow:0 24px 50px rgba(0,0,0,.25); max-width:620px; }
+  .lb-field{ display:flex; flex-direction:column; gap:2px; padding:10px 14px; border-radius:14px; background:var(--bg); cursor:pointer; }
+  .lb-field span{ font:700 11px var(--font-body); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .lb-field select{ border:0; background:transparent; font:700 17px var(--font-body); color:var(--navy-deep); padding:2px 0; outline:none; cursor:pointer; appearance:auto; width:100%; }
+  .lb-go{ display:flex; align-items:center; justify-content:center; gap:10px; min-height:56px; border:0; border-radius:14px; background:var(--gold);
+    color:var(--navy-deep); font:800 17px var(--font-body); cursor:pointer; transition:filter .15s; }
+  .lb-go:hover{ filter:brightness(1.06); }
+  .lb-go svg{ width:20px; height:20px; }
+  .lb-small{ margin-top:14px; font-size:14px; color:#AFC0D6; }
+  .lb-small a{ color:#fff; text-decoration:underline; text-underline-offset:3px; margin-left:4px; }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-        }
+  /* билет */
+  .lb-ticket-wrap{ max-width:400px; width:100%; margin:0 auto; }
+  .lb-ticket{ background:#fff; color:var(--text); border-radius:22px; padding:18px 18px 14px; transform:rotate(-2deg); box-shadow:0 30px 60px rgba(0,0,0,.35); position:relative; }
+  .lb-ticket-top{ display:flex; justify-content:space-between; align-items:center; font:600 11px var(--font-body); letter-spacing:.12em; color:var(--muted); }
+  .lb-ticket-top b{ color:var(--navy-deep); }
+  .lb-route{ display:flex; align-items:center; justify-content:space-between; margin:18px 0 14px; gap:10px; }
+  .lb-route small, .lb-ticket-grid small{ display:block; font:700 10px var(--font-body); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .lb-route b{ font:700 22px var(--font-head); color:var(--navy-deep); }
+  .lb-route .r{ text-align:right; }
+  .lb-plane{ flex:1; text-align:center; color:var(--gold-ink); font-size:20px; position:relative; }
+  .lb-plane::before{ content:""; position:absolute; left:0; right:0; top:50%; border-top:2px dashed #C9D5E6; z-index:0; }
+  .lb-plane{ background:linear-gradient(#fff,#fff) center/34px 100% no-repeat; }
+  .lb-ticket-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+  .lb-ticket-grid b{ font:700 15px var(--font-body); color:var(--navy-deep); }
+  .lb-ticket-grid b.ok{ color:#2F7A4C; }
+  .lb-cut{ margin:16px -18px 12px; border-top:2px dashed #D5DEEA; position:relative; }
+  .lb-cut::before, .lb-cut::after{ content:""; position:absolute; top:-12px; width:22px; height:22px; border-radius:50%; background:var(--navy-deep); }
+  .lb-cut::before{ left:-11px; } .lb-cut::after{ right:-11px; }
+  .lb-ticket-bottom{ display:flex; align-items:center; justify-content:space-between; gap:12px; font:700 12px var(--font-body); color:var(--navy); }
+  .lb-barcode{ height:34px; flex:1; max-width:170px; background:repeating-linear-gradient(90deg, var(--navy-deep) 0 2px, transparent 2px 4px, var(--navy-deep) 4px 7px, transparent 7px 9px, var(--navy-deep) 9px 10px, transparent 10px 13px); border-radius:2px; }
+  .lb-ticket-note{ text-align:center; font-size:12px; color:#8FA3BF; margin-top:18px; }
 
-        .ps-card {
-            padding: 50px;
-            border-radius: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        .card-problem {
-            background-color: #fdfaf6;
-            border: 1px solid #f0e6d8;
-        }
-        .card-solution {
-            background-color: var(--dark-bg);
-            color: white;
-        }
-        .ps-card h3 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-        .card-solution h3 { color: var(--bg-cream); }
-        
-        .ps-card p {
-            font-size: 1.05rem;
-            line-height: 1.7;
-        }
-        .card-problem p { color: var(--text-muted); }
-        .card-solution p { color: #d4c3b3; }
+  /* секции */
+  .lb-sec{ padding:56px 0; }
+  .lb-head{ margin-bottom:24px; max-width:720px; }
+  .lb-head h2{ font-size:clamp(28px, 6.5vw, 46px); color:var(--navy-deep); margin-top:8px; line-height:1.12; }
 
-        .ps-card .icon {
-            margin-bottom: 25px;
-            color: var(--accent-brown);
-        }
-        .card-solution .icon { color: #d4c3b3; }
+  .lb-pains{ display:grid; grid-auto-flow:column; grid-auto-columns:82%; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:0 18px; padding-bottom:8px; margin:0 -18px; padding-left:18px; padding-right:18px; scrollbar-width:none; }
+  .lb-pain{ scroll-snap-align:start; background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:22px; }
+  .lb-num{ display:block; font:700 52px/1 var(--font-head); color:var(--gold); margin-bottom:14px; }
+  .lb-pain h3{ font-size:20px; color:var(--navy-deep); margin-bottom:6px; }
+  .lb-pain p{ color:var(--muted); font-size:15px; }
 
-        /* --- Как это работает (Шаги) --- */
-        .steps-section {
-            padding: 100px 6%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .steps-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 60px;
-            border-bottom: 1px solid var(--line-color);
-            padding-bottom: 20px;
-        }
-        .steps-header h2 { font-size: 3rem; }
-        
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 40px;
-        }
-        .step h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .step h3 span {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            color: var(--accent-brown);
-            background: var(--accent-light);
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
-        }
-        .step p { color: var(--text-muted); font-size: 1rem; }
+  .lb-bento{ display:grid; gap:12px; }
+  .lb-tile{ border-radius:24px; padding:22px; background:var(--surface); border:1px solid var(--line); position:relative; overflow:hidden; }
+  .lb-tile h3{ font-size:22px; color:var(--navy-deep); margin-bottom:6px; }
+  .lb-tile p{ color:var(--muted); font-size:15px; max-width:440px; }
+  .lb-t-ai{ background:var(--navy); border-color:var(--navy); }
+  .lb-t-ai h3{ color:#fff; } .lb-t-ai p{ color:#C8D8EE; }
+  .lb-badge{ display:inline-block; background:var(--gold); color:var(--navy-deep); font:800 12px var(--font-body); padding:5px 8px; border-radius:8px; margin-bottom:12px; }
+  .lb-t-focus{ background:var(--gold); border-color:var(--gold); }
+  .lb-t-focus p{ color:#4A3A10; }
+  .lb-clock{ font:700 40px/1 var(--font-head); color:var(--navy-deep); margin-bottom:14px; letter-spacing:.02em; }
+  .lb-mini{ margin-top:18px; display:grid; gap:8px; }
+  .lb-mini-row{ display:flex; align-items:center; gap:10px; background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; }
+  .lb-mini-row b{ color:var(--navy-deep); font-weight:700; }
+  .lb-mini-row i{ margin-left:auto; font-style:normal; color:var(--muted); font-size:13px; }
+  .lb-mini-row .d{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .d.g{ background:#4C9667; } .d.y{ background:#D6A22D; } .d.r{ background:#C94C43; }
 
-        /* --- Подвал --- */
-        footer {
-            background-color: var(--dark-bg);
-            color: #a89c90;
-            text-align: center;
-            padding: 60px 20px;
-            font-size: 0.9rem;
-        }
+  .lb-path-sec{ padding-top:0; }
+  .lb-path{ list-style:none; display:grid; gap:0; position:relative; padding-left:0; }
+  .lb-path li{ position:relative; padding:0 0 26px 62px; }
+  .lb-path li::before{ content:""; position:absolute; left:21px; top:44px; bottom:0; border-left:2px dashed #C9D5E6; }
+  .lb-path li:last-child::before{ display:none; }
+  .lb-dot{ position:absolute; left:0; top:0; width:44px; height:44px; border-radius:50%; background:var(--navy-deep); color:var(--gold); display:grid; place-items:center; font:800 18px var(--font-body); }
+  .lb-path h3{ font-size:20px; color:var(--navy-deep); padding-top:8px; margin-bottom:4px; }
+  .lb-path p{ color:var(--muted); font-size:15px; }
 
-        /* Адаптив */
-        @media (max-width: 968px) {
-            .hero { grid-template-columns: 1fr; text-align: center; padding-top: 60px; }
-            .hero-text h1 { font-size: 3.5rem; }
-            .hero-text p { margin: 0 auto 40px; }
-            .hero-visual { display: none; }
-            .cards-grid { grid-template-columns: 1fr; }
-            .steps-grid { grid-template-columns: 1fr; }
-            .steps-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-        }
-    </style>
+  .lb-final{ background:var(--gold); padding:40px 0 34px; }
+  .lb-final-in{ display:grid; gap:18px; align-items:center; }
+  .lb-final h2{ color:var(--navy-deep); font-size:clamp(28px, 6vw, 44px); line-height:1.1; }
+  .lb-final p{ color:#4A3A10; margin-top:6px; font-size:16px; }
+  .lb-final-btn{ display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 28px; border-radius:999px; background:var(--navy-deep); color:#fff; font:800 17px var(--font-body); }
+  .lb-final-btn:hover{ background:var(--navy); }
+  .lb-final .lb-note{ margin-top:24px; background:rgba(255,255,255,.55); border-color:rgba(15,42,74,.15); }
+  .ui-b .land-b ~ .ep-footer, .ui-b.is-landing .ep-footer{ margin-top:0; border-radius:0; }
+
+  @media (min-width:700px){
+    .lb-wrap{ padding:0 28px; }
+    .lb-quick{ grid-template-columns:1fr 1fr auto; align-items:stretch; }
+    .lb-go{ padding:0 24px; }
+    .lb-pains{ grid-auto-flow:row; grid-template-columns:repeat(3,1fr); overflow:visible; margin:0; padding:0; }
+    .lb-bento{ grid-template-columns:repeat(2,1fr); }
+    .lb-t-uni{ grid-row:span 2; }
+    .lb-path{ grid-template-columns:repeat(3,1fr); gap:24px; }
+    .lb-path li{ padding:62px 0 0; }
+    .lb-path li::before{ left:52px; right:-24px; top:21px; bottom:auto; border-left:0; border-top:2px dashed #C9D5E6; }
+    .lb-path .lb-dot{ top:0; }
+    .lb-final-in{ grid-template-columns:1fr auto; }
+  }
+  @media (min-width:1000px){
+    .lb-hero{ padding:72px 0 96px; }
+    .lb-hero-grid{ grid-template-columns:1.15fr .85fr; align-items:center; gap:56px; }
+    .lb-sec{ padding:88px 0; }
+    .lb-bento{ grid-template-columns:repeat(4,1fr); grid-template-rows:auto auto; }
+    .lb-t-uni{ grid-column:span 2; grid-row:span 2; padding:30px; }
+    .lb-t-ai{ grid-column:span 2; }
+    .lb-path-sec{ padding-top:0; }
+  }
+
+  /* ===================== ЛЕНДИНГ C ===================== */
+  .land-c{ display:none; }
+  .ui-c .land-c{ display:block; }
+  .ui-c .land-a, .ui-c .land-b{ display:none; }
+  .ui-c.is-landing .ep-header{ background:#fff; border-bottom:2px solid var(--ink); -webkit-backdrop-filter:none; backdrop-filter:none; }
+  .ui-c.is-landing .ep-header .ep-logo{ font-family:var(--font-head); font-size:18px; }
+  .ui-c.is-landing .ep-header .btn-login{ background:var(--gold); color:var(--ink); border:2px solid var(--ink); box-shadow:3px 3px 0 var(--ink); }
+
+  .lc-wrap{ max-width:1200px; margin:0 auto; padding:0 18px; }
+  .lc-tag{ display:inline-block; background:#fff; border:2px solid var(--ink); border-radius:999px; padding:6px 12px; font:700 12px var(--font-body); color:var(--ink); }
+  .lc-hero{ padding:30px 0 40px; }
+  .lc-hero-grid{ display:grid; gap:34px; }
+  .ui-c .lc-h1{ font-family:var(--font-head); font-size:clamp(36px, 9.5vw, 76px) !important; line-height:1.04 !important; letter-spacing:-.035em; color:var(--ink); margin:16px 0 14px; }
+  .lc-h1 mark{ background:var(--gold); color:var(--ink); padding:0 .15em; border-radius:8px; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+  .lc-lead{ font-size:17px; color:var(--muted); max-width:560px; }
+  .lc-cta{ display:flex; flex-direction:column; gap:12px; margin-top:24px; }
+  .lc-btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:56px; padding:0 26px; border-radius:12px;
+    border:2px solid var(--ink); background:#fff; color:var(--ink); font:800 16px var(--font-body); box-shadow:4px 4px 0 var(--ink); transition:transform .12s, box-shadow .12s; }
+  .lc-btn:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--ink); }
+  .lc-btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
+  .lc-btn.gold{ background:var(--gold); }
+  .lc-btn.dark{ background:var(--ink); color:#fff; box-shadow:4px 4px 0 #fff; border-color:#fff; }
+
+  .lc-plan{ position:relative; max-width:440px; width:100%; margin:0 auto; padding:18px 10px 30px; }
+  .lc-plan-card{ background:#fff; border:2px solid var(--ink); border-radius:16px; box-shadow:8px 8px 0 var(--ink); padding:18px; }
+  .lc-plan-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .lc-plan-head b{ font:700 16px var(--font-head); color:var(--ink); }
+  .lc-plan-head span{ font-size:11px; color:var(--muted); border:1.5px dashed var(--muted); border-radius:6px; padding:2px 6px; }
+  .lc-plan ul{ list-style:none; display:grid; gap:8px; }
+  .lc-plan li{ display:flex; align-items:center; gap:10px; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-size:14px; font-weight:600; color:var(--ink); }
+  .lc-plan li i{ width:20px; height:20px; border:2px solid var(--ink); border-radius:6px; flex:none; display:grid; place-items:center; }
+  .lc-plan li.done{ color:var(--muted); }
+  .lc-plan li.done span{ text-decoration:line-through; }
+  .lc-plan li.done i{ background:var(--ink); }
+  .lc-plan li.done i::after{ content:"✓"; color:var(--gold); font-size:13px; font-style:normal; font-weight:800; }
+  .lc-plan li.now{ border:2px solid var(--ink); background:var(--tint-gold); }
+  .lc-plan li em{ margin-left:auto; font-style:normal; font-size:11px; font-weight:800; background:var(--gold); border:1.5px solid var(--ink); border-radius:6px; padding:2px 6px; }
+  .lc-plan-bar{ margin-top:14px; height:10px; border:2px solid var(--ink); border-radius:999px; overflow:hidden; background:#fff; }
+  .lc-plan-bar span{ display:block; height:100%; background:var(--gold); }
+  .lc-sticker{ position:absolute; background:var(--gold); border:2px solid var(--ink); border-radius:10px; padding:7px 11px; font:800 13px var(--font-body); color:var(--ink); box-shadow:3px 3px 0 var(--ink); white-space:nowrap; }
+  .lc-sticker.s1{ top:0; right:0; transform:rotate(4deg); }
+  .lc-sticker.s2{ bottom:0; left:0; transform:rotate(-3deg); background:#fff; }
+
+  .lc-marquee{ border-top:2px solid var(--ink); border-bottom:2px solid var(--ink); background:var(--ink); overflow:hidden; padding:12px 0; }
+  .lc-track{ display:flex; gap:28px; width:max-content; animation:lcmove 40s linear infinite; font:700 15px var(--font-head); color:#fff; white-space:nowrap; }
+  .lc-track span::after{ content:"✦"; color:var(--gold); margin-left:28px; }
+  @keyframes lcmove{ to{ transform:translateX(-50%); } }
+
+  .lc-sec{ padding:56px 0; }
+  .lc-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:22px; }
+  .lc-head h2{ font-family:var(--font-head); font-size:clamp(26px, 6vw, 44px); color:var(--ink); line-height:1.1; letter-spacing:-.03em; }
+  .lc-num{ font:800 14px var(--font-head); background:var(--gold); border:2px solid var(--ink); border-radius:8px; padding:4px 8px; color:var(--ink); flex:none; }
+  .lc-who{ display:grid; gap:14px; }
+  .lc-who article{ background:#fff; border:2px solid var(--ink); border-radius:14px; box-shadow:4px 4px 0 var(--ink); padding:18px; }
+  .lc-emo{ display:grid; place-items:center; width:46px; height:46px; border:2px solid var(--ink); border-radius:12px; background:var(--tint); font-size:22px; margin-bottom:12px; }
+  .lc-who h3{ font-family:var(--font-head); font-size:17px; color:var(--ink); margin-bottom:6px; letter-spacing:-.02em; }
+  .lc-who p{ color:var(--muted); font-size:15px; }
+
+  .lc-dark{ background:var(--ink); }
+  .lc-dark .lc-head h2{ color:#fff; }
+  .lc-list{ list-style:none; counter-reset:n; display:grid; gap:0; border-top:2px solid rgba(255,255,255,.2); }
+  .lc-list li{ counter-increment:n; display:grid; grid-template-columns:54px 1fr; gap:6px 14px; padding:20px 0; border-bottom:2px solid rgba(255,255,255,.2); }
+  .lc-list li::before{ content:"0" counter(n); grid-row:1 / 3; font:800 28px/1 var(--font-head); color:var(--gold); }
+  .lc-list b{ font:700 20px var(--font-head); color:#fff; letter-spacing:-.02em; }
+  .lc-list span{ color:#B9C7DA; font-size:15px; }
+
+  .lc-faq{ display:grid; gap:12px; }
+  .lc-faq details{ background:#fff; border:2px solid var(--ink); border-radius:12px; box-shadow:4px 4px 0 var(--ink); }
+  .lc-faq summary{ list-style:none; cursor:pointer; padding:16px 52px 16px 18px; font:700 16px var(--font-body); color:var(--ink); position:relative; min-height:56px; display:flex; align-items:center; }
+  .lc-faq summary::-webkit-details-marker{ display:none; }
+  .lc-faq summary::after{ content:"+"; position:absolute; right:14px; top:50%; transform:translateY(-50%); width:28px; height:28px; border:2px solid var(--ink); border-radius:8px; display:grid; place-items:center; font-weight:800; background:var(--gold); }
+  .lc-faq details[open] summary::after{ content:"–"; background:#fff; }
+  .lc-faq p{ padding:0 18px 18px; color:var(--muted); font-size:15px; }
+
+  .lc-final{ background:var(--gold); border-top:2px solid var(--ink); padding:44px 0; }
+  .lc-final-in{ display:grid; gap:20px; align-items:center; }
+  .lc-final h2{ font-family:var(--font-head); font-size:clamp(26px, 6vw, 46px); color:var(--ink); line-height:1.1; letter-spacing:-.03em; }
+  .ui-c.is-landing .ep-footer{ margin-top:0; border-top:2px solid var(--ink); }
+
+  @media (min-width:700px){
+    .lc-wrap{ padding:0 28px; }
+    .lc-cta{ flex-direction:row; }
+    .lc-who{ grid-template-columns:repeat(2,1fr); }
+    .lc-final-in{ grid-template-columns:1fr auto; }
+  }
+  @media (min-width:1000px){
+    .lc-hero{ padding:64px 0 72px; }
+    .lc-hero-grid{ grid-template-columns:1.2fr .8fr; align-items:center; gap:56px; }
+    .lc-who{ grid-template-columns:repeat(3,1fr); }
+    .lc-sec{ padding:84px 0; }
+    .lc-list{ grid-template-columns:1fr 1fr; column-gap:40px; }
+    .lc-faq-wrap{ display:grid; grid-template-columns:.8fr 1.2fr; gap:40px; align-items:start; }
+  }
+  @media (prefers-reduced-motion:reduce){ .lc-track{ animation:none; } }
+
+  /* ===================== ЛЕНДИНГ D (60/30/10) ===================== */
+  .land-d{ display:none; }
+  .ui-d .land-d{ display:block; }
+  .ui-d .land-a, .ui-d .land-b, .ui-d .land-c{ display:none; }
+  .ui-d.is-landing .ep-footer{ margin-top:0; }
+
+  .ld-wrap{ max-width:1240px; margin:0 auto; padding:0 20px; }
+  .ld-pill{ display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:999px; background:var(--d-gray); color:var(--d-black); font:600 13px var(--font-body); }
+  .ld-pill::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--d-blue); }
+  .ld-kick{ display:block; font:600 14px var(--font-body); color:var(--d-blue); margin-bottom:12px; }
+  .ld-kick.light{ color:#8FA8FF; }
+  .ld-h1{ font:700 clamp(40px, 10vw, 88px)/1 var(--font-head) !important; letter-spacing:-.045em !important; color:var(--d-black); margin:18px 0 18px; }
+  .ld-lead{ font-size:18px; line-height:1.6; color:var(--d-muted); max-width:560px; }
+  .ld-cta{ display:flex; flex-direction:column; gap:10px; margin-top:28px; }
+  .ld-btn{ display:inline-flex; align-items:center; justify-content:center; min-height:54px; padding:0 28px; border-radius:999px; font:600 16px var(--font-body); text-decoration:none; transition:background .15s, color .15s; }
+  .ld-btn.blue{ background:var(--d-blue); color:#fff; }
+  .ld-btn.blue:hover{ background:var(--d-blue-hover); }
+  .ld-btn.ghost{ border:1.5px solid var(--d-black); color:var(--d-black); }
+  .ld-btn.ghost:hover{ background:var(--d-black); color:#fff; }
+  .ld-note{ margin-top:16px; font-size:14px; color:var(--d-muted); }
+  .ld-img{ display:block; width:100%; height:100%; object-fit:cover; border-radius:28px; background:#1b1c1f; }
+
+  .ld-hero{ padding:28px 0 48px; }
+  .ld-hero-grid{ display:grid; gap:32px; align-items:center; }
+  .ld-hero-media{ position:relative; aspect-ratio:4/3.4; border-radius:28px; background:var(--d-black); }
+  .ld-float{ position:absolute; left:-6px; bottom:22px; background:#fff; border-radius:20px; padding:14px 16px; box-shadow:0 22px 50px rgba(10,10,11,.18); min-width:200px; }
+  .ld-float small{ display:block; font-size:12px; color:var(--d-muted); }
+  .ld-float b{ display:block; font:700 22px var(--font-head); letter-spacing:-.03em; color:var(--d-black); margin:2px 0 6px; }
+  .ld-float span{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--d-black); }
+  .ld-float span i{ width:9px; height:9px; border-radius:50%; background:#4C9667; }
+  .ld-float span em{ font-style:normal; }
+  .ld-float u{ position:absolute; top:10px; right:12px; text-decoration:none; font-size:10px; color:var(--d-muted); border:1px dashed #C9CCD2; border-radius:6px; padding:1px 5px; }
+  .ld-credit{ position:absolute; right:14px; bottom:12px; font-size:10px; color:rgba(255,255,255,.55); }
+
+  .ld-stats{ background:var(--d-gray); padding:28px 0; }
+  .ld-stats-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px 18px; }
+  .ld-stats b{ display:block; font:700 clamp(34px, 8vw, 56px)/1 var(--font-head); letter-spacing:-.04em; color:var(--d-black); }
+  .ld-stats span{ display:block; margin-top:6px; font-size:14px; line-height:1.45; color:var(--d-muted); }
+
+  .ld-dark{ background:var(--d-black); color:#fff; padding:64px 0; }
+  .ld-dark h2{ color:#fff; }
+  .ld-problem{ display:grid; gap:32px; }
+  .ld-problem h2{ font:700 clamp(28px, 6.4vw, 48px)/1.08 var(--font-head); letter-spacing:-.035em; }
+  .ld-problem-img{ margin-top:26px; aspect-ratio:3/2; height:auto; }
+  .ld-pains{ list-style:none; counter-reset:p; display:grid; gap:0; padding:0; margin:0; }
+  .ld-pains li{ counter-increment:p; border-top:1px solid rgba(255,255,255,.14); padding:22px 0 22px 52px; position:relative; }
+  .ld-pains li::before{ content:"0" counter(p); position:absolute; left:0; top:22px; font:700 20px var(--font-head); color:#8FA8FF; }
+  .ld-pains h3{ font:700 22px var(--font-head); letter-spacing:-.02em; color:#fff; margin:0 0 8px; }
+  .ld-pains p{ color:#B9BCC3; font-size:16px; line-height:1.6; margin:0; }
+
+  .ld-sec{ padding:72px 0; }
+  .ld-head{ max-width:760px; margin-bottom:36px; }
+  .ld-head h2{ font:700 clamp(30px, 7vw, 56px)/1.04 var(--font-head); letter-spacing:-.04em; color:var(--d-black); margin:0 0 14px; }
+  .ld-dark .ld-head h2{ color:#fff; }
+  .ld-head p{ font-size:18px; line-height:1.6; color:var(--d-muted); }
+
+  .ld-row{ display:grid; gap:24px; margin-bottom:56px; align-items:center; }
+  .ld-row .ld-img{ aspect-ratio:3/2; height:auto; }
+  .ld-num{ display:inline-block; font:700 14px var(--font-body); color:var(--d-blue); border:1.5px solid var(--d-blue); border-radius:999px; padding:4px 12px; margin-bottom:14px; }
+  .ld-row h3{ font:700 clamp(26px, 5vw, 40px)/1.05 var(--font-head); letter-spacing:-.035em; color:var(--d-black); margin:0 0 14px; }
+  .ld-row p{ font-size:17px; line-height:1.65; color:#3B3E45; margin:0 0 16px; }
+  .ld-row ul{ list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+  .ld-row li{ position:relative; padding-left:30px; font-size:16px; color:var(--d-black); }
+  .ld-row li::before{ content:"✓"; position:absolute; left:0; top:0; width:20px; height:20px; border-radius:50%; background:var(--d-black); color:#fff; font-size:11px; display:grid; place-items:center; font-weight:700; }
+
+  .ld-band{ position:relative; background:var(--d-black); overflow:hidden; min-height:440px; display:flex; align-items:flex-end; }
+  .ld-band-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.7; }
+  .ld-band::after{ content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(10,10,11,.9), rgba(10,10,11,.1) 70%); }
+  .ld-band-in{ position:relative; z-index:1; padding-top:40px; padding-bottom:48px; width:100%; }
+  .ld-band h2{ font:700 clamp(30px, 7vw, 60px)/1.04 var(--font-head); letter-spacing:-.04em; color:#fff; max-width:820px; margin:0 0 22px; }
+
+  .ld-who{ display:grid; gap:12px; }
+  .ld-who article{ background:var(--d-gray); border-radius:22px; padding:22px; }
+  .ld-who b{ display:block; font:700 19px/1.25 var(--font-head); letter-spacing:-.02em; color:var(--d-black); margin-bottom:8px; }
+  .ld-who p{ font-size:15px; line-height:1.55; color:var(--d-muted); margin:0; }
+
+  .ld-steps{ list-style:none; display:grid; gap:14px; padding:0; margin:0; }
+  .ld-steps li{ border:1px solid rgba(255,255,255,.14); border-radius:22px; padding:22px; }
+  .ld-steps span{ display:grid; place-items:center; width:42px; height:42px; border-radius:50%; background:var(--d-blue); color:#fff; font:700 18px var(--font-head); margin-bottom:16px; }
+  .ld-steps h3{ font:700 20px var(--font-head); letter-spacing:-.02em; color:#fff; margin:0 0 8px; }
+  .ld-steps p{ color:#B9BCC3; font-size:15px; line-height:1.55; margin:0; }
+
+  .ld-faq{ display:grid; gap:0; border-top:1px solid var(--line); }
+  .ld-faq details{ border-bottom:1px solid var(--line); }
+  .ld-faq summary{ list-style:none; cursor:pointer; padding:22px 48px 22px 0; font:600 18px var(--font-head); letter-spacing:-.01em; color:var(--d-black); position:relative; }
+  .ld-faq summary::-webkit-details-marker{ display:none; }
+  .ld-faq summary::after{ content:"+"; position:absolute; right:0; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; background:var(--d-gray); display:grid; place-items:center; font-size:20px; font-weight:500; }
+  .ld-faq details[open] summary::after{ content:"–"; background:var(--d-black); color:#fff; }
+  .ld-faq p{ margin:0 0 22px; font-size:16px; line-height:1.6; color:var(--d-muted); max-width:720px; }
+
+  .ld-final{ background:var(--d-black); padding:64px 0 40px; }
+  .ld-final-in{ display:grid; gap:24px; align-items:center; }
+  .ld-final h2{ font:700 clamp(30px, 7vw, 56px)/1.04 var(--font-head); letter-spacing:-.04em; color:#fff; margin:0; max-width:820px; }
+  .ui-d .ld-ai{ margin-top:32px; background:rgba(255,255,255,.07) !important; color:#C9CCD2 !important; }
+  .ui-d .ld-ai a{ color:#fff !important; }
+
+  @media (min-width:700px){
+    .ld-wrap{ padding:0 32px; }
+    .ld-cta{ flex-direction:row; }
+    .ld-stats-grid{ grid-template-columns:repeat(4,1fr); }
+    .ld-who{ grid-template-columns:repeat(2,1fr); }
+    .ld-steps{ grid-template-columns:repeat(2,1fr); }
+    .ld-final-in{ grid-template-columns:1fr auto; }
+    .ld-float{ left:-24px; }
+  }
+  @media (min-width:1000px){
+    .ld-hero{ padding:56px 0 80px; }
+    .ld-hero-grid{ grid-template-columns:1.05fr .95fr; gap:56px; }
+    .ld-problem{ grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
+    .ld-dark{ padding:96px 0; }
+    .ld-sec{ padding:110px 0; }
+    .ld-row{ grid-template-columns:1.1fr .9fr; gap:64px; margin-bottom:88px; }
+    .ld-row.rev .ld-img{ order:2; }
+    .ld-who{ grid-template-columns:repeat(3,1fr); }
+    .ld-steps{ grid-template-columns:repeat(4,1fr); }
+    .ld-band{ min-height:560px; }
+    .ld-faq-grid{ display:grid; grid-template-columns:.8fr 1.2fr; gap:64px; align-items:start; }
+  }
+
+</style>
 </head>
 <body>
+<header class="ep-header" id="siteHeader" data-variant="landing"></header>
+<script src="layout.js?v=4"></script>
+<script src="edupath-d.js?v=1"></script>
 
-    <!-- Шапка (Только Логотип и Войти) -->
-    <header>
-        <div class="logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-            EduPath
+<main class="land-a">
+  <!-- 1. Главный экран -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow" data-l="eyebrow">Поступление за рубеж без хаоса</span>
+        <h1 data-l-html="h1">Найди университет, который подходит <em>именно тебе</em></h1>
+        <p class="lead" data-l="lead">Условия поступления для твоего гражданства и уровня обучения, дедлайны, стоимость жизни и ИИ-подбор вузов — в одном месте, а не на сотне вкладок.</p>
+        <div class="cta-row">
+          <a href="#" class="btn btn-gold" data-auth-open="register"><span data-l="start">Начать — это бесплатно</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a href="#" class="btn btn-ghost" data-auth-open="login" data-l="have">У меня уже есть аккаунт</a>
         </div>
-        <!-- Кнопка Войти открывает окно входа / регистрации прямо здесь (auth.js) -->
-        <a href="#" class="btn-login" data-auth-open="login">Войти</a>
-    </header>
+        <div class="facts">
+          <span class="fact" data-l="f1">🌍 Для абитуриентов из любой страны</span>
+          <span class="fact" data-l="f2">🗣 5 языков интерфейса</span>
+          <span class="fact" data-l="f3">🔗 Ссылки на официальные источники</span>
+        </div>
+      </div>
 
-    <!-- Главный экран -->
-    <section class="hero">
-        <div class="hero-text">
-            <h1>Твой путь в университет начинается <em>здесь</em></h1>
-            <p>Пройди умный тест, узнай свои реальные шансы и получи персональный список вузов, которые подходят именно тебе по бюджету, оценкам и интересам.</p>
-        </div>
-        <div class="hero-visual">
-            <div class="visual-circle-big"></div>
-            <div class="visual-circle-small"></div>
-            <div class="visual-compass">
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+      <div>
+        <div class="mock" aria-hidden="true">
+          <div class="mock-panel">
+            <div class="mock-top"><span data-l="m_title">Университеты</span><span class="mock-chip" data-l="m_chip">Бакалавриат · KZ</span></div>
+            <div class="mock-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span data-l="m_search">Введи название университета…</span></div>
+            <div class="mock-card">
+              <div class="mock-row"><span data-l="m_place">Город, страна</span><span class="dot"></span></div>
+              <h4 data-l="m_uni">Твой будущий университет</h4>
+              <div class="mock-grid">
+                <div class="mock-box"><small data-l="m_req">Требования</small><b>IELTS · SAT</b></div>
+                <div class="mock-box"><small data-l="m_dl">Дедлайн</small><b data-l="m_dl_v">через 4 мес.</b></div>
+                <div class="mock-box"><small data-l="m_aid">Финпомощь</small><b data-l="m_aid_v">есть гранты</b></div>
+                <div class="mock-box"><small data-l="m_life">Жизнь в месяц</small><div class="mock-bar"><i></i></div></div>
+              </div>
             </div>
+          </div>
+          <div class="mock-float" data-l="m_float">4 категории × 3 вуза</div>
         </div>
-    </section>
+        <p class="mock-note" data-l="m_note">Так выглядит карточка вуза на сайте (пример интерфейса)</p>
+      </div>
+    </div>
+  </section>
 
-    <!-- Блок Проблема / Решение -->
-    <section class="problem-solution">
-        <div class="ps-container">
-            <div class="ps-header">
-                <h2>Почему выбор вуза — это сложно?</h2>
-                <p>Тысячи вариантов, скрытые требования и непонятные критерии выбора.</p>
-            </div>
-            
-            <div class="cards-grid">
-                <!-- Карточка проблемы -->
-                <div class="ps-card card-problem">
-                    <div class="icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                    </div>
-                    <h3 class="serif">Проблема</h3>
-                    <p>Абитуриенты часто не знают, какие университеты реально подходят под их профиль. Слишком много факторов: язык, бюджет, климат, экзамены. В итоге выбор делается наугад или по чужим советам, а не по объективным данным.</p>
-                </div>
-
-                <!-- Карточка решения -->
-                <div class="ps-card card-solution">
-                    <div class="icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    </div>
-                    <h3 class="serif">Решение EduPath</h3>
-                    <p>Мы сужаем выбор до релевантных вариантов. Наш ИИ анализирует твои интересы, оценки (SAT/IELTS) и бюджет, чтобы выдать не просто «Топ-10», а персональный список вузов с четкими пояснениями, куда ты точно поступишь, а куда можешь попробовать.</p>
-                </div>
-            </div>
+  <!-- 2. Проблема -->
+  <section class="block" id="problem">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="eyebrow" data-l="p_eyebrow">Проблема</span>
+        <h2 data-l="p_h2">Почему выбрать вуз за рубежом так тяжело</h2>
+        <p class="lead" data-l="p_lead">Дело не в том, что вариантов мало. Их слишком много, и всё важное спрятано.</p>
+      </div>
+      <div class="pains">
+        <div class="pain">
+          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 20h8"/></svg></div>
+          <h3 data-l="p1_h">Информация разбросана</h3>
+          <p data-l="p1_t">Требования, цены и стипендии лежат на разных сайтах, часто на чужом языке. Сравнить два вуза — уже целый вечер.</p>
         </div>
-    </section>
-
-    <!-- Как это работает -->
-    <section class="steps-section">
-        <div class="steps-header">
-            <h2 class="serif">Как это работает</h2>
-            <p style="color: var(--text-muted);">От вопросов до готового списка — 5 минут</p>
+        <div class="pain">
+          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>
+          <h3 data-l="p2_h">Условия зависят от тебя</h3>
+          <p data-l="p2_t">Гражданство, уровень обучения и бюджет меняют всё: цену, экзамены, шанс на грант. Общие «топ-10» этого не учитывают.</p>
         </div>
-        
-        <div class="steps-grid">
-            <div class="step">
-                <h3 class="serif"><span>01</span> Отвечай на вопросы</h3>
-                <p>Расскажи ИИ о своих интересах, предпочтениях по стране, климату и формату обучения. Укажи свои оценки и бюджет.</p>
-            </div>
-            <div class="step">
-                <h3 class="serif"><span>02</span> Умный анализ</h3>
-                <p>Наш алгоритм сопоставит твои данные с базой тысяч университетов по всему миру, отсекая неподходящие варианты.</p>
-            </div>
-            <div class="step">
-                <h3 class="serif"><span>03</span> Получи результат</h3>
-                <p>Ты получаешь структурированный список: куда точно поступишь, куда можешь попробовать и куда стоит стремиться.</p>
-            </div>
+        <div class="pain">
+          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg></div>
+          <h3 data-l="p3_h">Дедлайны подкрадываются</h3>
+          <p data-l="p3_t">Пока разбираешься, сроки подачи проходят. Многие узнают о нужном экзамене, когда регистрация уже закрыта.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Подвал -->
-    <footer>
-        <div class="logo" style="justify-content: center; margin-bottom: 20px; color: var(--bg-cream);">
-            EduPath
+  <!-- 3. Решение -->
+  <section class="block" id="features" style="padding-top:0">
+    <div class="wrap">
+      <div class="solution">
+        <span class="eyebrow" data-l="s_eyebrow">Решение</span>
+        <h2 style="font-size:clamp(28px,6vw,42px);margin:10px 0" data-l="s_h2">EduPath собирает всё в одном месте</h2>
+        <p class="lead" data-l="s_lead">Ты указываешь своё гражданство и уровень обучения — сайт показывает условия именно для тебя.</p>
+        <div class="features">
+          <div class="feature">
+            <div class="feature-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 12 5l9 5-9 5-9-5Z"/><path d="M7 12v5c3 2 7 2 10 0v-5"/></svg></div>
+            <div><h3 data-l="ft1_h">Университеты</h3><p data-l="ft1_t">Каталог из 50 сильных вузов и поиск по любому другому: требования, дедлайны, стоимость обучения и жизни, гранты, карта и фото.</p></div>
+          </div>
+          <div class="feature">
+            <div class="feature-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></div>
+            <div><h3 data-l="ft2_h">ИИ-подбор</h3><p data-l="ft2_t">Около 23 вопросов об оценках, бюджете, климате и целях — и 12 вузов в четырёх категориях: от надёжных до вузов мечты.</p></div>
+          </div>
+          <div class="feature">
+            <div class="feature-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></div>
+            <div><h3 data-l="ft3_h">Полезное и Контент</h3><p data-l="ft3_t">Официальные сайты экзаменов и стипендий разных стран, новости о визах и поступлении, видео о жизни студентов за рубежом.</p></div>
+          </div>
+          <div class="feature">
+            <div class="feature-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></div>
+            <div><h3 data-l="ft4_h">Фокус</h3><p data-l="ft4_t">Таймер учёбы с серией дней и цитатами: готовься к IELTS, SAT или ЕНТ каждый день и видь свой прогресс.</p></div>
+          </div>
         </div>
-        <p>EduPath — сервис для подбора университетов.</p>
-        <p style="margin-top: 15px;">© 2026 Все права защищены.</p>
-    </footer>
+      </div>
+    </div>
+  </section>
 
-    <script src="auth.js"></script>
+  <!-- 4. Как это работает -->
+  <section class="block" id="how" style="padding-top:0">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="eyebrow" data-l="h_eyebrow">Как это работает</span>
+        <h2 data-l="h_h2">Три шага до своего списка вузов</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><h3 data-l="st1_h">Создай аккаунт</h3><p data-l="st1_t">Почта и пароль или вход через Discord. Укажи гражданство и уровень обучения.</p></div>
+        <div class="step"><h3 data-l="st2_h">Пройди тест или ищи сам</h3><p data-l="st2_t">ИИ-подбор предложит 12 вузов, а в «Университетах» можно открыть любой вуз мира.</p></div>
+        <div class="step"><h3 data-l="st3_h">Сохрани и готовься</h3><p data-l="st3_t">Избранные вузы и результаты теста хранятся в профиле, а «Фокус» помогает заниматься каждый день.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Финальный призыв -->
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <div class="final">
+        <h2 data-l="c_h2">Начни выбирать осознанно</h2>
+        <p class="lead" data-l="c_lead">Регистрация занимает минуту.</p>
+        <div class="cta-row" style="justify-content:center">
+          <a href="#" class="btn btn-gold" data-auth-open="register" data-l="start">Начать — это бесплатно</a>
+        </div>
+        <p class="ep-ai-note" data-l-html="ai">ИИ рекомендует, но не гарантирует поступление. Данные собираются автоматически и могут устареть — перед подачей проверяй условия на официальном сайте вуза. Подробнее — в <a href="terms.html">Условиях использования</a>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== ЛЕНДИНГ, ВАРИАНТ B ===================== -->
+<main class="land-b">
+  <!-- 1. Тёмный главный экран с быстрым стартом -->
+  <section class="lb-hero">
+    <div class="lb-wrap lb-hero-grid">
+      <div>
+        <span class="lb-eyebrow" data-l="b_eyebrow">EduPath · поступление за рубеж</span>
+        <h1 class="lb-h1" data-l-html="b_h1">Куда <em>поступаем?</em></h1>
+        <p class="lb-lead" data-l="b_lead">Скажи, откуда ты и на какой уровень идёшь, — и EduPath покажет условия, дедлайны и цены именно для тебя.</p>
+
+        <form class="lb-quick" id="lbQuick" onsubmit="return false">
+          <label class="lb-field">
+            <span data-l="b_q_cit">Моё гражданство</span>
+            <select id="lbCit"></select>
+          </label>
+          <label class="lb-field">
+            <span data-l="b_q_deg">Уровень обучения</span>
+            <select id="lbDeg">
+              <option value="foundation">Foundation</option>
+              <option value="bachelor" selected data-l="b_deg_b">Бакалавриат</option>
+              <option value="master" data-l="b_deg_m">Магистратура</option>
+              <option value="phd" data-l="b_deg_p">Докторантура</option>
+            </select>
+          </label>
+          <button type="button" class="lb-go" data-auth-open="register" id="lbGo">
+            <span data-l="b_go">Подобрать вузы</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+        <p class="lb-small"><span data-l="b_small">Бесплатно. Регистрация — минута.</span> <a href="#" data-auth-open="login" data-l="have">У меня уже есть аккаунт</a></p>
+      </div>
+
+      <!-- «посадочный талон» — пример того, что получит человек -->
+      <div class="lb-ticket-wrap" aria-hidden="true">
+        <div class="lb-ticket">
+          <div class="lb-ticket-top">
+            <span>EDUPATH · <b data-l="b_pass">BOARDING PASS</b></span>
+            <svg viewBox="0 0 40 40" width="26" height="26"><circle cx="20" cy="20" r="18" fill="#0F2A4A"/><path d="M27.5 12.5 L18 18 L12.5 27.5 L22 22 Z" fill="#F2B233"/><circle cx="20" cy="20" r="2.2" fill="#fff"/></svg>
+          </div>
+          <div class="lb-route">
+            <div><small data-l="b_from">Откуда</small><b data-l="b_from_v">Твой город</b></div>
+            <div class="lb-plane">✈</div>
+            <div class="r"><small data-l="b_to">Куда</small><b data-l="b_to_v">Вуз мечты</b></div>
+          </div>
+          <div class="lb-ticket-grid">
+            <div><small data-l="b_gate">Уровень</small><b data-l="b_deg_b">Бакалавриат</b></div>
+            <div><small data-l="b_exam">Экзамены</small><b>IELTS · SAT</b></div>
+            <div><small data-l="m_dl">Дедлайн</small><b class="ok" data-l="b_dl_v">успеваешь ✓</b></div>
+            <div><small data-l="m_aid">Финпомощь</small><b data-l="m_aid_v">есть гранты</b></div>
+          </div>
+          <div class="lb-cut"></div>
+          <div class="lb-ticket-bottom">
+            <div class="lb-barcode"></div>
+            <span data-l="b_seat">4 категории × 3 вуза</span>
+          </div>
+        </div>
+        <p class="lb-ticket-note" data-l="b_ticket_note">Пример интерфейса</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Проблема: три числа в ряд (на телефоне — листаются) -->
+  <section class="lb-sec">
+    <div class="lb-wrap">
+      <div class="lb-head">
+        <span class="lb-eyebrow dark" data-l="p_eyebrow">Проблема</span>
+        <h2 data-l="p_h2">Почему выбрать вуз за рубежом так тяжело</h2>
+      </div>
+      <div class="lb-pains">
+        <article class="lb-pain"><span class="lb-num">01</span><h3 data-l="p1_h">Информация разбросана</h3><p data-l="p1_t">Требования, цены и стипендии лежат на разных сайтах, часто на чужом языке.</p></article>
+        <article class="lb-pain"><span class="lb-num">02</span><h3 data-l="p2_h">Условия зависят от тебя</h3><p data-l="p2_t">Гражданство, уровень обучения и бюджет меняют всё.</p></article>
+        <article class="lb-pain"><span class="lb-num">03</span><h3 data-l="p3_h">Дедлайны подкрадываются</h3><p data-l="p3_t">Пока разбираешься, сроки подачи проходят.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Решение: плитки разного размера -->
+  <section class="lb-sec" style="padding-top:0">
+    <div class="lb-wrap">
+      <div class="lb-head">
+        <span class="lb-eyebrow dark" data-l="s_eyebrow">Решение</span>
+        <h2 data-l="s_h2">EduPath собирает всё в одном месте</h2>
+      </div>
+      <div class="lb-bento">
+        <article class="lb-tile lb-t-uni">
+          <h3 data-l="ft1_h">Университеты</h3>
+          <p data-l="ft1_t">Каталог из 50 сильных вузов и поиск по любому другому.</p>
+          <div class="lb-mini" aria-hidden="true">
+            <div class="lb-mini-row"><span class="d g"></span><b data-l="b_row1">Вуз A · Канада</b><i data-l="b_row1v">≈ 5 мес.</i></div>
+            <div class="lb-mini-row"><span class="d y"></span><b data-l="b_row2">Вуз B · Германия</b><i data-l="b_row2v">≈ 2 мес.</i></div>
+            <div class="lb-mini-row"><span class="d r"></span><b data-l="b_row3">Вуз C · Корея</b><i data-l="b_row3v">3 нед.</i></div>
+          </div>
+        </article>
+        <article class="lb-tile lb-t-ai">
+          <span class="lb-badge">AI</span>
+          <h3 data-l="ft2_h">ИИ-подбор</h3>
+          <p data-l="ft2_t">Около 23 вопросов — и 12 вузов в четырёх категориях.</p>
+        </article>
+        <article class="lb-tile lb-t-res">
+          <h3 data-l="ft3_h">Полезное и Контент</h3>
+          <p data-l="ft3_t">Официальные сайты экзаменов и стипендий, новости, видео.</p>
+        </article>
+        <article class="lb-tile lb-t-focus">
+          <div class="lb-clock" aria-hidden="true">00:25:00</div>
+          <h3 data-l="ft4_h">Фокус</h3>
+          <p data-l="ft4_t">Таймер учёбы с серией дней и цитатами.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Путь: шаги по линии -->
+  <section class="lb-sec lb-path-sec">
+    <div class="lb-wrap">
+      <div class="lb-head">
+        <span class="lb-eyebrow dark" data-l="h_eyebrow">Как это работает</span>
+        <h2 data-l="h_h2">Три шага до своего списка вузов</h2>
+      </div>
+      <ol class="lb-path">
+        <li><span class="lb-dot">1</span><h3 data-l="st1_h">Создай аккаунт</h3><p data-l="st1_t">Почта и пароль или вход через Discord.</p></li>
+        <li><span class="lb-dot">2</span><h3 data-l="st2_h">Пройди тест или ищи сам</h3><p data-l="st2_t">ИИ-подбор предложит 12 вузов.</p></li>
+        <li><span class="lb-dot">3</span><h3 data-l="st3_h">Сохрани и готовься</h3><p data-l="st3_t">Избранное и результаты — в профиле.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. Финальная полоса -->
+  <section class="lb-final">
+    <div class="lb-wrap lb-final-in">
+      <div>
+        <h2 data-l="c_h2">Начни выбирать осознанно</h2>
+        <p data-l="c_lead">Регистрация занимает минуту.</p>
+      </div>
+      <a href="#" class="lb-final-btn" data-auth-open="register" data-l="start">Начать — это бесплатно</a>
+    </div>
+    <div class="lb-wrap"><p class="ep-ai-note lb-note" data-l-html="ai">ИИ рекомендует, но не гарантирует поступление.</p></div>
+  </section>
+</main>
+
+<!-- ===================== ЛЕНДИНГ, ВАРИАНТ C ===================== -->
+<main class="land-c">
+  <section class="lc-hero">
+    <div class="lc-wrap lc-hero-grid">
+      <div>
+        <span class="lc-tag" data-c="tag">EduPath · для абитуриентов из любой страны</span>
+        <h1 class="lc-h1" data-c-html="h1">Поступление за рубеж — <mark>по плану</mark>, а не наугад</h1>
+        <p class="lc-lead" data-c="lead">Условия для твоего гражданства, дедлайны, цены, гранты и ИИ-подбор вузов — в одном месте и на понятном языке.</p>
+        <div class="lc-cta">
+          <a href="#" class="lc-btn gold" data-auth-open="register"><span data-c="start">Создать план бесплатно</span> →</a>
+          <a href="#" class="lc-btn" data-auth-open="login" data-c="login">Войти</a>
+        </div>
+      </div>
+      <div class="lc-plan" aria-hidden="true">
+        <div class="lc-plan-card">
+          <div class="lc-plan-head"><b data-c="plan_t">Мой план поступления</b><span data-c="plan_ex">пример</span></div>
+          <ul>
+            <li class="done"><i></i><span data-c="plan1">Выбрать уровень и гражданство</span></li>
+            <li class="done"><i></i><span data-c="plan2">Пройти ИИ-тест — 12 вузов</span></li>
+            <li class="now"><i></i><span data-c="plan3">Сравнить требования и цены</span><em data-c="plan_now">сейчас</em></li>
+            <li><i></i><span data-c="plan4">Сдать IELTS / SAT</span></li>
+            <li><i></i><span data-c="plan5">Подать документы до дедлайна</span></li>
+          </ul>
+          <div class="lc-plan-bar"><span style="width:45%"></span></div>
+        </div>
+        <div class="lc-sticker s1" data-c="st1">🎯 4 × 3 вуза</div>
+        <div class="lc-sticker s2" data-c="st2">🔗 только офсайты</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lc-marquee" aria-hidden="true"><div class="lc-track" id="lcTrack"></div></div>
+
+  <section class="lc-sec">
+    <div class="lc-wrap">
+      <div class="lc-head"><span class="lc-num">01</span><h2 data-c="who_h">EduPath для тебя, если ты…</h2></div>
+      <div class="lc-who">
+        <article><span class="lc-emo">🧭</span><h3 data-c="w1h">Не знаешь, с чего начать</h3><p data-c="w1p">Рядом нет консультанта, а сайты вузов на чужом языке. Мы показываем требования и шаги по порядку.</p></article>
+        <article><span class="lc-emo">🏅</span><h3 data-c="w2h">Олимпиадник в стрессе</h3><p data-c="w2p">Вариантов много, времени мало. ИИ-подбор сузит выбор до 12 вузов в четырёх категориях.</p></article>
+        <article><span class="lc-emo">💸</span><h3 data-c="w3h">Ищешь бесплатное обучение</h3><p data-c="w3p">Фильтр по финансированию: полная или частичная стипендия, need-based aid.</p></article>
+        <article><span class="lc-emo">🎓</span><h3 data-c="w4h">Идёшь в магистратуру</h3><p data-c="w4p">Переключатель уровня обучения меняет экзамены, сроки и цены на карточках.</p></article>
+        <article><span class="lc-emo">⏰</span><h3 data-c="w5h">Нужно подаваться срочно</h3><p data-c="w5p">Цветная точка у каждого вуза показывает, сколько осталось до ближайшего дедлайна.</p></article>
+        <article><span class="lc-emo">🧑‍🏫</span><h3 data-c="w6h">Помогаешь другим поступать</h3><p data-c="w6p">Профориентатору или блогеру пригодятся проверенные официальные ссылки из «Полезного».</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="lc-sec lc-dark">
+    <div class="lc-wrap">
+      <div class="lc-head"><span class="lc-num">02</span><h2 data-c="in_h">Что внутри</h2></div>
+      <ol class="lc-list">
+        <li><b data-c="i1h">Университеты</b><span data-c="i1p">50 вузов в каталоге и поиск по любому другому: требования, дедлайны, обучение, жизнь, гранты.</span></li>
+        <li><b data-c="i2h">ИИ-подбор</b><span data-c="i2p">Около 23 вопросов — и 12 вузов от надёжных до вузов мечты, с сохранением в профиль.</span></li>
+        <li><b data-c="i3h">Полезное и Контент</b><span data-c="i3p">Официальные сайты экзаменов и стипендий, новости о визах, видео о жизни студентов.</span></li>
+        <li><b data-c="i4h">Фокус</b><span data-c="i4p">Таймер учёбы, серия дней и цитата дня — чтобы готовиться каждый день.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="lc-sec">
+    <div class="lc-wrap lc-faq-wrap">
+      <div class="lc-head"><span class="lc-num">03</span><h2 data-c="faq_h">Частые вопросы</h2></div>
+      <div class="lc-faq">
+        <details open><summary data-c="q1">Это бесплатно?</summary><p data-c="a1">Да, сейчас все функции бесплатные. Если появятся платные, мы заранее предупредим.</p></details>
+        <details><summary data-c="q2">EduPath гарантирует поступление?</summary><p data-c="a2">Нет. ИИ рекомендует, но не гарантирует. Данные собираются автоматически — перед подачей проверяй условия на официальном сайте вуза.</p></details>
+        <details><summary data-c="q3">Это только для Казахстана?</summary><p data-c="a3">Нет. Ты выбираешь своё гражданство, и условия показываются для него.</p></details>
+        <details><summary data-c="q4">Откуда берутся данные?</summary><p data-c="a4">С официальных сайтов вузов и открытых источников: реестр ROR, Wikidata, Wikimedia Commons, Open-Meteo. Сторонние источники помечены.</p></details>
+        <details><summary data-c="q5">На каких языках работает сайт?</summary><p data-c="a5">Русский, қазақша, кыргызча, English и 中文.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="lc-final">
+    <div class="lc-wrap lc-final-in">
+      <h2 data-c="fin_h">Твой путь начинается с одного шага</h2>
+      <a href="#" class="lc-btn dark" data-auth-open="register" data-c="start">Создать план бесплатно</a>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== ЛЕНДИНГ, ВАРИАНТ D (60/30/10) ===================== -->
+<main class="land-d">
+  <!-- 1. Главный экран -->
+  <section class="ld-hero">
+    <div class="ld-wrap ld-hero-grid">
+      <div class="ld-hero-text">
+        <span class="ld-pill" data-dl="kicker">Для абитуриентов из любой страны</span>
+        <h1 class="ld-h1" data-dl="h1">Университет мечты — ближе, чем кажется</h1>
+        <p class="ld-lead" data-dl="lead">EduPath собирает в одном месте всё, что нужно для поступления за рубеж: условия для твоего гражданства, дедлайны, стоимость обучения и жизни, гранты и подборку вузов от ИИ.</p>
+        <div class="ld-cta">
+          <a href="#" class="ld-btn blue" data-auth-open="register" data-dl="start">Начать бесплатно</a>
+          <a href="#how" class="ld-btn ghost" data-dl="how_btn">Как это работает</a>
+        </div>
+        <p class="ld-note" data-dl="note">Без оплаты · 5 языков · Только официальные источники</p>
+      </div>
+      <div class="ld-hero-media">
+        <img src="assets/d/d-hero.jpg" alt="" class="ld-img" onerror="this.style.visibility='hidden'">
+        <div class="ld-float" aria-hidden="true">
+          <small data-dl="fl_t">Следующий шаг</small>
+          <b>IELTS · 6.5</b>
+          <span><i></i><em data-dl="fl_d">до дедлайна 92 дня</em></span>
+          <u data-dl="fl_ex">пример</u>
+        </div>
+        <span class="ld-credit" data-dl="credit">Иллюстрация создана ИИ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Цифры -->
+  <section class="ld-stats">
+    <div class="ld-wrap ld-stats-grid">
+      <div><b>50</b><span data-dl="s1">вузов в каталоге — и поиск по любому другому</span></div>
+      <div><b>12</b><span data-dl="s2">университетов в подборке ИИ, в четырёх категориях</span></div>
+      <div><b>5</b><span data-dl="s3">языков интерфейса: русский, қазақша, кыргызча, English, 中文</span></div>
+      <div><b>0 ₸</b><span data-dl="s4">все функции сейчас бесплатные</span></div>
+    </div>
+  </section>
+
+  <!-- 3. Проблема (чёрный блок) -->
+  <section class="ld-dark">
+    <div class="ld-wrap ld-problem">
+      <div>
+        <span class="ld-kick light" data-dl="p_k">Почему это сложно</span>
+        <h2 data-dl="p_h">Выбор вуза за рубежом — это сотни вкладок, чужие языки и сроки, которые нельзя пропустить</h2>
+        <img src="assets/d/d-desk.jpg" alt="" class="ld-img ld-problem-img" loading="lazy" onerror="this.style.display='none'">
+      </div>
+      <ol class="ld-pains">
+        <li><h3 data-dl="p1h">Информация разбросана</h3><p data-dl="p1p">Требования лежат на сайте вуза, стипендии — на сайте министерства, стоимость жизни — на форумах. Чтобы сравнить два университета, приходится открыть десятки страниц, часто на английском или немецком.</p></li>
+        <li><h3 data-dl="p2h">Условия зависят от тебя</h3><p data-dl="p2p">Для граждан одной страны обучение бесплатное, для другой — платное. Бакалавриату часто нужен SAT, магистратуре — GRE. Общие рейтинги и «топ-10» этого не учитывают.</p></li>
+        <li><h3 data-dl="p3h">Сроки проходят незаметно</h3><p data-dl="p3p">Пока разбираешься, заканчивается регистрация на экзамен или приём на грант. Многие узнают о нужном тесте, когда сдавать его уже поздно.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. Возможности: фото + текст по очереди -->
+  <section class="ld-sec" id="features">
+    <div class="ld-wrap">
+      <div class="ld-head">
+        <span class="ld-kick" data-dl="f_k">Что внутри</span>
+        <h2 data-dl="f_h">Всё для поступления — в одном аккаунте</h2>
+        <p data-dl="f_p">Четыре раздела, которые закрывают путь от «не знаю, куда поступать» до «подал документы вовремя».</p>
+      </div>
+
+      <article class="ld-row">
+        <img src="assets/d/d-students.jpg" alt="" class="ld-img" loading="lazy" onerror="this.style.visibility='hidden'">
+        <div>
+          <span class="ld-num">01</span>
+          <h3 data-dl="r1h">Университеты</h3>
+          <p data-dl="r1p">Каталог из 50 сильных вузов мира и поиск по любому другому. Для каждого — досье: требования для твоего уровня и гражданства, тип подачи и дедлайны, стоимость обучения и жизни, финансовая помощь, город, карта и официальные ссылки.</p>
+          <ul><li data-dl="r1a">Цветная точка показывает, сколько осталось до дедлайна</li><li data-dl="r1b">Поиск по условиям: страна, бюджет, язык, стипендия</li><li data-dl="r1c">«Найти похожие» — подборка близких вузов</li></ul>
+        </div>
+      </article>
+
+      <article class="ld-row rev">
+        <img src="assets/d/d-graduation.jpg" alt="" class="ld-img" loading="lazy" onerror="this.style.visibility='hidden'">
+        <div>
+          <span class="ld-num">02</span>
+          <h3 data-dl="r2h">ИИ-подбор</h3>
+          <p data-dl="r2p">Около 23 вопросов об оценках, экзаменах, бюджете, климате и целях. ИИ ищет варианты под твоё гражданство и уровень обучения и раскладывает 12 вузов по четырём категориям — от надёжных до вузов мечты.</p>
+          <ul><li data-dl="r2a">Результат сохраняется в профиле</li><li data-dl="r2b">Любой вуз из подборки открывается полным досье</li><li data-dl="r2c">До 3 тестов в день</li></ul>
+        </div>
+      </article>
+
+      <article class="ld-row">
+        <img src="assets/d/d-phone.jpg" alt="" class="ld-img" loading="lazy" onerror="this.style.visibility='hidden'">
+        <div>
+          <span class="ld-num">03</span>
+          <h3 data-dl="r3h">Полезное и Контент</h3>
+          <p data-dl="r3p">Официальные сайты экзаменов (IELTS, SAT, HSK, TOPIK и другие), стипендий («Болашак», DAAD, MEXT, GKS) и порталов подачи документов. А ещё — лента новостей о визах и поступлении, видео о жизни студентов и фильмы для мотивации.</p>
+          <ul><li data-dl="r3a">Только официальные и проверенные ссылки</li><li data-dl="r3b">Экзамены не только для Казахстана — для разных стран</li><li data-dl="r3c">Новости на русском и английском</li></ul>
+        </div>
+      </article>
+
+      <article class="ld-row rev">
+        <img src="assets/d/d-study.jpg" alt="" class="ld-img" loading="lazy" onerror="this.style.visibility='hidden'">
+        <div>
+          <span class="ld-num">04</span>
+          <h3 data-dl="r4h">Фокус</h3>
+          <p data-dl="r4p">Таймер учёбы, в который ты записываешь, чем занимался. Пятнадцать минут в день — и серия продолжается. Цитата дня помогает не сдаваться, а итоги по дням видны в профиле.</p>
+          <ul><li data-dl="r4a">Пауза и продолжение с того же места</li><li data-dl="r4b">История занятий по дням</li><li data-dl="r4c">Цитаты можно сохранять</li></ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 5. Фото на всю ширину -->
+  <section class="ld-band">
+    <img src="assets/d/d-airport.jpg" alt="" class="ld-band-img" loading="lazy" onerror="this.style.display='none'">
+    <div class="ld-wrap ld-band-in">
+      <h2 data-dl="b_h">Путь за границу начинается не с чемодана, а с плана</h2>
+      <a href="#" class="ld-btn blue" data-auth-open="register" data-dl="b_btn">Составить свой план</a>
+    </div>
+  </section>
+
+  <!-- 6. Для кого -->
+  <section class="ld-sec">
+    <div class="ld-wrap">
+      <div class="ld-head">
+        <span class="ld-kick" data-dl="w_k">Для кого</span>
+        <h2 data-dl="w_h">EduPath пригодится, если ты…</h2>
+      </div>
+      <div class="ld-who">
+        <article><b data-dl="w1h">Не знаешь, с чего начать</b><p data-dl="w1p">Рядом нет консультанта, а сайты вузов на чужом языке. Покажем требования и шаги по порядку.</p></article>
+        <article><b data-dl="w2h">Готовишься к олимпиадам и в стрессе</b><p data-dl="w2p">Времени мало, вариантов много. ИИ сузит выбор до 12 вузов.</p></article>
+        <article><b data-dl="w3h">Ищешь бесплатное обучение</b><p data-dl="w3p">Фильтр по финансированию и список государственных стипендий разных стран.</p></article>
+        <article><b data-dl="w4h">Идёшь в магистратуру</b><p data-dl="w4p">Переключатель уровня меняет экзамены, сроки и цены на карточках.</p></article>
+        <article><b data-dl="w5h">Нужно подаваться срочно</b><p data-dl="w5p">Точки дедлайнов сразу показывают, куда ещё успеваешь.</p></article>
+        <article><b data-dl="w6h">Помогаешь поступать другим</b><p data-dl="w6p">Учителю или профориентатору пригодятся проверенные официальные ссылки.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Как это работает (чёрный) -->
+  <section class="ld-dark" id="how">
+    <div class="ld-wrap">
+      <div class="ld-head">
+        <span class="ld-kick light" data-dl="h_k">Как это работает</span>
+        <h2 data-dl="h_h">Четыре шага до своего списка вузов</h2>
+      </div>
+      <ol class="ld-steps">
+        <li><span>1</span><h3 data-dl="h1h">Создай аккаунт</h3><p data-dl="h1p">Почта и пароль или вход через Discord. Это бесплатно.</p></li>
+        <li><span>2</span><h3 data-dl="h2h">Укажи гражданство и уровень</h3><p data-dl="h2p">От них зависят цены, экзамены и виза на всех карточках.</p></li>
+        <li><span>3</span><h3 data-dl="h3h">Пройди тест или ищи сам</h3><p data-dl="h3p">ИИ предложит 12 вузов, а в каталоге можно открыть любой вуз мира.</p></li>
+        <li><span>4</span><h3 data-dl="h4h">Сохрани и готовься</h3><p data-dl="h4p">Избранное — в профиле, ссылки на экзамены — в «Полезном», каждый день — в «Фокусе».</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 8. Вопросы -->
+  <section class="ld-sec">
+    <div class="ld-wrap ld-faq-grid">
+      <div class="ld-head">
+        <span class="ld-kick" data-dl="q_k">Вопросы</span>
+        <h2 data-dl="q_h">Частые вопросы</h2>
+        <p data-dl="q_p">Не нашёл ответ? Напиши нам: edupath.our.team@gmail.com</p>
+      </div>
+      <div class="ld-faq">
+        <details open><summary data-dl="q1">Это правда бесплатно?</summary><p data-dl="a1">Да, сейчас все функции бесплатные. Если появятся платные, мы предупредим заранее, и они будут работать по отдельным условиям.</p></details>
+        <details><summary data-dl="q2">EduPath гарантирует поступление?</summary><p data-dl="a2">Нет. ИИ рекомендует, но не гарантирует. Данные собираются автоматически и могут устареть — перед подачей проверяй условия на официальном сайте вуза.</p></details>
+        <details><summary data-dl="q3">Это только для Казахстана?</summary><p data-dl="a3">Нет. Ты выбираешь своё гражданство, и условия показываются для него. В «Полезном» есть экзамены и стипендии разных стран.</p></details>
+        <details><summary data-dl="q4">Откуда берутся данные?</summary><p data-dl="a4">С официальных сайтов вузов и открытых источников: реестр университетов ROR, Wikidata, Wikimedia Commons, Open-Meteo. Сторонние источники помечены.</p></details>
+        <details><summary data-dl="q5">Что вы делаете с моими данными?</summary><p data-dl="a5">Храним только то, что нужно для работы сайта, и не продаём. Подробнее — в Политике конфиденциальности. Удалить данные можно в профиле.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Финал -->
+  <section class="ld-final">
+    <div class="ld-wrap ld-final-in">
+      <h2 data-dl="fin_h">Начни сегодня — и встреть дедлайны с готовым планом</h2>
+      <a href="#" class="ld-btn blue" data-auth-open="register" data-dl="start">Начать бесплатно</a>
+    </div>
+    <div class="ld-wrap"><p class="ep-ai-note ld-ai" data-dl-html="ai">ИИ рекомендует, но не гарантирует поступление. Подробнее — в <a href="terms.html">Условиях использования</a>.</p></div>
+  </section>
+</main>
+
+
+
+
+<script>
+/* Тексты главной на 5 языках. Язык берётся из того же переключателя, что и на всём сайте. */
+(function(){
+  const L = {
+    ru:{ eyebrow:"Поступление за рубеж без хаоса", h1:"Найди университет, который подходит <em>именно тебе</em>",
+      lead:"Условия поступления для твоего гражданства и уровня обучения, дедлайны, стоимость жизни и ИИ-подбор вузов — в одном месте, а не на сотне вкладок.",
+      start:"Начать — это бесплатно", have:"У меня уже есть аккаунт", f1:"🌍 Для абитуриентов из любой страны", f2:"🗣 5 языков интерфейса", f3:"🔗 Ссылки на официальные источники",
+      m_title:"Университеты", m_chip:"Бакалавриат · KZ", m_search:"Введи название университета…", m_place:"Город, страна", m_uni:"Твой будущий университет",
+      m_req:"Требования", m_dl:"Дедлайн", m_dl_v:"через 4 мес.", m_aid:"Финпомощь", m_aid_v:"есть гранты", m_life:"Жизнь в месяц", m_float:"4 категории × 3 вуза",
+      m_note:"Так выглядит карточка вуза на сайте (пример интерфейса)",
+      p_eyebrow:"Проблема", p_h2:"Почему выбрать вуз за рубежом так тяжело", p_lead:"Дело не в том, что вариантов мало. Их слишком много, и всё важное спрятано.",
+      p1_h:"Информация разбросана", p1_t:"Требования, цены и стипендии лежат на разных сайтах, часто на чужом языке. Сравнить два вуза — уже целый вечер.",
+      p2_h:"Условия зависят от тебя", p2_t:"Гражданство, уровень обучения и бюджет меняют всё: цену, экзамены, шанс на грант. Общие «топ-10» этого не учитывают.",
+      p3_h:"Дедлайны подкрадываются", p3_t:"Пока разбираешься, сроки подачи проходят. Многие узнают о нужном экзамене, когда регистрация уже закрыта.",
+      s_eyebrow:"Решение", s_h2:"EduPath собирает всё в одном месте", s_lead:"Ты указываешь своё гражданство и уровень обучения — сайт показывает условия именно для тебя.",
+      ft1_h:"Университеты", ft1_t:"Каталог из 50 сильных вузов и поиск по любому другому: требования, дедлайны, стоимость обучения и жизни, гранты, карта и фото.",
+      ft2_h:"ИИ-подбор", ft2_t:"Около 23 вопросов об оценках, бюджете, климате и целях — и 12 вузов в четырёх категориях: от надёжных до вузов мечты.",
+      ft3_h:"Полезное и Контент", ft3_t:"Официальные сайты экзаменов и стипендий разных стран, новости о визах и поступлении, видео о жизни студентов за рубежом.",
+      ft4_h:"Фокус", ft4_t:"Таймер учёбы с серией дней и цитатами: готовься к IELTS, SAT или ЕНТ каждый день и видь свой прогресс.",
+      h_eyebrow:"Как это работает", h_h2:"Три шага до своего списка вузов",
+      st1_h:"Создай аккаунт", st1_t:"Почта и пароль или вход через Discord. Укажи гражданство и уровень обучения.",
+      st2_h:"Пройди тест или ищи сам", st2_t:"ИИ-подбор предложит 12 вузов, а в «Университетах» можно открыть любой вуз мира.",
+      st3_h:"Сохрани и готовься", st3_t:"Избранные вузы и результаты теста хранятся в профиле, а «Фокус» помогает заниматься каждый день.",
+      c_h2:"Начни выбирать осознанно", c_lead:"Регистрация занимает минуту.",
+      ai:'ИИ рекомендует, но не гарантирует поступление. Данные собираются автоматически и могут устареть — перед подачей проверяй условия на официальном сайте вуза. Подробнее — в <a href="terms.html">Условиях использования</a>.' },
+    en:{ eyebrow:"Studying abroad, minus the chaos", h1:"Find the university that fits <em>you</em>",
+      lead:"Admission requirements for your citizenship and degree level, deadlines, cost of living and AI university matching — in one place instead of a hundred tabs.",
+      start:"Get started — it's free", have:"I already have an account", f1:"🌍 For applicants from any country", f2:"🗣 5 interface languages", f3:"🔗 Links to official sources",
+      m_title:"Universities", m_chip:"Bachelor's · KZ", m_search:"Type a university name…", m_place:"City, country", m_uni:"Your future university",
+      m_req:"Requirements", m_dl:"Deadline", m_dl_v:"in 4 months", m_aid:"Financial aid", m_aid_v:"grants available", m_life:"Living / month", m_float:"4 categories × 3 universities",
+      m_note:"This is what a university card looks like (interface example)",
+      p_eyebrow:"The problem", p_h2:"Why choosing a university abroad is so hard", p_lead:"It's not that there are too few options. There are too many, and the important details are hidden.",
+      p1_h:"Information is scattered", p1_t:"Requirements, prices and scholarships live on different websites, often in another language. Comparing two universities takes a whole evening.",
+      p2_h:"Conditions depend on you", p2_t:"Citizenship, degree level and budget change everything: price, exams, chances of a grant. Generic top-10 lists ignore this.",
+      p3_h:"Deadlines sneak up", p3_t:"While you figure things out, application windows close. Many people learn about a required exam after registration has ended.",
+      s_eyebrow:"The solution", s_h2:"EduPath puts it all in one place", s_lead:"Tell us your citizenship and degree level — the site shows the conditions that apply to you.",
+      ft1_h:"Universities", ft1_t:"A catalog of 50 strong universities plus search for any other: requirements, deadlines, tuition and living costs, grants, map and photos.",
+      ft2_h:"AI matching", ft2_t:"About 23 questions on grades, budget, climate and goals — and 12 universities in four categories, from safe picks to dream schools.",
+      ft3_h:"Resources & Content", ft3_t:"Official exam and scholarship websites from many countries, news on visas and admissions, videos about student life abroad.",
+      ft4_h:"Focus", ft4_t:"A study timer with streaks and quotes: prepare for IELTS, SAT or national exams every day and see your progress.",
+      h_eyebrow:"How it works", h_h2:"Three steps to your university list",
+      st1_h:"Create an account", st1_t:"Email and password or sign in with Discord. Set your citizenship and degree level.",
+      st2_h:"Take the test or search yourself", st2_t:"AI matching suggests 12 universities, and on the Universities page you can open any university in the world.",
+      st3_h:"Save and prepare", st3_t:"Saved universities and test results stay in your profile, and Focus helps you study every day.",
+      c_h2:"Start choosing with confidence", c_lead:"Sign-up takes a minute.",
+      ai:'AI recommends, it does not guarantee admission. Data is collected automatically and may be outdated — always check the requirements on the official university website before applying. See the <a href="terms.html">Terms of Use</a>.' },
+    kk:{ eyebrow:"Шетелге түсу — хаоссыз", h1:"Дәл <em>саған</em> сай университетті тап",
+      lead:"Азаматтығың мен оқу деңгейіңе қарай түсу талаптары, мерзімдер, өмір сүру құны және ЖИ арқылы университет іріктеу — жүз қойындыда емес, бір жерде.",
+      start:"Бастау — тегін", have:"Менде аккаунт бар", f1:"🌍 Кез келген елдің талапкерлері үшін", f2:"🗣 Интерфейстің 5 тілі", f3:"🔗 Ресми дереккөздерге сілтемелер",
+      m_title:"Университеттер", m_chip:"Бакалавриат · KZ", m_search:"Университет атауын жаз…", m_place:"Қала, ел", m_uni:"Болашақ университетің",
+      m_req:"Талаптар", m_dl:"Мерзім", m_dl_v:"4 айдан кейін", m_aid:"Қаржылай көмек", m_aid_v:"гранттар бар", m_life:"Айлық шығын", m_float:"4 санат × 3 университет",
+      m_note:"Сайттағы университет карточкасы осылай көрінеді (интерфейс мысалы)",
+      p_eyebrow:"Мәселе", p_h2:"Шетелдегі университетті таңдау неге қиын", p_lead:"Нұсқа аз емес. Тым көп, ал маңыздысы жасырын.",
+      p1_h:"Ақпарат шашыраңқы", p1_t:"Талаптар, бағалар мен стипендиялар әртүрлі сайттарда, көбіне бөтен тілде. Екі университетті салыстыру — бүтін бір кеш.",
+      p2_h:"Шарттар саған байланысты", p2_t:"Азаматтық, оқу деңгейі мен бюджет бәрін өзгертеді: баға, емтихандар, грант мүмкіндігі. Жалпы «топ-10» мұны ескермейді.",
+      p3_h:"Мерзімдер байқатпай келеді", p3_t:"Түсінгенше, құжат тапсыру мерзімі өтіп кетеді. Көбі керекті емтихан туралы тіркеу жабылғанда біледі.",
+      s_eyebrow:"Шешім", s_h2:"EduPath бәрін бір жерге жинайды", s_lead:"Азаматтығың мен оқу деңгейіңді көрсет — сайт дәл саған қатысты шарттарды көрсетеді.",
+      ft1_h:"Университеттер", ft1_t:"50 мықты университет каталогы және кез келген басқасын іздеу: талаптар, мерзімдер, оқу мен өмір құны, гранттар, карта мен фото.",
+      ft2_h:"ЖИ іріктеу", ft2_t:"Бағалар, бюджет, климат пен мақсаттар туралы 23-ке жуық сұрақ — және төрт санаттағы 12 университет.",
+      ft3_h:"Пайдалы және Контент", ft3_t:"Әр елдің емтихан мен стипендия ресми сайттары, визалар мен түсу жаңалықтары, шетелдегі студенттер өмірі туралы бейнелер.",
+      ft4_h:"Фокус", ft4_t:"Күндер сериясы мен дәйексөздері бар оқу таймері: IELTS, SAT немесе ҰБТ-ға күн сайын дайындал.",
+      h_eyebrow:"Бұл қалай жұмыс істейді", h_h2:"Университеттер тізіміне дейін үш қадам",
+      st1_h:"Аккаунт аш", st1_t:"Пошта мен құпиясөз немесе Discord арқылы кіру. Азаматтық пен оқу деңгейін көрсет.",
+      st2_h:"Тест тапсыр немесе өзің ізде", st2_t:"ЖИ 12 университет ұсынады, ал «Университеттер» бөлімінде әлемдегі кез келген университетті ашуға болады.",
+      st3_h:"Сақта және дайындал", st3_t:"Таңдаулы университеттер мен тест нәтижелері профильде сақталады, ал «Фокус» күн сайын оқуға көмектеседі.",
+      c_h2:"Саналы таңдауды баста", c_lead:"Тіркелу бір минут алады.",
+      ai:'ЖИ ұсынады, бірақ түсуге кепілдік бермейді. Деректер автоматты түрде жиналады және ескіруі мүмкін — құжат тапсырмас бұрын шарттарды университеттің ресми сайтынан тексер. Толығырақ — <a href="terms.html">Пайдалану шарттарында</a>.' },
+    ky:{ eyebrow:"Чет өлкөгө тапшыруу — башаламансыз", h1:"Так <em>сага</em> ылайык университетти тап",
+      lead:"Жарандыгыңа жана окуу деңгээлиңе жараша кабыл алуу талаптары, мөөнөттөр, жашоо наркы жана ЖИ менен университет тандоо — жүз өтмөктө эмес, бир жерде.",
+      start:"Баштоо — акысыз", have:"Менде аккаунт бар", f1:"🌍 Каалаган өлкөнүн абитуриенттери үчүн", f2:"🗣 Интерфейстин 5 тили", f3:"🔗 Расмий булактарга шилтемелер",
+      m_title:"Университеттер", m_chip:"Бакалавриат · KZ", m_search:"Университеттин атын жаз…", m_place:"Шаар, өлкө", m_uni:"Келечектеги университетиң",
+      m_req:"Талаптар", m_dl:"Мөөнөт", m_dl_v:"4 айдан кийин", m_aid:"Каржылык жардам", m_aid_v:"гранттар бар", m_life:"Айлык чыгым", m_float:"4 категория × 3 университет",
+      m_note:"Сайттагы университеттин карточкасы ушундай көрүнөт (интерфейс мисалы)",
+      p_eyebrow:"Көйгөй", p_h2:"Чет өлкөдөгү университетти тандоо эмне үчүн оор", p_lead:"Варианттар аз эмес. Өтө көп, а маанилүүсү жашырылган.",
+      p1_h:"Маалымат чачкын", p1_t:"Талаптар, баалар жана стипендиялар ар башка сайттарда, көбүнчө бөтөн тилде. Эки университетти салыштыруу — бүтүндөй бир кеч.",
+      p2_h:"Шарттар сага жараша", p2_t:"Жарандык, окуу деңгээли жана бюджет баарын өзгөртөт: баа, сынактар, грант мүмкүнчүлүгү. Жалпы «топ-10» муну эске албайт.",
+      p3_h:"Мөөнөттөр билинбей келет", p3_t:"Түшүнгөнчө тапшыруу мөөнөтү өтүп кетет. Көбү керектүү сынак тууралуу каттоо жабылганда билишет.",
+      s_eyebrow:"Чечим", s_h2:"EduPath баарын бир жерге чогултат", s_lead:"Жарандыгыңды жана окуу деңгээлиңди көрсөт — сайт так сага тиешелүү шарттарды көрсөтөт.",
+      ft1_h:"Университеттер", ft1_t:"50 күчтүү университеттин каталогу жана каалаган башкасын издөө: талаптар, мөөнөттөр, окуу жана жашоо наркы, гранттар, карта жана сүрөт.",
+      ft2_h:"ЖИ тандоо", ft2_t:"Баалар, бюджет, климат жана максаттар боюнча 23дөй суроо — жана төрт категориядагы 12 университет.",
+      ft3_h:"Пайдалуу жана Контент", ft3_t:"Ар кайсы өлкөлөрдүн сынак жана стипендия расмий сайттары, виза жана тапшыруу жаңылыктары, чет өлкөдөгү студенттердин жашоосу тууралуу видеолор.",
+      ft4_h:"Фокус", ft4_t:"Күндөр сериясы жана цитаталары бар окуу таймери: IELTS, SAT же ЖРТга күн сайын даярдан.",
+      h_eyebrow:"Бул кантип иштейт", h_h2:"Университеттер тизмесине чейин үч кадам",
+      st1_h:"Аккаунт ач", st1_t:"Почта жана сырсөз же Discord аркылуу кирүү. Жарандыкты жана окуу деңгээлин көрсөт.",
+      st2_h:"Тест тапшыр же өзүң изде", st2_t:"ЖИ 12 университет сунуштайт, ал эми «Университеттер» бөлүмүндө дүйнөдөгү каалаган университетти ачса болот.",
+      st3_h:"Сакта жана даярдан", st3_t:"Тандалган университеттер жана тесттин жыйынтыктары профилде сакталат, «Фокус» күн сайын окууга жардам берет.",
+      c_h2:"Аң-сезимдүү тандоону башта", c_lead:"Катталуу бир мүнөт алат.",
+      ai:'ЖИ сунуштайт, бирок кабыл алууга кепилдик бербейт. Маалыматтар автоматтык түрдө чогултулат жана эскириши мүмкүн — тапшыруудан мурун шарттарды университеттин расмий сайтынан текшер. Кененирээк — <a href="terms.html">Колдонуу шарттарында</a>.' },
+    zh:{ eyebrow:"出国留学，不再混乱", h1:"找到<em>适合你</em>的大学",
+      lead:"按你的国籍和学历层次查看录取要求、截止日期、生活成本，并用 AI 匹配大学——一个页面搞定，不用开一百个标签页。",
+      start:"免费开始", have:"我已有账号", f1:"🌍 面向任何国家的申请者", f2:"🗣 5 种界面语言", f3:"🔗 附官方来源链接",
+      m_title:"大学", m_chip:"本科 · KZ", m_search:"输入大学名称…", m_place:"城市，国家", m_uni:"你未来的大学",
+      m_req:"要求", m_dl:"截止日期", m_dl_v:"4 个月后", m_aid:"资助", m_aid_v:"有奖学金", m_life:"每月生活费", m_float:"4 类 × 3 所大学",
+      m_note:"网站上的大学卡片示例（界面示意）",
+      p_eyebrow:"问题", p_h2:"为什么选海外大学这么难", p_lead:"不是选择太少，而是太多，重要信息又藏得很深。",
+      p1_h:"信息分散", p1_t:"要求、学费和奖学金分散在不同网站，常常还是外语。比较两所大学就要花一整晚。",
+      p2_h:"条件因人而异", p2_t:"国籍、学历层次和预算会改变一切：价格、考试、奖学金机会。通用的「前十名」不会考虑这些。",
+      p3_h:"截止日期悄然逼近", p3_t:"还没弄清楚，申请期就结束了。很多人等报名关闭后才知道需要参加某项考试。",
+      s_eyebrow:"解决方案", s_h2:"EduPath 把一切集中在一起", s_lead:"填写国籍和学历层次，网站只显示与你相关的条件。",
+      ft1_h:"大学", ft1_t:"50 所优秀大学目录，并可搜索任何其他大学：要求、截止日期、学费和生活费、奖学金、地图和照片。",
+      ft2_h:"AI 匹配", ft2_t:"约 23 个关于成绩、预算、气候和目标的问题，得到 4 类共 12 所大学。",
+      ft3_h:"实用资源与内容", ft3_t:"各国考试和奖学金官网、签证与录取新闻、海外学生生活视频。",
+      ft4_h:"专注", ft4_t:"带连续打卡和名言的学习计时器：每天备考 IELTS、SAT 等考试，看见自己的进步。",
+      h_eyebrow:"使用方法", h_h2:"三步得到你的大学清单",
+      st1_h:"创建账号", st1_t:"使用邮箱和密码或 Discord 登录，填写国籍和学历层次。",
+      st2_h:"做测试或自己搜索", st2_t:"AI 推荐 12 所大学，在「大学」页面还能查看世界上任何大学。",
+      st3_h:"保存并准备", st3_t:"收藏的大学和测试结果保存在个人资料中，「专注」帮你每天坚持学习。",
+      c_h2:"开始理性选择", c_lead:"注册只需一分钟。",
+      ai:'AI 只提供建议，不保证录取。数据为自动收集，可能过时——申请前请在大学官网核实要求。详见<a href="terms.html">使用条款</a>。' }
+  };
+  function apply(){
+    let lang = "ru"; try { lang = localStorage.getItem("edupath_lang") || "ru"; } catch(e){}
+    const d = L[lang] || L.ru;
+    document.querySelectorAll("[data-l]").forEach(el => { const v = d[el.dataset.l]; if (v) el.textContent = v; });
+    document.querySelectorAll("[data-l-html]").forEach(el => { const v = d[el.dataset.lHtml]; if (v) el.innerHTML = v; });
+    document.documentElement.lang = lang;
+  }
+  apply();
+  window.addEventListener("edupath-lang-change", apply);
+
+/* ===== Тексты и логика лендинга B ===== */
+(function(){
+  const LB = {
+    ru:{ b_eyebrow:"EduPath · поступление за рубеж", b_h1:"Куда <em>поступаем?</em>", b_lead:"Скажи, откуда ты и на какой уровень идёшь, — и EduPath покажет условия, дедлайны и цены именно для тебя.",
+      b_q_cit:"Моё гражданство", b_q_deg:"Уровень обучения", b_deg_b:"Бакалавриат", b_deg_m:"Магистратура", b_deg_p:"Докторантура", b_go:"Подобрать вузы",
+      b_small:"Бесплатно. Регистрация — минута.", b_pass:"ПОСАДОЧНЫЙ ТАЛОН", b_from:"Откуда", b_from_v:"Твой город", b_to:"Куда", b_to_v:"Вуз мечты",
+      b_gate:"Уровень", b_exam:"Экзамены", b_dl_v:"успеваешь ✓", b_seat:"4 категории × 3 вуза", b_ticket_note:"Пример интерфейса",
+      b_row1:"Вуз A · Канада", b_row1v:"≈ 5 мес.", b_row2:"Вуз B · Германия", b_row2v:"≈ 2 мес.", b_row3:"Вуз C · Корея", b_row3v:"3 нед.", b_other:"Другая страна" },
+    en:{ b_eyebrow:"EduPath · study abroad", b_h1:"Where are you <em>heading?</em>", b_lead:"Tell us where you're from and which degree you're aiming for, and EduPath shows the requirements, deadlines and prices for you.",
+      b_q_cit:"My citizenship", b_q_deg:"Degree level", b_deg_b:"Bachelor's", b_deg_m:"Master's", b_deg_p:"PhD", b_go:"Find universities",
+      b_small:"Free. Sign-up takes a minute.", b_pass:"BOARDING PASS", b_from:"From", b_from_v:"Your city", b_to:"To", b_to_v:"Dream uni",
+      b_gate:"Level", b_exam:"Exams", b_dl_v:"on time ✓", b_seat:"4 categories × 3", b_ticket_note:"Interface example",
+      b_row1:"Uni A · Canada", b_row1v:"~5 mo", b_row2:"Uni B · Germany", b_row2v:"~2 mo", b_row3:"Uni C · Korea", b_row3v:"3 wk", b_other:"Other country" },
+    kk:{ b_eyebrow:"EduPath · шетелге түсу", b_h1:"Қайда <em>түсеміз?</em>", b_lead:"Қай елденсің және қай деңгейге түсесің — айт, EduPath дәл саған арналған талаптарды, мерзімдер мен бағаларды көрсетеді.",
+      b_q_cit:"Азаматтығым", b_q_deg:"Оқу деңгейі", b_deg_b:"Бакалавриат", b_deg_m:"Магистратура", b_deg_p:"Докторантура", b_go:"Университет таңдау",
+      b_small:"Тегін. Тіркелу — бір минут.", b_pass:"ОТЫРҒЫЗУ ТАЛОНЫ", b_from:"Қайдан", b_from_v:"Сенің қалаң", b_to:"Қайда", b_to_v:"Арман ЖОО",
+      b_gate:"Деңгей", b_exam:"Емтихандар", b_dl_v:"үлгересің ✓", b_seat:"4 санат × 3", b_ticket_note:"Интерфейс мысалы",
+      b_row1:"ЖОО A · Канада", b_row1v:"≈ 5 ай", b_row2:"ЖОО B · Германия", b_row2v:"≈ 2 ай", b_row3:"ЖОО C · Корея", b_row3v:"3 апта", b_other:"Басқа ел" },
+    ky:{ b_eyebrow:"EduPath · чет өлкөгө тапшыруу", b_h1:"Кайда <em>тапшырабыз?</em>", b_lead:"Кайсы өлкөдөнсүң жана кайсы деңгээлге барасың — айт, EduPath так сага тиешелүү талаптарды, мөөнөттөрдү жана бааларды көрсөтөт.",
+      b_q_cit:"Жарандыгым", b_q_deg:"Окуу деңгээли", b_deg_b:"Бакалавриат", b_deg_m:"Магистратура", b_deg_p:"Докторантура", b_go:"Университет тандоо",
+      b_small:"Акысыз. Катталуу — бир мүнөт.", b_pass:"ОТУРГУЗУУ ТАЛОНУ", b_from:"Кайдан", b_from_v:"Сенин шаарың", b_to:"Кайда", b_to_v:"Кыялдагы ЖОЖ",
+      b_gate:"Деңгээл", b_exam:"Сынактар", b_dl_v:"үлгүрөсүң ✓", b_seat:"4 категория × 3", b_ticket_note:"Интерфейс мисалы",
+      b_row1:"ЖОЖ A · Канада", b_row1v:"≈ 5 ай", b_row2:"ЖОЖ B · Германия", b_row2v:"≈ 2 ай", b_row3:"ЖОЖ C · Корея", b_row3v:"3 жума", b_other:"Башка өлкө" },
+    zh:{ b_eyebrow:"EduPath · 出国留学", b_h1:"你想去<em>哪里读书？</em>", b_lead:"告诉我们你的国籍和想读的学历层次，EduPath 会显示适用于你的要求、截止日期和费用。",
+      b_q_cit:"我的国籍", b_q_deg:"学历层次", b_deg_b:"本科", b_deg_m:"硕士", b_deg_p:"博士", b_go:"匹配大学",
+      b_small:"免费，注册只需一分钟。", b_pass:"登机牌", b_from:"出发", b_from_v:"你的城市", b_to:"目的地", b_to_v:"梦想大学",
+      b_gate:"层次", b_exam:"考试", b_dl_v:"来得及 ✓", b_seat:"4 类 × 3 所", b_ticket_note:"界面示例",
+      b_row1:"大学 A · 加拿大", b_row1v:"约 5 个月", b_row2:"大学 B · 德国", b_row2v:"约 2 个月", b_row3:"大学 C · 韩国", b_row3v:"3 周", b_other:"其他国家" }
+  };
+  Object.keys(LB).forEach(k => Object.assign(L[k], LB[k]));
+
+  // гражданство: названия стран на языке интерфейса (Intl), сохраняем выбор для страницы «Университеты»
+  const CC = ["KZ","UZ","KG","TJ","TM","RU","BY","UA","AZ","GE","AM","MN","TR","CN","IN","PK","ID","VN","EG","NG"];
+  function fillCit(lang){
+    const sel = document.getElementById("lbCit"); if (!sel) return;
+    let names; try { names = new Intl.DisplayNames([lang], { type:"region" }); } catch(e){ names = null; }
+    let cur = sel.value; if (!cur) { try { cur = localStorage.getItem("ep6:cit") || "KZ"; } catch(e){ cur = "KZ"; } }
+    sel.innerHTML = CC.map(c => `<option value="${c}">${names ? names.of(c) : c}</option>`).join("") + `<option value="">${(L[lang]||L.ru).b_other}</option>`;
+    sel.value = CC.includes(cur) ? cur : "KZ";
+  }
+  function save(){
+    try {
+      const c = document.getElementById("lbCit").value, d = document.getElementById("lbDeg").value;
+      if (c) localStorage.setItem("ep6:cit", c);
+      if (d) localStorage.setItem("ep6:degree", d);
+    } catch(e){}
+  }
+  const cur = () => { try { return localStorage.getItem("edupath_lang") || "ru"; } catch(e){ return "ru"; } };
+  fillCit(cur());
+  window.addEventListener("edupath-lang-change", () => { fillCit(cur()); apply(); });
+  const go = document.getElementById("lbGo"); if (go) go.addEventListener("click", save, true);
+  ["lbCit","lbDeg"].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener("change", save); });
+  apply();
+})();
+})();
+</script>
+<script>
+/* ===== Тексты и логика лендинга C ===== */
+(function(){
+  const LC = {
+    ru:{ tag:"EduPath · для абитуриентов из любой страны", h1:"Поступление за рубеж — <mark>по плану</mark>, а не наугад",
+      lead:"Условия для твоего гражданства, дедлайны, цены, гранты и ИИ-подбор вузов — в одном месте и на понятном языке.",
+      start:"Создать план бесплатно", login:"Войти", plan_t:"Мой план поступления", plan_ex:"пример",
+      plan1:"Выбрать уровень и гражданство", plan2:"Пройти ИИ-тест — 12 вузов", plan3:"Сравнить требования и цены", plan_now:"сейчас", plan4:"Сдать IELTS / SAT", plan5:"Подать документы до дедлайна",
+      st1:"🎯 4 × 3 вуза", st2:"🔗 только офсайты",
+      who_h:"EduPath для тебя, если ты…",
+      w1h:"Не знаешь, с чего начать", w1p:"Рядом нет консультанта, а сайты вузов на чужом языке. Мы показываем требования и шаги по порядку.",
+      w2h:"Олимпиадник в стрессе", w2p:"Вариантов много, времени мало. ИИ-подбор сузит выбор до 12 вузов в четырёх категориях.",
+      w3h:"Ищешь бесплатное обучение", w3p:"Фильтр по финансированию: полная или частичная стипендия, need-based aid.",
+      w4h:"Идёшь в магистратуру", w4p:"Переключатель уровня обучения меняет экзамены, сроки и цены на карточках.",
+      w5h:"Нужно подаваться срочно", w5p:"Цветная точка у каждого вуза показывает, сколько осталось до ближайшего дедлайна.",
+      w6h:"Помогаешь другим поступать", w6p:"Профориентатору или блогеру пригодятся проверенные официальные ссылки из «Полезного».",
+      in_h:"Что внутри",
+      i1h:"Университеты", i1p:"50 вузов в каталоге и поиск по любому другому: требования, дедлайны, обучение, жизнь, гранты.",
+      i2h:"ИИ-подбор", i2p:"Около 23 вопросов — и 12 вузов от надёжных до вузов мечты, с сохранением в профиль.",
+      i3h:"Полезное и Контент", i3p:"Официальные сайты экзаменов и стипендий, новости о визах, видео о жизни студентов.",
+      i4h:"Фокус", i4p:"Таймер учёбы, серия дней и цитата дня — чтобы готовиться каждый день.",
+      faq_h:"Частые вопросы",
+      q1:"Это бесплатно?", a1:"Да, сейчас все функции бесплатные. Если появятся платные, мы заранее предупредим.",
+      q2:"EduPath гарантирует поступление?", a2:"Нет. ИИ рекомендует, но не гарантирует. Данные собираются автоматически — перед подачей проверяй условия на официальном сайте вуза.",
+      q3:"Это только для Казахстана?", a3:"Нет. Ты выбираешь своё гражданство, и условия показываются для него.",
+      q4:"Откуда берутся данные?", a4:"С официальных сайтов вузов и открытых источников: реестр ROR, Wikidata, Wikimedia Commons, Open-Meteo. Сторонние источники помечены.",
+      q5:"На каких языках работает сайт?", a5:"Русский, қазақша, кыргызча, English и 中文.",
+      fin_h:"Твой путь начинается с одного шага" },
+    en:{ tag:"EduPath · for applicants from any country", h1:"Study abroad — <mark>with a plan</mark>, not by guesswork",
+      lead:"Conditions for your citizenship, deadlines, prices, grants and AI university matching — in one place, in plain language.",
+      start:"Make my plan — free", login:"Log in", plan_t:"My admission plan", plan_ex:"example",
+      plan1:"Choose degree level and citizenship", plan2:"Take the AI test — 12 universities", plan3:"Compare requirements and prices", plan_now:"now", plan4:"Take IELTS / SAT", plan5:"Apply before the deadline",
+      st1:"🎯 4 × 3 universities", st2:"🔗 official sites only",
+      who_h:"EduPath is for you if you…",
+      w1h:"Don't know where to start", w1p:"No counsellor nearby and university sites in another language. We show requirements and steps in order.",
+      w2h:"Are a stressed olympiad student", w2p:"Lots of options, little time. AI matching narrows it to 12 universities in four categories.",
+      w3h:"Want to study for free", w3p:"Funding filter: full or partial scholarship, need-based aid.",
+      w4h:"Are going for a Master's", w4p:"The degree switch changes exams, deadlines and prices on the cards.",
+      w5h:"Need to apply urgently", w5p:"A coloured dot on every university shows how long is left until the nearest deadline.",
+      w6h:"Help others apply", w6p:"Counsellors and bloggers get verified official links in Resources.",
+      in_h:"What's inside",
+      i1h:"Universities", i1p:"50 universities in the catalog plus search for any other: requirements, deadlines, tuition, living costs, grants.",
+      i2h:"AI matching", i2p:"About 23 questions — and 12 universities from safe picks to dream schools, saved to your profile.",
+      i3h:"Resources & Content", i3p:"Official exam and scholarship sites, visa news, videos about student life.",
+      i4h:"Focus", i4p:"Study timer, streaks and a quote of the day — to prepare every day.",
+      faq_h:"FAQ",
+      q1:"Is it free?", a1:"Yes, all features are free for now. If paid ones appear, we'll tell you in advance.",
+      q2:"Does EduPath guarantee admission?", a2:"No. AI recommends, it does not guarantee. Data is collected automatically — check the official university site before applying.",
+      q3:"Is it only for Kazakhstan?", a3:"No. You choose your citizenship and see the conditions for it.",
+      q4:"Where does the data come from?", a4:"Official university websites and open sources: the ROR registry, Wikidata, Wikimedia Commons, Open-Meteo. Third-party sources are labelled.",
+      q5:"Which languages does the site support?", a5:"Русский, қазақша, кыргызча, English and 中文.",
+      fin_h:"Your path starts with one step" },
+    kk:{ tag:"EduPath · кез келген елдің талапкерлері үшін", h1:"Шетелге түсу — кездейсоқ емес, <mark>жоспармен</mark>",
+      lead:"Азаматтығыңа сай шарттар, мерзімдер, бағалар, гранттар және ЖИ арқылы университет іріктеу — бір жерде, түсінікті тілде.",
+      start:"Жоспар құру — тегін", login:"Кіру", plan_t:"Менің түсу жоспарым", plan_ex:"мысал",
+      plan1:"Деңгей мен азаматтықты таңдау", plan2:"ЖИ-тест — 12 университет", plan3:"Талаптар мен бағаларды салыстыру", plan_now:"қазір", plan4:"IELTS / SAT тапсыру", plan5:"Мерзімге дейін құжат тапсыру",
+      st1:"🎯 4 × 3 университет", st2:"🔗 тек ресми сайттар",
+      who_h:"EduPath саған арналған, егер сен…",
+      w1h:"Неден бастарыңды білмесең", w1p:"Жаныңда кеңесші жоқ, университет сайттары бөтен тілде. Біз талаптар мен қадамдарды ретімен көрсетеміз.",
+      w2h:"Күйзелістегі олимпиадашы болсаң", w2p:"Нұсқа көп, уақыт аз. ЖИ таңдауды төрт санаттағы 12 университетке дейін қысқартады.",
+      w3h:"Тегін оқу іздесең", w3p:"Қаржыландыру сүзгісі: толық немесе ішінара стипендия, need-based aid.",
+      w4h:"Магистратураға түссең", w4p:"Оқу деңгейін ауыстырғыш карточкалардағы емтихандарды, мерзімдер мен бағаларды өзгертеді.",
+      w5h:"Шұғыл тапсыру керек болса", w5p:"Әр университеттегі түсті нүкте ең жақын мерзімге дейін қанша қалғанын көрсетеді.",
+      w6h:"Басқаларға көмектессең", w6p:"Кәсіби бағдар беруші немесе блогерге «Пайдалы» бөліміндегі тексерілген ресми сілтемелер керек болады.",
+      in_h:"Ішінде не бар",
+      i1h:"Университеттер", i1p:"Каталогта 50 университет және кез келгенін іздеу: талаптар, мерзімдер, оқу, өмір, гранттар.",
+      i2h:"ЖИ іріктеу", i2p:"23-ке жуық сұрақ — және сенімдіден арман университетке дейін 12 университет, профильге сақталады.",
+      i3h:"Пайдалы және Контент", i3p:"Емтихан мен стипендияның ресми сайттары, виза жаңалықтары, студенттер өмірі туралы бейнелер.",
+      i4h:"Фокус", i4p:"Оқу таймері, күндер сериясы және күн дәйексөзі — күн сайын дайындалу үшін.",
+      faq_h:"Жиі қойылатын сұрақтар",
+      q1:"Бұл тегін бе?", a1:"Иә, қазір барлық мүмкіндіктер тегін. Ақылы мүмкіндіктер пайда болса, алдын ала ескертеміз.",
+      q2:"EduPath түсуге кепілдік бере ме?", a2:"Жоқ. ЖИ ұсынады, бірақ кепілдік бермейді. Деректер автоматты түрде жиналады — құжат тапсырмас бұрын университеттің ресми сайтынан тексер.",
+      q3:"Бұл тек Қазақстан үшін бе?", a3:"Жоқ. Сен өз азаматтығыңды таңдайсың, шарттар соған сай көрсетіледі.",
+      q4:"Деректер қайдан алынады?", a4:"Университеттердің ресми сайттарынан және ашық дереккөздерден: ROR тізілімі, Wikidata, Wikimedia Commons, Open-Meteo. Бөгде дереккөздер белгіленген.",
+      q5:"Сайт қай тілдерде жұмыс істейді?", a5:"Русский, қазақша, кыргызча, English және 中文.",
+      fin_h:"Сенің жолың бір қадамнан басталады" },
+    ky:{ tag:"EduPath · каалаган өлкөнүн абитуриенттери үчүн", h1:"Чет өлкөгө тапшыруу — кокустан эмес, <mark>план менен</mark>",
+      lead:"Жарандыгыңа ылайык шарттар, мөөнөттөр, баалар, гранттар жана ЖИ менен университет тандоо — бир жерде, түшүнүктүү тилде.",
+      start:"План түзүү — акысыз", login:"Кирүү", plan_t:"Менин тапшыруу планым", plan_ex:"мисал",
+      plan1:"Деңгээл жана жарандыкты тандоо", plan2:"ЖИ-тест — 12 университет", plan3:"Талаптарды жана бааларды салыштыруу", plan_now:"азыр", plan4:"IELTS / SAT тапшыруу", plan5:"Мөөнөткө чейин документ тапшыруу",
+      st1:"🎯 4 × 3 университет", st2:"🔗 расмий сайттар гана",
+      who_h:"EduPath сен үчүн, эгер сен…",
+      w1h:"Эмнеден баштаарыңды билбесең", w1p:"Жаныңда кеңешчи жок, университеттердин сайттары бөтөн тилде. Биз талаптарды жана кадамдарды ирети менен көрсөтөбүз.",
+      w2h:"Стресстеги олимпиадачы болсоң", w2p:"Вариант көп, убакыт аз. ЖИ тандоону төрт категориядагы 12 университетке чейин кыскартат.",
+      w3h:"Акысыз окуу издесең", w3p:"Каржылоо чыпкасы: толук же жарым-жартылай стипендия, need-based aid.",
+      w4h:"Магистратурага тапшырсаң", w4p:"Окуу деңгээлин алмаштыргыч карточкалардагы сынактарды, мөөнөттөрдү жана бааларды өзгөртөт.",
+      w5h:"Шашылыш тапшыруу керек болсо", w5p:"Ар бир университеттеги түстүү чекит эң жакынкы мөөнөткө чейин канча калганын көрсөтөт.",
+      w6h:"Башкаларга жардам берсең", w6p:"Кесиптик багыт берүүчүгө же блогерге «Пайдалуу» бөлүмүндөгү текшерилген расмий шилтемелер керек болот.",
+      in_h:"Ичинде эмне бар",
+      i1h:"Университеттер", i1p:"Каталогдо 50 университет жана каалаганын издөө: талаптар, мөөнөттөр, окуу, жашоо, гранттар.",
+      i2h:"ЖИ тандоо", i2p:"23дөй суроо — жана ишенимдүүдөн кыялдагы университетке чейин 12 университет, профилге сакталат.",
+      i3h:"Пайдалуу жана Контент", i3p:"Сынак жана стипендиянын расмий сайттары, виза жаңылыктары, студенттердин жашоосу тууралуу видеолор.",
+      i4h:"Фокус", i4p:"Окуу таймери, күндөр сериясы жана күндүн цитатасы — күн сайын даярдануу үчүн.",
+      faq_h:"Көп берилүүчү суроолор",
+      q1:"Бул акысызбы?", a1:"Ооба, азыр бардык мүмкүнчүлүктөр акысыз. Акылуулары пайда болсо, алдын ала эскертебиз.",
+      q2:"EduPath кабыл алууга кепилдик береби?", a2:"Жок. ЖИ сунуштайт, бирок кепилдик бербейт. Маалыматтар автоматтык түрдө чогултулат — тапшыруудан мурун университеттин расмий сайтынан текшер.",
+      q3:"Бул Казакстан үчүн гана эмеспи?", a3:"Жок. Сен өз жарандыгыңды тандайсың, шарттар ага ылайык көрсөтүлөт.",
+      q4:"Маалыматтар кайдан алынат?", a4:"Университеттердин расмий сайттарынан жана ачык булактардан: ROR реестри, Wikidata, Wikimedia Commons, Open-Meteo. Башка булактар белгиленген.",
+      q5:"Сайт кайсы тилдерде иштейт?", a5:"Русский, қазақша, кыргызча, English жана 中文.",
+      fin_h:"Сенин жолуң бир кадамдан башталат" },
+    zh:{ tag:"EduPath · 面向任何国家的申请者", h1:"出国留学，<mark>有计划</mark>，不靠运气",
+      lead:"适用于你国籍的条件、截止日期、费用、奖学金和 AI 大学匹配——集中一处，通俗易懂。",
+      start:"免费制定计划", login:"登录", plan_t:"我的申请计划", plan_ex:"示例",
+      plan1:"选择学历层次和国籍", plan2:"完成 AI 测试——12 所大学", plan3:"比较要求和费用", plan_now:"进行中", plan4:"参加 IELTS / SAT", plan5:"截止前提交材料",
+      st1:"🎯 4 类 × 3 所", st2:"🔗 只用官网",
+      who_h:"如果你……EduPath 适合你",
+      w1h:"不知道从哪里开始", w1p:"身边没有顾问，大学官网又是外语。我们按顺序展示要求和步骤。",
+      w2h:"是压力很大的竞赛生", w2p:"选择太多、时间太少。AI 匹配帮你缩小到 4 类共 12 所大学。",
+      w3h:"想免费读书", w3p:"按资助筛选：全额或部分奖学金、need-based aid。",
+      w4h:"要读硕士", w4p:"切换学历层次，卡片上的考试、截止日期和费用随之改变。",
+      w5h:"需要尽快申请", w5p:"每所大学旁的彩色圆点显示距离最近截止日期还有多久。",
+      w6h:"在帮助别人申请", w6p:"升学顾问或博主可以使用「实用资源」中经过核实的官方链接。",
+      in_h:"包含什么",
+      i1h:"大学", i1p:"目录中 50 所大学，并可搜索任何其他大学：要求、截止日期、学费、生活、奖学金。",
+      i2h:"AI 匹配", i2p:"约 23 个问题——得到从稳妥到梦想的 12 所大学，并保存到个人资料。",
+      i3h:"实用资源与内容", i3p:"考试和奖学金官网、签证新闻、留学生活视频。",
+      i4h:"专注", i4p:"学习计时器、连续打卡和每日名言——帮你每天坚持备考。",
+      faq_h:"常见问题",
+      q1:"免费吗？", a1:"是的，目前所有功能都免费。如果以后有付费功能，我们会提前通知。",
+      q2:"EduPath 保证录取吗？", a2:"不保证。AI 只提供建议。数据为自动收集——申请前请在大学官网核实。",
+      q3:"只适用于哈萨克斯坦吗？", a3:"不是。你选择自己的国籍，就会看到相应的条件。",
+      q4:"数据从哪里来？", a4:"来自大学官网和公开来源：ROR 注册库、Wikidata、Wikimedia Commons、Open-Meteo。第三方来源会注明。",
+      q5:"网站支持哪些语言？", a5:"Русский、қазақша、кыргызча、English 和中文。",
+      fin_h:"你的道路从一步开始" }
+  };
+  const COUNTRIES = ["CA","DE","KR","CN","JP","US","GB","TR","IT","NL","FI","SE","CH","AU","SG","HK","PL","CZ","HU","ES","AT","BE","DK","QA","AE","LV"];
+  const cur = () => { try { return localStorage.getItem("edupath_lang") || "ru"; } catch(e){ return "ru"; } };
+  function applyC(){
+    const lang = cur(), d = LC[lang] || LC.ru;
+    document.querySelectorAll("[data-c]").forEach(el => { if (d[el.dataset.c]) el.textContent = d[el.dataset.c]; });
+    document.querySelectorAll("[data-c-html]").forEach(el => { if (d[el.dataset.cHtml]) el.innerHTML = d[el.dataset.cHtml]; });
+    const t = document.getElementById("lcTrack");
+    if (t) {
+      let names; try { names = new Intl.DisplayNames([lang], { type:"region" }); } catch(e){ names = null; }
+      const row = COUNTRIES.map(c => `<span>${names ? names.of(c) : c}</span>`).join("");
+      t.innerHTML = row + row;   // дважды — для бесконечной прокрутки
+    }
+  }
+  applyC();
+  window.addEventListener("edupath-lang-change", applyC);
+})();
+</script>
+<script>
+/* ===== Тексты лендинга D (60/30/10) ===== */
+(function(){
+  const LD = {"ru": {"kicker": "Для абитуриентов из любой страны", "h1": "Университет мечты — ближе, чем кажется", "lead": "EduPath собирает в одном месте всё, что нужно для поступления за рубеж: условия для твоего гражданства, дедлайны, стоимость обучения и жизни, гранты и подборку вузов от ИИ.", "start": "Начать бесплатно", "how_btn": "Как это работает", "note": "Без оплаты · 5 языков · Только официальные источники", "fl_t": "Следующий шаг", "fl_d": "до дедлайна 92 дня", "fl_ex": "пример", "credit": "Иллюстрация создана ИИ", "s1": "вузов в каталоге — и поиск по любому другому", "s2": "университетов в подборке ИИ, в четырёх категориях", "s3": "языков интерфейса: русский, қазақша, кыргызча, English, 中文", "s4": "все функции сейчас бесплатные", "p_k": "Почему это сложно", "p_h": "Выбор вуза за рубежом — это сотни вкладок, чужие языки и сроки, которые нельзя пропустить", "p1h": "Информация разбросана", "p1p": "Требования лежат на сайте вуза, стипендии — на сайте министерства, стоимость жизни — на форумах. Чтобы сравнить два университета, приходится открыть десятки страниц, часто на английском или немецком.", "p2h": "Условия зависят от тебя", "p2p": "Для граждан одной страны обучение бесплатное, для другой — платное. Бакалавриату часто нужен SAT, магистратуре — GRE. Общие рейтинги и «топ-10» этого не учитывают.", "p3h": "Сроки проходят незаметно", "p3p": "Пока разбираешься, заканчивается регистрация на экзамен или приём на грант. Многие узнают о нужном тесте, когда сдавать его уже поздно.", "f_k": "Что внутри", "f_h": "Всё для поступления — в одном аккаунте", "f_p": "Четыре раздела, которые закрывают путь от «не знаю, куда поступать» до «подал документы вовремя».", "r1h": "Университеты", "r1p": "Каталог из 50 сильных вузов мира и поиск по любому другому. Для каждого — досье: требования для твоего уровня и гражданства, тип подачи и дедлайны, стоимость обучения и жизни, финансовая помощь, город, карта и официальные ссылки.", "r1a": "Цветная точка показывает, сколько осталось до дедлайна", "r1b": "Поиск по условиям: страна, бюджет, язык, стипендия", "r1c": "«Найти похожие» — подборка близких вузов", "r2h": "ИИ-подбор", "r2p": "Около 23 вопросов об оценках, экзаменах, бюджете, климате и целях. ИИ ищет варианты под твоё гражданство и уровень обучения и раскладывает 12 вузов по четырём категориям — от надёжных до вузов мечты.", "r2a": "Результат сохраняется в профиле", "r2b": "Любой вуз из подборки открывается полным досье", "r2c": "До 3 тестов в день", "r3h": "Полезное и Контент", "r3p": "Официальные сайты экзаменов (IELTS, SAT, HSK, TOPIK и другие), стипендий («Болашак», DAAD, MEXT, GKS) и порталов подачи документов. А ещё — лента новостей о визах и поступлении, видео о жизни студентов и фильмы для мотивации.", "r3a": "Только официальные и проверенные ссылки", "r3b": "Экзамены не только для Казахстана — для разных стран", "r3c": "Новости на русском и английском", "r4h": "Фокус", "r4p": "Таймер учёбы, в который ты записываешь, чем занимался. Пятнадцать минут в день — и серия продолжается. Цитата дня помогает не сдаваться, а итоги по дням видны в профиле.", "r4a": "Пауза и продолжение с того же места", "r4b": "История занятий по дням", "r4c": "Цитаты можно сохранять", "b_h": "Путь за границу начинается не с чемодана, а с плана", "b_btn": "Составить свой план", "w_k": "Для кого", "w_h": "EduPath пригодится, если ты…", "w1h": "Не знаешь, с чего начать", "w1p": "Рядом нет консультанта, а сайты вузов на чужом языке. Покажем требования и шаги по порядку.", "w2h": "Готовишься к олимпиадам и в стрессе", "w2p": "Времени мало, вариантов много. ИИ сузит выбор до 12 вузов.", "w3h": "Ищешь бесплатное обучение", "w3p": "Фильтр по финансированию и список государственных стипендий разных стран.", "w4h": "Идёшь в магистратуру", "w4p": "Переключатель уровня меняет экзамены, сроки и цены на карточках.", "w5h": "Нужно подаваться срочно", "w5p": "Точки дедлайнов сразу показывают, куда ещё успеваешь.", "w6h": "Помогаешь поступать другим", "w6p": "Учителю или профориентатору пригодятся проверенные официальные ссылки.", "h_k": "Как это работает", "h_h": "Четыре шага до своего списка вузов", "h1h": "Создай аккаунт", "h1p": "Почта и пароль или вход через Discord. Это бесплатно.", "h2h": "Укажи гражданство и уровень", "h2p": "От них зависят цены, экзамены и виза на всех карточках.", "h3h": "Пройди тест или ищи сам", "h3p": "ИИ предложит 12 вузов, а в каталоге можно открыть любой вуз мира.", "h4h": "Сохрани и готовься", "h4p": "Избранное — в профиле, ссылки на экзамены — в «Полезном», каждый день — в «Фокусе».", "q_k": "Вопросы", "q_h": "Частые вопросы", "q_p": "Не нашёл ответ? Напиши нам: edupath.our.team@gmail.com", "q1": "Это правда бесплатно?", "a1": "Да, сейчас все функции бесплатные. Если появятся платные, мы предупредим заранее, и они будут работать по отдельным условиям.", "q2": "EduPath гарантирует поступление?", "a2": "Нет. ИИ рекомендует, но не гарантирует. Данные собираются автоматически и могут устареть — перед подачей проверяй условия на официальном сайте вуза.", "q3": "Это только для Казахстана?", "a3": "Нет. Ты выбираешь своё гражданство, и условия показываются для него. В «Полезном» есть экзамены и стипендии разных стран.", "q4": "Откуда берутся данные?", "a4": "С официальных сайтов вузов и открытых источников: реестр университетов ROR, Wikidata, Wikimedia Commons, Open-Meteo. Сторонние источники помечены.", "q5": "Что вы делаете с моими данными?", "a5": "Храним только то, что нужно для работы сайта, и не продаём. Подробнее — в Политике конфиденциальности. Удалить данные можно в профиле.", "fin_h": "Начни сегодня — и встреть дедлайны с готовым планом", "ai": "ИИ рекомендует, но не гарантирует поступление. Подробнее — в <a href=\"terms.html\">Условиях использования</a>."}, "en": {"kicker": "For applicants from any country", "h1": "Your dream university is closer than it seems", "lead": "EduPath brings everything you need to study abroad into one place: conditions for your citizenship, deadlines, tuition and living costs, grants and an AI-picked list of universities.", "start": "Start for free", "how_btn": "How it works", "note": "No payment · 5 languages · Official sources only", "fl_t": "Next step", "fl_d": "92 days to the deadline", "fl_ex": "example", "credit": "AI-generated illustration", "s1": "universities in the catalog — plus search for any other", "s2": "universities in your AI selection, in four categories", "s3": "interface languages: Russian, Kazakh, Kyrgyz, English, Chinese", "s4": "every feature is free for now", "p_k": "Why it's hard", "p_h": "Choosing a university abroad means hundreds of tabs, foreign languages and deadlines you can't miss", "p1h": "Information is scattered", "p1p": "Requirements are on the university site, scholarships on a ministry site, living costs on forums. Comparing two universities means opening dozens of pages, often in English or German.", "p2h": "Conditions depend on you", "p2p": "Tuition is free for citizens of one country and paid for another. Bachelor's programs often need the SAT, Master's the GRE. General rankings and top-10 lists ignore this.", "p3h": "Deadlines slip by", "p3p": "While you figure things out, exam registration or a grant intake closes. Many people learn about a required test when it's too late to take it.", "f_k": "What's inside", "f_h": "Everything for admission — in one account", "f_p": "Four sections that take you from “I don't know where to apply” to “I applied on time”.", "r1h": "Universities", "r1p": "A catalog of 50 strong universities worldwide plus search for any other. Each one has a dossier: requirements for your level and citizenship, application type and deadlines, tuition and living costs, financial aid, the city, a map and official links.", "r1a": "A coloured dot shows how long is left until the deadline", "r1b": "Search by conditions: country, budget, language, scholarship", "r1c": "“Find similar” — a list of comparable universities", "r2h": "AI matching", "r2p": "About 23 questions on grades, exams, budget, climate and goals. The AI looks for options that fit your citizenship and degree level and sorts 12 universities into four categories — from safe picks to dream schools.", "r2a": "Results are saved to your profile", "r2b": "Any university from the list opens as a full dossier", "r2c": "Up to 3 tests a day", "r3h": "Resources & Content", "r3p": "Official websites for exams (IELTS, SAT, HSK, TOPIK and more), scholarships (Bolashak, DAAD, MEXT, GKS) and application portals. Plus a news feed on visas and admissions, videos about student life and films for motivation.", "r3a": "Only official, verified links", "r3b": "Exams for many countries, not just Kazakhstan", "r3c": "News in Russian and English", "r4h": "Focus", "r4p": "A study timer where you note what you worked on. Fifteen minutes a day keeps the streak going. A quote of the day keeps you motivated, and daily totals show up in your profile.", "r4a": "Pause and resume where you left off", "r4b": "Study history by day", "r4c": "Save the quotes you like", "b_h": "Going abroad starts with a plan, not a suitcase", "b_btn": "Make my plan", "w_k": "Who it's for", "w_h": "EduPath helps if you…", "w1h": "Don't know where to start", "w1p": "No counsellor nearby and university sites in another language. We show requirements and steps in order.", "w2h": "Are preparing for olympiads and stressed", "w2p": "Little time, lots of options. AI narrows it down to 12 universities.", "w3h": "Want to study for free", "w3p": "A funding filter and government scholarships from different countries.", "w4h": "Are going for a Master's", "w4p": "The level switch changes exams, deadlines and prices on the cards.", "w5h": "Need to apply urgently", "w5p": "Deadline dots show at a glance where you can still make it.", "w6h": "Help others apply", "w6p": "Teachers and counsellors get verified official links.", "h_k": "How it works", "h_h": "Four steps to your university list", "h1h": "Create an account", "h1p": "Email and password or sign in with Discord. It's free.", "h2h": "Set citizenship and level", "h2p": "They change prices, exams and visas on every card.", "h3h": "Take the test or search yourself", "h3p": "AI suggests 12 universities, and the catalog opens any university in the world.", "h4h": "Save and prepare", "h4p": "Favourites in your profile, exam links in Resources, daily practice in Focus.", "q_k": "Questions", "q_h": "FAQ", "q_p": "Didn't find an answer? Write to us: edupath.our.team@gmail.com", "q1": "Is it really free?", "a1": "Yes, all features are free for now. If paid ones appear, we'll tell you in advance and they'll have separate terms.", "q2": "Does EduPath guarantee admission?", "a2": "No. AI recommends, it does not guarantee. Data is collected automatically and may be outdated — check the official university website before applying.", "q3": "Is it only for Kazakhstan?", "a3": "No. You choose your citizenship and see the conditions for it. Resources include exams and scholarships from many countries.", "q4": "Where does the data come from?", "a4": "Official university websites and open sources: the ROR university registry, Wikidata, Wikimedia Commons, Open-Meteo. Third-party sources are labelled.", "q5": "What do you do with my data?", "a5": "We store only what the site needs and never sell it. See the Privacy Policy. You can delete your data in your profile.", "fin_h": "Start today — and meet your deadlines with a plan", "ai": "AI recommends, it does not guarantee admission. See the <a href=\"terms.html\">Terms of Use</a>."}, "kk": {"kicker": "Кез келген елдің талапкерлері үшін", "h1": "Арман университеті — ойлағаннан жақын", "lead": "EduPath шетелге түсуге керектің бәрін бір жерге жинайды: азаматтығыңа сай шарттар, мерзімдер, оқу мен өмір құны, гранттар және ЖИ іріктеген университеттер тізімі.", "start": "Тегін бастау", "how_btn": "Бұл қалай жұмыс істейді", "note": "Төлемсіз · 5 тіл · Тек ресми дереккөздер", "fl_t": "Келесі қадам", "fl_d": "мерзімге 92 күн", "fl_ex": "мысал", "credit": "Иллюстрацияны ЖИ жасаған", "s1": "университет каталогта — және кез келгенін іздеу", "s2": "университет ЖИ іріктеуінде, төрт санатта", "s3": "интерфейс тілі: орыс, қазақ, қырғыз, ағылшын, қытай", "s4": "қазір барлық мүмкіндік тегін", "p_k": "Неге қиын", "p_h": "Шетелдегі университетті таңдау — жүздеген қойынды, бөтен тілдер және өткізіп алуға болмайтын мерзімдер", "p1h": "Ақпарат шашыраңқы", "p1p": "Талаптар университет сайтында, стипендиялар министрлік сайтында, өмір сүру құны форумдарда. Екі университетті салыстыру үшін ондаған бетті ашу керек, көбіне ағылшын не неміс тілінде.", "p2h": "Шарттар саған байланысты", "p2p": "Бір елдің азаматтарына оқу тегін, басқасына ақылы. Бакалавриатқа көбіне SAT, магистратураға GRE керек. Жалпы рейтингтер мен «топ-10» мұны ескермейді.", "p3h": "Мерзімдер байқатпай өтеді", "p3p": "Түсінгенше емтиханға тіркеу не грантқа қабылдау аяқталады. Көбі керекті тест туралы тапсыруға кеш болғанда біледі.", "f_k": "Ішінде не бар", "f_h": "Түсуге керектің бәрі — бір аккаунтта", "f_p": "«Қайда түсерімді білмеймін» дегеннен «құжатты уақытында тапсырдым» дегенге дейінгі жолды жабатын төрт бөлім.", "r1h": "Университеттер", "r1p": "Әлемнің 50 мықты университетінің каталогы және кез келгенін іздеу. Әрқайсысына досье: деңгейің мен азаматтығыңа арналған талаптар, тапсыру түрі мен мерзімдер, оқу мен өмір құны, қаржылай көмек, қала, карта және ресми сілтемелер.", "r1a": "Түсті нүкте мерзімге қанша қалғанын көрсетеді", "r1b": "Шарттар бойынша іздеу: ел, бюджет, тіл, стипендия", "r1c": "«Ұқсастарын табу» — жақын университеттер тізімі", "r2h": "ЖИ іріктеу", "r2p": "Бағалар, емтихандар, бюджет, климат пен мақсаттар туралы 23-ке жуық сұрақ. ЖИ азаматтығың мен оқу деңгейіңе сай нұсқаларды іздеп, 12 университетті төрт санатқа бөледі — сенімдіден арман университетке дейін.", "r2a": "Нәтиже профильде сақталады", "r2b": "Тізімдегі кез келген университет толық досьемен ашылады", "r2c": "Күніне 3 тестке дейін", "r3h": "Пайдалы және Контент", "r3p": "Емтихандардың (IELTS, SAT, HSK, TOPIK және т.б.), стипендиялардың («Болашақ», DAAD, MEXT, GKS) және құжат тапсыру порталдарының ресми сайттары. Сондай-ақ визалар мен түсу жаңалықтары, студенттер өмірі туралы бейнелер және мотивацияға арналған фильмдер.", "r3a": "Тек ресми әрі тексерілген сілтемелер", "r3b": "Тек Қазақстан үшін емес — әр елдің емтихандары", "r3c": "Орыс және ағылшын тіліндегі жаңалықтар", "r4h": "Фокус", "r4p": "Не істегеніңді жазып қоятын оқу таймері. Күніне он бес минут — және серия жалғасады. Күн дәйексөзі берілмеуге көмектеседі, ал күндік нәтижелер профильде көрінеді.", "r4a": "Кідіріп, сол жерден жалғастыру", "r4b": "Күндер бойынша сабақ тарихы", "r4c": "Ұнаған дәйексөздерді сақтау", "b_h": "Шетелге жол чемоданнан емес, жоспардан басталады", "b_btn": "Жоспар құру", "w_k": "Кімге арналған", "w_h": "EduPath саған көмектеседі, егер сен…", "w1h": "Неден бастарыңды білмесең", "w1p": "Жаныңда кеңесші жоқ, университет сайттары бөтен тілде. Талаптар мен қадамдарды ретімен көрсетеміз.", "w2h": "Олимпиадаға дайындалып, күйзелісте болсаң", "w2p": "Уақыт аз, нұсқа көп. ЖИ таңдауды 12 университетке дейін қысқартады.", "w3h": "Тегін оқу іздесең", "w3p": "Қаржыландыру сүзгісі және әр елдің мемлекеттік стипендиялары.", "w4h": "Магистратураға түссең", "w4p": "Деңгей ауыстырғышы карточкалардағы емтихандарды, мерзімдер мен бағаларды өзгертеді.", "w5h": "Шұғыл тапсыру керек болса", "w5p": "Мерзім нүктелері қайда әлі үлгеретініңді бірден көрсетеді.", "w6h": "Басқаларға түсуге көмектессең", "w6p": "Мұғалімге не кәсіби бағдар берушіге тексерілген ресми сілтемелер керек болады.", "h_k": "Бұл қалай жұмыс істейді", "h_h": "Университеттер тізіміне дейін төрт қадам", "h1h": "Аккаунт аш", "h1p": "Пошта мен құпиясөз немесе Discord арқылы кіру. Бұл тегін.", "h2h": "Азаматтық пен деңгейді көрсет", "h2p": "Олар барлық карточкадағы бағаны, емтихандар мен визаны өзгертеді.", "h3h": "Тест тапсыр немесе өзің ізде", "h3p": "ЖИ 12 университет ұсынады, ал каталогта әлемдегі кез келген университетті ашуға болады.", "h4h": "Сақта және дайындал", "h4p": "Таңдаулылар — профильде, емтихан сілтемелері — «Пайдалыда», күнделікті жаттығу — «Фокуста».", "q_k": "Сұрақтар", "q_h": "Жиі қойылатын сұрақтар", "q_p": "Жауап таппадың ба? Бізге жаз: edupath.our.team@gmail.com", "q1": "Бұл шынымен тегін бе?", "a1": "Иә, қазір барлық мүмкіндік тегін. Ақылылары пайда болса, алдын ала ескертеміз, олар бөлек шарттармен жұмыс істейді.", "q2": "EduPath түсуге кепілдік бере ме?", "a2": "Жоқ. ЖИ ұсынады, бірақ кепілдік бермейді. Деректер автоматты түрде жиналады және ескіруі мүмкін — құжат тапсырмас бұрын университеттің ресми сайтынан тексер.", "q3": "Бұл тек Қазақстан үшін бе?", "a3": "Жоқ. Сен өз азаматтығыңды таңдайсың, шарттар соған сай көрсетіледі. «Пайдалыда» әр елдің емтихандары мен стипендиялары бар.", "q4": "Деректер қайдан алынады?", "a4": "Университеттердің ресми сайттарынан және ашық дереккөздерден: ROR университеттер тізілімі, Wikidata, Wikimedia Commons, Open-Meteo. Бөгде дереккөздер белгіленген.", "q5": "Менің деректеріммен не істейсіңдер?", "a5": "Сайттың жұмысына керегін ғана сақтаймыз және сатпаймыз. Толығырақ — Құпиялылық саясатында. Деректерді профильде өшіруге болады.", "fin_h": "Бүгін баста — мерзімдерді дайын жоспармен қарсы ал", "ai": "ЖИ ұсынады, бірақ түсуге кепілдік бермейді. Толығырақ — <a href=\"terms.html\">Пайдалану шарттарында</a>."}, "ky": {"kicker": "Каалаган өлкөнүн абитуриенттери үчүн", "h1": "Кыялдагы университет — ойлогондон жакын", "lead": "EduPath чет өлкөгө тапшырууга керектүүнүн баарын бир жерге чогултат: жарандыгыңа ылайык шарттар, мөөнөттөр, окуу жана жашоо наркы, гранттар жана ЖИ тандаган университеттер тизмеси.", "start": "Акысыз баштоо", "how_btn": "Бул кантип иштейт", "note": "Төлөмсүз · 5 тил · Расмий булактар гана", "fl_t": "Кийинки кадам", "fl_d": "мөөнөткө 92 күн", "fl_ex": "мисал", "credit": "Иллюстрацияны ЖИ жасаган", "s1": "университет каталогдо — жана каалаганын издөө", "s2": "университет ЖИ тандоосунда, төрт категорияда", "s3": "интерфейс тили: орус, казак, кыргыз, англис, кытай", "s4": "азыр бардык мүмкүнчүлүк акысыз", "p_k": "Эмне үчүн оор", "p_h": "Чет өлкөдөгү университетти тандоо — жүздөгөн өтмөк, бөтөн тилдер жана өткөрүп жиберүүгө болбогон мөөнөттөр", "p1h": "Маалымат чачкын", "p1p": "Талаптар университеттин сайтында, стипендиялар министрликтин сайтында, жашоо наркы форумдарда. Эки университетти салыштыруу үчүн ондогон баракты ачуу керек, көбүнчө англис же немис тилинде.", "p2h": "Шарттар сага жараша", "p2p": "Бир өлкөнүн жарандарына окуу акысыз, башкасына акылуу. Бакалавриатка көбүнчө SAT, магистратурага GRE керек. Жалпы рейтингдер жана «топ-10» муну эске албайт.", "p3h": "Мөөнөттөр билинбей өтөт", "p3p": "Түшүнгөнчө сынакка каттоо же грантка кабыл алуу бүтөт. Көбү керектүү тест тууралуу тапшырууга кеч болгондо билишет.", "f_k": "Ичинде эмне бар", "f_h": "Тапшырууга керектүүнүн баары — бир аккаунтта", "f_p": "«Кайда тапшырарымды билбейм» дегенден «документти өз убагында тапшырдым» дегенге чейинки жолду жаап турган төрт бөлүм.", "r1h": "Университеттер", "r1p": "Дүйнөнүн 50 күчтүү университетинин каталогу жана каалаганын издөө. Ар бирине досье: деңгээлиң жана жарандыгың үчүн талаптар, тапшыруу түрү жана мөөнөттөр, окуу жана жашоо наркы, каржылык жардам, шаар, карта жана расмий шилтемелер.", "r1a": "Түстүү чекит мөөнөткө канча калганын көрсөтөт", "r1b": "Шарттар боюнча издөө: өлкө, бюджет, тил, стипендия", "r1c": "«Окшошторун табуу» — жакын университеттер тизмеси", "r2h": "ЖИ тандоо", "r2p": "Баалар, сынактар, бюджет, климат жана максаттар боюнча 23дөй суроо. ЖИ жарандыгыңа жана окуу деңгээлиңе ылайык варианттарды издеп, 12 университетти төрт категорияга бөлөт — ишенимдүүдөн кыялдагыга чейин.", "r2a": "Жыйынтык профилде сакталат", "r2b": "Тизмедеги каалаган университет толук досье менен ачылат", "r2c": "Күнүнө 3 тестке чейин", "r3h": "Пайдалуу жана Контент", "r3p": "Сынактардын (IELTS, SAT, HSK, TOPIK ж.б.), стипендиялардын («Болашак», DAAD, MEXT, GKS) жана документ тапшыруу порталдарынын расмий сайттары. Ошондой эле виза жана тапшыруу жаңылыктары, студенттердин жашоосу тууралуу видеолор жана мотивация үчүн тасмалар.", "r3a": "Расмий жана текшерилген шилтемелер гана", "r3b": "Казакстан үчүн гана эмес — ар кайсы өлкөлөрдүн сынактары", "r3c": "Орус жана англис тилиндеги жаңылыктар", "r4h": "Фокус", "r4p": "Эмне кылганыңды жазып коюучу окуу таймери. Күнүнө он беш мүнөт — серия уланат. Күндүн цитатасы колду шилтебөөгө жардам берет, ал эми күндүк жыйынтыктар профилде көрүнөт.", "r4a": "Тындырып, ошол жерден улантуу", "r4b": "Күндөр боюнча сабак тарыхы", "r4c": "Жаккан цитаталарды сактоо", "b_h": "Чет өлкөгө жол чемодандан эмес, пландан башталат", "b_btn": "План түзүү", "w_k": "Ким үчүн", "w_h": "EduPath сага жардам берет, эгер сен…", "w1h": "Эмнеден баштаарыңды билбесең", "w1p": "Жаныңда кеңешчи жок, университеттердин сайттары бөтөн тилде. Талаптарды жана кадамдарды ирети менен көрсөтөбүз.", "w2h": "Олимпиадага даярданып, стресстесең", "w2p": "Убакыт аз, вариант көп. ЖИ тандоону 12 университетке чейин кыскартат.", "w3h": "Акысыз окуу издесең", "w3p": "Каржылоо чыпкасы жана ар кайсы өлкөлөрдүн мамлекеттик стипендиялары.", "w4h": "Магистратурага тапшырсаң", "w4p": "Деңгээл алмаштыргыч карточкалардагы сынактарды, мөөнөттөрдү жана бааларды өзгөртөт.", "w5h": "Шашылыш тапшыруу керек болсо", "w5p": "Мөөнөт чекиттери кайда дагы үлгүрөрүңдү дароо көрсөтөт.", "w6h": "Башкаларга тапшырууга жардам берсең", "w6p": "Мугалимге же кесиптик багыт берүүчүгө текшерилген расмий шилтемелер керек болот.", "h_k": "Бул кантип иштейт", "h_h": "Университеттер тизмесине чейин төрт кадам", "h1h": "Аккаунт ач", "h1p": "Почта жана сырсөз же Discord аркылуу кирүү. Бул акысыз.", "h2h": "Жарандыкты жана деңгээлди көрсөт", "h2p": "Алар бардык карточкалардагы бааны, сынактарды жана визаны өзгөртөт.", "h3h": "Тест тапшыр же өзүң изде", "h3p": "ЖИ 12 университет сунуштайт, ал эми каталогдон дүйнөдөгү каалаган университетти ачса болот.", "h4h": "Сакта жана даярдан", "h4p": "Тандалгандар — профилде, сынак шилтемелери — «Пайдалууда», күнүмдүк машыгуу — «Фокуста».", "q_k": "Суроолор", "q_h": "Көп берилүүчү суроолор", "q_p": "Жооп таба алган жоксуңбу? Бизге жаз: edupath.our.team@gmail.com", "q1": "Бул чын эле акысызбы?", "a1": "Ооба, азыр бардык мүмкүнчүлүк акысыз. Акылуулары пайда болсо, алдын ала эскертебиз, алар өзүнчө шарттар менен иштейт.", "q2": "EduPath кабыл алууга кепилдик береби?", "a2": "Жок. ЖИ сунуштайт, бирок кепилдик бербейт. Маалыматтар автоматтык түрдө чогултулат жана эскириши мүмкүн — тапшыруудан мурун университеттин расмий сайтынан текшер.", "q3": "Бул Казакстан үчүн гана эмеспи?", "a3": "Жок. Сен өз жарандыгыңды тандайсың, шарттар ага ылайык көрсөтүлөт. «Пайдалууда» ар кайсы өлкөлөрдүн сынактары жана стипендиялары бар.", "q4": "Маалыматтар кайдан алынат?", "a4": "Университеттердин расмий сайттарынан жана ачык булактардан: ROR университеттер реестри, Wikidata, Wikimedia Commons, Open-Meteo. Башка булактар белгиленген.", "q5": "Менин маалыматтарым менен эмне кыласыңар?", "a5": "Сайттын иштеши үчүн керектүүсүн гана сактайбыз жана сатпайбыз. Кененирээк — Купуялык саясатында. Маалыматтарды профилде өчүрсө болот.", "fin_h": "Бүгүн башта — мөөнөттөрдү даяр план менен тосуп ал", "ai": "ЖИ сунуштайт, бирок кабыл алууга кепилдик бербейт. Кененирээк — <a href=\"terms.html\">Колдонуу шарттарында</a>."}, "zh": {"kicker": "面向任何国家的申请者", "h1": "梦想的大学，比你想象的更近", "lead": "EduPath 把出国留学所需的一切集中在一起：适用于你国籍的条件、截止日期、学费和生活成本、奖学金，以及由 AI 挑选的大学清单。", "start": "免费开始", "how_btn": "使用方法", "note": "无需付费 · 5 种语言 · 只用官方来源", "fl_t": "下一步", "fl_d": "距截止还有 92 天", "fl_ex": "示例", "credit": "AI 生成插图", "s1": "所大学在目录中——还可搜索任何其他大学", "s2": "所大学在 AI 推荐中，分为四类", "s3": "种界面语言：俄语、哈萨克语、吉尔吉斯语、英语、中文", "s4": "目前所有功能免费", "p_k": "为什么难", "p_h": "选择海外大学意味着上百个标签页、陌生的语言和不能错过的截止日期", "p1h": "信息分散", "p1p": "申请要求在大学官网，奖学金在教育部网站，生活成本在论坛。比较两所大学就要打开几十个页面，而且常常是英语或德语。", "p2h": "条件因人而异", "p2p": "对某国公民免费，对另一国公民收费。本科常常需要 SAT，硕士需要 GRE。通用排名和「前十名」不会考虑这些。", "p3h": "截止日期悄然而过", "p3p": "还没弄清楚，考试报名或奖学金申请就结束了。很多人等到来不及时才知道需要某项考试。", "f_k": "包含什么", "f_h": "申请所需的一切——一个账号搞定", "f_p": "四个板块，带你从「不知道申请哪里」走到「按时提交了材料」。", "r1h": "大学", "r1p": "全球 50 所优秀大学的目录，并可搜索任何其他大学。每所大学都有档案：适用于你学历层次和国籍的要求、申请类型和截止日期、学费和生活成本、资助、城市、地图和官方链接。", "r1a": "彩色圆点显示距截止日期还有多久", "r1b": "按条件搜索：国家、预算、语言、奖学金", "r1c": "「查找相似」——相近的大学清单", "r2h": "AI 匹配", "r2p": "约 23 个关于成绩、考试、预算、气候和目标的问题。AI 根据你的国籍和学历层次寻找选项，把 12 所大学分成四类——从稳妥选择到梦想学校。", "r2a": "结果保存在个人资料中", "r2b": "清单中的任何大学都能打开完整档案", "r2c": "每天最多 3 次测试", "r3h": "实用资源与内容", "r3p": "考试（IELTS、SAT、HSK、TOPIK 等）、奖学金（Bolashak、DAAD、MEXT、GKS）和申请门户的官方网站。另有签证和录取新闻、留学生活视频和励志电影。", "r3a": "只有官方且经过核实的链接", "r3b": "不只是哈萨克斯坦——涵盖多个国家的考试", "r3c": "俄语和英语新闻", "r4h": "专注", "r4p": "可以记录学习内容的计时器。每天十五分钟，连续打卡就不会中断。每日名言帮你坚持，每天的总结显示在个人资料中。", "r4a": "暂停后从原处继续", "r4b": "按天查看学习记录", "r4c": "收藏喜欢的名言", "b_h": "出国之路始于计划，而不是行李箱", "b_btn": "制定我的计划", "w_k": "适合谁", "w_h": "如果你……EduPath 会有帮助", "w1h": "不知道从哪里开始", "w1p": "身边没有顾问，大学官网又是外语。我们按顺序展示要求和步骤。", "w2h": "正在准备竞赛、压力很大", "w2p": "时间少、选择多。AI 帮你缩小到 12 所大学。", "w3h": "想免费读书", "w3p": "资助筛选以及各国政府奖学金。", "w4h": "要读硕士", "w4p": "切换学历层次，卡片上的考试、截止日期和费用随之改变。", "w5h": "需要尽快申请", "w5p": "截止日期圆点一眼看出哪些还来得及。", "w6h": "在帮助别人申请", "w6p": "老师或升学顾问可以使用经过核实的官方链接。", "h_k": "使用方法", "h_h": "四步得到你的大学清单", "h1h": "创建账号", "h1p": "使用邮箱和密码或通过 Discord 登录。免费。", "h2h": "填写国籍和学历层次", "h2p": "它们会改变每张卡片上的费用、考试和签证。", "h3h": "做测试或自己搜索", "h3p": "AI 推荐 12 所大学，目录中还能打开世界上任何大学。", "h4h": "收藏并准备", "h4p": "收藏在个人资料，考试链接在「实用资源」，每天练习在「专注」。", "q_k": "问题", "q_h": "常见问题", "q_p": "没找到答案？写信给我们：edupath.our.team@gmail.com", "q1": "真的免费吗？", "a1": "是的，目前所有功能免费。如果以后有付费功能，我们会提前通知，并有单独的条款。", "q2": "EduPath 保证录取吗？", "a2": "不保证。AI 只提供建议。数据为自动收集，可能过时——申请前请在大学官网核实。", "q3": "只适用于哈萨克斯坦吗？", "a3": "不是。你选择自己的国籍，就会看到相应的条件。「实用资源」中有多个国家的考试和奖学金。", "q4": "数据从哪里来？", "a4": "来自大学官网和公开来源：ROR 大学注册库、Wikidata、Wikimedia Commons、Open-Meteo。第三方来源会注明。", "q5": "你们如何处理我的数据？", "a5": "我们只保存网站运行所需的数据，绝不出售。详见隐私政策。你可以在个人资料中删除数据。", "fin_h": "今天就开始——带着计划迎接截止日期", "ai": "AI 只提供建议，不保证录取。详见<a href=\"terms.html\">使用条款</a>。"}};
+  function applyD(){
+    let lang="ru"; try{ lang=localStorage.getItem("edupath_lang")||"ru"; }catch(e){}
+    const d=LD[lang]||LD.ru;
+    document.querySelectorAll("[data-dl]").forEach(el=>{ const v=d[el.dataset.dl]; if(v!=null) el.textContent=v; });
+    document.querySelectorAll("[data-dl-html]").forEach(el=>{ const v=d[el.dataset.dlHtml]; if(v!=null) el.innerHTML=v; });
+  }
+  applyD();
+  window.addEventListener("edupath-lang-change", applyD);
+})();
+</script>
+<script src="auth.js"></script>
 </body>
 </html>

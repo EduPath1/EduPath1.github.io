@@ -1,0 +1,217 @@
+/* ============================================================
+   EduPath — общий стиль «Небо и латунь» (v1)
+   Подключается на КАЖДОЙ странице ПОСЛЕ её собственного <style>,
+   поэтому значения отсюда побеждают старые.
+   ============================================================ */
+
+:root{
+  /* --- 4 основных цвета --- */
+  --navy:#1E4E8C;        /* главный: кнопки, ссылки, акценты */
+  --navy-deep:#0F2A4A;   /* тёмные блоки, шапка-активная, подвал */
+  --gold:#F2B233;        /* латунь: выделения, иконки, значки */
+  --bg:#F6F8FC;          /* фон страниц */
+  --text:#17263C;        /* основной текст */
+
+  /* --- производные (оттенки тех же цветов) --- */
+  --surface:#FFFFFF;
+  --tint:#E6EDF7;                 /* светлая подложка, ховеры, чипы */
+  --tint-gold:#FDF1D6;            /* светлая латунь */
+  --gold-ink:#8A5E00;             /* латунь для ТЕКСТА на светлом (контраст ≥ 4.5) */
+  --muted:#5B6B82;                /* второстепенный текст */
+  --line:rgba(23,38,60,.12);
+  --shadow:0 14px 36px rgba(15,42,74,.10);
+  --radius:14px;
+
+  /* --- 2 шрифта (оба с кириллицей и казахскими буквами) --- */
+  --font-head:'Lora', Georgia, 'Times New Roman', serif;
+  --font-body:'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* --- совместимость: старые имена переменных из страниц ведут на новые цвета --- */
+  --cream:var(--bg); --cream-deep:var(--tint); --paper:var(--surface);
+  --espresso:var(--text); --bark:var(--navy-deep); --clay:var(--navy);
+  --caramel:var(--gold); --sand:#C9D5E6;
+  --text-main:var(--text); --text-muted:var(--muted);
+  --bg-cream:var(--bg); --text-dark:var(--text); --accent-brown:var(--navy);
+  --accent-light:var(--tint); --dark-bg:var(--navy-deep); --line-color:#D5DEEA;
+}
+
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body{ font-family:var(--font-body); background:var(--bg); color:var(--text); overflow-x:clip; }
+h1,h2,h3,h4{ font-family:var(--font-head); }
+::selection{ background:var(--gold); color:var(--navy-deep); }
+:focus-visible{ outline:3px solid rgba(242,178,51,.75); outline-offset:2px; }
+
+/* ============================================================
+   ШАПКА (рисует layout.js)
+   ============================================================ */
+.ep-header{
+  position:sticky; top:0; z-index:90;
+  background:rgba(246,248,252,.92);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:0; margin:0; display:block; min-height:64px;
+}
+.ep-nav{
+  max-width:1280px; margin:0 auto; min-height:64px;
+  padding:8px 16px; display:flex; align-items:center; gap:12px;
+}
+.ep-logo{
+  display:flex; align-items:center; gap:10px; flex:none;
+  font:700 22px/1 var(--font-head); color:var(--navy-deep); text-decoration:none; letter-spacing:-.01em;
+}
+.ep-logo svg{ width:34px; height:34px; flex:none; }
+.ep-links{ display:none; align-items:center; gap:4px; margin:0 auto; }
+.ep-links a{
+  padding:9px 13px; border-radius:10px; font:500 14px var(--font-body);
+  color:var(--muted); text-decoration:none; white-space:nowrap; transition:background .15s,color .15s;
+}
+.ep-links a:hover{ background:var(--tint); color:var(--text); }
+.ep-links a.active{ background:var(--navy-deep); color:#fff; }
+.ep-right{ display:flex; align-items:center; gap:6px; margin-left:auto; }
+
+.ep-icon-btn{
+  width:44px; height:44px; border-radius:12px; border:0; background:transparent;
+  display:grid; place-items:center; color:var(--navy-deep); cursor:pointer; padding:0;
+}
+.ep-icon-btn:hover{ background:var(--tint); }
+.ep-icon-btn svg{ width:21px; height:21px; }
+
+/* язык */
+.ep-lang{ position:relative; }
+.ep-lang-menu{
+  position:absolute; right:0; top:calc(100% + 8px); min-width:180px;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  box-shadow:var(--shadow); padding:6px; display:none; z-index:120;
+}
+.ep-lang-menu.open{ display:block; }
+.ep-lang-menu .lang-option{
+  display:block; width:100%; text-align:left; border:0; background:transparent;
+  padding:12px 14px; border-radius:10px; font:500 15px var(--font-body); color:var(--text); cursor:pointer;
+}
+.ep-lang-menu .lang-option:hover{ background:var(--tint); }
+.ep-lang-menu .lang-option.active{ color:var(--navy); font-weight:700; }
+.ep-lang-menu .lang-option.active::after{ content:" ✓"; color:var(--gold-ink); }
+
+/* кнопка «Войти» (лендинг) */
+.ep-header .btn-login{
+  display:inline-flex; align-items:center; min-height:44px; padding:0 18px; border-radius:999px;
+  background:var(--navy); color:#fff; font:600 15px var(--font-body); text-decoration:none; white-space:nowrap;
+  transition:background .15s;
+}
+.ep-header .btn-login:hover{ background:var(--navy-deep); }
+
+/* бургер */
+.ep-burger span{ display:block; width:20px; height:2px; border-radius:2px; background:currentColor; transition:transform .25s,opacity .2s; }
+.ep-burger{ display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px; }
+.ep-burger[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.ep-burger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.ep-burger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+.ep-drawer{
+  position:fixed; inset:64px 0 0 0; z-index:89; background:var(--bg);
+  padding:12px 16px calc(24px + env(safe-area-inset-bottom));
+  overflow-y:auto; overscroll-behavior:contain;
+  opacity:0; visibility:hidden; transform:translateY(-8px);
+  transition:opacity .2s, transform .2s, visibility 0s linear .2s;
+}
+.ep-drawer.open{ opacity:1; visibility:visible; transform:none; transition:opacity .2s, transform .2s; }
+.ep-drawer a.ep-drawer-link{
+  display:flex; align-items:center; justify-content:space-between; min-height:56px;
+  padding:0 6px; border-bottom:1px solid var(--line);
+  font:600 18px var(--font-body); color:var(--text); text-decoration:none;
+}
+.ep-drawer a.ep-drawer-link::after{ content:"→"; color:var(--muted); font-weight:400; }
+.ep-drawer a.ep-drawer-link.active{ color:var(--navy); }
+.ep-drawer a.ep-drawer-link.active::after{ content:"●"; color:var(--gold); font-size:12px; }
+.ep-drawer-small{ margin-top:22px; display:flex; flex-wrap:wrap; gap:8px 16px; }
+.ep-drawer-small a{ font-size:14px; color:var(--muted); text-decoration:underline; text-underline-offset:3px; padding:6px 0; }
+body.ep-lock{ overflow:hidden; }
+
+@media (min-width:1000px){
+  .ep-links{ display:flex; }
+  .ep-burger, .ep-drawer{ display:none !important; }
+  .ep-nav{ padding:8px 28px; min-height:72px; }
+  .ep-header{ min-height:72px; }
+}
+
+/* ============================================================
+   ПОДВАЛ (рисует layout.js)
+   ============================================================ */
+.ep-footer{
+  background:var(--navy-deep); color:#C8D3E3; margin-top:56px;
+  padding:40px 16px calc(28px + env(safe-area-inset-bottom)); font:400 14px/1.6 var(--font-body);
+}
+.ep-footer-in{ max-width:1280px; margin:0 auto; display:grid; gap:28px; }
+.ep-footer .ep-logo{ color:#fff; }
+.ep-footer-tag{ margin:10px 0 0; max-width:340px; color:#AFC0D6; }
+.ep-footer h4{ font:700 12px var(--font-body); letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin:0 0 10px; }
+.ep-footer ul{ list-style:none; margin:0; padding:0; }
+.ep-footer li a{ display:inline-block; padding:6px 0; color:#E6EDF7; text-decoration:none; }
+.ep-footer li a:hover{ color:var(--gold); }
+.ep-footer-ai{
+  border-top:1px solid rgba(255,255,255,.12); padding-top:18px; font-size:13px; color:#AFC0D6; margin:0;
+}
+.ep-footer-ai b{ color:var(--gold); }
+.ep-footer-copy{ font-size:13px; color:#8FA3BF; }
+@media (min-width:700px){
+  .ep-footer{ padding-left:28px; padding-right:28px; }
+  .ep-footer-in{ grid-template-columns:1.4fr 1fr 1fr 1fr; }
+  .ep-footer-ai, .ep-footer-copy{ grid-column:1 / -1; }
+}
+
+/* старые подвалы страниц больше не нужны (оставлены на случай отката) */
+body > footer:not(.ep-footer){ display:none !important; }
+
+/* ============================================================
+   ПЛАШКА «ИИ рекомендует, но не гарантирует»
+   ============================================================ */
+.ep-ai-note, .disclaimer{
+  display:block; position:relative;
+  background:var(--tint-gold); border:1px solid rgba(242,178,51,.55); color:#4A3A10 !important;
+  border-radius:12px; padding:12px 14px 12px 50px !important; font-size:13px !important; line-height:1.5;
+}
+.ep-ai-note::before, .disclaimer::before{
+  content:"AI"; position:absolute; left:13px; top:12px; font:800 11px/1 var(--font-body); letter-spacing:.04em;
+  background:var(--gold); color:var(--navy-deep); border-radius:6px; padding:5px 6px;
+}
+.ep-ai-note a, .disclaimer a{ color:var(--navy); text-decoration:underline; }
+.detail-card .disclaimer{ margin:0 16px 16px; }
+
+/* ============================================================
+   ТЕЛЕФОНЫ: удобство и читаемость на всех страницах
+   ============================================================ */
+@media (max-width:700px){
+  /* iPhone не будет «зумить» страницу при нажатии на поле */
+  input:not([type=checkbox]):not([type=radio]), select, textarea{ font-size:16px !important; }
+  /* мелкий текст в каталогах — до читаемого размера */
+  .card-location, .card-reason, .card-foot, .country-pill, .meta-chip, .info-box small, .info-box strong,
+  .plain-list, .sub-card, .source-link, .result-link, .match-chip, .search-hint, .muted, .footer-note,
+  .filter-field label, .filter-field small, .check-row label, .suggest-item span, .action-btn{ font-size:13px !important; }
+  .uni-card h3{ font-size:18px; }
+  /* кнопки и чипы — палец попадает с первого раза */
+  .mode-btn, .secondary-btn, .action-btn, .primary-btn{ min-height:44px; }
+  /* горизонтальные ленты листаются пальцем и не «прыгают» */
+  .cards-track, .chips, .filter-chips{ -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; }
+  img, iframe, video{ max-width:100%; }
+}
+/* уважение к настройке «уменьшить движение» */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+}
+
+/* иконка-стрелка внутри кнопок не должна наследовать размер/цвет больших иконок */
+.btn-primary svg{ width:16px !important; height:16px !important; color:inherit !important; margin:0 !important; }
+
+/* липкие панели фильтров («Полезное», «Контент») не прячутся под шапкой */
+.ui-a .res-panel, .ui-a .ct-panel{ top:64px; }
+@media (min-width:1000px){ .ui-a .res-panel, .ui-a .ct-panel{ top:72px; } }
+
+/* кнопка «Вид A / B» — временно, пока выбираете вариант */
+.ui-switch{
+  position:fixed; right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); z-index:110;
+  display:flex; align-items:center; gap:2px; padding:4px 4px 4px 12px; border-radius:999px;
+  background:var(--navy-deep); color:#AFC0D6; font:600 12px var(--font-body); box-shadow:0 10px 24px rgba(15,42,74,.3);
+}
+.ui-switch span{ margin-right:6px; }
+.ui-switch a{ min-width:34px; height:30px; display:grid; place-items:center; border-radius:999px; color:#fff; text-decoration:none; font-weight:800; }
+.ui-switch a.on{ background:var(--gold); color:var(--navy-deep); }

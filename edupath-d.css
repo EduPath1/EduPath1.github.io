@@ -1,0 +1,185 @@
+/* ============================================================
+   EduPath — вариант D «60/30/10» (v1)
+   60% белый · 30% чёрный · 10% синий.
+   Работает только когда на <html> стоит класс ui-d (ставит layout.js).
+   Синий — только для главных действий, ссылок и выделений.
+   ============================================================ */
+
+.ui-d{
+  --d-white:#FFFFFF;
+  --d-black:#0A0A0B;
+  --d-blue:#1F4FE0;
+  --d-blue-hover:#3A66F0;
+  --d-gray:#F3F4F6;
+  --d-gray-2:#E7E8EB;
+  --d-muted:#5F636B;
+
+  /* общие переменные сайта → новая палитра */
+  --navy:var(--d-blue);
+  --navy-deep:var(--d-black);
+  --gold:var(--d-blue);
+  --gold-ink:var(--d-blue);
+  --tint-gold:#EDF2FF;
+  --bg:var(--d-white);
+  --text:var(--d-black);
+  --surface:#FFFFFF;
+  --tint:var(--d-gray);
+  --muted:var(--d-muted);
+  --line:rgba(10,10,11,.10);
+  --sand:#D9DBE0;
+  --shadow:0 18px 40px rgba(10,10,11,.08);
+  --font-head:'Inter Tight', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+.ui-d body{ background:#fff; color:var(--d-black); font-family:var(--font-body); }
+.ui-d h1, .ui-d h2, .ui-d h3, .ui-d h4{ font-family:var(--font-head); font-weight:700; letter-spacing:-.03em; }
+.ui-d h1{ line-height:1.04; }
+.ui-d ::selection{ background:var(--d-blue); color:#fff; }
+.ui-d :focus-visible{ outline:2px solid var(--d-blue); outline-offset:2px; }
+.ui-d .eyebrow{ color:var(--d-blue) !important; font:600 13px var(--font-body) !important; letter-spacing:.02em !important; text-transform:none !important; }
+.ui-d .eyebrow::before{ background:var(--d-blue); }
+
+/* ---------- кнопки: пилюли ---------- */
+.ui-d .primary-btn, .ui-d .btn-primary, .ui-d .btn-main, .ui-d .btn-gold, .ui-d .cta{
+  background:var(--d-blue) !important; color:#fff !important; border-radius:999px !important; box-shadow:none !important; border:0 !important; font-weight:600 !important;
+}
+.ui-d .primary-btn:hover, .ui-d .btn-primary:hover, .ui-d .btn-main:hover, .ui-d .btn-gold:hover, .ui-d .cta:hover{ background:var(--d-blue-hover) !important; }
+.ui-d .secondary-btn, .ui-d .action-btn, .ui-d .mode-btn{ border-radius:999px !important; }
+.ui-d .mode-btn.active{ background:var(--d-black) !important; border-color:var(--d-black) !important; color:#fff !important; }
+
+/* ---------- карточки ---------- */
+.ui-d .card, .ui-d .search-panel, .ui-d .uni-card, .ui-d .detail-card, .ui-d .res-card, .ui-d .ct-card, .ui-d .tile, .ui-d .step, .ui-d .trust-note, .ui-d .toc{
+  border-radius:20px !important; box-shadow:none !important; border:1px solid var(--line) !important; background:#fff;
+}
+.ui-d .uni-card:hover, .ui-d .res-card:hover, .ui-d .ct-card:hover, .ui-d .tile:hover{ border-color:var(--d-black) !important; box-shadow:none !important; transform:translateY(-2px) !important; }
+.ui-d .uni-card.selected{ border:2px solid var(--d-blue) !important; }
+.ui-d input:not([type=checkbox]):not([type=radio]), .ui-d select, .ui-d textarea{ border-radius:12px !important; }
+.ui-d input:focus, .ui-d select:focus, .ui-d textarea:focus{ border-color:var(--d-blue) !important; box-shadow:0 0 0 3px rgba(31,79,224,.15) !important; }
+
+/* плашка ИИ */
+.ui-d .ep-ai-note, .ui-d .disclaimer{ background:var(--d-gray) !important; border:0 !important; color:#2A2C31 !important; border-radius:14px; }
+.ui-d .ep-ai-note::before, .ui-d .disclaimer::before{ background:var(--d-blue); color:#fff; }
+
+/* ============================================================
+   ШАПКА И МЕНЮ
+   ============================================================ */
+.ui-d .ep-header{ background:rgba(255,255,255,.94); border-bottom:1px solid var(--line); }
+.ui-d .ep-logo{ font-family:var(--font-head); font-weight:800; letter-spacing:-.03em; color:var(--d-black); }
+.ui-d .ep-links a{ color:#3B3E45; font-weight:500; }
+.ui-d .ep-links a:hover{ background:var(--d-gray); color:var(--d-black); }
+.ui-d .ep-links a.active{ background:var(--d-black); color:#fff; }
+.ui-d .ep-icon-btn{ color:var(--d-black); }
+.ui-d .d-test-btn{
+  display:none; align-items:center; min-height:40px; padding:0 18px; border-radius:999px; background:var(--d-blue); color:#fff;
+  font:600 14px var(--font-body); text-decoration:none; white-space:nowrap;
+}
+.ui-d .d-test-btn:hover{ background:var(--d-blue-hover); }
+@media (min-width:700px){ .ui-d .d-test-btn{ display:inline-flex; } }
+.ui-d .ep-header .btn-login{ background:var(--d-black); color:#fff; }
+.ui-d .ep-header .btn-login:hover{ background:#2A2C31; }
+
+/* телефон: чёрное меню на весь экран */
+.ui-d .ep-drawer{ background:var(--d-black); padding-top:24px; }
+.ui-d .ep-drawer a.ep-drawer-link{ color:#fff; font:700 30px/1.1 var(--font-head); letter-spacing:-.03em; border-bottom:1px solid rgba(255,255,255,.1); min-height:64px; }
+.ui-d .ep-drawer a.ep-drawer-link::after{ color:rgba(255,255,255,.4); }
+.ui-d .ep-drawer a.ep-drawer-link.active{ color:#fff; }
+.ui-d .ep-drawer a.ep-drawer-link.active::after{ content:"●"; color:var(--d-blue); }
+.ui-d .ep-drawer a.d-drawer-test{ color:#fff; background:var(--d-blue); border-radius:999px; padding:0 24px; margin-top:18px; border:0; font-size:20px; min-height:56px; }
+.ui-d .ep-drawer a.d-drawer-test::after{ color:#fff; }
+.ui-d .ep-drawer-small a{ color:rgba(255,255,255,.6); }
+.ui-d body.ep-lock .ep-header{ background:var(--d-black); border-bottom-color:rgba(255,255,255,.1); }
+.ui-d body.ep-lock .ep-header .ep-logo, .ui-d body.ep-lock .ep-header .ep-icon-btn{ color:#fff; }
+
+/* подвал — чёрный */
+.ui-d .ep-footer{ background:var(--d-black); color:#A6A9B0; }
+.ui-d .ep-footer .ep-logo{ color:#fff; }
+.ui-d .ep-footer h4{ color:#fff; letter-spacing:.06em; }
+.ui-d .ep-footer li a{ color:#D6D8DC; }
+.ui-d .ep-footer li a:hover{ color:#fff; text-decoration:underline; }
+.ui-d .ep-footer-ai b{ color:#fff; }
+.ui-d .ui-switch{ background:var(--d-black); }
+.ui-d .ui-switch a.on{ background:var(--d-blue); color:#fff; }
+
+/* липкие панели под шапкой */
+.ui-d .res-panel, .ui-d .ct-panel{ top:64px; background:rgba(255,255,255,.96); }
+@media (min-width:1000px){ .ui-d .res-panel, .ui-d .ct-panel{ top:72px; } }
+.ui-d .res-tab[aria-selected="true"], .ui-d .ct-topic[aria-selected="true"], .ui-d .ct-kind[aria-pressed="true"], .ui-d .ct-lang[aria-pressed="true"]{ background:var(--d-black) !important; border-color:var(--d-black) !important; color:#fff !important; }
+
+/* ============================================================
+   ВСТАВКИ ВАРИАНТА D (рисует edupath-d.js): баннеры, подсказки, описания
+   ============================================================ */
+.d-banner{
+  position:relative; border-radius:28px; overflow:hidden; background:var(--d-black); color:#fff; margin:8px 0 26px;
+  display:grid; min-height:260px;
+}
+.d-banner-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.62; }
+.d-banner::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(10,10,11,.92) 0%, rgba(10,10,11,.55) 55%, rgba(10,10,11,.1) 100%); }
+.d-banner-body{ position:relative; z-index:1; padding:28px 22px; align-self:end; max-width:640px; }
+.d-banner-kicker{ display:inline-block; font:600 12px var(--font-body); letter-spacing:.08em; text-transform:uppercase; color:#fff; background:var(--d-blue); padding:6px 10px; border-radius:999px; margin-bottom:12px; }
+.d-banner h2{ font:700 clamp(26px, 6vw, 44px)/1.05 var(--font-head); letter-spacing:-.03em; color:#fff; margin:0 0 10px; }
+.d-banner p{ color:#D6D8DC; font-size:16px; line-height:1.55; margin:0; }
+.d-banner-credit{ position:absolute; right:12px; bottom:10px; z-index:1; font-size:10px; color:rgba(255,255,255,.45); }
+
+.d-info{ display:grid; gap:12px; margin:0 0 28px; }
+.d-info-card{ background:var(--d-gray); border-radius:20px; padding:20px; }
+.d-info-card .n{ display:inline-grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--d-black); color:#fff; font:700 14px var(--font-body); margin-bottom:12px; }
+.d-info-card h3{ font:700 18px/1.25 var(--font-head); letter-spacing:-.02em; margin:0 0 6px; color:var(--d-black); }
+.d-info-card p{ font-size:15px; line-height:1.55; color:var(--d-muted); margin:0; }
+.d-info-card.dark{ background:var(--d-black); }
+.d-info-card.dark h3{ color:#fff; } .d-info-card.dark p{ color:#B9BCC3; }
+.d-info-card.dark .n{ background:var(--d-blue); }
+
+.d-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; font-size:14px; color:var(--d-muted); margin:-6px 0 18px; }
+.d-legend b{ color:var(--d-black); font-weight:600; margin-right:4px; }
+.d-legend span{ display:inline-flex; align-items:center; gap:7px; }
+.d-legend i{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+.d-cat-desc{ margin:-6px 0 16px; max-width:760px; color:var(--d-muted); font-size:15px; line-height:1.55; }
+
+@media (min-width:700px){
+  .d-banner{ min-height:320px; }
+  .d-banner-body{ padding:40px; }
+  .d-info{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+}
+@media (min-width:1000px){
+  .d-banner{ min-height:380px; }
+}
+
+/* ============================================================
+   СТРАНИЦЫ
+   ============================================================ */
+/* Главная после входа */
+.ui-d .test-card{ background:var(--d-black) !important; border-radius:28px; }
+.ui-d .test-card::after{ border-color:rgba(255,255,255,.12); }
+.ui-d .test-card h2 em{ color:#fff; text-decoration:underline; text-decoration-color:var(--d-blue); text-decoration-thickness:4px; text-underline-offset:6px; font-style:normal; }
+.ui-d .test-card .eyebrow{ color:#8FA8FF !important; }
+.ui-d .test-card .btn-gold{ color:#fff !important; }
+.ui-d .test-card .ep-ai-note{ background:rgba(255,255,255,.07) !important; color:#C9CCD2 !important; }
+.ui-d .test-card .ep-ai-note a{ color:#fff; }
+.ui-d .test-facts span{ background:rgba(255,255,255,.08) !important; border-color:rgba(255,255,255,.16) !important; }
+.ui-d .tile-ico{ background:var(--d-gray) !important; color:var(--d-black) !important; }
+.ui-d .tile.wide .tile-ico{ background:var(--d-blue) !important; color:#fff !important; }
+.ui-d .step::before{ background:var(--d-black) !important; color:#fff !important; }
+.ui-d .d-photo-tiles{ display:grid; gap:12px; grid-template-columns:1fr 1fr; margin:6px 0 0; }
+.ui-d .d-photo-tile{ position:relative; border-radius:20px; overflow:hidden; min-height:180px; background:var(--d-black); color:#fff; text-decoration:none; display:flex; align-items:flex-end; }
+.ui-d .d-photo-tile img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.7; transition:transform .4s, opacity .3s; }
+.ui-d .d-photo-tile::after{ content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(10,10,11,.88), rgba(10,10,11,0) 65%); }
+.ui-d .d-photo-tile:hover img{ transform:scale(1.04); opacity:.8; }
+.ui-d .d-photo-tile div{ position:relative; z-index:1; padding:16px; }
+.ui-d .d-photo-tile b{ display:block; font:700 19px var(--font-head); letter-spacing:-.02em; }
+.ui-d .d-photo-tile small{ display:block; color:#C9CCD2; font-size:13px; margin-top:4px; line-height:1.4; }
+.ui-d .d-photo-tile.big{ grid-column:1 / -1; min-height:220px; }
+@media (min-width:1000px){ .ui-d .d-photo-tiles{ grid-template-columns:2fr 1fr 1fr; } .ui-d .d-photo-tile.big{ grid-column:auto; grid-row:span 2; min-height:100%; } }
+.ui-d.d-has-photos .tiles-head, .ui-d.d-has-photos section.tiles{ display:none; }
+
+/* Университеты */
+.ui-d .detail-head{ background:var(--d-black); color:#fff; }
+.ui-d .detail-head h2{ color:#fff; }
+.ui-d .detail-location{ color:#C9CCD2 !important; }
+.ui-d .detail-head .meta-chip{ background:rgba(255,255,255,.1) !important; color:#fff !important; }
+.ui-d .detail-head .eyebrow{ color:#8FA8FF !important; }
+.ui-d .degree-switch button[aria-checked="true"]{ background:var(--d-black) !important; color:#fff !important; }
+
+/* Фокус */
+.ui-d .quote-card{ background:var(--d-black) !important; }
+.ui-d .fc-display{ font-family:var(--font-head) !important; letter-spacing:-.04em !important; }

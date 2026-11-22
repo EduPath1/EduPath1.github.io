@@ -1,0 +1,268 @@
+/* ============================================================
+   EduPath — вариант B «как приложение» (v1)
+   Работает только когда на <html> стоит класс ui-b (ставит layout.js).
+   Телефон  < 700px  : верхняя строка + нижние вкладки + лист «Ещё»
+   Планшет  700–1099 : рейка с иконками слева
+   Ноутбук/ПК ≥ 1100 : боковое меню с подписями; страницы раскладываются в колонки
+   ============================================================ */
+
+/* ---------- элементы оболочки по умолчанию скрыты ---------- */
+.b-side, .b-tabs, .b-sheet{ display:none; }
+.ui-b .ep-ico{ width:22px; height:22px; flex:none; }
+
+/* =====================  ТЕЛЕФОН  ===================== */
+.ui-b.is-app .b-header{ position:sticky; top:0; min-height:56px; }
+.ui-b .b-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:56px; padding:6px 8px 6px 16px; }
+.ui-b .b-top .ep-logo{ font-size:20px; }
+.ui-b .b-top .ep-logo svg{ width:30px; height:30px; }
+.ui-b .b-top-right{ display:flex; align-items:center; gap:4px; }
+.ui-b .b-test-pill{
+  display:inline-flex; align-items:center; gap:6px; min-height:38px; padding:0 14px 0 10px; border-radius:999px;
+  background:var(--gold); color:var(--navy-deep); font:800 14px var(--font-body); text-decoration:none;
+}
+.ui-b .b-test-pill .ep-ico{ width:18px; height:18px; }
+
+.ui-b.is-app .b-tabs{
+  display:grid; grid-template-columns:repeat(5,1fr);
+  position:fixed; left:0; right:0; bottom:0; z-index:95;
+  background:rgba(255,255,255,.97); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  border-top:1px solid var(--line); padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.ui-b .b-tab{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:54px;
+  border:0; background:none; color:var(--muted); font:600 11px var(--font-body); text-decoration:none; cursor:pointer; padding:0;
+}
+.ui-b .b-tab .ep-ico{ width:24px; height:24px; padding:3px 14px; box-sizing:content-box; border-radius:999px; transition:background .15s; }
+.ui-b .b-tab.active{ color:var(--navy-deep); }
+.ui-b .b-tab.active .ep-ico{ background:var(--tint-gold); color:var(--gold-ink); }
+.ui-b.is-app body{ padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+.ui-b.is-app .ui-switch{ bottom:calc(84px + env(safe-area-inset-bottom)); }
+
+/* лист «Ещё» */
+.ui-b.is-app .b-sheet{
+  display:block; position:fixed; inset:0; z-index:120; background:rgba(15,42,74,.45);
+  opacity:0; visibility:hidden; transition:opacity .2s, visibility 0s linear .2s;
+}
+.ui-b .b-sheet.open{ opacity:1; visibility:visible; transition:opacity .2s; }
+.ui-b .b-sheet-panel{
+  position:absolute; left:0; right:0; bottom:0; background:var(--bg); border-radius:24px 24px 0 0;
+  padding:10px 16px calc(18px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform .25s cubic-bezier(.22,1,.36,1);
+  max-height:85vh; overflow:auto;
+}
+.ui-b .b-sheet.open .b-sheet-panel{ transform:none; }
+.ui-b .b-sheet-grip{ width:40px; height:4px; border-radius:4px; background:#C9D5E6; margin:0 auto 14px; }
+.ui-b .b-sheet-tiles{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ui-b .b-sheet-tile{
+  display:flex; flex-direction:column; gap:10px; padding:16px; min-height:96px; border-radius:16px;
+  background:var(--surface); border:1px solid var(--line); color:var(--navy-deep); font:700 16px var(--font-body); text-decoration:none;
+}
+.ui-b .b-sheet-tile .ep-ico{ color:var(--navy); }
+.ui-b .b-sheet-tile.gold{ background:var(--gold); border-color:var(--gold); }
+.ui-b .b-sheet-tile.gold .ep-ico{ color:var(--navy-deep); }
+.ui-b .b-sheet-close{ width:100%; min-height:50px; margin-top:16px; border-radius:14px; border:1px solid var(--line); background:var(--surface); font:700 15px var(--font-body); color:var(--navy-deep); }
+
+/* подвал в B компактнее */
+.ui-b .ep-footer{ margin-top:40px; border-radius:24px 24px 0 0; }
+
+/* =====================  ПЛАНШЕТ: рейка  ===================== */
+@media (min-width:700px){
+  .ui-b.is-app .b-header{ display:none; }
+  .ui-b.is-app .b-tabs, .ui-b.is-app .b-sheet{ display:none; }
+  .ui-b.is-app body{ padding-bottom:0; padding-left:88px; }
+  .ui-b.is-app .ui-switch{ bottom:16px; }
+
+  .ui-b.is-app .b-side{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    position:fixed; left:0; top:0; bottom:0; width:88px; z-index:95;
+    background:var(--navy-deep); padding:14px 8px; overflow:visible;
+  }
+  .ui-b .b-side .ep-logo{ color:#fff; }
+  .ui-b .b-side-logo span{ display:none; }
+  .ui-b .b-side-logo svg{ width:40px; height:40px; }
+  .ui-b .b-side-logo{ margin-bottom:10px; }
+  .ui-b .b-side-test{
+    display:flex; flex-direction:column; align-items:center; gap:4px; width:72px; padding:10px 4px; border-radius:16px;
+    background:var(--gold); color:var(--navy-deep); text-decoration:none; margin-bottom:10px;
+  }
+  .ui-b .b-side-test-ico .ep-ico{ width:24px; height:24px; }
+  .ui-b .b-side-test-txt b{ font:800 11px var(--font-body); }
+  .ui-b .b-side-test-txt small{ display:none; }
+  .ui-b .b-side-links, .ui-b .b-side-extra{ display:flex; flex-direction:column; gap:4px; width:100%; }
+  .ui-b .b-side-link{
+    display:flex; flex-direction:column; align-items:center; gap:4px; padding:9px 2px; border-radius:14px;
+    color:#AFC0D6; text-decoration:none; font:600 10.5px var(--font-body); text-align:center; line-height:1.15; overflow-wrap:anywhere;
+  }
+  .ui-b .b-side-link:hover{ background:rgba(255,255,255,.07); color:#fff; }
+  .ui-b .b-side-link.active{ background:rgba(242,178,51,.16); color:var(--gold); }
+  .ui-b .b-side-extra{ display:none; }
+  .ui-b .b-side-docs{ display:none; }
+  .ui-b .b-side-lang{ margin-top:auto; padding-top:10px; }
+  .ui-b .b-side .ep-icon-btn{ color:#C8D3E3; }
+  .ui-b .b-side .ep-icon-btn:hover{ background:rgba(255,255,255,.08); }
+  .ui-b .b-side .ep-lang-menu{ top:auto; bottom:0; left:calc(100% + 10px); right:auto; }
+
+  .ui-b .ep-footer{ border-radius:24px 0 0 0; }
+}
+
+/* =====================  НОУТБУК / ПК: боковое меню  ===================== */
+@media (min-width:1100px){
+  .ui-b.is-app body{ padding-left:256px; }
+  .ui-b.is-app .b-side{ width:256px; align-items:stretch; padding:20px 14px 16px; gap:4px; }
+  .ui-b .b-side-logo span{ display:inline; font-size:22px; }
+  .ui-b .b-side-logo svg{ width:36px; height:36px; }
+  .ui-b .b-side-logo{ padding:0 8px; margin-bottom:16px; }
+  .ui-b .b-side-test{ flex-direction:row; width:auto; gap:12px; padding:12px 14px; margin-bottom:16px; transition:transform .15s; }
+  .ui-b .b-side-test:hover{ transform:translateY(-2px); }
+  .ui-b .b-side-test-ico{ width:38px; height:38px; border-radius:12px; background:rgba(15,42,74,.12); display:grid; place-items:center; flex:none; }
+  .ui-b .b-side-test-txt{ display:flex; flex-direction:column; text-align:left; }
+  .ui-b .b-side-test-txt b{ font-size:15px; }
+  .ui-b .b-side-test-txt small{ display:block; font:500 12px var(--font-body); opacity:.8; }
+  .ui-b .b-side-link{ flex-direction:row; gap:12px; padding:11px 12px; font-size:15px; text-align:left; }
+  .ui-b .b-side-link .ep-ico{ width:21px; height:21px; }
+  .ui-b .b-side-extra{ display:flex; margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.1); }
+  .ui-b .b-side-docs{ display:flex; flex-direction:column; gap:4px; padding:12px 12px 0; }
+  .ui-b .b-side-docs a{ color:#8FA3BF; font-size:12px; text-decoration:none; }
+  .ui-b .b-side-docs a:hover{ color:#fff; }
+  .ui-b .b-side-lang{ padding:12px 4px 0; }
+  .ui-b .ep-footer{ padding-left:32px; padding-right:32px; }
+}
+
+/* ============================================================
+   СТРАНИЦЫ В ВАРИАНТЕ B — другие места для блоков
+   ============================================================ */
+
+/* ---------- Главная после входа ---------- */
+.ui-b .tiles{ grid-template-columns:1fr !important; gap:8px; }
+.ui-b .tile, .ui-b .tile.wide{
+  display:grid; grid-template-columns:42px minmax(0,1fr) auto; column-gap:14px; row-gap:2px; align-items:center;
+  min-height:0; padding:14px; grid-column:auto;
+}
+.ui-b .tile .tile-ico{ grid-column:1; grid-row:1 / span 2; }
+.ui-b .tile > h3{ grid-column:2; grid-row:1; font-size:17px; align-self:end; }
+.ui-b .tile > p{ grid-column:2; grid-row:2; align-self:start; }
+.ui-b .tile.wide > div{ grid-column:2; grid-row:1 / span 2; }
+.ui-b .tile::after{ content:"›"; grid-column:3; grid-row:1 / span 2; font-size:26px; color:var(--muted); line-height:1; }
+@media (min-width:700px){
+  .ui-b .tiles{ grid-template-columns:1fr 1fr !important; }
+}
+@media (min-width:1100px){
+  .ui-b main.wrap:has(> .test-card){
+    max-width:1240px; display:grid; grid-template-columns:minmax(0,1fr) 340px; column-gap:28px;
+    grid-template-areas:"hello hello" "test side" "how side";
+  }
+  .ui-b .hello{ grid-area:hello; }
+  .ui-b .test-card{ grid-area:test; grid-template-columns:1fr; align-items:start; }
+  .ui-b .test-card .ep-ai-note{ grid-column:auto; }
+  .ui-b .how{ grid-area:how; }
+  .ui-b .how .steps{ grid-template-columns:1fr; }
+  .ui-b .tiles-head{ display:none; }
+  .ui-b .tiles{ grid-area:side; grid-template-columns:1fr !important; align-self:start; position:sticky; top:20px;
+    background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:10px; }
+  .ui-b .tiles .tile{ border:0; border-radius:14px; }
+  .ui-b .tiles .tile:hover{ transform:none; box-shadow:none; background:var(--tint); }
+}
+@media (min-width:1500px){ .ui-b .how .steps{ grid-template-columns:repeat(3,1fr); } }
+
+/* ---------- Университеты ---------- */
+.ui-b #cardsTrack, .ui-b #similarTrack{
+  grid-auto-flow:row; grid-auto-columns:auto; grid-template-columns:repeat(auto-fill, minmax(230px,1fr));
+  overflow:visible; scroll-snap-type:none; padding:0;
+}
+.ui-b .track-hint{ display:none; }
+.ui-b #cardsTrack.b-limited > .uni-card:nth-child(n+13){ display:none; }
+.ui-b .b-show-all{
+  display:flex; align-items:center; justify-content:center; width:100%; min-height:48px; margin-top:12px;
+  border:1.5px dashed rgba(30,78,140,.35); border-radius:14px; background:transparent; color:var(--navy); font:700 15px var(--font-body); cursor:pointer;
+}
+.ui-b .b-show-all:hover{ background:var(--tint); }
+.ui-b .empty-state#emptyState{ border:2px dashed #C9D5E6; background:transparent; border-radius:20px; padding:34px 20px; }
+.ui-b .empty-state#emptyState::before{ content:"🎓"; display:block; font-size:34px; margin-bottom:8px; }
+
+@media (max-width:699px){
+  /* телефон: список вместо ленты, первые 6 карточек */
+  .ui-b #cardsTrack, .ui-b #similarTrack{ grid-template-columns:1fr; gap:10px; }
+  .ui-b #cardsTrack.b-limited > .uni-card:nth-child(n+7){ display:none; }
+  .ui-b .uni-card{ min-height:0; padding:14px; }
+  .ui-b .card-facts{ grid-template-columns:1fr 1fr; column-gap:14px; }
+  .ui-b .hero .trust-note{ display:none; }
+  .ui-b .search-panel{ border-radius:18px; }
+}
+@media (min-width:1280px){
+  /* ноутбук/ПК: каталог слева, досье справа и не уезжает */
+  .ui-b main.page{
+    max-width:1500px; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr); column-gap:26px;
+    grid-template-areas:"hero hero" "search detail" "catalog detail" "similar detail" "note note"; align-items:start;
+  }
+  .ui-b main.page > .hero{ grid-area:hero; grid-template-columns:minmax(0,1fr) 300px; }
+  .ui-b main.page > .search-panel{ grid-area:search; margin-bottom:0; }
+  .ui-b main.page > .catalog-section{ grid-area:catalog; }
+  .ui-b main.page > .similar-section{ grid-area:similar; }
+  .ui-b main.page > .footer-note{ grid-area:note; }
+  .ui-b main.page > #detailShell{
+    grid-area:detail; position:sticky; top:16px; margin-top:0; max-height:calc(100vh - 32px); overflow-y:auto;
+    border-radius:22px; scrollbar-width:thin; overscroll-behavior:contain;
+  }
+  .ui-b #detailShell .detail-grid{ grid-template-columns:1fr; }
+  .ui-b #detailShell .empty-state#emptyState{ min-height:calc(100vh - 32px); display:flex; flex-direction:column; justify-content:center; }
+  .ui-b .filter-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .ui-b #cardsTrack, .ui-b #similarTrack{ grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); }
+}
+
+/* ---------- Фокус: таймер сверху крупно, остальное плиткой ---------- */
+.ui-b .fc-grid{ grid-template-columns:1fr; }
+.ui-b .fc-side{ display:contents; }
+.ui-b .fc-grid > .timer-card{ order:1; }
+.ui-b .fc-side > section:nth-child(2){ order:2; }   /* серия дней */
+.ui-b .fc-side > .today-section{ order:3; }
+.ui-b .fc-side > .quote-card{ order:4; }
+@media (min-width:700px){
+  .ui-b .fc-grid{ grid-template-columns:1fr 1fr; }
+  .ui-b .fc-grid > .timer-card{ grid-column:1 / -1; }
+  .ui-b .fc-side > .today-section{ grid-column:1 / -1; }
+}
+@media (min-width:1100px){
+  .ui-b .fc-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); grid-template-areas:"timer timer stats" "today today quote"; }
+  .ui-b .fc-grid > .timer-card{ grid-area:timer; }
+  .ui-b .fc-side > section:nth-child(2){ grid-area:stats; }
+  .ui-b .fc-side > .today-section{ grid-area:today; }
+  .ui-b .fc-side > .quote-card{ grid-area:quote; }
+  .ui-b .fc-display{ font-size:clamp(64px, 7vw, 104px) !important; }
+}
+
+/* ---------- Полезное и Контент: фильтры слева, список справа ---------- */
+.ui-b.is-app .res-panel, .ui-b.is-app .ct-panel{ top:56px; }
+@media (min-width:700px){ .ui-b.is-app .res-panel, .ui-b.is-app .ct-panel{ top:0; } }
+@media (min-width:1100px){
+  .ui-b .b-split{
+    display:grid; grid-template-columns:270px minmax(0,1fr); gap:26px; align-items:start;
+    max-width:1400px; margin:0 auto; padding:0 28px;
+  }
+  .ui-b .b-split > .res-panel, .ui-b .b-split > .ct-panel{
+    position:sticky; top:16px; background:var(--surface); border:1px solid var(--line); border-radius:20px;
+    padding:16px; max-height:calc(100vh - 32px); overflow-y:auto; -webkit-backdrop-filter:none; backdrop-filter:none;
+  }
+  .ui-b .b-split .wrap{ max-width:none; padding:0; margin:0; }
+  .ui-b .res-row, .ui-b .ct-row{ flex-direction:column; align-items:stretch; }
+  .ui-b .res-row > *, .ui-b .ct-row > *{ flex:0 0 auto; width:100%; }
+  .ui-b .ct-langs{ flex-wrap:wrap; }
+  .ui-b .ct-kinds{ width:100%; }
+  .ui-b .ct-kind{ flex:1; text-align:center; padding:8px 6px; }
+  .ui-b .res-tabs, .ui-b .ct-topics{ flex-direction:column; overflow:visible; padding-top:14px; gap:4px; }
+  .ui-b .res-tab, .ui-b .ct-topic{
+    display:flex; justify-content:space-between; align-items:center; width:100%; text-align:left;
+    border-radius:12px; white-space:normal; padding:10px 12px; border-color:transparent;
+  }
+  .ui-b .res-tab[aria-selected="true"], .ui-b .ct-topic[aria-selected="true"]{ background:var(--navy-deep); color:#fff; }
+  .ui-b .res-tab .count, .ui-b .ct-topic .count{ margin-left:8px; }
+  .ui-b .b-split > main{ padding-top:0 !important; }
+}
+
+/* ---------- Документы: содержание слева и всегда под рукой ---------- */
+@media (min-width:1100px){
+  .ui-b .doc{ max-width:1120px; }
+  .ui-b .doc article.show{ display:grid; grid-template-columns:260px minmax(0,1fr); column-gap:40px; align-items:start; }
+  .ui-b .doc article > *{ grid-column:2; }
+  .ui-b .doc article > .toc{ grid-column:1; grid-row:2 / span 200; position:sticky; top:20px; margin:0; }
+  .ui-b .doc article > .toc ol{ columns:1; }
+  .ui-b .doc article > .doc-top{ grid-column:1 / -1; }
+}

@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F7EFE1">
+<meta name="theme-color" content="#F6F8FC">
 <title>EduPath — Полезное</title>
 <meta name="description" content="Официальные сайты экзаменов, стипендий, подачи документов и подготовки к поступлению за рубеж.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#F7EFE1; --cream-deep:#EFE1C6; --paper:#FBF6EC;
-    --espresso:#2B1B10; --bark:#5A3B26; --clay:#8C5A34;
-    --caramel:#C79256; --sand:#D9BD93;
-    --text-main:#2B1B10; --text-muted:#7A6552;
-    --line:rgba(43,27,16,0.14);
-    --shadow:0 16px 42px rgba(43,27,16,.09);
+    --cream:#F6F8FC; --cream-deep:#E6EDF7; --paper:#FFFFFF;
+    --espresso:#17263C; --bark:#0F2A4A; --clay:#1E4E8C;
+    --caramel:#F2B233; --sand:#C9D5E6;
+    --text-main:#17263C; --text-muted:#5B6B82;
+    --line:rgba(23,38,60,0.14);
+    --shadow:0 16px 42px rgba(23,38,60,.09);
     --ease:cubic-bezier(0.22, 1, 0.36, 1);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   html{ scroll-behavior:smooth; }
-  body{ font-family:'Work Sans', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:'Fraunces', serif; letter-spacing:-.02em; }
+  body{ font-family:'Manrope', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Lora', serif; letter-spacing:-.02em; }
   a{ text-decoration:none; color:inherit; }
   button,input{ font:inherit; }
   button{ cursor:pointer; border:none; background:none; appearance:none; }
@@ -31,7 +31,7 @@
   /* Шапка — как на остальных страницах */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Fraunces', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Lora', serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
   .logo:hover svg{ transform:rotate(90deg); }
   .nav-links{ display:flex; align-items:center; gap:8px; }
@@ -42,7 +42,7 @@
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .15s, color .15s; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(43,27,16,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(23,38,60,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
   .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
   .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
@@ -55,10 +55,10 @@
   .res-hero p{ color:var(--text-muted); max-width:720px; }
 
   /* Панель поиска и фильтров */
-  .res-panel{ position:sticky; top:0; z-index:4; background:rgba(247,239,225,.95); backdrop-filter:blur(10px); padding:14px 0 12px; border-bottom:1px solid var(--line); }
+  .res-panel{ position:sticky; top:0; z-index:4; background:rgba(246,248,252,.95); backdrop-filter:blur(10px); padding:14px 0 12px; border-bottom:1px solid var(--line); }
   .res-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .res-search{ flex:1 1 280px; min-width:0; padding:12px 14px; border:1px solid var(--line); border-radius:11px; background:#fffdf8; color:var(--espresso); outline:none; }
-  .res-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(140,90,52,.12); }
+  .res-search{ flex:1 1 280px; min-width:0; padding:12px 14px; border:1px solid var(--line); border-radius:11px; background:#FFFFFF; color:var(--espresso); outline:none; }
+  .res-search:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(30,78,140,.12); }
   .free-toggle{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--bark); padding:10px 12px; border:1px solid var(--line); border-radius:11px; background:var(--paper); user-select:none; cursor:pointer; }
   .free-toggle input{ accent-color:var(--clay); width:16px; height:16px; }
   .res-tabs{ display:flex; gap:6px; overflow-x:auto; padding:12px 0 2px; scrollbar-width:thin; }
@@ -75,11 +75,11 @@
   .res-card{ display:flex; gap:16px; align-items:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:16px; transition:transform .2s, box-shadow .2s, border-color .2s; }
   .res-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow); border-color:var(--caramel); }
   .res-logo{ flex:none; width:64px; height:64px; border-radius:14px; background:#fff; border:1px solid var(--line); display:grid; place-items:center; overflow:hidden; transition:transform .2s, box-shadow .2s; }
-  .res-logo:hover, .res-logo:focus-visible{ transform:scale(1.06); box-shadow:0 8px 18px -8px rgba(43,27,16,.35); outline:none; }
+  .res-logo:hover, .res-logo:focus-visible{ transform:scale(1.06); box-shadow:0 8px 18px -8px rgba(23,38,60,.35); outline:none; }
   .res-logo img{ width:44px; height:44px; object-fit:contain; }
-  .res-logo .letter{ font-family:'Fraunces',serif; font-size:28px; font-weight:600; color:var(--paper); width:100%; height:100%; display:grid; place-items:center; }
+  .res-logo .letter{ font-family:'Lora',serif; font-size:28px; font-weight:600; color:var(--paper); width:100%; height:100%; display:grid; place-items:center; }
   .res-body{ min-width:0; flex:1; display:flex; flex-direction:column; gap:6px; }
-  .res-name{ font-family:'Fraunces',serif; font-size:19px; font-weight:600; line-height:1.2; }
+  .res-name{ font-family:'Lora',serif; font-size:19px; font-weight:600; line-height:1.2; }
   .res-name:hover{ color:var(--clay); }
   .res-domain{ font-size:11px; color:var(--text-muted); }
   .res-desc{ font-size:13px; color:var(--bark); line-height:1.45; }
@@ -87,13 +87,13 @@
   .chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
   .chip{ font-size:10px; font-weight:600; padding:3px 8px; border-radius:999px; background:var(--cream); color:var(--bark); }
   .chip.free{ background:#dcebdf; color:#2f6b43; }
-  .chip.freemium{ background:#f3e9c9; color:#7a5b10; }
-  .chip.paid{ background:#efe1c6; color:#5A3B26; }
+  .chip.freemium{ background:#FDF1D6; color:#7a5b10; }
+  .chip.paid{ background:#E6EDF7; color:#0F2A4A; }
   .chip.official{ background:#e2e9f3; color:#2c4a73; }
-  .chip.only{ background:#f6dcc6; color:#8a4a12; }
+  .chip.only{ background:#FDF1D6; color:#8a4a12; }
   .res-go{ align-self:flex-start; font-size:12px; color:var(--clay); font-weight:600; margin-top:2px; }
   .res-go:hover{ text-decoration:underline; }
-  .res-empty, .res-loading{ background:rgba(251,246,236,.7); border:1px dashed var(--sand); border-radius:18px; padding:30px; text-align:center; color:var(--text-muted); margin-top:30px; }
+  .res-empty, .res-loading{ background:rgba(255,255,255,.7); border:1px dashed var(--sand); border-radius:18px; padding:30px; text-align:center; color:var(--text-muted); margin-top:30px; }
   .res-foot{ margin-top:40px; font-size:12px; color:var(--text-muted); text-align:center; line-height:1.6; }
   footer{ text-align:center; padding:26px; font-size:13px; color:var(--text-muted); border-top:1px solid var(--line); }
 
@@ -110,43 +110,16 @@
   }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 </style>
+<link rel="stylesheet" href="edupath.css?v=2">
+<link rel="stylesheet" href="edupath-b.css?v=1">
+<link rel="stylesheet" href="edupath-c.css?v=1">
+<link rel="stylesheet" href="edupath-d.css?v=1">
 </head>
 <body>
 
-<header>
-  <nav class="wrap">
-    <a href="index.html" class="logo">
-      <svg viewBox="0 0 40 40" fill="none">
-        <circle cx="20" cy="20" r="18" stroke="#5A3B26" stroke-width="2"/>
-        <path d="M27 13 L18 18 L13 27 L22 22 Z" fill="#C79256"/>
-        <circle cx="20" cy="20" r="2.4" fill="#2B1B10"/>
-      </svg>
-      EduPath
-    </a>
-    <div class="nav-links">
-      <a href="index.html" data-i18n="nav_home">Главная</a>
-      <a href="universities.html" data-i18n="nav_universities">Университеты</a>
-      <a href="resources.html" class="active" data-i18n="nav_resources">Полезное</a>
-      <a href="profile.html" data-i18n="nav_profile">Профиль</a>
-      <a href="fanzone.html" data-i18n="nav_fanzone">🤡 Fun Zone</a>
-      <a href="team.html" data-i18n="nav_team">О нашей команде</a>
-    </div>
-    <div class="nav-right">
-      <div class="lang-dropdown">
-        <button type="button" class="icon-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Language">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="19" height="19"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>
-        </button>
-        <div class="lang-menu" id="langMenu" role="menu">
-          <button type="button" class="lang-option active" data-lang="ru" role="menuitem">Русский</button>
-          <button type="button" class="lang-option" data-lang="en" role="menuitem">English</button>
-          <button type="button" class="lang-option" data-lang="zh" role="menuitem">中文</button>
-          <button type="button" class="lang-option" data-lang="kk" role="menuitem">Қазақша</button>
-          <button type="button" class="lang-option" data-lang="ky" role="menuitem">Кыргызча</button>
-        </div>
-      </div>
-    </div>
-  </nav>
-</header>
+<header class="ep-header" id="siteHeader" data-variant="app"></header>
+<script src="layout.js?v=4"></script>
+<script src="edupath-d.js?v=1"></script>
 
 <section class="res-hero wrap">
   <div class="eyebrow" data-r="eyebrow">EduPath · Полезное</div>
@@ -154,7 +127,7 @@
   <p data-r="sub">Официальные сайты экзаменов, стипендий и подачи документов, а также проверенные сервисы для подготовки. Нажми на логотип — откроется сам сайт.</p>
 </section>
 
-<div class="res-panel">
+<div class="res-panel" data-b-aside>
   <div class="wrap">
     <div class="res-row">
       <input type="search" id="resSearch" class="res-search" autocomplete="off" placeholder="Поиск: IELTS, стипендия, Германия…" aria-label="Поиск">
@@ -164,14 +137,13 @@
   </div>
 </div>
 
-<main class="wrap">
+<main class="wrap" data-b-main>
   <div id="resList"><div class="res-loading" data-r="loading">Загружаем сайты…</div></div>
   <p class="res-foot" id="resFoot"></p>
 </main>
 
-<footer data-i18n="home_footer">EduPath © 2026. Все права защищены</footer>
 
-<script src="i18n.js"></script>
+<script src="i18n.js?v=9"></script>
 <script src="auth.js"></script>
 <script>
 (function () {
@@ -187,7 +159,7 @@
   };
   // Описания сайтов есть на русском и английском: казахский и кыргызский берут русский, китайский — английский
   const DESC_FALLBACK = { ru: "ru", kk: "ru", ky: "ru", en: "en", zh: "en" };
-  const LOGO_COLORS = ["#8C5A34", "#5A3B26", "#2B1B10", "#C79256", "#7A6552", "#A0673A"];
+  const LOGO_COLORS = ["#1E4E8C", "#0F2A4A", "#17263C", "#F2B233", "#5B6B82", "#2A63AD"];
 
   const $ = (id) => document.getElementById(id);
   let DATA = null;
@@ -303,7 +275,7 @@
       .map((c) => {
         const items = DATA.items.filter((it) => it.cat === c.id && matches(it, q, freeOnly));
         if (!items.length) return "";
-        return `<section class="res-section"><h2>${esc(pick(c.title) || c.title.ru)}</h2>
+        return `<section class="res-section" data-cat="${esc(c.id)}"><h2>${esc(pick(c.title) || c.title.ru)}</h2>
                   <div class="res-grid">${items.map((it) => cardHtml(it, idx++)).join("")}</div></section>`;
       }).join("");
     $("resList").innerHTML = html || `<div class="res-empty">${esc(ui("empty"))}</div>`;
