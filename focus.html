@@ -4,27 +4,27 @@
 <script>/* Внутренние страницы только для вошедших: без входа — на лендинг */try{if(!localStorage.getItem("edupath_token")){location.replace("index.html");}}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#F6F8FC">
+<meta name="theme-color" content="#FFFFFF">
 <title>EduPath — Фокус</title>
 <meta name="description" content="Таймер учёбы EduPath: пауза, продолжение, итоги по дням, серия дней и цитата дня.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#F6F8FC; --cream-deep:#E6EDF7; --paper:#FFFFFF;
-    --espresso:#17263C; --bark:#0F2A4A; --clay:#1E4E8C;
-    --caramel:#F2B233; --sand:#C9D5E6;
-    --text-main:#17263C; --text-muted:#5B6B82;
-    --line:rgba(23,38,60,0.14);
-    --shadow:0 16px 42px rgba(23,38,60,.09);
+    --cream:#FFFFFF; --cream-deep:#F3F4F6; --paper:#FFFFFF;
+    --espresso:#0A0A0B; --bark:#0A0A0B; --clay:#1F4FE0;
+    --caramel:#1F4FE0; --sand:#D9DBE0;
+    --text-main:#0A0A0B; --text-muted:#5F636B;
+    --line:rgba(10,10,11,0.14);
+    --shadow:0 16px 42px rgba(10,10,11,.09);
     --ok:#2f6b43; --ok-bg:#dcebdf;
     --ease:cubic-bezier(0.22, 1, 0.36, 1);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   html{ scroll-behavior:smooth; }
-  body{ font-family:'Manrope', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
-  h1,h2,h3{ font-family:'Lora', serif; letter-spacing:-.02em; }
+  body{ font-family:'Inter', sans-serif; background:var(--cream); color:var(--text-main); line-height:1.5; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3{ font-family:'Inter Tight', serif; letter-spacing:-.02em; }
   a{ text-decoration:none; color:inherit; }
   button,input{ font:inherit; }
   button{ cursor:pointer; border:none; background:none; appearance:none; }
@@ -33,7 +33,7 @@
   /* Шапка — как на остальных страницах */
   header{ background:var(--paper); border-bottom:1px solid var(--line); position:relative; z-index:5; }
   nav.wrap{ display:flex; align-items:center; justify-content:space-between; height:84px; position:relative; }
-  .logo{ display:flex; align-items:center; gap:12px; font-family:'Lora', serif; font-weight:600; font-size:26px; color:var(--espresso); }
+  .logo{ display:flex; align-items:center; gap:12px; font-family:'Inter Tight', serif; font-weight:600; font-size:26px; color:var(--espresso); }
   .logo svg{ width:38px; height:38px; flex-shrink:0; transition:transform .6s var(--ease); }
   .logo:hover svg{ transform:rotate(90deg); }
   .nav-links{ display:flex; align-items:center; gap:8px; }
@@ -44,7 +44,7 @@
   .icon-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-radius:50%; transition:background .15s, color .15s; }
   .icon-btn:hover{ background:var(--cream-deep); color:var(--espresso); }
   .lang-dropdown{ position:relative; }
-  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(23,38,60,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
+  .lang-menu{ position:absolute; top:calc(100% + 10px); right:0; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:6px; min-width:150px; box-shadow:0 16px 32px -14px rgba(10,10,11,0.3); opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .15s, transform .15s, visibility .15s; z-index:30; }
   .lang-menu.open{ opacity:1; visibility:visible; transform:translateY(0); }
   .lang-option{ display:block; width:100%; text-align:left; padding:10px 12px; font-size:14px; color:var(--text-muted); border-radius:8px; }
   .lang-option:hover{ background:var(--cream-deep); color:var(--espresso); }
@@ -60,18 +60,18 @@
   .fc-grid{ display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:18px; align-items:start; }
   .fc-side{ display:flex; flex-direction:column; gap:18px; }
   .card{ background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:26px; }
-  .card-title{ font-family:'Lora',serif; font-size:20px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .card-title{ font-family:'Inter Tight',serif; font-size:20px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
 
   /* Таймер */
   .timer-card{ padding:30px; }
   .fc-label-row label{ display:block; font-size:12px; font-weight:600; color:var(--bark); margin-bottom:7px; letter-spacing:.02em; }
   .fc-input{ width:100%; padding:13px 15px; border:1px solid var(--line); border-radius:12px; background:#FFFFFF; color:var(--espresso); outline:none; font-size:16px; }
-  .fc-input:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(30,78,140,.12); }
+  .fc-input:focus{ border-color:var(--clay); box-shadow:0 0 0 3px rgba(31,79,224,.12); }
   .fc-input.invalid{ border-color:#B84A3A; box-shadow:0 0 0 3px rgba(184,74,58,.12); }
   .fc-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; min-height:4px; }
   .fc-chip{ font-size:12px; padding:5px 11px; border-radius:999px; border:1px solid var(--line); color:var(--bark); background:var(--cream); transition:background .15s, border-color .15s; }
   .fc-chip:hover{ background:var(--cream-deep); border-color:var(--sand); }
-  .fc-display{ font-family:'Lora',serif; font-variant-numeric:tabular-nums; font-feature-settings:"tnum"; font-size:clamp(58px, 9vw, 104px); font-weight:600; line-height:1; text-align:center; color:var(--espresso); margin:30px 0 8px; letter-spacing:-.02em; }
+  .fc-display{ font-family:'Inter Tight',serif; font-variant-numeric:tabular-nums; font-feature-settings:"tnum"; font-size:clamp(58px, 9vw, 104px); font-weight:600; line-height:1; text-align:center; color:var(--espresso); margin:30px 0 8px; letter-spacing:-.02em; }
   .fc-display.paused{ color:var(--clay); }
   .fc-state{ text-align:center; font-size:13px; color:var(--text-muted); min-height:20px; display:flex; align-items:center; justify-content:center; gap:7px; }
   .fc-dot{ width:8px; height:8px; border-radius:50%; background:var(--sand); }
@@ -100,7 +100,7 @@
   /* Цитата дня */
   .quote-card{ position:relative; background:var(--espresso); color:var(--paper); border-color:var(--espresso); overflow:hidden; }
   .quote-card .eyebrow{ color:var(--caramel); margin-bottom:14px; }
-  .quote-text{ font-family:'Lora',serif; font-size:clamp(20px,2.1vw,25px); line-height:1.32; font-weight:500; letter-spacing:-.01em; }
+  .quote-text{ font-family:'Inter Tight',serif; font-size:clamp(20px,2.1vw,25px); line-height:1.32; font-weight:500; letter-spacing:-.01em; }
   .quote-text::before{ content:"«"; color:var(--caramel); margin-right:2px; }
   .quote-text::after{ content:"»"; color:var(--caramel); margin-left:2px; }
   html[lang="en"] .quote-text::before, html[lang="zh"] .quote-text::before{ content:"“"; }
@@ -108,8 +108,8 @@
   .quote-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; }
   .quote-author{ font-size:14px; color:var(--sand); }
   .quote-author::before{ content:"— "; }
-  .quill{ width:44px; height:44px; flex:none; border-radius:50%; display:grid; place-items:center; color:var(--sand); border:1px solid rgba(201,213,230,.35); transition:background .2s, color .2s, transform .2s, border-color .2s; }
-  .quill:hover{ background:rgba(201,213,230,.14); color:var(--paper); }
+  .quill{ width:44px; height:44px; flex:none; border-radius:50%; display:grid; place-items:center; color:var(--sand); border:1px solid rgba(217,219,224,.35); transition:background .2s, color .2s, transform .2s, border-color .2s; }
+  .quill:hover{ background:rgba(217,219,224,.14); color:var(--paper); }
   .quill:active{ transform:scale(.92); }
   .quill svg{ width:22px; height:22px; }
   .quill .q-fill{ fill:transparent; transition:fill .2s; }
@@ -117,12 +117,12 @@
   .quill[aria-pressed="true"] .q-fill{ fill:currentColor; }
   .quill.pop{ animation:pop .35s var(--ease); }
   @keyframes pop{ 40%{ transform:scale(1.18) rotate(-8deg); } }
-  .quote-sub{ margin-top:14px; font-size:12px; color:rgba(246,248,252,.6); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .quote-sub{ margin-top:14px; font-size:12px; color:rgba(255,255,255,.6); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
   .quote-sub a{ color:var(--sand); text-decoration:underline; text-underline-offset:3px; }
 
   /* Статистика */
   .streak{ display:flex; align-items:center; gap:14px; }
-  .streak-num{ font-family:'Lora',serif; font-size:46px; font-weight:600; line-height:1; color:var(--espresso); }
+  .streak-num{ font-family:'Inter Tight',serif; font-size:46px; font-weight:600; line-height:1; color:var(--espresso); }
   .streak-label{ font-size:13px; color:var(--text-muted); line-height:1.35; }
   .streak-best{ font-size:12px; color:var(--text-muted); margin-top:2px; }
   .goal{ margin-top:16px; }
@@ -144,16 +144,16 @@
   .today-list{ display:flex; flex-direction:column; gap:8px; }
   .today-item{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 16px; background:var(--cream); border-radius:12px; font-size:15px; }
   .today-item b{ font-weight:600; color:var(--espresso); }
-  .today-item .dur{ font-family:'Lora',serif; font-weight:600; white-space:nowrap; color:var(--bark); }
+  .today-item .dur{ font-family:'Inter Tight',serif; font-weight:600; white-space:nowrap; color:var(--bark); }
   .today-item .cnt{ font-size:12px; color:var(--text-muted); margin-left:6px; }
   .today-item.pending{ background:transparent; border:1px dashed var(--sand); }
   .pending-tag{ font-size:11px; color:var(--clay); margin-left:6px; }
   .today-total{ font-size:14px; color:var(--text-muted); }
-  .muted-box{ padding:18px; text-align:center; color:var(--text-muted); font-size:14px; background:rgba(230,237,247,.35); border-radius:12px; }
+  .muted-box{ padding:18px; text-align:center; color:var(--text-muted); font-size:14px; background:rgba(243,244,246,.35); border-radius:12px; }
   .muted-box a{ color:var(--clay); text-decoration:underline; }
 
   /* Всплывающее предупреждение снизу */
-  .fc-toast{ position:fixed; left:50%; bottom:24px; transform:translate(-50%, 30px); opacity:0; pointer-events:none; z-index:9000; width:min(560px, calc(100vw - 28px)); background:var(--espresso); color:var(--paper); border-radius:16px; padding:14px 14px 14px 18px; display:flex; align-items:flex-start; gap:12px; box-shadow:0 20px 40px -16px rgba(23,38,60,.55); transition:opacity .25s var(--ease), transform .3s var(--ease); font-size:14px; line-height:1.45; }
+  .fc-toast{ position:fixed; left:50%; bottom:24px; transform:translate(-50%, 30px); opacity:0; pointer-events:none; z-index:9000; width:min(560px, calc(100vw - 28px)); background:var(--espresso); color:var(--paper); border-radius:16px; padding:14px 14px 14px 18px; display:flex; align-items:flex-start; gap:12px; box-shadow:0 20px 40px -16px rgba(10,10,11,.55); transition:opacity .25s var(--ease), transform .3s var(--ease); font-size:14px; line-height:1.45; }
   .fc-toast.show{ opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
   .fc-toast.ok{ background:#24402c; }
   .fc-toast.err{ background:#8b3a30; }
@@ -181,16 +181,14 @@
   }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important; } }
 </style>
-<link rel="stylesheet" href="edupath.css?v=2">
-<link rel="stylesheet" href="edupath-b.css?v=1">
-<link rel="stylesheet" href="edupath-c.css?v=1">
-<link rel="stylesheet" href="edupath-d.css?v=1">
+<link rel="stylesheet" href="edupath.css?v=3">
+<link rel="stylesheet" href="edupath-d.css?v=2">
 </head>
 <body>
 
 <header class="ep-header" id="siteHeader" data-variant="app"></header>
-<script src="layout.js?v=4"></script>
-<script src="edupath-d.js?v=1"></script>
+<script src="layout.js?v=5"></script>
+<script src="edupath-d.js?v=3"></script>
 
 <section class="fc-hero wrap">
   <div class="eyebrow" data-f="eyebrow">EduPath · Фокус</div>

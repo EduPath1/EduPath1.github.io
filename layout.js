@@ -1,13 +1,7 @@
 /* ============================================================
-   EduPath — layout.js (v2)
-   Шапка, меню и подвал для ВСЕХ страниц. Два варианта интерфейса:
-     A — верхнее меню + бургер на телефоне
-     B — «как приложение»: нижние вкладки на телефоне,
-         рейка с иконками на планшете, боковое меню на ноутбуке/ПК
-     C — «новый»: плавающая панель внизу на телефоне, панель-пилюля сверху на ПК
-     D — 60/30/10: белый, чёрный, синий; меню сверху, на телефоне — чёрное меню на весь экран
-   Переключить: ?ui=a / ?ui=b / ?ui=c в адресе, или кнопка «Вид» внизу экрана.
-   Когда выберете вариант — поставь DEFAULT_UI и SHOW_SWITCH = false.
+   EduPath — layout.js (v5)
+   Одна шапка + меню + подвал для ВСЕХ страниц.
+   Меняешь меню здесь — оно меняется везде.
 
    На странице нужно:
      <header class="ep-header" id="siteHeader" data-variant="app"></header>   (в начале <body>)
@@ -20,8 +14,6 @@
 
   const CONTACT_EMAIL = "edupath.our.team@gmail.com";
   const HOME = "app.html";
-  const DEFAULT_UI = "a";     // какой вариант видят все по умолчанию
-  const SHOW_SWITCH = true;   // показывать кнопку «Вид A/B» (на время выбора)
 
   // пункты меню: [файл, ключ текста, иконка]
   const NAV = [
@@ -32,8 +24,6 @@
     ["focus.html", "nav_focus", "timer"],
     ["profile.html", "nav_profile", "user"]
   ];
-  // нижние вкладки на телефоне (вариант B): 4 раздела + «Ещё»
-  const TABS = [[HOME, "nav_home", "home"], ["universities.html", "tab_uni", "uni"], ["focus.html", "nav_focus", "timer"], ["profile.html", "nav_profile", "user"]];
 
   const LANGS = [["ru", "Русский"], ["en", "English"], ["zh", "中文"], ["kk", "Қазақша"], ["ky", "Кыргызча"]];
 
@@ -84,28 +74,9 @@
   const loggedIn = () => !!store.get("edupath_token");
   const file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
 
-  // ---------- какой вариант интерфейса ----------
-  const UI = (function () {
-    const q = new URLSearchParams(location.search).get("ui");
-    const OK = ["a", "b", "c", "d"];
-    if (OK.includes(q)) store.set("edupath_ui", q);
-    const v = store.get("edupath_ui");
-    return OK.includes(v) ? v : DEFAULT_UI;
-  })();
-  document.documentElement.classList.add("ui-" + UI);
-  // у вариантов C и D свои шрифты
-  if (UI === "d" && !document.getElementById("epFontsD")) {
-    const l = document.createElement("link");
-    l.id = "epFontsD"; l.rel = "stylesheet";
-    l.href = "https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap";
-    document.head.appendChild(l);
-  }
-  if (UI === "c" && !document.getElementById("epFontsC")) {
-    const l = document.createElement("link");
-    l.id = "epFontsC"; l.rel = "stylesheet";
-    l.href = "https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap";
-    document.head.appendChild(l);
-  }
+  // дизайн один (бывший вариант D); класс ui-d нужен стилям edupath-d.css
+  document.documentElement.classList.add("ui-d");
+  try { localStorage.removeItem("edupath_ui"); } catch (e) { /* ignore */ }
 
   const ICONS = {
     home: '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
@@ -122,9 +93,9 @@
   const ico = (n) => `<svg class="ep-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ""}</svg>`;
 
   const LOGO_SVG = `<svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <circle cx="20" cy="20" r="18" fill="#0F2A4A"/>
-      <circle cx="20" cy="20" r="14.5" stroke="#F2B233" stroke-width="1.4" opacity=".55"/>
-      <path d="M27.5 12.5 L18 18 L12.5 27.5 L22 22 Z" fill="#F2B233"/>
+      <circle cx="20" cy="20" r="18" fill="#0A0A0B"/>
+      <circle cx="20" cy="20" r="14.5" stroke="#1F4FE0" stroke-width="1.4" opacity=".55"/>
+      <path d="M27.5 12.5 L18 18 L12.5 27.5 L22 22 Z" fill="#1F4FE0"/>
       <circle cx="20" cy="20" r="2.2" fill="#fff"/></svg>`;
   const GLOBE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.7 4 6 4 9.5s-1.4 6.8-4 9.5c-2.6-2.7-4-6-4-9.5s1.4-6.8 4-9.5z"/></svg>`;
 
@@ -157,10 +128,8 @@
       <a href="privacy.html" data-ep="privacy">${tx("privacy")}</a>
       <a href="terms.html" data-ep="terms">${tx("terms")}</a>`;
 
-  // =========================================================
-  // ВАРИАНТ A: верхнее меню + бургер
-  // =========================================================
-  function buildHeaderA(h, v) {
+  // шапка: логотип, меню разделов, язык; на телефоне — бургер с чёрным меню на весь экран
+  function buildHeaderMain(h, v) {
     const logoHref = v === "app" ? HOME : "index.html";
     if (v === "landing") {
       h.innerHTML = `<nav class="ep-nav" aria-label="EduPath">
@@ -174,7 +143,6 @@
         <a href="${logoHref}" class="ep-logo">${LOGO_SVG}<span>EduPath</span></a>
         <div class="ep-links">${navLinksHtml("", false)}</div>
         <div class="ep-right">${langMenuHtml()}
-          ${UI === "d" ? `<a href="test.html" class="d-test-btn"><span data-ep="test">${tx("test")}</span></a>` : ""}
           <button type="button" class="ep-icon-btn ep-burger" id="epBurger" aria-expanded="false" aria-controls="epDrawer" data-ep-label="menu" aria-label="${tx("menu")}"><span></span><span></span><span></span></button>
         </div>
       </nav>`;
@@ -184,7 +152,7 @@
     drawer.id = "epDrawer";
     drawer.setAttribute("role", "dialog");
     drawer.setAttribute("aria-modal", "true");
-    drawer.innerHTML = `${navLinksHtml("ep-drawer-link", false)}${UI === "d" ? `<a href="test.html" class="ep-drawer-link d-drawer-test"><span data-ep="test">${tx("test")}</span></a>` : ""}<div class="ep-drawer-small">${smallLinks()}</div>`;
+    drawer.innerHTML = `${navLinksHtml("ep-drawer-link", false)}<div class="ep-drawer-small">${smallLinks()}</div>`;
     h.insertAdjacentElement("afterend", drawer);
 
     const burger = h.querySelector("#epBurger");
@@ -199,140 +167,6 @@
     window.addEventListener("resize", () => { if (window.innerWidth >= 1000) setOpen(false); });
   }
 
-  // =========================================================
-  // ВАРИАНТ B: приложение (вкладки / рейка / боковое меню)
-  // =========================================================
-  function buildHeaderB(h, v) {
-    if (v === "landing") { buildHeaderA(h, v); return; }   // у гостей своя шапка лендинга
-    h.classList.add("b-header");
-    h.innerHTML = `<div class="b-top">
-        <a href="${HOME}" class="ep-logo">${LOGO_SVG}<span>EduPath</span></a>
-        <div class="b-top-right">
-          <a href="test.html" class="b-test-pill">${ico("spark")}<span data-ep="test">${tx("test")}</span></a>
-          ${langMenuHtml()}
-        </div></div>`;
-
-    // боковое меню (планшет — рейка с иконками, ноутбук/ПК — с подписями)
-    const side = document.createElement("nav");
-    side.className = "b-side";
-    side.setAttribute("aria-label", "EduPath");
-    side.innerHTML = `
-      <a href="${HOME}" class="ep-logo b-side-logo">${LOGO_SVG}<span>EduPath</span></a>
-      <a href="test.html" class="b-side-test${file === "test.html" ? " active" : ""}">
-        <span class="b-side-test-ico">${ico("spark")}</span>
-        <span class="b-side-test-txt"><b data-ep="test">${tx("test")}</b><small data-ep="test_sub">${tx("test_sub")}</small></span>
-      </a>
-      <div class="b-side-links">${navLinksHtml("b-side-link", true)}</div>
-      <div class="b-side-extra">
-        <a href="team.html" class="b-side-link${file === "team.html" ? " active" : ""}">${ico("team")}<span data-ep="team">${tx("team")}</span></a>
-        <a href="mailto:${CONTACT_EMAIL}" class="b-side-link">${ico("mail")}<span data-ep="write">${tx("write")}</span></a>
-      </div>
-      <div class="b-side-docs"><a href="privacy.html" data-ep="privacy">${tx("privacy")}</a><a href="terms.html" data-ep="terms">${tx("terms")}</a></div>`;
-    h.insertAdjacentElement("afterend", side);
-
-    // кнопка языка одна: на телефоне — в верхней строке, на планшете и ПК — внизу бокового меню
-    const langEl = h.querySelector(".ep-lang");
-    const slot = document.createElement("div");
-    slot.className = "b-side-lang";
-    side.appendChild(slot);
-    const mq = window.matchMedia("(min-width: 700px)");
-    const placeLang = () => (mq.matches ? slot : h.querySelector(".b-top-right")).appendChild(langEl);
-    placeLang();
-    if (mq.addEventListener) mq.addEventListener("change", placeLang); else mq.addListener(placeLang);
-
-    // нижние вкладки (телефон)
-    const tabs = document.createElement("nav");
-    tabs.className = "b-tabs";
-    tabs.setAttribute("aria-label", "EduPath");
-    const moreActive = ["resources.html", "content.html", "team.html", "privacy.html", "terms.html"].includes(file);
-    tabs.innerHTML = TABS.map(([href, key, icon]) => {
-      const a = href === file ? " active" : "";
-      return `<a href="${href}" class="b-tab${a}"${a ? ' aria-current="page"' : ""}>${ico(icon)}<span data-ep="${key}">${tx(key)}</span></a>`;
-    }).join("") + `<button type="button" class="b-tab${moreActive ? " active" : ""}" id="bMoreBtn" aria-expanded="false" aria-controls="bSheet">${ico("more")}<span data-ep="more">${tx("more")}</span></button>`;
-    side.insertAdjacentElement("afterend", tabs);
-
-    // лист «Ещё»
-    const sheet = document.createElement("div");
-    sheet.className = "b-sheet";
-    sheet.id = "bSheet";
-    sheet.setAttribute("role", "dialog");
-    sheet.setAttribute("aria-modal", "true");
-    sheet.innerHTML = `<div class="b-sheet-panel">
-        <div class="b-sheet-grip"></div>
-        <div class="b-sheet-tiles">
-          <a href="resources.html" class="b-sheet-tile">${ico("link")}<span data-ep="nav_resources">${tx("nav_resources")}</span></a>
-          <a href="content.html" class="b-sheet-tile">${ico("play")}<span data-ep="nav_content">${tx("nav_content")}</span></a>
-          <a href="test.html" class="b-sheet-tile gold">${ico("spark")}<span data-ep="test">${tx("test")}</span></a>
-          <a href="team.html" class="b-sheet-tile">${ico("team")}<span data-ep="team">${tx("team")}</span></a>
-        </div>
-        <div class="ep-drawer-small"><a href="mailto:${CONTACT_EMAIL}" data-ep="write">${tx("write")}</a><a href="privacy.html" data-ep="privacy">${tx("privacy")}</a><a href="terms.html" data-ep="terms">${tx("terms")}</a></div>
-        <button type="button" class="b-sheet-close" data-ep="close">${tx("close")}</button>
-      </div>`;
-    tabs.insertAdjacentElement("afterend", sheet);
-
-    const moreBtn = tabs.querySelector("#bMoreBtn");
-    const setOpen = (open) => {
-      sheet.classList.toggle("open", open);
-      moreBtn.setAttribute("aria-expanded", String(open));
-      document.body.classList.toggle("ep-lock", open);
-    };
-    moreBtn.addEventListener("click", () => setOpen(!sheet.classList.contains("open")));
-    sheet.addEventListener("click", (e) => {
-      if (e.target === sheet || e.target.closest(".b-sheet-close") || e.target.closest("a")) setOpen(false);
-    });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
-  }
-
-  // =========================================================
-  // ВАРИАНТ C: панель-пилюля сверху (ПК) + плавающий док снизу (телефон)
-  // =========================================================
-  function buildHeaderC(h, v) {
-    if (v === "landing") { buildHeaderA(h, v); return; }
-    h.classList.add("c-header");
-    const prof = file === "profile.html" ? " active" : "";
-    h.innerHTML = `<div class="c-bar">
-        <a href="${HOME}" class="ep-logo c-logo">${LOGO_SVG}<span>EduPath</span></a>
-        <nav class="c-nav" aria-label="EduPath">${navLinksHtml("c-nav-link", true)}</nav>
-        <div class="c-right">
-          ${langMenuHtml()}
-          <a href="test.html" class="c-test${file === "test.html" ? " active" : ""}">${ico("spark")}<span data-ep="test">${tx("test")}</span></a>
-          <a href="profile.html" class="c-me${prof}" data-ep-label="nav_profile" aria-label="${tx("nav_profile")}">${ico("user")}</a>
-        </div></div>`;
-
-    const dockItems = [[HOME, "nav_home", "home"], ["universities.html", "tab_uni", "uni"], null, ["focus.html", "nav_focus", "timer"]];
-    const moreActive = ["resources.html", "content.html", "team.html", "privacy.html", "terms.html"].includes(file);
-    const dock = document.createElement("nav");
-    dock.className = "c-dock";
-    dock.setAttribute("aria-label", "EduPath");
-    dock.innerHTML = dockItems.map((it) => {
-      if (!it) return `<a href="test.html" class="c-dock-ai${file === "test.html" ? " active" : ""}" data-ep-label="test" aria-label="${tx("test")}">${ico("spark")}<span>AI</span></a>`;
-      const [href, key, icon] = it; const a = href === file ? " active" : "";
-      return `<a href="${href}" class="c-dock-item${a}"${a ? ' aria-current="page"' : ""}>${ico(icon)}<span data-ep="${key}">${tx(key)}</span></a>`;
-    }).join("") + `<button type="button" class="c-dock-item${moreActive ? " active" : ""}" id="cMoreBtn" aria-expanded="false" aria-controls="cSheet">${ico("more")}<span data-ep="more">${tx("more")}</span></button>`;
-    h.insertAdjacentElement("afterend", dock);
-
-    const sheet = document.createElement("div");
-    sheet.className = "c-sheet"; sheet.id = "cSheet";
-    sheet.setAttribute("role", "dialog"); sheet.setAttribute("aria-modal", "true");
-    sheet.innerHTML = `<div class="c-sheet-panel">
-        <div class="c-sheet-list">
-          <a href="resources.html">${ico("link")}<span data-ep="nav_resources">${tx("nav_resources")}</span></a>
-          <a href="content.html">${ico("play")}<span data-ep="nav_content">${tx("nav_content")}</span></a>
-          <a href="profile.html">${ico("user")}<span data-ep="nav_profile">${tx("nav_profile")}</span></a>
-          <a href="team.html">${ico("team")}<span data-ep="team">${tx("team")}</span></a>
-          <a href="mailto:${CONTACT_EMAIL}">${ico("mail")}<span data-ep="write">${tx("write")}</span></a>
-        </div>
-        <div class="c-sheet-docs"><a href="privacy.html" data-ep="privacy">${tx("privacy")}</a><a href="terms.html" data-ep="terms">${tx("terms")}</a></div>
-        <button type="button" class="c-sheet-close" data-ep="close">${tx("close")}</button>
-      </div>`;
-    dock.insertAdjacentElement("afterend", sheet);
-    const btn = dock.querySelector("#cMoreBtn");
-    const setOpen = (open) => { sheet.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open)); document.body.classList.toggle("ep-lock", open); };
-    btn.addEventListener("click", () => setOpen(!sheet.classList.contains("open")));
-    sheet.addEventListener("click", (e) => { if (e.target === sheet || e.target.closest(".c-sheet-close") || e.target.closest("a")) setOpen(false); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
-  }
-
   function buildHeader() {
     const h = document.getElementById("siteHeader");
     if (!h) return;
@@ -340,7 +174,7 @@
     h.classList.add("ep-header");
     h.dataset.mode = v;
     document.documentElement.classList.add(v === "landing" ? "is-landing" : "is-app");
-    if (UI === "b") buildHeaderB(h, v); else if (UI === "c") buildHeaderC(h, v); else buildHeaderA(h, v);
+    buildHeaderMain(h, v);
   }
 
   function buildFooter() {
@@ -364,50 +198,6 @@
         <p class="ep-footer-copy" data-ep="copy">${tx("copy")}</p>
       </div>`;
     document.body.appendChild(f);
-  }
-
-  // переключатель вариантов «Вид: A | B»
-  function buildSwitch() {
-    if (!SHOW_SWITCH) return;
-    const s = document.createElement("div");
-    s.className = "ui-switch";
-    s.innerHTML = `<span data-ep="view">${tx("view")}</span><a href="?ui=a" data-ui="a" class="${UI === "a" ? "on" : ""}">A</a><a href="?ui=b" data-ui="b" class="${UI === "b" ? "on" : ""}">B</a><a href="?ui=c" data-ui="c" class="${UI === "c" ? "on" : ""}">C</a><a href="?ui=d" data-ui="d" class="${UI === "d" ? "on" : ""}">D</a>`;
-    s.addEventListener("click", (e) => {
-      const a = e.target.closest("[data-ui]"); if (!a) return;
-      e.preventDefault();
-      store.set("edupath_ui", a.dataset.ui);
-      const u = new URL(location.href); u.searchParams.delete("ui"); location.replace(u.toString());
-    });
-    document.body.appendChild(s);
-  }
-
-  // B: на широких экранах панель фильтров встаёт слева от списка
-  function splitPanels() {
-    const aside = document.querySelector("[data-b-aside]"), main = document.querySelector("[data-b-main]");
-    if (!aside || !main || aside.parentNode.classList.contains("b-split")) return;
-    const wrap = document.createElement("div");
-    wrap.className = "b-split";
-    aside.parentNode.insertBefore(wrap, aside);
-    wrap.appendChild(aside);
-    wrap.appendChild(main);
-  }
-
-  // B: каталог вузов — сначала часть карточек, по кнопке все
-  function catalogToggle() {
-    const track = document.getElementById("cardsTrack");
-    if (!track || document.getElementById("bShowAll")) return;
-    track.classList.add("b-limited");
-    const btn = document.createElement("button");
-    btn.type = "button"; btn.id = "bShowAll"; btn.className = "b-show-all";
-    btn.innerHTML = `<span data-ep="show_all">${tx("show_all")}</span>`;
-    btn.addEventListener("click", () => {
-      const lim = track.classList.toggle("b-limited");
-      const span = btn.querySelector("span");
-      span.dataset.ep = lim ? "show_all" : "show_less";
-      span.textContent = tx(span.dataset.ep);
-      if (lim) track.scrollIntoView({ block: "start", behavior: "smooth" });
-    });
-    track.insertAdjacentElement("afterend", btn);
   }
 
   // перевод при смене языка
@@ -439,12 +229,10 @@
   document.documentElement.lang = lang();
   const onReady = () => {
     buildFooter();
-    buildSwitch();
-    if (UI === "b") { splitPanels(); catalogToggle(); }
     fallbackLang();
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", onReady);
   else onReady();
 
-  window.EduLayout = { t: tx, lang, ui: UI, CONTACT_EMAIL };
+  window.EduLayout = { t: tx, lang, CONTACT_EMAIL };
 })();
