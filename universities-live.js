@@ -129,7 +129,17 @@
     const days = Math.ceil((new Date(date + "T23:59:59") - new Date()) / DAY);
     return days < 0 ? "" : days <= 30 ? "red" : days <= 90 ? "yellow" : "green";
   }
-  const summaryFor = u => { const g = state.groups[groupOf(u.countryCode)] || {}; return g[norm(u.name)] || (u.id && g[u.id]) || null; };
+  // сводка с сервера; если в ней нет даты дедлайна — берём проверенный дедлайн из deadlines.json (только бакалавриат)
+  const summaryFor = u => {
+    const g = state.groups[groupOf(u.countryCode)] || {};
+    const s = g[norm(u.name)] || (u.id && g[u.id]) || null;
+    if (state.degree !== "bachelor" || !window.EduDeadlines) return s;
+    const sd = s?.nextDeadline?.date;
+    if (sd && /^\d{4}-\d{2}-\d{2}$/.test(sd) && new Date(sd + "T23:59:59") >= new Date()) return s;
+    const d = window.EduDeadlines.next(u.name);
+    if (!d) return s;
+    return Object.assign({}, s || {}, { nextDeadline: { date: d.date, display: d.date ? (d.approx ? "≈ " : "") + d.display : d.label, label: d.label, approx: d.approx, url: d.url } });
+  };
 
   function factsHtml(u) {
     const s = summaryFor(u);
@@ -150,7 +160,7 @@
       const siteHtml = site ? `<a class="result-link" href="${esc(site)}" target="_blank" rel="noopener noreferrer">${esc(T("official_site", { d: uni.domain || hostOf(site) }))}</a>`
         : `<span class="result-link missing">${esc(T("site_not_found"))}</span>`;
       const s = summaryFor(uni);
-      card.innerHTML = `<div class="card-top"><span class="country-pill">${esc(countryName(uni) || T("country_tbd"))}</span><span class="deadline-dot ${dotClass(s?.nextDeadline?.date)}" title="${esc(T("dot_title"))}"></span></div>
+      card.innerHTML = `<div class="card-top"><span class="country-pill">${esc(countryName(uni) || T("country_tbd"))}</span><span class="deadline-dot ${dotClass(s?.nextDeadline?.date)}" title="${esc(s?.nextDeadline?.display || T("dot_title"))}"></span></div>
         <h3>${esc(uni.name)}</h3><div class="card-location">📍 ${esc(uni.city || T("city_tbd"))}</div>
         ${opts.reason && uni.reason ? `<div class="card-reason">${esc(uni.reason)}</div>` : ""}
         ${opts.showMatch && uni.matchType ? `<span class="match-chip">${esc(matchLabel(uni.matchType))}</span>` : ""}
@@ -168,7 +178,7 @@
       const fake = { name: card.querySelector("h3")?.textContent || "", id: card.dataset.key.startsWith("https://") ? card.dataset.key : null, countryCode: card.dataset.cc || "" };
       const s = summaryFor(fake);
       const wrap = card.querySelector(".card-facts-wrap"); if (wrap) wrap.innerHTML = factsHtml(fake);
-      const dot = card.querySelector(".deadline-dot"); if (dot) dot.className = "deadline-dot " + dotClass(s?.nextDeadline?.date);
+      const dot = card.querySelector(".deadline-dot"); if (dot) { dot.className = "deadline-dot " + dotClass(s?.nextDeadline?.date); dot.title = s?.nextDeadline?.display || T("dot_title"); }
     });
   }
   function highlightSelected() {
@@ -188,6 +198,8 @@
     }
     showCatalog();
     loadSummary(false);
+    // дедлайны из deadlines.json: сразу раскрашиваем точки на карточках
+    window.EduDeadlines?.load().then(() => refreshCardFacts());
   }
   function showCatalog() {
     state.view = "catalog";
